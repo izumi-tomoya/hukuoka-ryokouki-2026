@@ -38,44 +38,47 @@ export default async function DayView({ events, dayNumber }: DayViewProps) {
   const isSecretMode = cookieStore.get(SECRET_MODE_COOKIE_NAME)?.value === "true";
 
   return (
-    <section>
+    <section className="bg-white">
       {/* Day header */}
-      <div className={`relative -mb-4 overflow-hidden bg-linear-to-br ${theme.bg} px-5 pb-10 pt-6`}>
-        {/* Glow orbs */}
-        <div className={`absolute -left-10 -top-10 h-48 w-48 rounded-full blur-[60px] ${theme.orb1}`} />
-        <div className={`absolute -right-8 bottom-0 h-40 w-40 rounded-full blur-[50px] ${theme.orb2}`} />
+      <div className={`relative -mb-4 overflow-hidden bg-linear-to-br ${theme.bg}`}>
+        {/* Decorative background elements */}
+        <div className={`absolute -left-10 -top-10 h-64 w-64 md:h-96 md:w-96 rounded-full blur-[80px] opacity-60 ${theme.orb1}`} />
+        <div className={`absolute -right-8 bottom-0 h-64 w-64 md:h-96 md:w-96 rounded-full blur-[80px] opacity-60 ${theme.orb2}`} />
 
-        {/* Gold/accent top rule */}
         <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-white/20 to-transparent" />
 
-        <div className="relative">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="h-px w-5 bg-white/25" />
-            <p className={`text-[9px] font-black tracking-[5px] uppercase ${theme.labelColor}`}>
+        <div className="relative mx-auto max-w-7xl px-6 md:px-12 pb-14 pt-8 md:pt-12">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="h-px w-6 bg-white/30" />
+            <p className={`text-[10px] font-black tracking-[6px] uppercase ${theme.labelColor}`}>
               {config.label}
             </p>
           </div>
 
-          <h2 className={`font-playfair mb-4 text-[20px] font-bold leading-snug ${theme.titleColor}`}>
+          <h2 className={`font-playfair mb-6 text-[28px] md:text-[36px] font-bold leading-tight ${theme.titleColor}`}>
             {config.title}
           </h2>
 
           <div
-            className={`rounded-2xl border-l-4 px-4 py-3 text-[11px] leading-relaxed text-white/85 font-medium backdrop-blur-sm ${theme.highlightBorder} ${theme.highlightBg}`}
+            className={`max-w-3xl rounded-[24px] border-l-4 px-6 py-4 text-[13px] md:text-[14px] leading-relaxed text-white/90 font-medium backdrop-blur-md shadow-2xl ${theme.highlightBorder} ${theme.highlightBg}`}
           >
             {config.highlight}
           </div>
         </div>
       </div>
 
-      <Timeline events={events} dayNumber={dayNumber} />
+      <div className="mx-auto max-w-7xl">
+        <Timeline events={events} dayNumber={dayNumber} />
 
-      {isSecretMode && (
-        <TipsSection
-          tips={dayNumber === 1 ? day1Tips : day2Tips}
-          dayNumber={dayNumber}
-        />
-      )}
+        {isSecretMode && (
+          <div className="px-6 md:px-12 pb-20">
+            <TipsSection
+              tips={dayNumber === 1 ? day1Tips : day2Tips}
+              dayNumber={dayNumber}
+            />
+          </div>
+        )}
+      </div>
     </section>
   );
 }

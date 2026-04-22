@@ -21,11 +21,11 @@ const playfairDisplay = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "ふたりだけの福岡大満喫トリップ 🍜",
-  description: "2026.5.24-25 福岡旅行のしおり — 美味しい博多グルメと歴史を巡る1泊2日",
+  title: "Memoir — ふたりの旅の記憶 ✨",
+  description: "ふたりで巡った場所、これから行きたい場所。すべての旅の大切な記録。",
   openGraph: {
-    title: "ふたりだけの福岡大満喫トリップ",
-    description: "2026.5.24-25 福岡旅行のしおり",
+    title: "Memoir — ふたりの旅の記憶",
+    description: "ふたりだけの特別な旅行記・しおりポータル",
   },
 };
 
@@ -42,7 +42,9 @@ export default async function RootLayout({
       <body
         className={`${notoSansJP.variable} ${playfairDisplay.variable} font-sans antialiased bg-stone-50`}
       >
-        <main className="mx-auto min-h-screen max-w-md bg-white pb-20 shadow-xl sm:pb-24">
+        {/* Desktop top-nav spacer — only on md+ */}
+        <div className="hidden md:block h-14" aria-hidden="true" />
+        <main className="min-h-screen bg-white pb-24 md:pb-0">
           {children}
         </main>
         <TabNavigation isSecretMode={isSecretMode} />

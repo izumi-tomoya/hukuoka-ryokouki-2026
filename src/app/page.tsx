@@ -17,8 +17,8 @@ export default async function PortalPage() {
 
       {/* ─── Hero ─── */}
       <header className="relative overflow-hidden bg-[#0D0A06] px-6 pt-28 pb-20">
-        <div className="absolute -top-40 -left-40 h-[600px] w-[600px] rounded-full bg-amber-800/8 blur-[160px]" />
-        <div className="absolute -bottom-20 right-0 h-[400px] w-[400px] rounded-full bg-orange-900/6 blur-[120px]" />
+        <div className="absolute -top-40 -left-40 h-150 w-150 rounded-full bg-amber-800/8 blur-[160px]" />
+        <div className="absolute -bottom-20 right-0 h-100 w-100 rounded-full bg-orange-900/6 blur-[120px]" />
         <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-amber-600/25 to-transparent" />
 
         {/* Large M watermark */}
@@ -28,7 +28,7 @@ export default async function PortalPage() {
           </span>
         </div>
 
-        <div className="relative mx-auto max-w-screen-xl flex flex-col items-center text-center">
+        <div className="relative mx-auto max-w-7xl flex flex-col items-center text-center">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/4 ring-1 ring-white/10 mb-10 backdrop-blur-md whitespace-nowrap">
             <Lock size={10} className="text-amber-400/70" />
             <span className="text-[9px] font-black tracking-[4px] text-white/40 uppercase">Private Collection</span>
@@ -60,7 +60,7 @@ export default async function PortalPage() {
       </header>
 
       {/* ─── Collection ─── */}
-      <main className="mx-auto max-w-screen-xl px-6 md:px-12 pt-12 pb-28">
+      <main className="mx-auto max-w-7xl px-6 md:px-12 pt-12 pb-28">
         <div className="mb-10 flex items-center gap-4">
           <div className="h-px flex-1 bg-linear-to-r from-stone-200 to-transparent" />
           <span className="text-[9px] font-black tracking-[7px] text-stone-300 uppercase">
@@ -83,7 +83,7 @@ export default async function PortalPage() {
                   {/* Gradient "photo" */}
                   <div className="relative h-72 overflow-hidden" style={{ background: trip.image }}>
                     <div className="absolute inset-0 bg-linear-to-t from-black/65 via-black/5 to-transparent" />
-                    <div className="absolute inset-3 rounded-[28px] ring-1 ring-white/[0.08]" />
+                    <div className="absolute inset-3 rounded-[28px] ring-1 ring-white/8" />
 
                     {/* Status badge */}
                     <div className="absolute top-5 right-5">

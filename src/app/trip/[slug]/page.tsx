@@ -26,7 +26,7 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
         <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/30 to-black/10" />
         <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-white/20 to-transparent" />
 
-        <div className="relative mx-auto max-w-screen-xl">
+        <div className="relative mx-auto max-w-7xl">
           <Link
             href="/"
             className="mb-8 inline-flex items-center gap-2 rounded-full bg-white/8 px-4 py-1.5 text-[10px] font-black tracking-[3px] text-white/60 uppercase backdrop-blur-md ring-1 ring-white/10 hover:bg-white/15 transition-all"
@@ -58,7 +58,7 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
       </header>
 
       {/* ─── Days ─── */}
-      <main className="mx-auto max-w-screen-xl px-6 md:px-12 pt-12 pb-24">
+      <main className="mx-auto max-w-7xl px-6 md:px-12 pt-12 pb-24">
         <div className="mb-8 flex items-center gap-4">
           <div className="h-px flex-1 bg-linear-to-r from-stone-200 to-transparent" />
           <span className="text-[9px] font-black tracking-[7px] text-stone-300 uppercase">Itinerary</span>
@@ -83,7 +83,7 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
                   <div className="absolute left-0 top-8 bottom-8 w-1.5 rounded-r-full" style={{ background: t.accent }} />
                   <div className="absolute inset-0 rounded-[32px] ring-1 ring-white/10" />
                   <div
-                    className="absolute -bottom-4 -right-2 pointer-events-none select-none font-playfair font-black leading-none text-white/[0.05] transition-transform group-hover:scale-110"
+                    className="absolute -bottom-4 -right-2 pointer-events-none select-none font-playfair font-black leading-none text-white/5 transition-transform group-hover:scale-110"
                     style={{ fontSize: "120px" }}
                   >
                     {String(day.dayNumber).padStart(2, "0")}

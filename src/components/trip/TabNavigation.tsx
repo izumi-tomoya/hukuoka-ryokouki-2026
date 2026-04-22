@@ -128,7 +128,7 @@ export default function TabNavigation({ isSecretMode }: TabNavigationProps) {
                     <span>{item.label}</span>
                     
                     {isActive && (
-                      <div className="absolute -bottom-[21px] left-1/2 -translate-x-1/2 h-0.5 w-6 rounded-full bg-amber-500 shadow-[0_0_10px_rgba(217,119,6,0.4)] animate-in slide-in-from-bottom-1 duration-500" />
+                      <div className="absolute -bottom-5.25 left-1/2 -translate-x-1/2 h-0.5 w-6 rounded-full bg-amber-500 shadow-[0_0_10px_rgba(217,119,6,0.4)] animate-in slide-in-from-bottom-1 duration-500" />
                     )}
                   </Link>
                 );

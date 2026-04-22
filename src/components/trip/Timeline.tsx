@@ -44,7 +44,7 @@ export default function Timeline({ events, dayNumber = 1 }: TimelineProps) {
               {/* Time pill — in flow, never clipped */}
               <div className="mb-2">
                 <span
-                  className={`inline-block rounded-full px-2.5 py-0.5 text-[10px] font-bold tabular-nums ring-1 ${theme.timeBg}`}
+                  className={`inline-block rounded-full px-2.5 py-0.5 text-[10px] font-bold tabular-nums ring-1 whitespace-nowrap tracking-tighter ${theme.timeBg}`}
                 >
                   {event.time}
                 </span>

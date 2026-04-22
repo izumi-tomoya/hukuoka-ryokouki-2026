@@ -32,7 +32,7 @@ function TagBadge({ tag, label }: { tag: string; label: string }) {
     <Badge
       variant="outline"
       className={cn(
-        'mb-3 gap-1.5 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider',
+        'mb-3 gap-1.5 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider whitespace-nowrap',
         config.className
       )}
     >
@@ -49,10 +49,10 @@ function BasicCard({ event }: { event: TripEvent }) {
       <div className="absolute right-0 top-0 h-20 w-20 bg-linear-to-br from-stone-50 to-transparent opacity-60" />
 
       {event.tag && event.tagLabel && <TagBadge tag={event.tag} label={event.tagLabel} />}
-      <h3 className="text-[15px] font-bold text-stone-800 tracking-tight leading-snug">
+      <h3 className="text-[15px] font-bold text-stone-800 tracking-tighter leading-snug whitespace-nowrap overflow-hidden text-ellipsis">
         {event.title}
       </h3>
-      <p className="mt-1.5 text-[12px] leading-relaxed text-stone-500/90 font-medium">
+      <p className="mt-1.5 text-[12px] leading-relaxed text-stone-500/90 font-medium line-clamp-2">
         {event.desc}
       </p>
 
@@ -64,7 +64,7 @@ function BasicCard({ event }: { event: TripEvent }) {
           target="_blank"
           rel="noopener noreferrer"
           suppressHydrationWarning
-          className="mt-4 inline-flex items-center gap-2 text-[10px] font-bold text-sky-600 transition-all hover:gap-3"
+          className="mt-4 inline-flex items-center gap-2 text-[10px] font-bold text-sky-600 transition-all hover:gap-3 whitespace-nowrap"
         >
           <div className="flex h-6 w-6 items-center justify-center rounded-full bg-sky-50">
             <MapPin size={11} />
@@ -101,10 +101,10 @@ function FoodCard({ event }: { event: TripEvent }) {
       <div className="relative p-6 pl-7">
         <TagBadge tag="food" label="Premium Gourmet" />
 
-        <p className="mb-2 text-[19px] font-bold leading-tight text-stone-900 tracking-tight">
+        <p className="mb-2 text-[19px] font-bold leading-tight text-stone-900 tracking-tighter whitespace-nowrap overflow-hidden text-ellipsis">
           {event.foodName}
         </p>
-        <p className="mb-4 text-[12px] leading-relaxed text-stone-500 font-medium">
+        <p className="mb-4 text-[12px] leading-relaxed text-stone-500 font-medium line-clamp-2">
           {event.foodDesc}
         </p>
 
@@ -131,7 +131,7 @@ function FoodCard({ event }: { event: TripEvent }) {
             target="_blank"
             rel="noopener noreferrer"
             suppressHydrationWarning
-            className="mt-3 inline-flex items-center gap-2 text-[10px] font-bold text-orange-600 transition-all hover:gap-3"
+            className="mt-3 inline-flex items-center gap-2 text-[10px] font-bold text-orange-600 transition-all hover:gap-3 whitespace-nowrap"
           >
             <div className="flex h-6 w-6 items-center justify-center rounded-full bg-orange-100">
               <Utensils size={11} />
@@ -211,7 +211,7 @@ function SurpriseCard() {
           <Star size={24} className="fill-amber-400 text-amber-400" />
         </div>
 
-        <p className="mb-2 text-[9px] font-black tracking-[6px] text-purple-400/80 uppercase">
+        <p className="mb-2 text-[9px] font-black tracking-[4px] text-purple-400/80 uppercase whitespace-nowrap">
           Secret Event
         </p>
         <h3 className="font-playfair mb-5 text-[24px] font-bold italic leading-tight text-white drop-shadow-lg">
@@ -267,12 +267,12 @@ function YataiCard({
               🏮
             </div>
             <div>
-              <p className="text-[8px] font-black tracking-[4px] text-amber-500/60 uppercase mb-0.5">
-                Local Night Tour
-              </p>
-              <h3 className="text-[15px] font-bold text-amber-300 tracking-tight">
-                博多屋台ハシゴツアー
-              </h3>
+                <p className="text-[8px] font-black tracking-[2px] text-amber-500/60 uppercase mb-0.5 whitespace-nowrap overflow-hidden text-ellipsis">
+                  Local Night Tour
+                </p>
+                <h3 className="text-[15px] font-bold text-amber-300 tracking-tighter whitespace-nowrap overflow-hidden text-ellipsis">
+                  博多屋台ハシゴツアー
+                </h3>
             </div>
           </div>
 

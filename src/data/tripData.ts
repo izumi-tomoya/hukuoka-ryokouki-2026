@@ -97,11 +97,11 @@ export const day1Events: TripEvent[] = [
   {
     time: "18:30",
     type: "food",
-    foodName: "🐟 はじめの一歩 (割烹)",
+    foodName: "🐟 はじめの一歩 キャナルシティ博多店",
     foodDesc:
       "呼子の透き通るようなイカの活造り。足が動く鮮度は感動モノ。博多名物「ごまさば」も、ここでは一味違う洗練された味わい。博多の海の恵みを、二人で分かち合おう。",
-    highlight: "🌟 ポイント：カウンター席を予約。板前さんの手さばきを見ながら、旬の地酒で乾杯するのがおすすめ。",
-    locationUrl: "https://hajimenoippo.co.jp/",
+    highlight: "🌟 ポイント：キャナルシティ内にあるので、食前後に噴水ショーを楽しむのが最高の流れ。カウンター席で板前さんの手さばきを見ながら、旬の地酒で乾杯！",
+    locationUrl: "https://maps.app.goo.gl/UFoEzUdDGu9uomVF8",
   },
   {
     time: "20:30",
@@ -280,5 +280,70 @@ export const day2Tips: Tip[] = [
     title: "🍜 牧のうどん『空港店』の罠",
     body: "店名は空港店ですが、ターミナルからは離れています。徒歩は無理！19:45には店を出てタクシーを呼ぶのが、20:45のフライトに遅れないための鉄則です。",
     isWarning: true,
+  },
+];
+
+export const itoshimaEvents: TripEvent[] = [
+  {
+    time: "10:00",
+    type: "transport",
+    title: "🚗 レンタカーで糸島へ出発",
+    desc: "博多駅や天神でレンタカーをピックアップ。お気に入りのプレイリストを流して、シーサイドドライブの始まり！",
+    tag: "transport",
+    tagLabel: "Drive",
+  },
+  {
+    time: "11:00",
+    type: "sightseeing",
+    title: "⛩️ 桜井二見ヶ浦・白い鳥居",
+    desc: "糸島のシンボル。青い海に映える白い鳥居と、仲良く並ぶ夫婦岩。砂浜を歩いて、波の音を間近で感じよう。",
+    tag: "sightseeing",
+    tagLabel: "Scenic",
+    locationUrl: "https://maps.app.goo.gl/8JpY9uY6XWp3L7Z67",
+  },
+  {
+    time: "12:30",
+    type: "food",
+    foodName: "🥗 Beach Cafe SUNSET",
+    foodDesc: "糸島カフェブームの先駆け。テラス席から海を眺めながら、名物のロコモコや新鮮な糸島野菜のランチを堪能。",
+    highlight: "💡 エスコート術：人気店なので、二見ヶ浦に着く前に混雑状況を確認。並ぶ場合は名前を書いてから砂浜を散策するのが吉。",
+    locationUrl: "https://maps.app.goo.gl/6Dq29v2u6Xm8f5X68",
+  },
+  {
+    time: "14:30",
+    type: "food",
+    foodName: "🍦 ロンドンバスカフェ",
+    foodDesc: "海岸沿いに停まった赤い2階建てバス。海をバックにジェラートを。2階席からの眺めもフォトジェニック！",
+    tag: "food",
+    tagLabel: "Gelato",
+    locationUrl: "https://maps.app.goo.gl/XyZ29v3u6Xm8f5X69",
+  },
+  {
+    time: "16:00",
+    type: "sightseeing",
+    title: "🌴 ヤシの木ブランコ",
+    desc: "ざうお糸島本店にある巨大なブランコ。童心に帰って、海に飛び込むような開放感を味わおう。",
+    tag: "sightseeing",
+    tagLabel: "Fun",
+    locationUrl: "https://maps.app.goo.gl/AzZ29v4u6Xm8f5X70",
+  },
+  {
+    time: "18:00",
+    type: "transport",
+    title: "🌆 福岡市内へ帰還",
+    desc: "夕日に染まる海岸線を走りながら。楽しかった一日の余韻に浸りつつ、安全運転で戻りましょう。",
+    tag: "transport",
+    tagLabel: "Return",
+  }
+];
+
+export const itoshimaTips: Tip[] = [
+  {
+    title: "🚗 運転のポイント",
+    body: "糸島の海岸線は一本道が多く、週末は渋滞することも。時間に余裕を持って動くのが、機嫌よく過ごすコツです。",
+  },
+  {
+    title: "📸 撮影スポット",
+    body: "二見ヶ浦の鳥居は午後になると順光になり、海の色がよりきれいに写ります。スマホの広角モードを活用して！",
   },
 ];

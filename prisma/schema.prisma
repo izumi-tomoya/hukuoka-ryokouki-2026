@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Trip {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  description String?
+  startDate   DateTime
+  endDate     DateTime
+  location    String
+  image       String   // gradient or image url
+  accentColor String   @default("#F5C842")
+  status      String   @default("Upcoming") // Upcoming, Planning, Completed
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  days        Day[]
+  tips        Tip[]
+}
+
+model Day {
+  id        String   @id @default(cuid())
+  tripId    String
+  trip      Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  dayNumber Int      // 1, 2, 3...
+  date      DateTime
+  title     String?
+  highlight String?
+
+  events    Event[]
+
+  @@unique([tripId, dayNumber])
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  dayId       String
+  day         Day      @relation(fields: [dayId], references: [id], onDelete: Cascade)
+  time        String
+  type        String   // transport, food, sightseeing, hotel, shopping, surprise, basic
+  title       String?
+  desc        String?
+  tag         String?
+  tagLabel    String?
+  locationUrl String?
+  foodName    String?
+  foodDesc    String?
+  highlight   String?
+  isYatai     Boolean  @default(false)
+  order       Int      @default(0)
+
+  yataiStops  YataiStop[]
+}
+
+model YataiStop {
+  id      String @id @default(cuid())
+  eventId String
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  time    String
+  stop    String
+  desc    String
+  order   Int    @default(0)
+}
+
+model Tip {
+  id        String  @id @default(cuid())
+  tripId    String
+  trip      Trip    @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  title     String
+  body      String
+  isWarning Boolean @default(false)
+  order     Int     @default(0)
+}

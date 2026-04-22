@@ -2,23 +2,49 @@ import SecretToggle from "@/components/trip/client/SecretToggle";
 import { cookies } from "next/headers";
 import { SECRET_MODE_COOKIE_NAME } from "@/config/constants";
 
-export default async function Hero() {
+interface HeroProps {
+  title: string;
+  startDate: Date;
+  endDate: Date;
+  accentColor?: string;
+}
+
+export default async function Hero({ title, startDate, endDate, accentColor = "#F5C842" }: HeroProps) {
   const cookieStore = await cookies();
   const isSecretMode = cookieStore.get(SECRET_MODE_COOKIE_NAME)?.value === "true";
+
+  // Format dates for the chips
+  const formatDate = (date: Date) => ({
+    date: `${date.getMonth() + 1}.${date.getDate()}`,
+    day: date.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase()
+  });
+
+  const startInfo = formatDate(new Date(startDate));
+  const endInfo = formatDate(new Date(endDate));
+
+  // Split title if it contains a space or just show it
+  const titleText = title || "Journey Memoir";
+  const titleParts = titleText.split(' ');
+  const mainTitle = titleParts.length > 1 ? titleParts.slice(0, -1).join(' ') : "Our";
+  const subTitle = titleParts.length > 1 ? titleParts[titleParts.length - 1] : titleParts[0];
 
   return (
     <header className="relative overflow-hidden" style={{ background: "#050B17" }}>
       {/* Layered gradient mesh */}
-      <div className="absolute inset-0 bg-linear-to-br from-[#071A3D] via-[#0A2E7A] to-[#105AC4] opacity-75" />
+      <div 
+        className="absolute inset-0 opacity-75" 
+        style={{ 
+          background: `linear-gradient(135deg, #071A3D 0%, #0A2E7A 50%, ${accentColor}33 100%)` 
+        }} 
+      />
       <div className="absolute inset-0 bg-linear-to-t from-[#050B17]/80 via-transparent to-transparent" />
 
       {/* Atmospheric orbs */}
       <div className="absolute -top-24 left-1/4 h-80 w-80 rounded-full bg-blue-500/25 blur-25 animate-pulse" />
       <div
-        className="absolute -bottom-16 -right-16 h-72 w-72 rounded-full bg-cyan-400/20 blur-[80px] animate-pulse"
-        style={{ animationDelay: "700ms" }}
+        className="absolute -bottom-16 -right-16 h-72 w-72 rounded-full blur-[80px] animate-pulse opacity-20"
+        style={{ background: accentColor, animationDelay: "700ms" }}
       />
-      <div className="absolute top-1/2 -left-20 h-56 w-56 rounded-full bg-indigo-700/15 blur-[70px]" />
 
       {/* Subtle grid pattern */}
       <div
@@ -29,7 +55,7 @@ export default async function Hero() {
         }}
       />
 
-      {/* Large kanji watermark */}
+      {/* Large watermark */}
       <div
         className="absolute bottom-6 right-0 pointer-events-none select-none overflow-hidden leading-none"
         aria-hidden="true"
@@ -38,12 +64,9 @@ export default async function Hero() {
           className="font-playfair font-black italic text-white/4.5"
           style={{ fontSize: "230px", lineHeight: 1 }}
         >
-          福
+          {subTitle.charAt(0)}
         </span>
       </div>
-
-      {/* Top gold rule */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-amber-400/50 to-transparent" />
 
       <div className="relative z-10 flex flex-col items-center px-6 pb-28 pt-12 text-center">
         <SecretToggle isSecretMode={isSecretMode} />
@@ -51,73 +74,72 @@ export default async function Hero() {
         {/* Icon badge */}
         <div className="mt-5 mb-7 animate-fade-up">
           <div
-            className="mx-auto flex h-14.5 w-14.5 items-center justify-center rounded-4.5 border border-amber-400/20 backdrop-blur-sm shadow-xl"
-            style={{ background: "rgba(10, 120, 196, 0.12)" }}
+            className="mx-auto flex h-14.5 w-14.5 items-center justify-center rounded-4.5 border border-white/10 backdrop-blur-sm shadow-xl"
+            style={{ background: "rgba(255, 255, 255, 0.05)" }}
           >
-            <span className="text-[28px] leading-none" role="img" aria-label="飛行機">
-              ✈️
+            <span className="text-[28px] leading-none" role="img" aria-label="Trip Icon">
+              ✨
             </span>
           </div>
         </div>
 
         {/* Eyebrow with gold rules */}
         <div className="flex items-center gap-3 mb-5 animate-fade-up delay-100">
-          <div className="h-px w-8 bg-linear-to-r from-transparent to-amber-400/55" />
-          <span className="text-[9px] font-black tracking-[5px] text-amber-400/75 uppercase">
-            2026 · Fukuoka Trip
+          <div className="h-px w-8 bg-linear-to-r from-transparent to-white/30" />
+          <span className="text-[9px] font-black tracking-[5px] text-white/50 uppercase">
+            {startDate.getFullYear()} · Journey Memoir
           </span>
-          <div className="h-px w-8 bg-linear-to-l from-transparent to-amber-400/55" />
+          <div className="h-px w-8 bg-linear-to-l from-transparent to-white/30" />
         </div>
 
         {/* Main title */}
         <div className="animate-fade-up delay-200">
-          <h1 className="font-playfair text-[50px] font-bold leading-none text-white tracking-tight drop-shadow-2xl">
-            ふたりの
+          <h1 className="font-playfair text-[32px] md:text-[40px] font-bold leading-none text-white tracking-tight drop-shadow-2xl mb-1">
+            {mainTitle}
           </h1>
           <h1
-            className="font-playfair text-[50px] font-bold italic leading-[1.05] drop-shadow-2xl"
-            style={{ color: "#F5C842" }}
+            className="font-playfair text-[50px] md:text-[60px] font-bold italic leading-[1.05] drop-shadow-2xl"
+            style={{ color: accentColor }}
           >
-            福岡
+            {subTitle}
           </h1>
         </div>
 
-        {/* Gold ornament divider */}
+        {/* Ornament divider */}
         <div className="my-6 flex items-center gap-2.5 animate-fade-up delay-300">
-          <div className="h-px w-6 bg-amber-400/35" />
-          <div className="h-0.75 w-0.75 rounded-full bg-amber-400/55" />
-          <div className="h-px w-3 bg-amber-400/25" />
-          <div className="h-1.25 w-1.25 rounded-full bg-amber-400/70" />
-          <div className="h-px w-3 bg-amber-400/25" />
-          <div className="h-0.75 w-0.75 rounded-full bg-amber-400/55" />
-          <div className="h-px w-6 bg-amber-400/35" />
+          <div className="h-px w-6 bg-white/20" />
+          <div className="h-0.75 w-0.75 rounded-full bg-white/40" />
+          <div className="h-px w-3 bg-white/15" />
+          <div className="h-1.25 w-1.25 rounded-full bg-white/50" />
+          <div className="h-px w-3 bg-white/15" />
+          <div className="h-0.75 w-0.75 rounded-full bg-white/40" />
+          <div className="h-px w-6 bg-white/20" />
         </div>
 
         {/* Date chips */}
         <div className="flex gap-4 animate-fade-up delay-400">
           {[
-            { label: "DAY 1", date: "5.24", day: "SUN" },
-            { label: "DAY 2", date: "5.25", day: "MON" },
+            { label: "START", info: startInfo },
+            { label: "END", info: endInfo },
           ].map((d) => (
             <div
               key={d.label}
-              className="group relative overflow-hidden rounded-[24px] border border-white/10 px-6 py-4 transition-all hover:border-amber-400/30 hover:bg-white/5 active:scale-95"
+              className="group relative overflow-hidden rounded-[24px] border border-white/10 px-6 py-4 transition-all"
               style={{ background: "rgba(255,255,255,0.03)", backdropFilter: "blur(12px)" }}
             >
-              <div className="absolute inset-0 bg-linear-to-br from-white/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-              <p className="text-[7px] font-black tracking-[4px] text-amber-400/50 uppercase mb-1.5 transition-colors group-hover:text-amber-400/80">
+              <p className="text-[7px] font-black tracking-[4px] text-white/30 uppercase mb-1.5">
                 {d.label}
               </p>
               <div className="flex items-baseline gap-1">
-                <p className="text-[20px] font-bold text-white tracking-tighter leading-none">{d.date}</p>
-                <p className="text-[9px] font-bold text-white/30 uppercase tracking-widest">{d.day}</p>
+                <p className="text-[20px] font-bold text-white tracking-tighter leading-none">{d.info.date}</p>
+                <p className="text-[9px] font-bold text-white/30 uppercase tracking-widest">{d.info.day}</p>
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Bottom wave — fill-white matches page bg */}
+      {/* Bottom wave */}
       <div className="absolute bottom-0 left-0 w-full">
         <svg
           viewBox="0 0 400 56"

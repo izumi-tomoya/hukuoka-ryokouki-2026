@@ -1,0 +1,205 @@
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e8]:
+        - paragraph [ref=e11]: DAY 2 — 2026.5.25 (月)
+        - heading "🍲 水炊きランチ → 大濠公園 → サプライズ✨" [level=2] [ref=e12]
+        - generic [ref=e13]: 100年の老舗で本格水炊きランチ、大濠公園でのんびりお散歩、そして彼氏からのとっておきサプライズへ…！最後は福岡のソウルフードで締めくくり🍜
+      - generic [ref=e16]:
+        - generic [ref=e17]:
+          - generic [ref=e21]:
+            - text: "07"
+            - text: "00"
+          - generic [ref=e23]:
+            - generic [ref=e25]:
+              - img
+              - text: ☀️ 朝
+            - heading "⏰ 起床" [level=3] [ref=e26]
+            - paragraph [ref=e27]: 福岡の朝！窓から那珂川の景色を眺めながら、ゆっくり目を覚まそう☀️
+        - generic [ref=e28]:
+          - generic [ref=e32]:
+            - text: "08"
+            - text: "00"
+          - generic [ref=e39]:
+            - generic [ref=e40]:
+              - img
+              - text: Premium Gourmet
+            - paragraph [ref=e41]: 🍳 ホテルオークラ福岡 伝統の朝食ビュッフェ
+            - paragraph [ref=e42]: 「世界一」とも称される極厚のフレンチトーストは絶対に外せません✨ 目の前で仕上げてくれるオムレツや、博多ならではの明太子、和洋バラエティ豊かな贅沢メニューで、優雅な朝のひとときを。お腹いっぱい食べて、2日目も元気にスタート！
+            - generic [ref=e43]:
+              - generic [ref=e44]:
+                - img [ref=e45]
+                - generic [ref=e47]: Master Tips
+              - text: 🌟 ポイント：名物のフレンチトーストは焼き上がりの時間をチェックして、ぜひ出来立てを食べてね💕
+            - link "お店の詳細・地図を見る" [ref=e48] [cursor=pointer]:
+              - /url: https://www.fuk.hotelokura.co.jp/restaurant/guide/all_day/
+              - img [ref=e50]
+              - text: お店の詳細・地図を見る
+        - generic [ref=e53]:
+          - generic [ref=e57]:
+            - text: "09"
+            - text: "00"
+          - generic [ref=e59]:
+            - generic [ref=e61]:
+              - img
+              - text: 🏨 準備
+            - heading "🏨 ホテルでゆっくり準備" [level=3] [ref=e62]
+            - paragraph [ref=e63]: チェックアウトに向けて荷物をまとめよう。最後にお部屋からの景色も満喫して♪
+        - generic [ref=e64]:
+          - generic [ref=e68]:
+            - text: "11"
+            - text: "00"
+          - generic [ref=e70]:
+            - generic [ref=e72]:
+              - img
+              - text: 🏨 CO
+            - heading "🧳 チェックアウト" [level=3] [ref=e73]
+            - paragraph [ref=e74]: 名残惜しいけれど…！荷物は預けておいて、午後もフルに楽しもう✨
+        - generic [ref=e75]:
+          - generic [ref=e79]:
+            - text: "12"
+            - text: "00"
+          - generic [ref=e86]:
+            - generic [ref=e87]:
+              - img
+              - text: Premium Gourmet
+            - paragraph [ref=e88]: 🍲 水たき 長野
+            - paragraph [ref=e89]: 創業100年以上の老舗水炊き専門店。博多コーチンを使ったスープは澄み渡るほど丁寧に炊き上げられ、ほっとする深い旨味が広がります。コース仕立てでスタッフが一から仕上げてくれるので、ふたりでゆったり話しながら食事に集中できる贅沢な時間✨
+            - generic [ref=e90]:
+              - generic [ref=e91]:
+                - img [ref=e92]
+                - generic [ref=e94]: Master Tips
+              - text: "🌟 ポイント：要予約！TEL: 092-281-2200 ／月曜休業の場合あり→要電話確認！"
+            - generic [ref=e96]:
+              - generic [ref=e97]: 📍 ホテルオークラ福岡
+              - generic [ref=e98]: → 徒歩 約15分 →
+              - generic [ref=e99]: 📍 水たき長野（対馬小路）
+        - generic [ref=e100]:
+          - generic [ref=e104]:
+            - text: "14"
+            - text: "00"
+          - generic [ref=e106]:
+            - generic [ref=e108]:
+              - img
+              - text: 🌳 公園
+            - heading "🌳 大濠公園でお散歩" [level=3] [ref=e109]
+            - paragraph [ref=e110]: 福岡市内に広がる大きな公園。池を囲む遊歩道をのんびり歩いて、ふたりだけのリラックスタイム🌸
+            - generic [ref=e112]:
+              - generic [ref=e113]: 📍 水たき長野
+              - generic [ref=e114]: → 地下鉄 →
+              - generic [ref=e115]: 📍 大濠公園駅
+              - generic [ref=e116]: → 徒歩 5分 →
+              - generic [ref=e117]: 📍 大濠公園
+        - generic [ref=e118]:
+          - generic [ref=e122]:
+            - text: "14"
+            - text: "50"
+          - generic [ref=e124]:
+            - generic [ref=e126]:
+              - img
+              - text: 🚕 移動
+            - heading "🚕 大濠公園を出発" [level=3] [ref=e127]
+            - paragraph [ref=e128]: 次は…とっておきの場所へ移動！公園からタクシーで一直線に向かいましょう🎉
+        - generic [ref=e129]:
+          - generic [ref=e133]:
+            - text: "15"
+            - text: "30"
+          - generic [ref=e150]:
+            - img [ref=e152]
+            - paragraph [ref=e154]: Secret Event
+            - heading "とっておきの サプライズ！💝" [level=3] [ref=e155]:
+              - text: とっておきの
+              - text: サプライズ！💝
+            - paragraph [ref=e160]:
+              - text: ここだけは、お楽しみ。💕
+              - text: 君のためにこっそり計画してた
+              - strong [ref=e161]: 最高の時間が待ってるよ✨
+        - generic [ref=e162]:
+          - generic [ref=e166]:
+            - text: "17"
+            - text: "00"
+          - generic [ref=e168]:
+            - generic [ref=e170]:
+              - img
+              - text: ✨ フリータイム
+            - heading "🕐 最後の自由時間" [level=3] [ref=e171]
+            - paragraph [ref=e172]: 旅の締めくくり。お気に入りのカフェでひと息ついてもいいし、気になったお店に立ち寄っても♪
+        - generic [ref=e173]:
+          - generic [ref=e177]:
+            - text: "18"
+            - text: "30"
+          - generic [ref=e184]:
+            - generic [ref=e185]:
+              - img
+              - text: Premium Gourmet
+            - paragraph [ref=e186]: 🍜 牧のうどん 空港店
+            - paragraph [ref=e187]: 福岡を代表するソウルフード！やわらかくてモチモチの「やわ麺」に、ずっと出汁を吸い続けるうどん。卓上のやかんでスープを足しながら食べる独特のスタイルが福岡流✨ シンプルだけど深い。締めにぴったり！
+            - generic [ref=e188]:
+              - generic [ref=e189]:
+                - img [ref=e190]
+                - generic [ref=e192]: Master Tips
+              - text: ⚠️ 注意：「空港店」という名前だがターミナルから1.7km離れている！タクシーで向かって
+            - generic [ref=e194]:
+              - generic [ref=e195]: 📍 自由時間の場所
+              - generic [ref=e196]: → タクシー →
+              - generic [ref=e197]: 📍 牧のうどん空港店
+        - generic [ref=e198]:
+          - generic [ref=e202]:
+            - text: "19"
+            - text: "15"
+          - generic [ref=e204]:
+            - generic [ref=e206]:
+              - img
+              - text: 🎁 おみやげ
+            - heading "🛍️ 福岡空港でお土産タイム！" [level=3] [ref=e207]
+            - paragraph [ref=e208]: 博多通りもん・めんべい・空港限定の明太キッシュなど人気みやげが勢ぞろい✨ ターミナルへもタクシーで！
+            - generic [ref=e210]:
+              - generic [ref=e211]: 📍 牧のうどん空港店
+              - generic [ref=e212]: → タクシー →
+              - generic [ref=e213]: 📍 福岡空港ターミナル
+        - generic [ref=e214]:
+          - generic [ref=e218]:
+            - text: "20"
+            - text: "45"
+          - generic [ref=e220]:
+            - generic [ref=e222]:
+              - img
+              - text: ✈️ フライト
+            - heading "✈️ 福岡空港 出発！" [level=3] [ref=e223]
+            - paragraph [ref=e224]: お疲れ様！たくさんの思い出を胸に、東京へ帰ろう🛫
+        - generic [ref=e225]:
+          - generic [ref=e229]:
+            - text: "22"
+            - text: "25"
+          - generic [ref=e231]:
+            - generic [ref=e233]:
+              - img
+              - text: 🛬 到着
+            - heading "🛬 羽田空港 到着" [level=3] [ref=e234]
+            - paragraph [ref=e235]: 無事到着！どんな旅だった？いっぱい語りながら帰ろうね☺️
+        - generic [ref=e236]:
+          - generic [ref=e240]:
+            - text: "24"
+            - text: "00"
+          - generic [ref=e242]:
+            - generic [ref=e244]:
+              - img
+              - text: 🏠 帰宅
+            - heading "🏠 八王子着・おつかれさま！" [level=3] [ref=e245]
+            - paragraph [ref=e246]: 最高の旅行でした！また一緒に旅しようね💕 おやすみなさい〜
+  - navigation [ref=e248]:
+    - generic [ref=e249]:
+      - link "Home" [ref=e250] [cursor=pointer]:
+        - /url: /
+        - img [ref=e252]
+        - generic [ref=e255]: Home
+      - link "Day 1" [ref=e256] [cursor=pointer]:
+        - /url: /day/1
+        - img [ref=e258]
+        - generic [ref=e260]: Day 1
+      - link "Day 2" [ref=e261] [cursor=pointer]:
+        - /url: /day/2
+        - img [ref=e263]
+        - generic [ref=e265]: Day 2
+  - button "Open Next.js Dev Tools" [ref=e272] [cursor=pointer]:
+    - img [ref=e273]

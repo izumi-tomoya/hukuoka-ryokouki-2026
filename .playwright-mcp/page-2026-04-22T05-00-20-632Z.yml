@@ -1,0 +1,83 @@
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e4]:
+        - generic: 福
+        - generic [ref=e12]:
+          - button "TRAVEL GUIDE 2026" [ref=e13]
+          - img "飛行機" [ref=e16]: ✈️
+          - generic [ref=e19]: 2026 · Fukuoka Trip
+          - generic [ref=e21]:
+            - heading "ふたりの" [level=1] [ref=e22]
+            - heading "福岡" [level=1] [ref=e23]
+          - generic [ref=e32]:
+            - generic [ref=e33]:
+              - paragraph [ref=e34]: DAY 1
+              - paragraph [ref=e35]: "5.24"
+              - paragraph [ref=e36]: SUN
+            - generic [ref=e37]:
+              - paragraph [ref=e38]: DAY 2
+              - paragraph [ref=e39]: "5.25"
+              - paragraph [ref=e40]: MON
+        - img [ref=e42]
+      - generic [ref=e44]:
+        - generic [ref=e47]: Itinerary
+        - generic [ref=e49]:
+          - link "Day 01 太宰府 & 屋台の夜 2026.05.24 (SUN) 15 Events" [ref=e50] [cursor=pointer]:
+            - /url: /day/1
+            - generic: "01"
+            - generic [ref=e56]:
+              - generic [ref=e57]:
+                - generic [ref=e58]:
+                  - paragraph [ref=e59]: Day 01
+                  - heading "太宰府 & 屋台の夜" [level=3] [ref=e60]:
+                    - text: 太宰府 &
+                    - text: 屋台の夜
+                - img [ref=e62]
+              - generic [ref=e64]:
+                - generic [ref=e65]: 2026.05.24 (SUN)
+                - generic [ref=e67]: 15 Events
+          - link "Day 02 水炊き & サプライズ 2026.05.25 (MON) 14 Events" [ref=e84] [cursor=pointer]:
+            - /url: /day/2
+            - generic: "02"
+            - generic [ref=e96]:
+              - generic [ref=e97]:
+                - generic [ref=e98]:
+                  - paragraph [ref=e99]: Day 02
+                  - heading "水炊き & サプライズ" [level=3] [ref=e100]:
+                    - text: 水炊き &
+                    - text: サプライズ
+                - img [ref=e102]
+              - generic [ref=e104]:
+                - generic [ref=e105]: 2026.05.25 (MON)
+                - generic [ref=e107]: 14 Events
+      - generic [ref=e127]:
+        - generic [ref=e128]:
+          - generic [ref=e129]:
+            - img [ref=e130]
+            - generic [ref=e132]: Trip Stats
+          - generic [ref=e133]: LIVE
+        - generic [ref=e135]:
+          - generic [ref=e136]:
+            - paragraph [ref=e137]: Budget Est.
+            - paragraph [ref=e138]: ¥45,000~
+          - generic [ref=e139]:
+            - paragraph [ref=e140]: Weather (FUK)
+            - paragraph [ref=e141]: 24°C ☀️
+  - navigation [ref=e142]:
+    - generic [ref=e143]:
+      - link "Home" [ref=e144] [cursor=pointer]:
+        - /url: /
+        - img [ref=e146]
+        - generic [ref=e149]: Home
+      - link "Day 1" [ref=e151] [cursor=pointer]:
+        - /url: /day/1
+        - img [ref=e153]
+        - generic [ref=e155]: Day 1
+      - link "Day 2" [ref=e156] [cursor=pointer]:
+        - /url: /day/2
+        - img [ref=e158]
+        - generic [ref=e160]: Day 2
+  - button "Open Next.js Dev Tools" [ref=e166] [cursor=pointer]:
+    - img [ref=e167]
+  - alert [ref=e170]

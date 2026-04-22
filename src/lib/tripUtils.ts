@@ -6,6 +6,9 @@ type EventWithStops = Prisma.EventGetPayload<{
 }>;
 
 export function mapEventToTripEvent(event: EventWithStops): TripEvent {
+  // Use type assertion as a fallback if the generated Prisma types are out of sync in the current environment
+  const isConfirmed = (event as unknown as { isConfirmed?: boolean }).isConfirmed;
+  
   return {
     time: event.time,
     type: event.type as EventType,
@@ -18,6 +21,8 @@ export function mapEventToTripEvent(event: EventWithStops): TripEvent {
     foodDesc: event.foodDesc ?? undefined,
     highlight: event.highlight ?? undefined,
     isYatai: event.isYatai,
+    isConfirmed: isConfirmed ?? false,
+    id: event.id,
     yataiStops: event.yataiStops.map((s): YataiStop => ({
       time: s.time,
       stop: s.stop,

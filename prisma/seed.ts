@@ -43,17 +43,18 @@ async function main() {
   const tripFukuoka = await prisma.trip.upsert({
     where: { slug: 'fukuoka-2026' },
     update: {
-      title: 'ふたりの福岡大満喫トリップ',
-      description: '美味しい博多グルメと歴史を巡る1泊2日',
+      title: '福岡、静寂と躍動の二日間',
+      description: '二人の記憶を刻む、洗練された博多の旅',
+      image: 'linear-gradient(135deg, #1a1c2c 0%, #4a192c 100%)',
     },
     create: {
       slug: 'fukuoka-2026',
-      title: 'ふたりの福岡大満喫トリップ',
-      description: '美味しい博多グルメと歴史を巡る1泊2日',
+      title: '福岡、静寂と躍動の二日間',
+      description: '二人の記憶を刻む、洗練された博多の旅',
       location: 'Fukuoka, Japan',
       startDate: new Date('2026-05-24T00:00:00Z'),
       endDate: new Date('2026-05-25T23:59:59Z'),
-      image: 'linear-gradient(135deg, #071A3D 0%, #0A2E7A 100%)',
+      image: 'linear-gradient(135deg, #1a1c2c 0%, #4a192c 100%)',
       accentColor: '#F5C842',
       status: 'Upcoming',
     },
@@ -63,25 +64,31 @@ async function main() {
 
   const d1 = await prisma.day.upsert({
     where: { tripId_dayNumber: { tripId: tripFukuoka.id, dayNumber: 1 } },
-    update: {},
+    update: {
+      title: '博多、彩りの追憶',
+      highlight: '都会の洗練と伝統が交差する街。最高のスタートを。',
+    },
     create: {
       tripId: tripFukuoka.id,
       dayNumber: 1,
       date: new Date('2026-05-24'),
-      title: '⛩️ 太宰府 → 博多グルメ → 屋台ハシゴ！',
-      highlight: '千年の歴史が息づく太宰府を参拝し、博多グルメを満喫！夜は中洲の屋台街でシメのラーメンまで、博多の魅力をぎゅっと詰め込んだ最高の一日🔥',
+      title: '博多、彩りの追憶',
+      highlight: '都会の洗練と伝統が交差する街。最高のスタートを。',
     },
   });
 
   const d2 = await prisma.day.upsert({
     where: { tripId_dayNumber: { tripId: tripFukuoka.id, dayNumber: 2 } },
-    update: {},
+    update: {
+      title: '海風と、語り継がれる風景',
+      highlight: '海風を感じながら、心に刻まれる穏やかな時間を。',
+    },
     create: {
       tripId: tripFukuoka.id,
       dayNumber: 2,
       date: new Date('2026-05-25'),
-      title: '🍲 水炊き & サプライズ',
-      highlight: '伝統の水炊きに舌鼓。午後は海辺の公園を散策し、旅のフィナーレは福岡タワーからの絶景！心に残る最高の思い出を✨',
+      title: '海風と、語り継がれる風景',
+      highlight: '海風を感じながら、心に刻まれる穏やかな時間を。',
     },
   });
 
@@ -156,15 +163,15 @@ async function main() {
   const tripItoshima = await prisma.trip.upsert({
     where: { slug: 'itoshima-drive' },
     update: {
-      title: '🌊 糸島シーサイド・ドライブ',
-      description: '絶景とカフェを巡る最高の休日',
+      title: '糸島、碧に溶ける休日',
+      description: '絶景とカフェを巡る、心洗われるシーサイド・エスケープ',
       startDate: new Date('2026-05-24T00:00:00Z'),
       endDate: new Date('2026-05-24T23:59:59Z'),
     },
     create: {
       slug: 'itoshima-drive',
-      title: '🌊 糸島シーサイド・ドライブ',
-      description: '絶景とカフェを巡る最高の休日',
+      title: '糸島、碧に溶ける休日',
+      description: '絶景とカフェを巡る、心洗われるシーサイド・エスケープ',
       location: 'Itoshima, Fukuoka',
       startDate: new Date('2026-05-24T00:00:00Z'),
       endDate: new Date('2026-05-24T23:59:59Z'),
@@ -185,8 +192,8 @@ async function main() {
       tripId: tripItoshima.id,
       dayNumber: 1,
       date: new Date('2026-05-24'),
-      title: '🚙 海風を感じる糸島一周旅',
-      highlight: '青い海、白い鳥居、オシャレなカフェ。都会の喧騒を離れて、最高の癒やしタイムを。',
+      title: '潮騒に癒やされる一日',
+      highlight: '青い海、白い鳥居、お洒落なカフェ。都会の喧騒を離れて、最高の癒やしタイムを。',
     },
   });
 

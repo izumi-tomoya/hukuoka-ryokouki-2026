@@ -22,6 +22,13 @@ export interface YataiStop {
   desc: string;
 }
 
+export interface WeatherStats {
+  temp: number;
+  condition: string;
+  uvIndex: number;
+  humidity: number;
+}
+
 export interface TripEvent {
   time: string;
   type: EventType;
@@ -37,10 +44,12 @@ export interface TripEvent {
   // Yatai card
   isYatai?: boolean;
   yataiStops?: YataiStop[];
-  // New features
+  id?: string;
+  isConfirmed?: boolean;
   photos?: string[];
   locationUrl?: string;
   budget?: number;
+  weatherStats?: WeatherStats; // 追加
 }
 
 export interface Tip {

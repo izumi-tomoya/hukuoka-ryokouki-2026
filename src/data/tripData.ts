@@ -4,7 +4,7 @@ export const day1Events: TripEvent[] = [
   {
     time: "04:15",
     type: "transport",
-    title: "🏠 夜明け前の出発",
+    title: "夜明けのプロローグ",
     desc: "黎明の静寂の中、特別な2日間の幕開け。忘れ物はない？二人の福岡物語、いよいよスタート✨",
     tag: "transport",
     tagLabel: "Departure",
@@ -12,7 +12,7 @@ export const day1Events: TripEvent[] = [
   {
     time: "04:25",
     type: "transport",
-    title: "🚌 空港連絡バス (京王八王子駅前)",
+    title: "静寂のエアポート・ライン",
     desc: "早朝の羽田行きバス。乗り換えなしで座っていけるから、空港まであともうひと眠り💤",
     tag: "transport",
     tagLabel: "Transit",
@@ -21,7 +21,7 @@ export const day1Events: TripEvent[] = [
   {
     time: "05:30",
     type: "transport",
-    title: "✈️ 羽田空港 第2ターミナル到着",
+    title: "空路、福岡へ：羽田の朝",
     desc: "フライトの1時間半前。余裕を持って保安検査を済ませ、展望デッキで朝の空気を感じよう。",
     tag: "transport",
     tagLabel: "Airport",
@@ -29,7 +29,7 @@ export const day1Events: TripEvent[] = [
   {
     time: "07:00",
     type: "transport",
-    title: "🛫 雲の上のティータイム",
+    title: "雲上の安らぎ",
     desc: "JAL/ANAの翼で福岡へ。窓の外に広がる雲海と、時折顔を出す富士山を探して。",
     tag: "transport",
     tagLabel: "Flight",
@@ -42,11 +42,12 @@ export const day1Events: TripEvent[] = [
     tag: "sightseeing",
     tagLabel: "Fukuoka",
     access: ["福岡空港駅", "→ 地下鉄空港線(約10分) →", "中洲川端駅"],
+    weatherStats: { temp: 22, condition: "Sunny", uvIndex: 5, humidity: 45 },
   },
   {
     time: "09:30",
     type: "hotel",
-    title: "🏨 ホテルオークラ福岡 プレチェックイン",
+    title: "伝統の門、オークラへ",
     desc: "重い荷物はここで預けて。博多の伝統と気品が漂うロビーで、少しだけ背筋を伸ばして出発。",
     tag: "hotel",
     tagLabel: "Okura",
@@ -54,7 +55,7 @@ export const day1Events: TripEvent[] = [
   {
     time: "10:30",
     type: "transport",
-    title: "🚃 直通観光列車「旅人」で太宰府へ",
+    title: "彩りの特急「旅人」",
     desc: "日曜限定、天神10:30発の直通急行。ピンク色の可愛い車両が、観光気分を盛り上げてくれる🌸",
     tag: "transport",
     tagLabel: "Transit",
@@ -72,7 +73,7 @@ export const day1Events: TripEvent[] = [
   {
     time: "14:00",
     type: "sightseeing",
-    title: "🏛️ 九州国立博物館の「蒼い空間」",
+    title: "蒼の回廊：九州国立博物館",
     desc: "山の中に浮かぶ巨大なミラーガラス。エスカレーターを抜けた先の「虹のトンネル」は、二人を異世界へ誘うフォトスポット。",
     tag: "sightseeing",
     tagLabel: "Culture",
@@ -88,7 +89,7 @@ export const day1Events: TripEvent[] = [
   {
     time: "17:30",
     type: "shopping",
-    title: "💦 キャナルシティの黄昏",
+    title: "水と光のセレナーデ",
     desc: "ホテルから川沿いを散策して10分。夕闇に映える18:00の噴水ショーは、二人の夜を彩る最初の演出。",
     tag: "shopping",
     tagLabel: "Evening",
@@ -148,8 +149,7 @@ export const day2Events: TripEvent[] = [
     time: "08:30",
     type: "food",
     foodName: "🍳 オークラ伝統のフレンチトースト",
-    foodDesc:
-      "一晩かけてアパレイユに浸し、じっくりと焼き上げられた「芸術品」。ぷるぷると震える柔らかさと、バターの香りに包まれる至福。博多の朝食で、これ以上の贅沢はないはず。",
+    foodDesc: "一晩かけてアパレイユに浸し、じっくりと焼き上げられた「芸術品」。ぷるぷると震える柔らかさと、バターの香りに包まれる至福。博多の朝食で、これ以上の贅沢はないはず。",
     highlight: "🌟 ポイント：焼き上がりに時間がかかるので、席に着いたらまずオーダーを確認しておくのがスムーズ。",
     tag: "hotel",
     tagLabel: "Breakfast",
@@ -165,10 +165,10 @@ export const day2Events: TripEvent[] = [
   {
     time: "12:00",
     type: "food",
-    foodName: "🍲 水たき 長野 (伝説の老舗)",
+    foodName: "🍲 伝統の極み、水たき 長野",
     foodDesc:
       "予約の取れない名店。白濁したスープは鶏の旨味が凝縮された美容液のよう。仲居さんが最高の一杯をよそってくれるから、僕たちはただ美味しいねって言い合える。〆のおじやは、すべての旨味を吸い込んだ絶品。",
-    highlight: "⚠️ 注意：完全予約制(2ヶ月前から)。支払いは「現金のみ」なので、事前に千円札を多めに用意しておくとスマート。",
+    highlight: "🎉 予約完了済み。博多水炊きの最高峰を、心ゆくまで堪能しよう。※支払いは現金のみなので注意！",
     access: ["ホテル", "→ タクシー(約5分) →", "水たき長野"],
     locationUrl: "https://tabelog.com/fukuoka/A4001/A400102/40000010/",
   },
@@ -227,7 +227,7 @@ export const day2Events: TripEvent[] = [
   {
     time: "20:45",
     type: "transport",
-    title: "✈️ さよなら福岡、また来るね",
+    title: "Final Departure",
     desc: "滑走路の光が宝石のように流れていく。帰りたくないね、そんな言葉を交わしながら高度を上げていく。",
     tag: "transport",
     tagLabel: "Flight",
@@ -243,7 +243,7 @@ export const day2Events: TripEvent[] = [
   {
     time: "24:00",
     type: "hotel",
-    title: "🏠 お家が「一番」になる魔法",
+    title: "Memoir Completed",
     desc: "ただいま。最高の旅をありがとう。ふたりの思い出の1ページが、今日完成しました。おやすみなさい💤",
     tag: "hotel",
     tagLabel: "Home",
@@ -287,15 +287,15 @@ export const itoshimaEvents: TripEvent[] = [
   {
     time: "10:00",
     type: "transport",
-    title: "🚗 レンタカーで糸島へ出発",
-    desc: "博多駅や天神でレンタカーをピックアップ。お気に入りのプレイリストを流して、シーサイドドライブの始まり！",
+    title: "糸島、蒼のドライブ",
+    desc: "博多から西へ。お気に入りのプレイリストを流して、シーサイドドライブの始まり！",
     tag: "transport",
     tagLabel: "Drive",
   },
   {
     time: "11:00",
     type: "sightseeing",
-    title: "⛩️ 桜井二見ヶ浦・白い鳥居",
+    title: "潮騒と白い鳥居：二見ヶ浦",
     desc: "糸島のシンボル。青い海に映える白い鳥居と、仲良く並ぶ夫婦岩。砂浜を歩いて、波の音を間近で感じよう。",
     tag: "sightseeing",
     tagLabel: "Scenic",
@@ -321,8 +321,8 @@ export const itoshimaEvents: TripEvent[] = [
   {
     time: "16:00",
     type: "sightseeing",
-    title: "🌴 ヤシの木ブランコ",
-    desc: "ざうお糸島本店にある巨大なブランコ。童心に帰って、海に飛び込むような開放感を味わおう。",
+    title: "空と海のブランコ",
+    desc: "海に向かって飛び出すような開放感。童心に帰って、潮風を全身で受け止めて。",
     tag: "sightseeing",
     tagLabel: "Fun",
     locationUrl: "https://maps.app.goo.gl/AzZ29v4u6Xm8f5X70",
@@ -330,7 +330,7 @@ export const itoshimaEvents: TripEvent[] = [
   {
     time: "18:00",
     type: "transport",
-    title: "🌆 福岡市内へ帰還",
+    title: "黄昏の帰路",
     desc: "夕日に染まる海岸線を走りながら。楽しかった一日の余韻に浸りつつ、安全運転で戻りましょう。",
     tag: "transport",
     tagLabel: "Return",

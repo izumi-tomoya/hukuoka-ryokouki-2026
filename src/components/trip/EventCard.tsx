@@ -3,26 +3,21 @@ import { Badge } from '@/components/ui/badge';
 import AccessRow from '@/components/trip/AccessRow';
 import PhotoGallery from '@/components/trip/PhotoGallery';
 import { cn } from '@/lib/utils';
-import {
-  MapPin,
-  Utensils,
-  Star,
-  Bus,
-  ShoppingBag,
-  Eye,
-  Moon,
-  Home,
-} from 'lucide-react';
+import { MapPin, Utensils, Star, Bus, ShoppingBag, Eye, Moon, Home, Lock } from 'lucide-react';
 import ClickableCard from '@/components/trip/client/ClickableCard';
+import ConfirmCheckbox from '@/components/trip/client/ConfirmCheckbox';
+import FavoriteToggle from '@/components/trip/client/FavoriteToggle';
+import MapLink from '@/components/trip/client/MapLink';
+import WeatherStatsDisplay from '@/components/trip/WeatherStats';
 
 const tagConfig: Record<string, { className: string; icon: React.ElementType }> = {
-  food: { className: 'bg-orange-50 text-orange-600 border-orange-100', icon: Utensils },
+  food: { className: 'bg-rose-50 text-rose-600 border-rose-100', icon: Utensils },
   transport: { className: 'bg-stone-50 text-stone-500 border-stone-100', icon: Bus },
   sightseeing: { className: 'bg-sky-50 text-sky-600 border-sky-100', icon: Eye },
   hotel: { className: 'bg-emerald-50 text-emerald-600 border-emerald-100', icon: Home },
-  shopping: { className: 'bg-purple-50 text-purple-600 border-purple-100', icon: ShoppingBag },
-  surprise: { className: 'bg-amber-50 text-orange-600 border-amber-100', icon: Star },
-  night: { className: 'bg-slate-900 text-purple-300 border-slate-800', icon: Moon },
+  shopping: { className: 'bg-pink-50 text-pink-600 border-pink-100', icon: ShoppingBag },
+  surprise: { className: 'bg-purple-50 text-purple-600 border-purple-100', icon: Star },
+  night: { className: 'bg-rose-900 text-rose-200 border-rose-800', icon: Moon },
 };
 
 function TagBadge({ tag, label }: { tag: string; label: string }) {
@@ -32,7 +27,7 @@ function TagBadge({ tag, label }: { tag: string; label: string }) {
     <Badge
       variant="outline"
       className={cn(
-        'mb-3 gap-1.5 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider whitespace-nowrap',
+        'mb-3 gap-1.5 px-2.5 py-1 text-xs font-bold uppercase tracking-wider whitespace-nowrap',
         config.className
       )}
     >
@@ -45,11 +40,34 @@ function TagBadge({ tag, label }: { tag: string; label: string }) {
 // ---------- Basic card ----------
 function BasicCard({ event }: { event: TripEvent }) {
   return (
-    <div className="group relative overflow-hidden rounded-[22px] border border-stone-100 bg-white p-5 shadow-lg shadow-stone-200/50 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-stone-200/60">
-      <div className="absolute right-0 top-0 h-20 w-20 bg-linear-to-br from-stone-50 to-transparent opacity-60" />
+    <div
+      className={cn(
+        'group relative overflow-hidden rounded-[22px] border border-rose-100/70 bg-white p-5 shadow-lg shadow-rose-100/40 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-rose-200/50',
+        event.isConfirmed && 'opacity-75 grayscale-[0.3]'
+      )}
+    >
+      <div className="absolute right-0 top-0 h-20 w-20 bg-linear-to-br from-rose-50/60 to-transparent opacity-60" />
 
-      {event.tag && event.tagLabel && <TagBadge tag={event.tag} label={event.tagLabel} />}
-      <h3 className="text-[15px] font-bold text-stone-800 tracking-tighter leading-snug whitespace-nowrap overflow-hidden text-ellipsis">
+      <div className="flex justify-between items-start mb-1">
+        {event.tag && event.tagLabel ? (
+          <TagBadge tag={event.tag} label={event.tagLabel} />
+        ) : (
+          <div />
+        )}
+        {event.id && (
+          <div className="flex gap-2">
+            <FavoriteToggle eventId={event.id} />
+            <ConfirmCheckbox eventId={event.id} initialConfirmed={!!event.isConfirmed} />
+          </div>
+        )}
+      </div>
+
+      <h3
+        className={cn(
+          'text-[15px] font-bold text-stone-800 tracking-tighter leading-snug whitespace-nowrap overflow-hidden text-ellipsis',
+          event.isConfirmed && 'line-through decoration-stone-400/50 text-stone-400'
+        )}
+      >
         {event.title}
       </h3>
       <p className="mt-1.5 text-[12px] leading-relaxed text-stone-500/90 font-medium line-clamp-2">
@@ -58,25 +76,14 @@ function BasicCard({ event }: { event: TripEvent }) {
 
       {event.photos && <PhotoGallery photos={event.photos} />}
 
-      {event.locationUrl && (
-        <a
-          href={event.locationUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          suppressHydrationWarning
-          className="mt-4 inline-flex items-center gap-2 text-[10px] font-bold text-sky-600 transition-all hover:gap-3 whitespace-nowrap"
-        >
-          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-sky-50">
-            <MapPin size={11} />
-          </div>
-          Google Map で見る
-        </a>
-      )}
+      {event.locationUrl && <MapLink url={event.locationUrl} />}
+
       {event.access && (
-        <div className="mt-4 border-t border-stone-50 pt-4">
+        <div className="mt-4 border-t border-rose-50 pt-4">
           <AccessRow chips={event.access} />
         </div>
       )}
+      {event.weatherStats && <WeatherStatsDisplay stats={event.weatherStats} />}
     </div>
   );
 }
@@ -84,24 +91,41 @@ function BasicCard({ event }: { event: TripEvent }) {
 // ---------- Food card ----------
 function FoodCard({ event }: { event: TripEvent }) {
   return (
-    <div className="group relative overflow-hidden rounded-[26px] transition-all hover:-translate-y-1 hover:shadow-2xl hover:shadow-orange-200/50">
-      {/* Warm paper background */}
+    <div
+      className={cn(
+        'group relative overflow-hidden rounded-[26px] transition-all hover:-translate-y-1 hover:shadow-2xl hover:shadow-rose-200/50',
+        event.isConfirmed && 'opacity-75 grayscale-[0.2]'
+      )}
+    >
       <div
         className="absolute inset-0"
         style={{
-          background: 'linear-gradient(145deg, #FFFCF8 0%, #FFF8EE 40%, #FFF3E2 100%)',
+          background: 'linear-gradient(145deg, #FFFCFB 0%, #FFF5F7 40%, #FFECF0 100%)',
         }}
       />
-      <div className="absolute inset-0 rounded-[26px] ring-2 ring-orange-200/60" />
-      <div className="absolute -right-6 -top-6 h-32 w-32 rounded-full bg-orange-200/25 blur-3xl" />
+      <div className="absolute inset-0 rounded-[26px] ring-2 ring-rose-200/50" />
+      <div className="absolute -right-6 -top-6 h-32 w-32 rounded-full bg-rose-200/25 blur-3xl" />
 
       {/* Left accent */}
-      <div className="absolute left-0 top-0 bottom-0 w-1 rounded-l-[26px] bg-linear-to-b from-orange-400 via-amber-500 to-orange-300" />
+      <div className="absolute left-0 top-0 bottom-0 w-1 rounded-l-[26px] bg-linear-to-b from-rose-400 via-pink-400 to-rose-300" />
 
       <div className="relative p-6 pl-7">
-        <TagBadge tag="food" label="Premium Gourmet" />
+        <div className="flex justify-between items-start mb-2">
+          <TagBadge tag="food" label="Premium Gourmet" />
+          {event.id && (
+            <div className="flex gap-2">
+              <FavoriteToggle eventId={event.id} />
+              <ConfirmCheckbox eventId={event.id} initialConfirmed={!!event.isConfirmed} />
+            </div>
+          )}
+        </div>
 
-        <p className="mb-2 text-[19px] font-bold leading-tight text-stone-900 tracking-tighter whitespace-nowrap overflow-hidden text-ellipsis">
+        <p
+          className={cn(
+            'mb-2 text-[19px] font-bold leading-tight text-stone-900 tracking-tighter whitespace-nowrap overflow-hidden text-ellipsis',
+            event.isConfirmed && 'line-through decoration-stone-400/50 text-stone-400'
+          )}
+        >
           {event.foodName}
         </p>
         <p className="mb-4 text-[12px] leading-relaxed text-stone-500 font-medium line-clamp-2">
@@ -110,12 +134,12 @@ function FoodCard({ event }: { event: TripEvent }) {
 
         {event.highlight && (
           <div
-            className="mb-4 rounded-2xl p-4 text-[11px] font-bold leading-relaxed text-amber-900 ring-1 ring-amber-200/70"
-            style={{ background: 'rgba(255, 237, 200, 0.5)' }}
+            className="mb-4 rounded-2xl p-4 text-[11px] font-bold leading-relaxed text-rose-900 ring-1 ring-rose-200/60"
+            style={{ background: 'rgba(255, 240, 245, 0.7)' }}
           >
             <div className="flex items-center gap-2 mb-1.5">
-              <Star size={11} className="fill-amber-500 text-amber-500 shrink-0" />
-              <span className="text-[9px] font-black tracking-[3px] text-amber-600 uppercase">
+              <Star size={11} className="fill-rose-400 text-rose-400 shrink-0" />
+              <span className="text-xs font-black tracking-[3px] text-rose-500 uppercase">
                 Master Tips
               </span>
             </div>
@@ -125,22 +149,10 @@ function FoodCard({ event }: { event: TripEvent }) {
 
         {event.photos && <PhotoGallery photos={event.photos} />}
 
-        {event.locationUrl && (
-          <a
-            href={event.locationUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            suppressHydrationWarning
-            className="mt-3 inline-flex items-center gap-2 text-[10px] font-bold text-orange-600 transition-all hover:gap-3 whitespace-nowrap"
-          >
-            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-orange-100">
-              <Utensils size={11} />
-            </div>
-            お店の詳細・地図を見る
-          </a>
-        )}
+        {event.locationUrl && <MapLink url={event.locationUrl} label="お店の詳細・地図を見る" />}
+
         {event.access && (
-          <div className="mt-4 border-t border-orange-100/60 pt-4">
+          <div className="mt-4 border-t border-rose-100/60 pt-4">
             <AccessRow chips={event.access} />
           </div>
         )}
@@ -151,90 +163,42 @@ function FoodCard({ event }: { event: TripEvent }) {
 
 // ---------- Surprise card ----------
 function SurpriseCard() {
-  const starPositions: Array<{
-    top: string;
-    left?: string;
-    right?: string;
-    size: number;
-    delay: number;
-  }> = [
-    { top: "15%", left: "8%", size: 2.5, delay: 0 },
-    { top: "25%", right: "12%", size: 2, delay: 500 },
-    { top: "55%", left: "5%", size: 1.5, delay: 900 },
-    { top: "70%", right: "8%", size: 2, delay: 300 },
-    { top: "40%", left: "15%", size: 1.5, delay: 700 },
-    { top: "65%", left: "35%", size: 1, delay: 1200 },
-    { top: "20%", right: "30%", size: 1.5, delay: 600 },
-    { top: "80%", right: "25%", size: 2.5, delay: 200 },
-  ];
-
   return (
-    <div className="group relative overflow-hidden rounded-[28px] text-center shadow-2xl shadow-purple-950/30">
-      {/* Deep cosmic background */}
-      <div className="absolute inset-0 bg-[#080612]" />
-      <div className="absolute inset-0 bg-linear-to-br from-[#1A0830]/90 via-[#0A0618] to-[#0F0A20]/80" />
+    <div className="group relative overflow-hidden rounded-[28px] text-center shadow-2xl shadow-stone-900/20">
+      {/* Deep mystery background */}
+      <div className="absolute inset-0 bg-[#1A1A1A]" />
 
-      {/* Aurora glows */}
-      <div className="absolute -left-12 -top-12 h-56 w-56 rounded-full bg-purple-700/20 blur-17.5 animate-pulse" />
+      {/* Subtle pulsing glow */}
+      <div className="absolute inset-0 bg-linear-to-br from-stone-800 via-stone-900 to-black" />
+      <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-amber-500/5 blur-[80px] animate-pulse" />
       <div
-        className="absolute -right-12 -bottom-12 h-56 w-56 rounded-full bg-indigo-600/15 blur-17.5 animate-pulse"
-        style={{ animationDelay: '800ms' }}
-      />
-      <div
-        className="absolute left-1/3 bottom-0 h-40 w-40 rounded-full bg-rose-600/10 blur-12.5 animate-pulse"
-        style={{ animationDelay: '400ms' }}
+        className="absolute -left-20 -bottom-20 h-64 w-64 rounded-full bg-stone-500/5 blur-[80px]"
+        style={{ animationDelay: '1s' }}
       />
 
-      {/* Ring border */}
-      <div className="absolute inset-0 rounded-[28px] ring-1 ring-purple-500/15" />
+      {/* Decorative corners */}
+      <div className="absolute left-4 top-4 h-8 w-8 border-l border-t border-stone-700/50 rounded-tl-xl" />
+      <div className="absolute right-4 top-4 h-8 w-8 border-r border-t border-stone-700/50 rounded-tr-xl" />
+      <div className="absolute left-4 bottom-4 h-8 w-8 border-l border-b border-stone-700/50 rounded-bl-xl" />
+      <div className="absolute right-4 bottom-4 h-8 w-8 border-r border-b border-stone-700/50 rounded-br-xl" />
 
-      {/* Star field */}
-      {starPositions.map((star, i) => (
-        <div
-          key={i}
-          className="absolute rounded-full bg-white"
-          style={{
-            top: star.top,
-            left: 'left' in star ? star.left : undefined,
-            right: 'right' in star ? star.right : undefined,
-            width: `${star.size}px`,
-            height: `${star.size}px`,
-            animation: `star-twinkle ${2.5 + i * 0.4}s ease-in-out infinite`,
-            animationDelay: `${star.delay}ms`,
-          }}
-          aria-hidden="true"
-        />
-      ))}
+      {/* Grid pattern overlay */}
+      <div
+        className="absolute inset-0 opacity-[0.03]"
+        style={{
+          backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)',
+          backgroundSize: '24px 24px',
+        }}
+      />
 
-      <div className="relative z-10 p-8">
-        <div className="mx-auto mb-5 flex h-15 w-15 items-center justify-center rounded-2xl border border-amber-400/20 bg-amber-400/10 backdrop-blur-sm">
-          <Star size={24} className="fill-amber-400 text-amber-400" />
+      <div className="relative z-10 flex flex-col items-center justify-center p-10 py-20">
+        <div className="flex h-20 w-20 items-center justify-center rounded-full border border-white/5 bg-white/5 backdrop-blur-xl shadow-2xl transition-transform group-hover:scale-110">
+          <Lock size={32} className="text-stone-600/50" />
         </div>
-
-        <p className="mb-2 text-[9px] font-black tracking-[4px] text-purple-400/80 uppercase whitespace-nowrap">
-          Secret Event
-        </p>
-        <h3 className="font-playfair mb-5 text-[24px] font-bold italic leading-tight text-white drop-shadow-lg">
-          とっておきの
-          <br />
-          サプライズ！
-          <span className="not-italic">💝</span>
-        </h3>
-
-        <div className="mx-auto mb-5 flex items-center gap-2 justify-center">
-          <div className="h-px w-6 bg-purple-400/30" />
-          <div className="h-0.75 w-0.75 rounded-full bg-purple-400/50" />
-          <div className="h-px w-6 bg-purple-400/30" />
-        </div>
-
-        <p className="text-[12px] leading-relaxed text-slate-300/80 font-medium">
-          ここだけは、お楽しみ。💕
-          <br />
-          君のためにこっそり計画してた
-          <br />
-          <strong className="text-white font-bold">最高の時間が待ってるよ✨</strong>
-        </p>
       </div>
+
+      {/* Scanline effect */}
+      <div className="absolute inset-0 pointer-events-none bg-linear-to-b from-transparent via-white/2 to-transparent h-[10%] w-full animate-scanline" />
     </div>
   );
 }
@@ -242,53 +206,61 @@ function SurpriseCard() {
 // ---------- Yatai card ----------
 function YataiCard({
   stops,
+  eventId,
+  isConfirmed,
 }: {
   stops: NonNullable<TripEvent['yataiStops']>;
+  eventId?: string;
+  isConfirmed?: boolean;
 }) {
   return (
-    <div className="group relative overflow-hidden rounded-[26px] shadow-2xl shadow-stone-900/50 transition-all hover:-translate-y-1">
-      {/* Deep night background */}
-      <div className="absolute" style={{ display: 'none' }} />
+    <div className="group relative overflow-hidden rounded-[26px] shadow-xl shadow-amber-200/40 transition-all hover:-translate-y-1">
       <div
         className="relative"
         style={{
-          background: 'linear-gradient(160deg, #1C0E06 0%, #140B04 50%, #0D0806 100%)',
+          background: 'linear-gradient(160deg, #3A1A08 0%, #2C1406 50%, #221006 100%)',
         }}
       >
-        {/* Warm glow from lanterns */}
-        <div className="absolute -right-8 -top-8 h-40 w-40 rounded-full bg-amber-600/10 blur-12.5" />
-        <div className="absolute -left-4 bottom-0 h-32 w-32 rounded-full bg-orange-700/10 blur-10" />
-        <div className="absolute inset-0 ring-1 ring-amber-900/40 rounded-[26px]" />
+        {/* Warm lantern glow */}
+        <div className="absolute -right-8 -top-8 h-40 w-40 rounded-full bg-amber-500/15 blur-[50px]" />
+        <div className="absolute -left-4 bottom-0 h-32 w-32 rounded-full bg-orange-500/12 blur-2xl" />
+        <div className="absolute inset-0 ring-1 ring-amber-700/30 rounded-[26px]" />
 
         <div className="relative p-6">
           {/* Header */}
-          <div className="mb-5 flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-[14px] bg-amber-400/10 ring-1 ring-amber-400/20 text-xl">
-              🏮
-            </div>
-            <div>
-                <p className="text-[8px] font-black tracking-[2px] text-amber-500/60 uppercase mb-0.5 whitespace-nowrap overflow-hidden text-ellipsis">
+          <div className="mb-5 flex items-start justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-[14px] bg-amber-400/15 ring-1 ring-amber-400/25 text-xl">
+                🏮
+              </div>
+              <div>
+                <p className="text-[8px] font-black tracking-[2px] text-amber-400/60 uppercase mb-0.5 whitespace-nowrap overflow-hidden text-ellipsis">
                   Local Night Tour
                 </p>
-                <h3 className="text-[15px] font-bold text-amber-300 tracking-tighter whitespace-nowrap overflow-hidden text-ellipsis">
+                <h3 className="text-[15px] font-bold text-amber-200 tracking-tighter whitespace-nowrap overflow-hidden text-ellipsis">
                   博多屋台ハシゴツアー
                 </h3>
+              </div>
             </div>
+            {eventId && (
+              <div className="flex gap-2">
+                <FavoriteToggle eventId={eventId} />
+                <ConfirmCheckbox eventId={eventId} initialConfirmed={!!isConfirmed} />
+              </div>
+            )}
           </div>
 
           {/* Stops */}
           <div className="relative space-y-5">
-            {/* Vertical line */}
-            <div className="absolute left-4 top-2 h-[calc(100%-16px)] w-px bg-linear-to-b from-amber-700/60 via-amber-800/40 to-transparent" />
+            <div className="absolute left-4 top-2 h-[calc(100%-16px)] w-px bg-linear-to-b from-amber-600/50 via-amber-700/30 to-transparent" />
 
             {stops.map((s, i) => (
               <div key={i} className="relative flex items-start gap-4">
-                {/* Numbered circle */}
-                <div className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-amber-700/50 bg-amber-400/10 text-[11px] font-bold text-amber-400">
+                <div className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-amber-600/40 bg-amber-400/12 text-[11px] font-bold text-amber-300">
                   {i + 1}
                 </div>
                 <div className="flex-1 pb-1">
-                  <p className="text-[10px] font-bold text-amber-500/80 mb-1">
+                  <p className="text-[10px] font-bold text-amber-400/80 mb-1">
                     {s.time} — {s.stop}
                   </p>
                   <p className="text-[12px] leading-relaxed text-stone-400 font-medium">{s.desc}</p>
@@ -307,7 +279,10 @@ export default function EventCard({ event }: { event: TripEvent }) {
   let content: React.ReactNode;
   if (event.type === 'food') content = <FoodCard event={event} />;
   else if (event.type === 'surprise') content = <SurpriseCard />;
-  else if (event.isYatai && event.yataiStops) content = <YataiCard stops={event.yataiStops} />;
+  else if (event.isYatai && event.yataiStops)
+    content = (
+      <YataiCard stops={event.yataiStops} eventId={event.id} isConfirmed={!!event.isConfirmed} />
+    );
   else content = <BasicCard event={event} />;
 
   return <ClickableCard event={event}>{content}</ClickableCard>;

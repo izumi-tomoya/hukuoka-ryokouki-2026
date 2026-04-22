@@ -21,10 +21,11 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
     <DayView
       events={events}
       dayNumber={themeDay}
-      dayLabel={`DAY ${dayNumber} — ${new Date(day.date).toLocaleDateString("ja-JP", { year: "numeric", month: "numeric", day: "numeric" })}`}
+      dayLabel={`DAY ${dayNumber} — ${new Date(day.date).toLocaleDateString("ja-JP", { month: "numeric", day: "numeric" })}`}
       dayTitle={day.title ?? undefined}
       dayHighlight={day.highlight ?? undefined}
       tips={trip.tips.map((t) => ({ title: t.title, body: t.body, isWarning: t.isWarning }))}
+      slug={slug}
     />
   );
 }

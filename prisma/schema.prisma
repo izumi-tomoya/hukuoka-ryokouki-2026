@@ -57,6 +57,7 @@ model Event {
   foodDesc    String?
   highlight   String?
   isYatai     Boolean  @default(false)
+  isConfirmed Boolean  @default(false)
   order       Int      @default(0)
 
   yataiStops  YataiStop[]

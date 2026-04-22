@@ -11,16 +11,16 @@ export default function TipsSection({ tips, dayNumber }: TipsSectionProps) {
       {/* Section header */}
       <div className="mb-5 flex items-center gap-3">
         <div
-          className="flex h-10 w-10 items-center justify-center rounded-2xl text-xl shadow-lg"
-          style={{ background: "linear-gradient(135deg, #F59E0B, #EA580C)" }}
+          className="flex h-10 w-10 items-center justify-center rounded-2xl text-xl shadow-lg shadow-rose-200/40"
+          style={{ background: "linear-gradient(135deg, #D4607A, #9B3A8C)" }}
         >
           🧭
         </div>
         <div>
-          <p className="text-[9px] font-black tracking-[4px] text-amber-600 uppercase mb-0.5">
+          <p className="text-[9px] font-black tracking-[4px] text-rose-500 uppercase mb-0.5">
             Day {dayNumber} Guide
           </p>
-          <p className="font-playfair text-[17px] font-bold text-stone-800">
+          <p className="font-playfair text-[17px] font-bold text-rose-900/80">
             エスコートの秘訣
           </p>
         </div>
@@ -30,23 +30,23 @@ export default function TipsSection({ tips, dayNumber }: TipsSectionProps) {
         {tips.map((tip, i) => (
           <div
             key={i}
-            className="group relative overflow-hidden rounded-2xl transition-all hover:-translate-y-0.5 hover:shadow-xl"
+            className="group relative overflow-hidden rounded-2xl transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-rose-100/60"
             style={{
               background: tip.isWarning
-                ? "linear-gradient(135deg, #FFF5F5 0%, #FEF0EF 100%)"
-                : "linear-gradient(135deg, #F8FAFF 0%, #F3F6FF 100%)",
+                ? "linear-gradient(135deg, #FFF5F5 0%, #FFF0F0 100%)"
+                : "linear-gradient(135deg, #FFF5F8 0%, #FFF0F5 100%)",
             }}
           >
             <div
               className={`absolute inset-0 rounded-2xl ring-1 ${
-                tip.isWarning ? "ring-rose-200/80" : "ring-blue-200/60"
+                tip.isWarning ? "ring-red-200/70" : "ring-rose-200/50"
               }`}
             />
             <div
               className={`absolute left-0 top-0 bottom-0 w-0.5 rounded-l-2xl ${
                 tip.isWarning
-                  ? "bg-linear-to-b from-rose-400 to-rose-600"
-                  : "bg-linear-to-b from-blue-400 to-indigo-500"
+                  ? "bg-linear-to-b from-red-400 to-red-500"
+                  : "bg-linear-to-b from-rose-400 to-pink-500"
               }`}
             />
 
@@ -61,12 +61,12 @@ export default function TipsSection({ tips, dayNumber }: TipsSectionProps) {
               <div>
                 <h3
                   className={`mb-1 text-[13px] font-bold tracking-tight ${
-                    tip.isWarning ? "text-rose-700" : "text-stone-800"
+                    tip.isWarning ? "text-red-600" : "text-rose-800"
                   }`}
                 >
                   {tip.title}
                 </h3>
-                <p className="text-[11px] leading-relaxed text-stone-500 font-medium">
+                <p className="text-[11px] leading-relaxed text-rose-700/60 font-medium">
                   {tip.body}
                 </p>
               </div>

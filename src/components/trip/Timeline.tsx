@@ -32,7 +32,7 @@ export default function Timeline({ events, dayNumber = 1 }: TimelineProps) {
     <div className="relative bg-stone-50 px-3 pb-20 pt-8">
       {/* Vertical connecting line - move slightly left */}
       <div
-        className={`absolute left-[19px] top-0 h-full w-px ${theme.line}`}
+        className={`absolute left-4.75 top-0 h-full w-px ${theme.line}`}
       />
 
       <div className="relative space-y-6">
@@ -65,7 +65,7 @@ export default function Timeline({ events, dayNumber = 1 }: TimelineProps) {
       </div>
 
       {/* End marker */}
-      <div className={`absolute bottom-8 left-[13px] h-4 w-4 rounded-full border-4 border-white shadow-sm ${theme.bg} opacity-30`} />
+      <div className={`absolute bottom-8 left-3.25 h-4 w-4 rounded-full border-4 border-white shadow-sm ${theme.bg} opacity-30`} />
     </div>
   );
 }

@@ -21,7 +21,7 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
         {/* Countdown Tile */}
         <BentoTile className="md:col-span-2 lg:col-span-1 bg-[#FDFDFC] border-zinc-200">
           <h3 className="text-zinc-400 text-[10px] uppercase tracking-[0.2em] mb-4">Countdown</h3>
-          <TripCountdown startDate={new Date(trip.startDate)} />
+          <TripCountdown startDate={trip.startDate} />
         </BentoTile>
 
         {/* Days Grid */}

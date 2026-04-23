@@ -45,10 +45,9 @@ export default async function Hero({ title, startDate, endDate }: HeroProps) {
         </div>
 
         <div className="animate-fade-up delay-200">
-          <TripCountdown startDate={startDate.toISOString()} />
+          <TripCountdown startDate={startDate} />
         </div>
       </div>
     </header>
   );
 }
-

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 
 type Props = {
-  startDate: string;
+  startDate: Date | string;
 };
 
 export const TripCountdown = ({ startDate }: Props) => {

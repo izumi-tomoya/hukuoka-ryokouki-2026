@@ -1,25 +1,27 @@
 'use client';
 
 import { createTrip } from '@/features/trip/api/tripActions';
-import { useState } from 'react';
+import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { Sparkles, MapPin, Palette } from 'lucide-react';
 
-const labelCls = "block text-[9px] font-black tracking-[4px] text-stone-400 uppercase mb-2";
-const inputCls = "w-full rounded-2xl bg-white ring-1 ring-stone-200 px-4 py-3.5 text-[14px] font-medium text-stone-800 placeholder:text-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-400/60 transition-all";
+const labelCls = 'block text-[9px] font-black tracking-[4px] text-stone-400 uppercase mb-2';
+const inputCls =
+  'w-full rounded-2xl bg-white ring-1 ring-stone-200 px-4 py-3.5 text-[14px] font-medium text-stone-800 placeholder:text-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-400/60 transition-all';
 
 export default function NewTripForm() {
   const router = useRouter();
-  const [isPending, setIsPending] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
-  async function handleSubmit(formData: FormData) {
-    setIsPending(true);
-    try {
+  function handleSubmit(formData: FormData) {
+    startTransition(async () => {
       const result = await createTrip(formData);
-      if (result.success) router.push(`/trip/${result.slug}`);
-    } finally {
-      setIsPending(false);
-    }
+      if (result.success) {
+        router.push(`/trip/${result.slug}`);
+      } else {
+        alert(result.error);
+      }
+    });
   }
 
   return (
@@ -39,23 +41,21 @@ export default function NewTripForm() {
           <label className={labelCls}>Location</label>
           <div className="relative">
             <MapPin size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-300" />
-            <input
-              name="location"
-              required
-              placeholder="Okinawa"
-              className={`${inputCls} pl-10`}
-            />
+            <input name="location" required placeholder="Okinawa" className={`${inputCls} pl-10`} />
           </div>
         </div>
         <div>
           <label className={labelCls}>Accent Color</label>
           <div className="relative">
-            <Palette size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-300 z-10" />
+            <Palette
+              size={14}
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-300 z-10"
+            />
             <input
               name="accentColor"
               type="color"
               defaultValue="#F5C842"
-              className="w-full h-[50px] rounded-2xl bg-white ring-1 ring-stone-200 pl-10 pr-3 cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-400/60 transition-all"
+              className="w-full h-12.5 rounded-2xl bg-white ring-1 ring-stone-200 pl-10 pr-3 cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-400/60 transition-all"
             />
           </div>
         </div>

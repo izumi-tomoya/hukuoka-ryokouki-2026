@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import TabNavigation from "@/components/trip/TabNavigation";
+import DesktopHeader from "@/components/trip/DesktopHeader";
+import Footer from "@/components/trip/Footer";
 import EventDetailModal from "@/components/trip/client/EventDetailModal";
 import "./globals.css";
 import { cookies } from "next/headers";
@@ -36,10 +38,12 @@ export default async function RootLayout({
 
   return (
     <html lang="ja" suppressHydrationWarning>
-      <body className="font-sans antialiased bg-[#FFFCF9]">
-        <main className="min-h-screen bg-white">
+      <body className="font-sans antialiased bg-[#FFFCF9] flex flex-col min-h-screen">
+        <DesktopHeader isSecretMode={isSecretMode} />
+        <main className="flex-grow bg-white">
           {children}
         </main>
+        <Footer />
         <TabNavigation isSecretMode={isSecretMode} />
         <EventDetailModal />
       </body>

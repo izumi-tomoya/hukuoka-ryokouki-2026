@@ -5,11 +5,7 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Home, Calendar, Compass, Info as InfoIcon } from 'lucide-react';
 
-interface TabNavigationProps {
-  isSecretMode: boolean;
-}
-
-export default function TabNavigation({ isSecretMode }: TabNavigationProps) {
+export default function DesktopHeader({ isSecretMode }: { isSecretMode: boolean }) {
   const pathname = usePathname();
   const pathParts = pathname.split('/');
   const isTripPage = pathParts[1] === 'trip';
@@ -26,27 +22,27 @@ export default function TabNavigation({ isSecretMode }: TabNavigationProps) {
   ];
 
   return (
-    <nav className="fixed bottom-4 left-4 right-4 z-50 md:hidden">
-      <div className="flex items-center justify-between gap-1 rounded-full bg-white/70 px-4 py-2 shadow-sm ring-1 ring-zinc-100 backdrop-blur-2xl">
+    <header className="hidden md:flex items-center justify-between px-12 py-6 bg-white border-b border-zinc-100 sticky top-0 z-50">
+      <Link href="/" className="font-playfair text-2xl font-bold text-zinc-900">Memoir</Link>
+      <nav className="flex items-center gap-1">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
-          const Icon = item.icon;
           return (
-            <Link
-              key={item.href}
+            <Link 
+              key={item.href} 
               href={item.href}
               className={cn(
-                'flex flex-col items-center gap-1 rounded-full px-4 py-2 transition-all',
+                "px-4 py-2 text-sm font-bold transition-colors rounded-full",
                 isActive 
-                  ? 'bg-zinc-900 text-white' 
-                  : 'text-zinc-400 hover:text-zinc-900'
+                  ? "bg-zinc-900 text-white" 
+                  : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100"
               )}
             >
-              <Icon size={18} />
+              {item.label}
             </Link>
           );
         })}
-      </div>
-    </nav>
+      </nav>
+    </header>
   );
 }

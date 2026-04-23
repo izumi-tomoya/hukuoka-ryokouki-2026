@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import AccessRow from '@/components/trip/AccessRow';
 import PhotoGallery from '@/components/trip/PhotoGallery';
 import { cn } from '@/lib/utils';
-import { MapPin, Utensils, Star, Bus, ShoppingBag, Eye, Moon, Home, Lock } from 'lucide-react';
+import { Utensils, Star, Bus, ShoppingBag, Eye, Moon, Home, Lock } from 'lucide-react';
 import ClickableCard from '@/components/trip/client/ClickableCard';
 import ConfirmCheckbox from '@/components/trip/client/ConfirmCheckbox';
 import FavoriteToggle from '@/components/trip/client/FavoriteToggle';
@@ -43,7 +43,6 @@ function BasicCard({ event }: { event: TripEvent }) {
     <div
       className={cn(
         'group relative overflow-hidden rounded-[22px] border border-rose-100/70 bg-white p-4 md:p-6 shadow-lg shadow-rose-100/40 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-rose-200/50',
-        event.isConfirmed && 'opacity-75 grayscale-[0.3]'
       )}
     >
       <div className="absolute right-0 top-0 h-20 w-20 bg-linear-to-br from-rose-50/60 to-transparent opacity-60" />
@@ -62,14 +61,20 @@ function BasicCard({ event }: { event: TripEvent }) {
         )}
       </div>
 
-      <h3
-        className={cn(
-          'text-[15px] md:text-[16px] font-bold text-stone-800 tracking-tighter leading-snug',
-          event.isConfirmed && 'line-through decoration-stone-400/50 text-stone-400'
+      <div className="flex items-center gap-2">
+        <h3
+          className={cn(
+            'text-[15px] md:text-[16px] font-bold text-stone-800 tracking-tighter leading-snug',
+          )}
+        >
+          {event.title}
+        </h3>
+        {event.isConfirmed && (
+          <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100 text-[10px] py-0 px-2">
+            予約済み
+          </Badge>
         )}
-      >
-        {event.title}
-      </h3>
+      </div>
       <p className="mt-2 text-[12px] md:text-[13px] leading-relaxed text-stone-500/90 font-medium line-clamp-2">
         {event.desc}
       </p>
@@ -94,7 +99,6 @@ function FoodCard({ event }: { event: TripEvent }) {
     <div
       className={cn(
         'group relative overflow-hidden rounded-[26px] transition-all hover:-translate-y-1 hover:shadow-2xl hover:shadow-rose-200/50',
-        event.isConfirmed && 'opacity-75 grayscale-[0.2]'
       )}
     >
       <div
@@ -120,14 +124,20 @@ function FoodCard({ event }: { event: TripEvent }) {
           )}
         </div>
 
-        <p
-          className={cn(
-            'mb-2 text-[18px] md:text-[19px] font-bold leading-tight text-stone-900 tracking-tighter',
-            event.isConfirmed && 'line-through decoration-stone-400/50 text-stone-400'
+        <div className="flex items-center gap-2">
+          <p
+            className={cn(
+              'mb-2 text-[18px] md:text-[19px] font-bold leading-tight text-stone-900 tracking-tighter',
+            )}
+          >
+            {event.foodName}
+          </p>
+          {event.isConfirmed && (
+            <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100 text-[10px] py-0 px-2 -mt-2">
+              予約済み
+            </Badge>
           )}
-        >
-          {event.foodName}
-        </p>
+        </div>
         <p className="mb-4 text-[12px] md:text-[13px] leading-relaxed text-stone-500 font-medium line-clamp-2">
           {event.foodDesc}
         </p>
@@ -223,7 +233,7 @@ function YataiCard({
           </div>
 
           <div className="relative space-y-4">
-            <div className="absolute left-[18px] top-1 h-[calc(100%-16px)] w-px bg-linear-to-b from-amber-600/50 via-amber-700/30 to-transparent" />
+            <div className="absolute left-4.5 top-1 h-[calc(100%-16px)] w-px bg-linear-to-b from-amber-600/50 via-amber-700/30 to-transparent" />
             {stops.map((s, i) => (
               <div key={i} className="relative flex items-start gap-4">
                 <div className="relative z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-xl border border-amber-600/40 bg-amber-400/12 text-[10px] font-bold text-amber-300">

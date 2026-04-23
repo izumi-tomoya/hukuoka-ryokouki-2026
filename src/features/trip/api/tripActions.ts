@@ -95,14 +95,15 @@ export async function updateEventAction(eventId: string, data: unknown) {
 
 export async function toggleEventConfirmation(eventId: string, isConfirmed: boolean) {
   try {
-    await prisma.event.update({
+    const res = await prisma.event.update({
       where: { id: eventId },
       data: { isConfirmed },
     });
+    console.log("Updated event:", res);
     revalidatePath('/trip/[slug]/day/[id]', 'page');
     return { success: true };
   } catch (error) {
     console.error('Failed to toggle event confirmation:', error);
-    return { success: false };
+    return { success: false, error: String(error) };
   }
 }

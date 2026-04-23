@@ -2,6 +2,7 @@ import { BentoTile } from "@/components/ui/BentoTile";
 import { getTripBySlug } from "@/features/trip/api/tripActions";
 import { notFound } from "next/navigation";
 import { TripCountdown } from "@/features/trip/components/client/TripCountdown";
+import { getWeatherData } from "@/lib/weather";
 import Link from "next/link";
 
 export default async function TripPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -9,6 +10,8 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
   const trip = await getTripBySlug(slug);
 
   if (!trip) return notFound();
+
+  const weather = await getWeatherData(trip.location);
 
   return (
     <main className="min-h-screen bg-[#FDFDFC] p-6 pb-24 md:p-12">
@@ -20,7 +23,15 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Countdown Tile */}
         <BentoTile className="md:col-span-2 lg:col-span-1 bg-[#FDFDFC] border-zinc-200">
-          <h3 className="text-zinc-400 text-[10px] uppercase tracking-[0.2em] mb-4">Countdown</h3>
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-zinc-400 text-[10px] uppercase tracking-[0.2em]">Countdown</h3>
+            {weather && (
+              <div className="flex items-center gap-2 bg-zinc-900 px-3 py-1.5 rounded-full text-white">
+                <span className="text-xl">{weather.condition}</span>
+                <span className="text-sm font-bold">{weather.temp}°C</span>
+              </div>
+            )}
+          </div>
           <TripCountdown startDate={trip.startDate} />
         </BentoTile>
 

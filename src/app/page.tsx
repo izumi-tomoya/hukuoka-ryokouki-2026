@@ -31,11 +31,14 @@ export default async function PortalPage() {
           </Link>
         ))}
         
-        {/* Create New Trip Placeholder */}
-        <div className="p-8 rounded-[2.5rem] border border-dashed border-zinc-200 flex flex-col justify-center items-center text-center text-zinc-400">
+        {/* Create New Trip Link */}
+        <Link 
+          href="/trip/new"
+          className="p-8 rounded-[2.5rem] border border-dashed border-zinc-200 flex flex-col justify-center items-center text-center text-zinc-400 hover:border-zinc-400 hover:text-zinc-600 transition-colors"
+        >
           <Plus className="mb-4" />
           <p className="text-sm font-medium">Create a new journey</p>
-        </div>
+        </Link>
       </section>
     </main>
   );

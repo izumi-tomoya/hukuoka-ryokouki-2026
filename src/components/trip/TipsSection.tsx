@@ -2,10 +2,34 @@ import type { Tip } from "@/features/trip/types/trip";
 
 interface TipsSectionProps {
   tips: Tip[];
-  dayNumber: 1 | 2;
+  dayNumber: number;
 }
 
+const getTheme = (dayNumber: number) => {
+  const themes = {
+    1: {
+      bg: "bg-rose-50",
+      border: "border-rose-100",
+      text: "text-rose-900",
+      icon: "text-rose-400"
+    },
+    2: {
+      bg: "bg-purple-50",
+      border: "border-purple-100",
+      text: "text-purple-900",
+      icon: "text-purple-400"
+    }
+  };
+  return themes[dayNumber as keyof typeof themes] || {
+    bg: "bg-stone-50",
+    border: "border-stone-100",
+    text: "text-stone-900",
+    icon: "text-stone-400"
+  };
+};
+
 export default function TipsSection({ tips, dayNumber }: TipsSectionProps) {
+  const t = getTheme(dayNumber);
   return (
     <section className="px-5 py-8 bg-white">
       {/* Section header */}
@@ -30,18 +54,8 @@ export default function TipsSection({ tips, dayNumber }: TipsSectionProps) {
         {tips.map((tip, i) => (
           <div
             key={i}
-            className="group relative overflow-hidden rounded-2xl transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-rose-100/60"
-            style={{
-              background: tip.isWarning
-                ? "linear-gradient(135deg, #FFF5F5 0%, #FFF0F0 100%)"
-                : "linear-gradient(135deg, #FFF5F8 0%, #FFF0F5 100%)",
-            }}
+            className={`group relative overflow-hidden rounded-2xl transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-rose-100/60 ${t.bg} border ${t.border}`}
           >
-            <div
-              className={`absolute inset-0 rounded-2xl ring-1 ${
-                tip.isWarning ? "ring-red-200/70" : "ring-rose-200/50"
-              }`}
-            />
             <div
               className={`absolute left-0 top-0 bottom-0 w-0.5 rounded-l-2xl ${
                 tip.isWarning

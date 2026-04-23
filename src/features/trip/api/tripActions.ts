@@ -40,7 +40,7 @@ export async function createTrip(formData: FormData) {
         startDate,
         endDate,
         slug,
-        image: `linear-gradient(135deg, ${accentColor} 0%, #050B17 100%)`, // Auto-generate gradient
+        image: `linear-gradient(135deg, ${accentColor} 0%, #050B17 100%)`,
         status: 'Planning',
       },
     });
@@ -73,7 +73,7 @@ export async function updateEventAction(eventId: string, data: unknown) {
       where: { id: eventId },
       data: {
         ...eventData,
-        time: result.data.time, // Ensure time is explicitly updated
+        time: result.data.time, 
         yataiStops: yataiStops ? {
           deleteMany: {},
           create: yataiStops.map((stop, index) => ({

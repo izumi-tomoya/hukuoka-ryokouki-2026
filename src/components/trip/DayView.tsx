@@ -6,7 +6,7 @@ import { SECRET_MODE_COOKIE_NAME, DAY_CONFIG } from '@/config/constants';
 
 interface DayViewProps {
   events: TripEvent[];
-  dayNumber: 1 | 2;
+  dayNumber: number;
   dayLabel?: string;
   dayTitle?: string;
   dayHighlight?: string;
@@ -14,26 +14,33 @@ interface DayViewProps {
   slug: string;
 }
 
-const dayTheme = {
-  1: {
-    bg: 'from-rose-100 via-pink-50 to-rose-50',
-    labelColor: 'text-rose-400/80',
-    titleColor: 'text-rose-900',
-    highlightBorder: 'border-rose-200',
-    highlightBg: 'bg-white/60',
-    orb1: 'bg-rose-200/40',
-    orb2: 'bg-pink-200/30',
-  },
-  2: {
-    bg: 'from-purple-100 via-indigo-50 to-purple-50',
-    labelColor: 'text-purple-400/80',
-    titleColor: 'text-purple-900',
-    highlightBorder: 'border-purple-200',
-    highlightBg: 'bg-white/60',
-    orb1: 'bg-purple-200/40',
-    orb2: 'bg-indigo-200/30',
-  },
-} as const;
+const getTheme = (dayNumber: number) => {
+  const themes: Record<
+    number,
+    { bg: string; labelColor: string; titleColor: string; highlightBorder: string }
+  > = {
+    1: {
+      bg: 'from-rose-100 via-pink-50 to-rose-50',
+      labelColor: 'text-rose-400/80',
+      titleColor: 'text-rose-900',
+      highlightBorder: 'border-rose-200',
+    },
+    2: {
+      bg: 'from-purple-100 via-indigo-50 to-purple-50',
+      labelColor: 'text-purple-400/80',
+      titleColor: 'text-purple-900',
+      highlightBorder: 'border-purple-200',
+    },
+  };
+  return (
+    themes[dayNumber] || {
+      bg: 'from-stone-100 via-stone-50 to-stone-50',
+      labelColor: 'text-stone-400/80',
+      titleColor: 'text-stone-900',
+      highlightBorder: 'border-stone-200',
+    }
+  );
+};
 
 export default async function DayView({
   events,
@@ -43,8 +50,12 @@ export default async function DayView({
   dayHighlight,
   tips,
 }: DayViewProps) {
-  const config = DAY_CONFIG[dayNumber];
-  const theme = dayTheme[dayNumber];
+  const config = DAY_CONFIG[dayNumber as keyof typeof DAY_CONFIG] || {
+    title: `Day ${dayNumber}`,
+    label: `DAY ${dayNumber}`,
+    highlight: '',
+  };
+  const theme = getTheme(dayNumber);
   const cookieStore = await cookies();
   const isSecretMode = cookieStore.get(SECRET_MODE_COOKIE_NAME)?.value === 'true';
 

@@ -1,29 +1,27 @@
 export const SECRET_MODE_COOKIE_NAME = "secret_mode";
 
-export const NAV_ITEMS = [
-  { href: "/", label: "Home", icon: "🏠" },
-  { href: "/day/1", label: "Day 1", icon: "📅" },
-  { href: "/day/2", label: "Day 2", icon: "📅" },
-  { href: "/tips", label: "Tips", icon: "🧭" },
-] as const;
+export const DAY_CONFIG: Record<number, { title: string; label: string; highlight: string }> = {
+  1: { title: "博多、彩りの追憶", label: "DAY 1", highlight: "都会の洗練と伝統が交差する街。最高のスタートを。" },
+  2: { title: "海風と、語り継がれる風景", label: "DAY 2", highlight: "海風を感じながら、心に刻まれる穏やかな時間を。" },
+};
 
-export const DAY_CONFIG = {
-  1: {
-    label: "DAY 1 — 2026.5.24 (日)",
-    title: "⛩️ 太宰府 → 博多グルメ → 屋台ハシゴ！",
-    highlight:
-      "千年の歴史が息づく太宰府を参拝し、博多グルメを満喫！夜は中洲の屋台街でシメのラーメンまで、博多の魅力をぎゅっと詰め込んだ最高の一日🔥",
+export const ESSENTIALS_BY_REGION: Record<string, { title: string; items: string[] }> = {
+  "Fukuoka": {
+    title: "福岡・博多旅の準備",
+    items: [
+      "交通系ICカード（nimoca/SUGOCA等）: 福岡の地下鉄やバスは非常に便利です。",
+      "地下鉄1日乗車券: 空港や博多・天神を巡るなら必須。",
+      "モバイルバッテリー: 食べ歩きや写真撮影で電池を消耗します。",
+      "少し良いハンカチ: 屋台などはタオルが必要な場合も。"
+    ]
   },
-  2: {
-    label: "DAY 2 — 2026.5.25 (月)",
-    title: "🍲 水炊きランチ → 大濠公園 → サプライズ✨",
-    highlight:
-      "100年の老舗で本格水炊きランチ、大濠公園でのんびりお散歩、そして彼氏からのとっておきサプライズへ…！最後は福岡のソウルフードで締めくくり🍜",
-  },
-} as const;
-
-export const TRIP_STATS = {
-  BUDGET: "¥45,000~",
-  WEATHER: "24°C ☀️",
-  LOCATION: "FUK",
-} as const;
+  "Itoshima": {
+    title: "糸島ドライブの準備",
+    items: [
+      "運転免許証: レンタカーを借りる場合は忘れずに。",
+      "サングラス: 糸島の海岸線は日差しが強いです。",
+      "歩きやすい靴: 砂浜を歩くスポットが多いです。",
+      "現金: 小規模なカフェでは現金のみの場所も多いです。"
+    ]
+  }
+};

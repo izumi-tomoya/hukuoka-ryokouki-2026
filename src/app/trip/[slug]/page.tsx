@@ -1,51 +1,44 @@
+import { BentoTile } from "@/components/ui/BentoTile";
+import { getTripBySlug } from "@/features/trip/api/tripActions";
 import { notFound } from "next/navigation";
+import { TripCountdown } from "@/features/trip/components/client/TripCountdown";
 import Link from "next/link";
-import { cookies } from "next/headers";
-import { SECRET_MODE_COOKIE_NAME } from "@/config/constants";
-import { getTripBySlug } from "@/app/actions/tripActions";
-import { Calendar, MapPin, ChevronRight, Lock } from "lucide-react";
 
 export default async function TripPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const trip = await getTripBySlug(slug);
+
   if (!trip) return notFound();
 
   return (
-    <div className="min-h-screen bg-stone-50 pb-20">
-      {/* ─── Header ─── */}
-      <header className="px-6 pt-12 pb-8 mx-auto max-w-5xl">
-        <Link href="/" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-rose-400 mb-8 hover:text-rose-600">
-          ← Back to Collection
-        </Link>
-        <h1 className="font-playfair text-4xl md:text-5xl font-bold text-rose-950 mb-4 tracking-tight">{trip.title}</h1>
-        <div className="flex items-center gap-4 text-stone-500 text-sm font-medium">
-          <div className="flex items-center gap-1.5"><MapPin size={14} /> {trip.location}</div>
-          <span>•</span>
-          <div className="flex items-center gap-1.5"><Calendar size={14} /> {new Date(trip.startDate).toLocaleDateString("ja-JP", { month: "short", day: "numeric" })}</div>
-        </div>
+    <main className="min-h-screen bg-[#FDFDFC] p-6 pb-24 md:p-12">
+      <header className="mb-12 max-w-2xl">
+        <h1 className="text-4xl font-light tracking-tight text-zinc-900 mb-2">{trip.title}</h1>
+        <p className="text-zinc-500">{trip.location}</p>
       </header>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Countdown Tile */}
+        <BentoTile className="md:col-span-2 lg:col-span-1 bg-[#FDFDFC] border-zinc-200">
+          <h3 className="text-zinc-400 text-[10px] uppercase tracking-[0.2em] mb-4">Countdown</h3>
+          <TripCountdown startDate={new Date(trip.startDate)} />
+        </BentoTile>
 
-      {/* ─── Days Grid ─── */}
-      <main className="mx-auto max-w-5xl px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {trip.days.map((day) => (
-            <Link
-              key={day.id}
-              href={`/trip/${slug}/day/${day.dayNumber}`}
-              className="group block rounded-[2rem] border border-rose-100 bg-white p-8 shadow-sm transition-all hover:shadow-xl hover:-translate-y-1"
-            >
-              <div className="flex justify-between items-start mb-8">
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-rose-400">Day {day.dayNumber}</span>
-                <div className="h-10 w-10 rounded-full bg-rose-50 flex items-center justify-center text-rose-500 group-hover:bg-rose-500 group-hover:text-white transition-colors">
-                  <ChevronRight size={18} />
-                </div>
-              </div>
-              <h2 className="font-playfair text-2xl font-bold text-stone-900 mb-2">{day.title}</h2>
-              <p className="text-sm text-stone-500">{day.events.length} Plans</p>
-            </Link>
-          ))}
-        </div>
-      </main>
-    </div>
+        {/* Days Grid */}
+        {trip.days.map((day) => (
+          <Link 
+            key={day.id} 
+            href={`/trip/${slug}/day/${day.dayNumber}`}
+            className="group block"
+          >
+            <BentoTile className="transition-all hover:shadow-lg hover:border-zinc-300">
+              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Day {day.dayNumber}</span>
+              <h3 className="text-xl font-medium mt-1 mb-4">{day.title}</h3>
+              <p className="text-sm text-zinc-500 line-clamp-2">{day.highlight}</p>
+            </BentoTile>
+          </Link>
+        ))}
+      </div>
+    </main>
   );
 }

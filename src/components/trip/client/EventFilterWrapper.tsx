@@ -1,7 +1,7 @@
 "use client";
 
 import { useFilterStore } from "@/lib/store/useFilterStore";
-import { TripEvent } from "@/types/trip";
+import { TripEvent } from "@/features/trip/types/trip";
 import CategoryFilter from "@/components/trip/CategoryFilter";
 import Timeline from "@/components/trip/Timeline";
 

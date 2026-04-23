@@ -1,9 +1,9 @@
 import { Sun, Droplets, Thermometer, Info } from 'lucide-react';
-import { type WeatherStats } from '@/types/trip';
+import { type WeatherStats } from '@/features/trip/types/trip';
 
 export default function WeatherStatsDisplay({ stats }: { stats: WeatherStats }) {
   return (
-    <div className="mt-5 rounded-[2rem] bg-gradient-to-br from-rose-50 to-pink-50 p-6 shadow-inner ring-1 ring-rose-100">
+    <div className="mt-5 rounded-[2rem] bg-linear-to-br from-rose-50 to-pink-50 p-6 shadow-inner ring-1 ring-rose-100">
       <div className="mb-4 flex items-center gap-3 text-xs font-bold text-rose-400 uppercase tracking-[0.2em]">
         <div className="h-1 w-8 bg-rose-300 rounded-full" />
         Comfort Guide

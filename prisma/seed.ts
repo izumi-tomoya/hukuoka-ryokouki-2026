@@ -10,6 +10,7 @@ import {
   itoshimaEvents,
   itoshimaTips
 } from '../src/data/tripData';
+import { YataiStop } from "../src/features/trip/types/trip";
 
 // Load .env file
 dotenv.config();
@@ -32,7 +33,7 @@ const pool = new pg.Pool({
   },
 });
 const adapter = new PrismaPg(pool);
-const prisma = new PrismaClient({ adapter });
+const prisma = new PrismaClient({ adapter, log: ['error', 'warn'] });
 
 async function main() {
   console.log('🌱 Start seeding...');
@@ -112,12 +113,12 @@ async function main() {
         isYatai: event.isYatai || false,
         order: index,
         yataiStops: event.yataiStops ? {
-          create: event.yataiStops.map((stop, sIndex) => ({
+          create: event.yataiStops.map((stop: YataiStop, sIndex: number) => ({
             time: stop.time,
             stop: stop.stop,
             desc: stop.desc,
             order: sIndex,
-          }))
+          })),
         } : undefined,
       },
     });

@@ -59,13 +59,47 @@ export async function getTrips() {
   });
 }
 
+import { eventSchema } from '@/lib/formvalidation/eventSchema';
+
+export async function updateEventAction(eventId: string, data: unknown) {
+  const result = eventSchema.safeParse(data);
+  if (!result.success) {
+    return { success: false, error: 'Invalid data' };
+  }
+
+  try {
+    const { yataiStops, ...eventData } = result.data;
+    await prisma.event.update({
+      where: { id: eventId },
+      data: {
+        ...eventData,
+        time: result.data.time, // Ensure time is explicitly updated
+        yataiStops: yataiStops ? {
+          deleteMany: {},
+          create: yataiStops.map((stop, index) => ({
+            time: stop.time,
+            stop: stop.stop,
+            desc: stop.desc ?? "",
+            order: index
+          }))
+        } : undefined
+      },
+    });
+    revalidatePath('/trip/[slug]/day/[id]', 'page');
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to update event:', error);
+    return { success: false, error: 'Failed to update' };
+  }
+}
+
 export async function toggleEventConfirmation(eventId: string, isConfirmed: boolean) {
   try {
     await prisma.event.update({
       where: { id: eventId },
       data: { isConfirmed },
     });
-    revalidatePath('/');
+    revalidatePath('/trip/[slug]/day/[id]', 'page');
     return { success: true };
   } catch (error) {
     console.error('Failed to toggle event confirmation:', error);

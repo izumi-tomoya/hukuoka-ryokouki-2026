@@ -1,4 +1,4 @@
-import type { TripEvent } from "@/types/trip";
+import type { TripEvent } from "@/features/trip/types/trip";
 import EventCard from "@/components/trip/EventCard";
 
 interface TimelineProps {
@@ -25,25 +25,25 @@ export default function Timeline({ events, dayNumber = 1 }: TimelineProps) {
   const theme = dotAccent[dayNumber];
 
   return (
-    <div className="relative bg-stone-50 px-5 pb-20 pt-8">
-      {/* Vertical connecting line */}
+    <div className="relative bg-stone-50 px-3 pb-20 pt-8">
+      {/* Vertical connecting line - move slightly left */}
       <div
-        className={`absolute left-5 top-0 h-full w-px ${theme.line}`}
+        className={`absolute left-[19px] top-0 h-full w-px ${theme.line}`}
       />
 
       <div className="relative space-y-6">
         {events.map((event, index) => (
-          <div key={index} className="relative flex gap-4">
+          <div key={index} className="relative flex gap-2 md:gap-4">
             {/* Left column: dot */}
-            <div className="relative flex w-4 shrink-0 flex-col items-center pt-3">
+            <div className="relative flex w-6 shrink-0 flex-col items-center pt-3">
               <div className={`z-10 h-3 w-3 rounded-full border-2 border-white shadow-sm ring-2 ${theme.ring} ${theme.bg}`} />
             </div>
 
             {/* Right column: time + card */}
             <div className="min-w-0 flex-1 pb-2">
-              <div className="mb-3">
+              <div className="mb-2">
                 <span
-                  className={`inline-block rounded-full px-4 py-1 text-[10px] font-black uppercase tracking-widest ${theme.timeBg}`}
+                  className={`inline-block rounded-full px-3 py-0.5 text-[9px] font-black uppercase tracking-widest ${theme.timeBg}`}
                 >
                   {event.time}
                 </span>
@@ -61,7 +61,7 @@ export default function Timeline({ events, dayNumber = 1 }: TimelineProps) {
       </div>
 
       {/* End marker */}
-      <div className={`absolute bottom-8 left-3.5 h-5 w-5 rounded-full border-4 border-white shadow-sm ${theme.bg} opacity-30`} />
+      <div className={`absolute bottom-8 left-[13px] h-4 w-4 rounded-full border-4 border-white shadow-sm ${theme.bg} opacity-30`} />
     </div>
   );
 }

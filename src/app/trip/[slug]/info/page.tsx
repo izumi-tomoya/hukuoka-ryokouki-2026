@@ -1,14 +1,17 @@
 import PackingList from '@/components/trip/PackingList';
+import { BentoTile } from '@/components/ui/BentoTile';
 
 export default function TripInfoPage({ params }: { params: { slug: string } }) {
   return (
-    <div className="mx-auto max-w-3xl px-6 py-12 md:py-20">
-      <div className="mb-10 text-center">
-        <h1 className="font-playfair text-3xl font-bold text-rose-900 mb-4">Trip Essentials</h1>
-        <p className="text-sm text-rose-600/70 font-medium tracking-wide uppercase">忘れ物はない？二人の旅を完璧に楽しむためのリスト</p>
-      </div>
+    <main className="min-h-screen bg-[#FDFDFC] text-[#2D2D2D] p-6 md:p-12">
+      <header className="mb-12 max-w-2xl">
+        <h1 className="text-3xl font-light tracking-tight mb-3">Trip Essentials</h1>
+        <p className="text-zinc-500 text-base">二人の旅を完璧に楽しむための準備リスト</p>
+      </header>
 
-      <PackingList />
-    </div>
+      <BentoTile>
+        <PackingList />
+      </BentoTile>
+    </main>
   );
 }

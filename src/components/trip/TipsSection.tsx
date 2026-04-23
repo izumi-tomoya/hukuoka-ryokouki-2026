@@ -1,4 +1,4 @@
-import type { Tip } from "@/types/trip";
+import type { Tip } from "@/features/trip/types/trip";
 
 interface TipsSectionProps {
   tips: Tip[];

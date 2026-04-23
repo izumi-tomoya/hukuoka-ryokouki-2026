@@ -1,7 +1,6 @@
 "use client";
 
 import { usePackingStore } from "@/lib/store/usePackingStore";
-import { Checkbox } from "@/components/ui/checkbox"; // 既存のものがあれば使用
 
 export default function PackingList() {
   const { items, toggleItem } = usePackingStore();

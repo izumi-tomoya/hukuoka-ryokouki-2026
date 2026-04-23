@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 import DayView from "@/components/trip/DayView";
-import { getTripBySlug } from "@/app/actions/tripActions";
+import { getTripBySlug } from "@/features/trip/api/tripActions";
 import { mapEventToTripEvent } from "@/lib/tripUtils";
+import { BentoTile } from "@/components/ui/BentoTile";
 
 export default async function DayPage({ params }: { params: Promise<{ slug: string; id: string }> }) {
   const { slug, id } = await params;
@@ -18,14 +19,29 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
   const themeDay = (dayNumber === 1 || dayNumber === 2) ? dayNumber as 1 | 2 : 1;
 
   return (
-    <DayView
-      events={events}
-      dayNumber={themeDay}
-      dayLabel={`DAY ${dayNumber} — ${new Date(day.date).toLocaleDateString("ja-JP", { month: "numeric", day: "numeric" })}`}
-      dayTitle={day.title ?? undefined}
-      dayHighlight={day.highlight ?? undefined}
-      tips={trip.tips.map((t) => ({ title: t.title, body: t.body, isWarning: t.isWarning }))}
-      slug={slug}
-    />
+    <main className="min-h-screen bg-[#FDFDFC] text-[#2D2D2D] p-6 md:p-12">
+      <header className="mb-12">
+        <BentoTile>
+          <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em] mb-3 block">
+            DAY {dayNumber}
+          </span>
+          <h1 className="text-3xl font-light tracking-tight">
+            {new Date(day.date).toLocaleDateString("ja-JP", { month: "numeric", day: "numeric" })}
+          </h1>
+          {day.title && <p className="text-zinc-500 mt-2">{day.title}</p>}
+          {day.highlight && <p className="text-sm font-medium text-zinc-900 mt-4">{day.highlight}</p>}
+        </BentoTile>
+      </header>
+
+      <DayView
+        events={events}
+        dayNumber={themeDay}
+        dayLabel={`DAY ${dayNumber}`}
+        dayTitle={day.title ?? undefined}
+        dayHighlight={day.highlight ?? undefined}
+        tips={trip.tips.map((t) => ({ title: t.title, body: t.body, isWarning: t.isWarning }))}
+        slug={slug}
+      />
+    </main>
   );
 }

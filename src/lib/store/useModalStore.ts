@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { TripEvent } from "@/types/trip";
+import type { TripEvent } from "@/features/trip/types/trip";
 
 interface ModalState {
   isOpen: boolean;

@@ -1,24 +1,9 @@
 import type { Metadata } from "next";
-import { Noto_Sans_JP, Playfair_Display } from "next/font/google";
 import TabNavigation from "@/components/trip/TabNavigation";
 import EventDetailModal from "@/components/trip/client/EventDetailModal";
 import "./globals.css";
 import { cookies } from "next/headers";
 import { SECRET_MODE_COOKIE_NAME } from "@/config/constants";
-
-const notoSansJP = Noto_Sans_JP({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "700"],
-  variable: "--font-noto-sans-jp",
-  display: "swap",
-});
-
-const playfairDisplay = Playfair_Display({
-  subsets: ["latin"],
-  style: ["normal", "italic"],
-  variable: "--font-playfair",
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: {
@@ -51,12 +36,8 @@ export default async function RootLayout({
 
   return (
     <html lang="ja" suppressHydrationWarning>
-      <body
-        className={`${notoSansJP.variable} ${playfairDisplay.variable} font-sans antialiased bg-[#FFFCF9]`}
-      >
-        {/* Desktop top-nav spacer — only on md+ */}
-        <div className="hidden md:block h-14" aria-hidden="true" />
-        <main className="min-h-screen bg-white pb-24 md:pb-0">
+      <body className="font-sans antialiased bg-[#FFFCF9]">
+        <main className="min-h-screen bg-white">
           {children}
         </main>
         <TabNavigation isSecretMode={isSecretMode} />

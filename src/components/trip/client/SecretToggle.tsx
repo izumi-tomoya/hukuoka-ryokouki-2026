@@ -1,7 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
-import { toggleSecretModeAction } from "@/app/actions/secretMode";
+import { toggleSecretModeAction } from "@/features/trip/api/secretMode";
 import { Lock } from "lucide-react";
 
 interface SecretToggleProps {

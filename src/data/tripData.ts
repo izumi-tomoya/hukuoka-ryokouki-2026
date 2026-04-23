@@ -1,4 +1,4 @@
-import type { TripEvent, Tip } from "@/types/trip";
+import type { TripEvent, Tip } from "@/features/trip/types/trip";
 
 export const day1Events: TripEvent[] = [
   {

@@ -1,5 +1,5 @@
 import type { Prisma } from '@prisma/client';
-import type { TripEvent, EventType, TagType, YataiStop } from '@/types/trip';
+import type { TripEvent, EventType, TagType, YataiStop } from '@/features/trip/types/trip';
 
 type EventWithStops = Prisma.EventGetPayload<{
   include: { yataiStops: true };

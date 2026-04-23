@@ -1,7 +1,7 @@
 "use client";
 
 import { useModalStore } from "@/lib/store/useModalStore";
-import type { TripEvent } from "@/types/trip";
+import type { TripEvent } from "@/features/trip/types/trip";
 import { cn } from "@/lib/utils";
 
 interface ClickableCardProps {

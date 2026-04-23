@@ -1,6 +1,6 @@
 'use client';
 
-import { createTrip } from '@/app/actions/tripActions';
+import { createTrip } from '@/features/trip/api/tripActions';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Sparkles, MapPin, Palette } from 'lucide-react';

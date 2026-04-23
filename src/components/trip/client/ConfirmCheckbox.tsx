@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { toggleEventConfirmation } from '@/app/actions/tripActions';
+import { toggleEventConfirmation } from '@/features/trip/api/tripActions';
 import { Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 

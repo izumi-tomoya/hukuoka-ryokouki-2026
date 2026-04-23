@@ -1,7 +1,6 @@
-import type { TripEvent, Tip } from "@/types/trip";
+import type { TripEvent, Tip } from "@/features/trip/types/trip";
 import Timeline from "@/components/trip/Timeline";
 import TipsSection from "@/components/trip/TipsSection";
-import CategoryTabs from "@/components/trip/CategoryTabs";
 import { cookies } from "next/headers";
 import { SECRET_MODE_COOKIE_NAME, DAY_CONFIG } from "@/config/constants";
 
@@ -58,9 +57,7 @@ export default async function DayView({
   return (
     <section className="bg-stone-50 min-h-screen">
       <div className="mx-auto max-w-5xl px-6 pt-12">
-        <CategoryTabs slug={slug} activePath={`/trip/${slug}/day/${dayNumber}`} isSecretMode={isSecretMode} />
-
-        <div className={`relative mb-10 overflow-hidden rounded-[2rem] bg-gradient-to-br ${theme.bg}`}>
+        <div className={`relative mb-10 overflow-hidden rounded-[2rem] bg-linear-to-br ${theme.bg}`}>
           <div className="relative mx-auto px-8 py-10">
             <p className={`text-[10px] font-black tracking-[0.3em] uppercase mb-3 ${theme.labelColor}`}>
               {label}

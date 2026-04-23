@@ -2,7 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["driverAdapters"]
 }
 
@@ -18,36 +18,36 @@ model Trip {
   startDate   DateTime
   endDate     DateTime
   location    String
-  image       String   // gradient or image url
+  image       String // gradient or image url
   accentColor String   @default("#F5C842")
   status      String   @default("Upcoming") // Upcoming, Planning, Completed
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  days        Day[]
-  tips        Tip[]
+  days Day[]
+  tips Tip[]
 }
 
 model Day {
   id        String   @id @default(cuid())
   tripId    String
   trip      Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
-  dayNumber Int      // 1, 2, 3...
+  dayNumber Int // 1, 2, 3...
   date      DateTime
   title     String?
   highlight String?
 
-  events    Event[]
+  events Event[]
 
   @@unique([tripId, dayNumber])
 }
 
 model Event {
-  id          String   @id @default(cuid())
+  id          String  @id @default(cuid())
   dayId       String
-  day         Day      @relation(fields: [dayId], references: [id], onDelete: Cascade)
+  day         Day     @relation(fields: [dayId], references: [id], onDelete: Cascade)
   time        String
-  type        String   // transport, food, sightseeing, hotel, shopping, surprise, basic
+  type        String // transport, food, sightseeing, hotel, shopping, surprise, basic
   title       String?
   desc        String?
   tag         String?
@@ -56,11 +56,12 @@ model Event {
   foodName    String?
   foodDesc    String?
   highlight   String?
-  isYatai     Boolean  @default(false)
-  isConfirmed Boolean  @default(false)
-  order       Int      @default(0)
+  isYatai     Boolean @default(false)
+  isConfirmed Boolean @default(false)
+  isPending   Boolean @default(false)
+  order       Int     @default(0)
 
-  yataiStops  YataiStop[]
+  yataiStops YataiStop[]
 }
 
 model YataiStop {

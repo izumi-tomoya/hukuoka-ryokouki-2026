@@ -1,5 +1,9 @@
 import type { TripEvent } from "@/features/trip/types/trip";
-import EventCard from "@/components/trip/EventCard";
+import dynamic from "next/dynamic";
+
+const EventCard = dynamic(() => import("@/components/trip/EventCard"), {
+  loading: () => <div className="h-40 w-full animate-pulse rounded-[22px] bg-stone-100" />,
+});
 
 interface TimelineProps {
   events: TripEvent[];

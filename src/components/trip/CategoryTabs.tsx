@@ -16,15 +16,15 @@ interface CategoryTabsProps {
 
 export default function CategoryTabs({ slug, activePath, isSecretMode }: CategoryTabsProps) {
   const navItems: NavItem[] = [
-    { href: `/trip/${slug}`, label: 'Itinerary', icon: Home },
+    { href: `/trip/${slug}`, label: 'Plan', icon: Home },
     { href: `/trip/${slug}/day/1`, label: 'Day 1', icon: Calendar },
     { href: `/trip/${slug}/day/2`, label: 'Day 2', icon: Calendar },
-    { href: `/trip/${slug}/info`, label: 'Essentials', icon: InfoIcon },
-    ...(isSecretMode ? [{ href: `/trip/${slug}/tips`, label: 'Secret Tips', icon: Compass }] : []),
+    { href: `/trip/${slug}/info`, label: 'Info', icon: InfoIcon },
+    ...(isSecretMode ? [{ href: `/trip/${slug}/tips`, label: 'Tips', icon: Compass }] : []),
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-10">
+    <div className="flex flex-wrap items-center justify-center gap-3 mb-16">
       {navItems.map((item) => {
         const isActive = activePath === item.href;
         const Icon = item.icon;
@@ -33,13 +33,13 @@ export default function CategoryTabs({ slug, activePath, isSecretMode }: Categor
             key={item.href}
             href={item.href}
             className={cn(
-              "flex flex-col items-center justify-center gap-2 py-4 rounded-[2rem] border transition-all text-xs font-black uppercase tracking-widest",
+              "flex items-center gap-2.5 px-8 py-3.5 rounded-full border transition-all text-xs font-bold tracking-[0.15em] uppercase",
               isActive
-                ? "bg-rose-50 border-rose-200 text-rose-700 shadow-sm"
+                ? "bg-rose-50 border-rose-200 text-rose-600 shadow-sm"
                 : "bg-white border-stone-100 text-stone-400 hover:border-rose-100 hover:text-rose-400"
             )}
           >
-            <Icon size={18} />
+            <Icon size={14} strokeWidth={isActive ? 3 : 2} />
             {item.label}
           </Link>
         );

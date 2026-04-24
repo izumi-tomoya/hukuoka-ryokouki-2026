@@ -2,7 +2,7 @@
 
 import { useTransition } from "react";
 import { toggleSecretModeAction } from "@/features/trip/api/secretMode";
-import { Lock } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 
 interface SecretToggleProps {
   isSecretMode: boolean;
@@ -21,11 +21,13 @@ export default function SecretToggle({ isSecretMode }: SecretToggleProps) {
     <button
       onClick={handleToggle}
       disabled={isPending}
-      className="mb-3 inline-flex items-center gap-2 rounded-full border border-rose-200/60 bg-white/70 px-4 py-1 text-[11px] font-bold tracking-[3px] text-rose-500 transition-all hover:bg-white/90 hover:shadow-md active:scale-95 disabled:opacity-50 backdrop-blur-sm shadow-sm"
+      className={`mb-3 inline-flex items-center gap-2 rounded-md border px-4 py-1.5 text-[11px] font-medium tracking-[0.1em] transition-all duration-300 disabled:opacity-50 
+        ${isSecretMode 
+          ? "border-primary bg-primary text-white shadow-sm" 
+          : "border-border bg-white text-foreground hover:bg-muted"}`}
     >
-      {isSecretMode ? <Lock size={12} className="text-rose-500" /> : null}
-      TRAVEL GUIDE 2026
-      {isSecretMode ? <span className="ml-1 text-[8px] text-rose-400">SECURE</span> : null}
+      <ShieldCheck size={14} className={isSecretMode ? "text-white" : "text-primary"} />
+      ADMIN MODE {isSecretMode ? "ENABLED" : "DISABLED"}
     </button>
   );
 }

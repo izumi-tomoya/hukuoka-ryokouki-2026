@@ -24,9 +24,9 @@ export default async function Hero({ title, startDate, endDate }: HeroProps) {
 
   return (
     <header className="relative overflow-hidden py-16 bg-background">
-      {/* 柔らかいパステル背景の装飾 */}
-      <div className="absolute top-0 right-0 h-100 w-100 rounded-full bg-primary/20 blur-[120px] -translate-y-1/2 translate-x-1/4" />
-      <div className="absolute bottom-0 left-0 h-75 w-75 rounded-full bg-secondary/30 blur-[100px] translate-y-1/3 -translate-x-1/4" />
+      {/* 柔らかい背景の装飾 */}
+      <div className="absolute top-0 right-0 h-100 w-100 rounded-full bg-primary/10 blur-[120px] -translate-y-1/2 translate-x-1/4" />
+      <div className="absolute bottom-0 left-0 h-75 w-75 rounded-full bg-secondary/20 blur-[100px] translate-y-1/3 -translate-x-1/4" />
 
       <div className="relative z-10 flex flex-col items-center px-6 text-center">
         <SecretToggle isSecretMode={isSecretMode} />

@@ -53,7 +53,7 @@ async function main() {
       title: '福岡、静寂と躍動の二日間',
       description: '二人の記憶を刻む、洗練された博多の旅',
       location: 'Fukuoka, Japan',
-      startDate: new Date('2026-05-24T00:00:00Z'),
+      startDate: new Date('2026-05-24T07:30:00Z'),
       endDate: new Date('2026-05-25T23:59:59Z'),
       image: 'linear-gradient(135deg, #1a1c2c 0%, #4a192c 100%)',
       accentColor: '#F5C842',

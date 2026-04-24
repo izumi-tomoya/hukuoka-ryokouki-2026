@@ -50,6 +50,7 @@ export interface TripEvent {
   locationUrl?: string;
   budget?: number;
   weatherStats?: WeatherStats; // 追加
+  notes?: string; // 追加
 }
 
 export interface Tip {

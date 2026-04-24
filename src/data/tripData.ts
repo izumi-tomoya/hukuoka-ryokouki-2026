@@ -61,10 +61,13 @@ export const day1Events: TripEvent[] = [
   {
     time: "18:30",
     type: "food",
-    foodName: "🐟 博多の夕食",
-    foodDesc: "博多の名店で地元の海の幸を堪能。",
+    foodName: "🐟 海鮮屋 はじめの一歩 キャナルシティ博多店",
+    foodDesc: "【予約済み】とりあえずごまさば＋イカ活造りプラン。博多名物のごまさばと、鮮度抜群のイカ活造りを堪能。予約番号：#10356",
+    highlight: "🌟 18:30入店〜20:30退店。キャナルシティ内にあるので、食前後に噴水ショーを楽しむのがおすすめ！",
+    locationUrl: "https://hajimeno-ippo.info/",
     tag: "food",
-    tagLabel: "Dinner",
+    tagLabel: "Reserved",
+    isConfirmed: true,
   },
   {
     time: "20:30",

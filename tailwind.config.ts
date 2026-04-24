@@ -26,48 +26,39 @@ const config: Config = {
           "Meiryo",
           "sans-serif",
         ],
-        // font-playfair クラスで使用
         playfair: ["var(--font-playfair)", "Georgia", "serif"],
       },
       colors: {
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
+        border: "oklch(0.85 0.01 240)",
+        input: "oklch(0.9 0.01 240)",
+        ring: "oklch(0.2 0.05 240)",
+        background: "oklch(0.99 0.005 240)",  /* ほぼ白。わずかな青みで清潔感を出す */
+        foreground: "oklch(0.1 0.02 240)",    /* ほぼ黒。深いネイビーで最高の視認性 */
         primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
+          DEFAULT: "oklch(0.25 0.05 240)",    /* かなり暗めのネイビーブルー */
+          foreground: "oklch(1 0 0)",
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
-        },
-        destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
+          DEFAULT: "oklch(0.94 0.02 240)",    /* 薄いグレーブルー */
+          foreground: "oklch(0.1 0.02 240)",
         },
         muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
+          DEFAULT: "oklch(0.92 0.01 240)",
+          foreground: "oklch(0.3 0.02 240)",
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
-        },
-        popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
+          DEFAULT: "oklch(0.9 0.04 240)",
+          foreground: "oklch(0.1 0.05 240)",
         },
         card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
+          DEFAULT: "oklch(1 0 0)",            /* カードは完全な白 */
+          foreground: "oklch(0.1 0.02 240)",
         },
       },
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        lg: "0.5rem",
+        md: "0.375rem",
+        sm: "0.25rem",
       },
     },
   },

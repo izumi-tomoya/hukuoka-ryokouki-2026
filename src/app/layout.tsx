@@ -6,6 +6,8 @@ import EventDetailModal from "@/components/trip/client/EventDetailModal";
 import "./globals.css";
 import { cookies } from "next/headers";
 import { SECRET_MODE_COOKIE_NAME } from "@/config/constants";
+import { auth } from "@/lib/auth";
+import { SessionProvider } from "next-auth/react";
 
 export const metadata: Metadata = {
   title: {
@@ -35,17 +37,20 @@ export default async function RootLayout({
 }>) {
   const cookieStore = await cookies();
   const isSecretMode = cookieStore.get(SECRET_MODE_COOKIE_NAME)?.value === "true";
+  const session = await auth();
 
   return (
     <html lang="ja" suppressHydrationWarning>
-      <body className="font-sans antialiased bg-[#FFFCF9] flex flex-col min-h-screen">
-        <DesktopHeader isSecretMode={isSecretMode} />
-        <main className="flex-grow bg-white">
-          {children}
-        </main>
-        <Footer />
-        <TabNavigation isSecretMode={isSecretMode} />
-        <EventDetailModal />
+      <body className="font-sans antialiased bg-background text-foreground flex flex-col min-h-screen">
+        <SessionProvider session={session}>
+          <DesktopHeader isSecretMode={isSecretMode} session={session} />
+          <main className="grow">
+            {children}
+          </main>
+          <Footer />
+          <TabNavigation isSecretMode={isSecretMode} />
+          <EventDetailModal />
+        </SessionProvider>
       </body>
     </html>
   );

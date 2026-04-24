@@ -3,6 +3,11 @@
 import { cookies } from "next/headers";
 import { SECRET_MODE_COOKIE_NAME } from "@/config/constants";
 
+export async function getSecretMode() {
+  const cookieStore = await cookies();
+  return cookieStore.get(SECRET_MODE_COOKIE_NAME)?.value === "true";
+}
+
 export async function toggleSecretModeAction() {
   const cookieStore = await cookies();
   const current = cookieStore.get(SECRET_MODE_COOKIE_NAME)?.value === "true";

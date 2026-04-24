@@ -16,26 +16,31 @@ export default function CategoryFilter() {
   const { activeCategory, setActiveCategory } = useFilterStore();
 
   return (
-    <div className="flex gap-2 p-4 overflow-x-auto scrollbar-hide">
-      <Badge
-        variant={activeCategory === null ? "default" : "outline"}
-        className="cursor-pointer px-4 py-1.5"
+    <div className="flex flex-wrap gap-2 mb-8">
+      <button
+        className={cn(
+          "px-6 py-2 rounded-full text-xs font-bold tracking-widest uppercase transition-all border",
+          activeCategory === null
+            ? "bg-rose-50 border-rose-200 text-rose-600 shadow-sm"
+            : "bg-white border-stone-100 text-stone-400 hover:border-rose-100"
+        )}
         onClick={() => setActiveCategory(null)}
       >
         すべて
-      </Badge>
+      </button>
       {CATEGORIES.map((cat) => (
-        <Badge
+        <button
           key={cat.id}
-          variant={activeCategory === cat.id ? "default" : "outline"}
           className={cn(
-            "cursor-pointer px-4 py-1.5 whitespace-nowrap",
-            activeCategory === cat.id ? "bg-rose-500 hover:bg-rose-600" : ""
+            "px-6 py-2 rounded-full text-xs font-bold tracking-widest uppercase transition-all border whitespace-nowrap",
+            activeCategory === cat.id
+              ? "bg-rose-50 border-rose-200 text-rose-600 shadow-sm"
+              : "bg-white border-stone-100 text-stone-400 hover:border-rose-100"
           )}
           onClick={() => setActiveCategory(cat.id === activeCategory ? null : cat.id)}
         >
           {cat.label}
-        </Badge>
+        </button>
       ))}
     </div>
   );

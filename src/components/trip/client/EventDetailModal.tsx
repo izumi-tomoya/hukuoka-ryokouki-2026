@@ -2,14 +2,21 @@
 import { useState } from 'react';
 import { Dialog } from '@base-ui/react/dialog';
 import { useModalStore } from '@/lib/store/useModalStore';
-import { X, MapPin, Clock, Star, Info, Navigation, ExternalLink, ChevronRight, Edit2 } from 'lucide-react';
+import { useEventUserStore } from '@/lib/store/useEventUserStore';
+import { X, MapPin, Clock, Star, Info, Navigation, ExternalLink, ChevronRight, Edit2, FileText, Save, JapaneseYen } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { EditEventForm } from './EditEventForm';
 import { YataiStop } from '@/features/trip/types/trip';
 
 export default function EventDetailModal() {
   const { isOpen, selectedEvent, closeModal } = useModalStore();
+  const { getNote, setNote, getBudget, setBudget } = useEventUserStore();
   const [isEditing, setIsEditing] = useState(false);
+  
+  // 初期化関数を定義
+  const [noteText, setNoteText] = useState(() => selectedEvent?.id ? getNote(selectedEvent.id) : '');
+  const [budgetAmount, setBudgetAmount] = useState<string>(() => selectedEvent?.id ? getBudget(selectedEvent.id, selectedEvent.budget).toString() : '0');
+  const [isUserEditing, setIsUserEditing] = useState(false);
 
   if (!selectedEvent) return null;
 
@@ -17,11 +24,21 @@ export default function EventDetailModal() {
   const isSurprise = selectedEvent.type === 'surprise';
   const isYatai = selectedEvent.isYatai;
 
+  const handleSaveUserData = () => {
+    if (selectedEvent.id) {
+      setNote(selectedEvent.id, noteText);
+      const amount = parseInt(budgetAmount, 10);
+      setBudget(selectedEvent.id, isNaN(amount) ? 0 : amount);
+      setIsUserEditing(false);
+    }
+  };
+
   return (
     <Dialog.Root open={isOpen} onOpenChange={(open) => {
       if (!open) {
         closeModal();
         setIsEditing(false);
+        setIsUserEditing(false);
       }
     }}>
       <Dialog.Portal>
@@ -107,6 +124,84 @@ export default function EventDetailModal() {
 
                     {!isSurprise && (
                       <>
+                        {/* User Input Section (Notes & Budget) */}
+                        <div className="mb-10 overflow-hidden rounded-[28px] bg-stone-50 p-6 md:p-8 ring-1 ring-stone-100 shadow-xs">
+                          <div className="mb-6 flex items-center justify-between">
+                            <div className="flex items-center gap-2.5">
+                              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-stone-200">
+                                <FileText size={18} className="text-stone-500" />
+                              </div>
+                              <span className="text-[12px] font-black tracking-wider text-stone-500 uppercase">
+                                Personal Journal & Budget
+                              </span>
+                            </div>
+                            {!isUserEditing ? (
+                              <button 
+                                onClick={() => setIsUserEditing(true)}
+                                className="text-[11px] font-bold text-rose-500 hover:text-rose-600 underline underline-offset-2"
+                              >
+                                編集する
+                              </button>
+                            ) : (
+                              <button 
+                                onClick={handleSaveUserData}
+                                className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-600 hover:text-emerald-700"
+                              >
+                                <Save size={12} />
+                                完了
+                              </button>
+                            )}
+                          </div>
+                          
+                          <div className="space-y-6">
+                            {/* Budget Input */}
+                            <div className="flex items-center gap-4 border-b border-stone-200 pb-6">
+                              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 ring-1 ring-emerald-100">
+                                <JapaneseYen size={18} />
+                              </div>
+                              <div className="flex-1">
+                                <p className="text-[10px] font-black text-stone-400 uppercase tracking-widest mb-1">Budget / Spent</p>
+                                {isUserEditing ? (
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-lg font-bold text-stone-700">¥</span>
+                                    <input
+                                      type="number"
+                                      value={budgetAmount}
+                                      onChange={(e) => setBudgetAmount(e.target.value)}
+                                      className="w-full bg-white rounded-lg border border-stone-200 px-3 py-1.5 text-lg font-bold text-stone-800 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+                                      placeholder="0"
+                                    />
+                                  </div>
+                                ) : (
+                                  <p className="text-xl font-bold text-stone-800">
+                                    ¥{parseInt(budgetAmount, 10).toLocaleString()}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Note Input */}
+                            <div>
+                              <p className="text-[10px] font-black text-stone-400 uppercase tracking-widest mb-2 text-center md:text-left">Memories & Notes</p>
+                              {isUserEditing ? (
+                                <textarea
+                                  value={noteText}
+                                  onChange={(e) => setNoteText(e.target.value)}
+                                  className="w-full min-h-25 p-4 rounded-xl border border-stone-200 text-[14px] leading-relaxed text-stone-700 focus:outline-none focus:ring-2 focus:ring-rose-200 resize-none bg-white"
+                                  placeholder="この場所での思い出や、気づいたことをメモしよう…"
+                                />
+                              ) : (
+                                <p className={cn(
+                                  "text-[13px] md:text-[14px] leading-relaxed",
+                                  noteText ? "text-stone-700 font-medium" : "text-stone-400 italic"
+                                )}>
+                                  {noteText || "メモはまだありません。"}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
                         {selectedEvent.highlight && (
                           <div className="mb-10 overflow-hidden rounded-[28px] bg-linear-to-br from-rose-50 to-pink-50 p-6 md:p-8 ring-1 ring-rose-100/60 shadow-sm">
                             <div className="mb-3 flex items-center gap-2.5">

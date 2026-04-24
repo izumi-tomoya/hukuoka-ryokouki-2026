@@ -34,11 +34,15 @@ export const TripCountdown = ({ startDate }: Props) => {
   }, [startDate]);
 
   return (
-    <div className="flex gap-4">
+    <div className="flex gap-6">
       {Object.entries(timeLeft).map(([unit, value]) => (
         <div key={unit} className="flex flex-col items-center">
-          <span className="text-4xl font-light text-zinc-900 tracking-tight">{value.toString().padStart(2, '0')}</span>
-          <span className="text-[9px] font-bold uppercase text-zinc-400 tracking-widest mt-1">{unit}</span>
+          <span className="font-playfair text-4xl md:text-5xl font-bold text-stone-900 tracking-tighter">
+            {value.toString().padStart(2, '0')}
+          </span>
+          <span className="text-[10px] font-black uppercase text-stone-400 tracking-[0.2em] mt-2">
+            {unit}
+          </span>
         </div>
       ))}
     </div>

@@ -2,6 +2,14 @@
 
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
+import { auth } from '@/lib/auth';
+
+async function checkAdmin() {
+  const session = await auth();
+  if (!session?.user?.isAdmin) {
+    throw new Error("管理者権限が必要です");
+  }
+}
 
 export async function getTripBySlug(slug: string) {
   return prisma.trip.findUnique({
@@ -22,6 +30,7 @@ export async function getTripBySlug(slug: string) {
 }
 
 export async function createTrip(formData: FormData) {
+  await checkAdmin();
   const title = formData.get('title') as string;
   const location = formData.get('location') as string;
   const accentColor = formData.get('accentColor') as string;
@@ -62,6 +71,7 @@ export async function getTrips() {
 import { eventSchema } from '@/lib/formvalidation/eventSchema';
 
 export async function updateEventAction(eventId: string, data: unknown) {
+  await checkAdmin();
   const result = eventSchema.safeParse(data);
   if (!result.success) {
     return { success: false, error: 'Invalid data' };
@@ -94,12 +104,13 @@ export async function updateEventAction(eventId: string, data: unknown) {
 }
 
 export async function toggleEventConfirmation(eventId: string, isConfirmed: boolean) {
+  // 管理者以外も確認状態の切り替えは許可する場合、ここでのチェックは不要
+  // 必要であれば await checkAdmin(); を追加してください
   try {
     const res = await prisma.event.update({
       where: { id: eventId },
       data: { isConfirmed },
     });
-    console.log("Updated event:", res);
     revalidatePath('/trip/[slug]/day/[id]', 'page');
     return { success: true };
   } catch (error) {

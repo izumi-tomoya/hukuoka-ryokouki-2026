@@ -44,6 +44,21 @@ export default function Header({ session }: HeaderProps) {
       <div className="flex items-center justify-between px-6 py-4">
         <Link href="/" className="font-playfair text-xl font-bold text-zinc-900 tracking-tight">Memoir</Link>
         
+        <nav className="hidden md:flex items-center gap-1">
+          {navItems.map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <Link 
+                key={item.href} 
+                href={item.href}
+                className={cn("px-4 py-2 text-sm font-bold transition-colors rounded-full", isActive ? "bg-primary text-white" : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100")}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
+        </nav>
+
         <div className="flex items-center gap-2">
           {session ? (
             <LogoutButton>
@@ -61,21 +76,6 @@ export default function Header({ session }: HeaderProps) {
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
-
-        <nav className="hidden md:flex items-center gap-1">
-          {navItems.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-              <Link 
-                key={item.href} 
-                href={item.href}
-                className={cn("px-4 py-2 text-sm font-bold transition-colors rounded-full", isActive ? "bg-primary text-white" : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100")}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
-        </nav>
       </div>
 
       {isOpen && (

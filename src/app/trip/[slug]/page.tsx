@@ -3,39 +3,31 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { SECRET_MODE_COOKIE_NAME } from "@/config/constants";
 import { getTripBySlug } from "@/features/trip/api/tripActions";
-import { Calendar, MapPin, ChevronRight, Clock } from "lucide-react";
-import CategoryTabs from "@/components/trip/CategoryTabs";
+import { Calendar, ChevronRight, Clock } from "lucide-react";
+import TripLayout from "@/components/trip/TripLayout";
 import { TripCountdown } from "@/features/trip/components/client/TripCountdown";
+import { auth } from "@/lib/auth";
+import { Container } from "@/components/ui/Container";
+import { SectionHeader } from "@/components/ui/SectionHeader";
 
 export default async function TripPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const trip = await getTripBySlug(slug);
   if (!trip) return notFound();
 
-  const cookieStore = await cookies();
-  const isSecretMode = cookieStore.get(SECRET_MODE_COOKIE_NAME)?.value === "true";
+  const session = await auth();
+  const isAdmin = !!session?.user?.isAdmin;
 
   return (
-    <div className="min-h-screen bg-stone-50 pb-24">
-      {/* ─── Header ─── */}
-      <header className="px-6 pt-16 pb-12 mx-auto max-w-5xl">
-        <CategoryTabs slug={slug} activePath={`/trip/${slug}`} isSecretMode={isSecretMode} />
-        
-        <div className="mt-12 text-center md:text-left">
-          <h1 className="font-playfair text-5xl md:text-6xl font-extrabold text-stone-900 mb-6 tracking-tight leading-tight">
-            {trip.title}
-          </h1>
-          <div className="flex flex-wrap items-center justify-center md:justify-start gap-5 text-stone-400 text-xs font-bold tracking-[0.2em] uppercase">
-            <div className="flex items-center gap-2"><MapPin size={14} className="text-rose-400" /> {trip.location}</div>
-            <div className="h-1.5 w-1.5 rounded-full bg-rose-200" />
-            <div className="flex items-center gap-2"><Calendar size={14} className="text-rose-400" /> {new Date(trip.startDate).toLocaleDateString("ja-JP", { month: "short", day: "numeric" })} — {new Date(trip.endDate).toLocaleDateString("ja-JP", { month: "short", day: "numeric" })}</div>
-          </div>
-        </div>
-      </header>
-
-      <main className="mx-auto max-w-5xl px-6">
+    <TripLayout 
+      slug={slug} 
+      activePath={`/trip/${slug}`} 
+      isSecretMode={isAdmin} 
+      title={trip.title}
+      subtitle={`${trip.location} / ${new Date(trip.startDate).toLocaleDateString("ja-JP", { month: "short", day: "numeric" })} — ${new Date(trip.endDate).toLocaleDateString("ja-JP", { month: "short", day: "numeric" })}`}
+    >
+      <Container className="pb-24">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
-          {/* Countdown Tile */}
           <div className="md:col-span-2 overflow-hidden rounded-[3rem] bg-white border border-rose-100 p-8 md:p-12 shadow-sm flex flex-col md:flex-row items-center justify-between gap-8">
             <div>
               <div className="flex items-center gap-2 text-rose-400 text-[10px] font-black uppercase tracking-[0.4em] mb-4">
@@ -49,7 +41,8 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
             </div>
           </div>
 
-          {/* Day Cards */}
+          <SectionHeader title="Itinerary" subtitle="Daily Plans" className="md:col-span-2 mb-0" />
+
           {trip.days.map((day) => (
             <Link
               key={day.id}
@@ -70,7 +63,7 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
             </Link>
           ))}
         </div>
-      </main>
-    </div>
+      </Container>
+    </TripLayout>
   );
 }

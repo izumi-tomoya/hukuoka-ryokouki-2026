@@ -1,29 +1,19 @@
-"use client";
-
+import { MagazineCard } from "@/components/ui/MagazineCard";
+import { JapaneseYen } from "lucide-react";
 import { TripEvent } from "@/features/trip/types/trip";
-import { useEventUserStore } from "@/lib/store/useEventUserStore";
 
 export default function BudgetSummary({ events }: { events: TripEvent[] }) {
-  const { getBudget } = useEventUserStore();
-
-  const total = events.reduce((acc, event) => {
-    // ユーザーが入力した予算があれば優先、なければデフォルト
-    const userBudget = event.id ? getBudget(event.id, event.budget) : (event.budget ?? 0);
-    return acc + userBudget;
-  }, 0);
-
+  const total = events.reduce((sum, e) => sum + (e.budget || 0), 0);
+  
   return (
-    <div className="rounded-3xl bg-rose-50/50 p-6 border border-rose-100/50 backdrop-blur-sm">
-      <div className="flex items-baseline justify-between gap-4">
-        <div>
-          <p className="text-[10px] font-black tracking-[2px] text-rose-400 uppercase mb-1">Estimated Budget</p>
-          <h3 className="text-sm font-bold text-rose-900">この日の予算目安</h3>
-        </div>
-        <p className="text-2xl font-bold text-rose-600">
-          <span className="text-sm mr-1">¥</span>
-          {total.toLocaleString()}
-        </p>
+    <MagazineCard padding="sm" className="flex items-center gap-4 bg-rose-50/50 border-rose-100">
+      <div className="h-12 w-12 rounded-2xl bg-white flex items-center justify-center text-rose-500 shadow-sm">
+        <JapaneseYen size={20} />
       </div>
-    </div>
+      <div>
+        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-rose-400 mb-0.5">Total Budget</p>
+        <p className="text-xl font-bold text-stone-900">¥{total.toLocaleString()}</p>
+      </div>
+    </MagazineCard>
   );
 }

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import TabNavigation from "@/components/trip/TabNavigation";
-import DesktopHeader from "@/components/trip/DesktopHeader";
+import Header from "@/components/trip/DesktopHeader";
 import Footer from "@/components/trip/Footer";
 import { DynamicEventModal } from "@/components/trip/client/DynamicEventModal";
 import "./globals.css";
@@ -9,6 +8,7 @@ import { cookies } from "next/headers";
 import { SECRET_MODE_COOKIE_NAME } from "@/config/constants";
 import { auth } from "@/lib/auth";
 import { SessionProvider } from "next-auth/react";
+import { NavLinkProvider } from "@/components/trip/NavLinkProvider";
 
 export const metadata: Metadata = {
   title: {
@@ -44,14 +44,15 @@ export default async function RootLayout({
     <html lang="ja" suppressHydrationWarning>
       <body className="font-sans antialiased bg-background text-foreground flex flex-col min-h-screen">
         <SessionProvider session={session}>
-          <DesktopHeader isSecretMode={isSecretMode} session={session} />
+          <Header session={session}>
+             <NavLinkProvider isSecretMode={isSecretMode} />
+          </Header>
           <Suspense fallback={<div className="flex-1 animate-pulse bg-stone-100" />}>
             <main className="grow">
               {children}
             </main>
           </Suspense>
           <Footer />
-          <TabNavigation isSecretMode={isSecretMode} />
           <DynamicEventModal />
         </SessionProvider>
       </body>

@@ -3,7 +3,20 @@ import { useState } from 'react';
 import { Dialog } from '@base-ui/react/dialog';
 import { useModalStore } from '@/lib/store/useModalStore';
 import { useEventUserStore } from '@/lib/store/useEventUserStore';
-import { X, MapPin, Clock, Star, Info, Navigation, ExternalLink, ChevronRight, Edit2, FileText, Save, JapaneseYen } from 'lucide-react';
+import {
+  X,
+  MapPin,
+  Clock,
+  Star,
+  Info,
+  Navigation,
+  ExternalLink,
+  ChevronRight,
+  Edit2,
+  FileText,
+  Save,
+  JapaneseYen,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { EditEventForm } from './EditEventForm';
 import { YataiStop } from '@/features/trip/types/trip';
@@ -12,10 +25,14 @@ export default function EventDetailModal() {
   const { isOpen, selectedEvent, closeModal } = useModalStore();
   const { getNote, setNote, getBudget, setBudget } = useEventUserStore();
   const [isEditing, setIsEditing] = useState(false);
-  
+
   // 初期化関数を定義
-  const [noteText, setNoteText] = useState(() => selectedEvent?.id ? getNote(selectedEvent.id) : '');
-  const [budgetAmount, setBudgetAmount] = useState<string>(() => selectedEvent?.id ? getBudget(selectedEvent.id, selectedEvent.budget).toString() : '0');
+  const [noteText, setNoteText] = useState(() =>
+    selectedEvent?.id ? getNote(selectedEvent.id) : ''
+  );
+  const [budgetAmount, setBudgetAmount] = useState<string>(() =>
+    selectedEvent?.id ? getBudget(selectedEvent.id, selectedEvent.budget).toString() : '0'
+  );
   const [isUserEditing, setIsUserEditing] = useState(false);
 
   if (!selectedEvent) return null;
@@ -34,13 +51,16 @@ export default function EventDetailModal() {
   };
 
   return (
-    <Dialog.Root open={isOpen} onOpenChange={(open) => {
-      if (!open) {
-        closeModal();
-        setIsEditing(false);
-        setIsUserEditing(false);
-      }
-    }}>
+    <Dialog.Root
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) {
+          closeModal();
+          setIsEditing(false);
+          setIsUserEditing(false);
+        }
+      }}
+    >
       <Dialog.Portal>
         <Dialog.Backdrop className="fixed inset-0 z-50 bg-rose-900/30 backdrop-blur-md transition-all duration-500 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
         <Dialog.Popup className="fixed left-1/2 top-1/2 z-50 flex flex-col w-[94%] max-w-2xl max-h-[92vh] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-[32px] md:rounded-[40px] bg-white/97 shadow-2xl shadow-rose-300/20 backdrop-blur-xl ring-1 ring-rose-100/60 transition-all duration-500 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] focus:outline-none">
@@ -63,7 +83,7 @@ export default function EventDetailModal() {
             </div>
 
             <div className="absolute right-6 top-6 z-20 flex gap-2">
-              <button 
+              <button
                 onClick={() => setIsEditing(!isEditing)}
                 className="flex h-10 w-10 items-center justify-center rounded-full bg-white/25 text-white backdrop-blur-md ring-1 ring-white/30 transition-all hover:bg-white/40 hover:scale-110 active:scale-90"
               >
@@ -136,14 +156,14 @@ export default function EventDetailModal() {
                               </span>
                             </div>
                             {!isUserEditing ? (
-                              <button 
+                              <button
                                 onClick={() => setIsUserEditing(true)}
                                 className="text-[11px] font-bold text-rose-500 hover:text-rose-600 underline underline-offset-2"
                               >
                                 編集する
                               </button>
                             ) : (
-                              <button 
+                              <button
                                 onClick={handleSaveUserData}
                                 className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-600 hover:text-emerald-700"
                               >
@@ -152,7 +172,7 @@ export default function EventDetailModal() {
                               </button>
                             )}
                           </div>
-                          
+
                           <div className="space-y-6">
                             {/* Budget Input */}
                             <div className="flex items-center gap-4 border-b border-stone-200 pb-6">
@@ -160,7 +180,9 @@ export default function EventDetailModal() {
                                 <JapaneseYen size={18} />
                               </div>
                               <div className="flex-1">
-                                <p className="text-[10px] font-black text-stone-400 uppercase tracking-widest mb-1">Budget / Spent</p>
+                                <p className="text-[10px] font-black text-stone-400 uppercase tracking-widest mb-1">
+                                  Budget / Spent
+                                </p>
                                 {isUserEditing ? (
                                   <div className="flex items-center gap-2">
                                     <span className="text-lg font-bold text-stone-700">¥</span>
@@ -182,7 +204,9 @@ export default function EventDetailModal() {
 
                             {/* Note Input */}
                             <div>
-                              <p className="text-[10px] font-black text-stone-400 uppercase tracking-widest mb-2 text-center md:text-left">Memories & Notes</p>
+                              <p className="text-[10px] font-black text-stone-400 uppercase tracking-widest mb-2 text-center md:text-left">
+                                Memories & Notes
+                              </p>
                               {isUserEditing ? (
                                 <textarea
                                   value={noteText}
@@ -191,11 +215,15 @@ export default function EventDetailModal() {
                                   placeholder="この場所での思い出や、気づいたことをメモしよう…"
                                 />
                               ) : (
-                                <p className={cn(
-                                  "text-[13px] md:text-[14px] leading-relaxed",
-                                  noteText ? "text-stone-700 font-medium" : "text-stone-400 italic"
-                                )}>
-                                  {noteText || "メモはまだありません。"}
+                                <p
+                                  className={cn(
+                                    'text-[13px] md:text-[14px] leading-relaxed',
+                                    noteText
+                                      ? 'text-stone-700 font-medium'
+                                      : 'text-stone-400 italic'
+                                  )}
+                                >
+                                  {noteText || 'メモはまだありません。'}
                                 </p>
                               )}
                             </div>

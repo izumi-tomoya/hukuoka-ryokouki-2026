@@ -5,10 +5,9 @@ import { cn } from "@/lib/utils";
 
 interface TipsSectionProps {
   tips: Tip[];
-  dayNumber: number;
 }
 
-export default function TipsSection({ tips, dayNumber }: TipsSectionProps) {
+export default function TipsSection({ tips }: TipsSectionProps) {
   if (!tips || tips.length === 0) return null;
 
   return (

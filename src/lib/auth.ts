@@ -11,5 +11,5 @@ if (!prisma || !prisma.user) {
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
   ...authConfig,
-  debug: true,
+  debug: process.env.NODE_ENV === "development",
 });

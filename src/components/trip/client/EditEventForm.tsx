@@ -15,10 +15,10 @@ export function EditEventForm({ event, onSuccess }: Props) {
   const { register, handleSubmit } = useForm<EventFormData>({
     defaultValues: {
       time: event.time,
-      type: event.type as any,
+      type: event.type,
       title: event.title ?? "",
       desc: event.desc ?? "",
-      tag: event.tag as any,
+      tag: event.tag,
       foodName: event.foodName ?? "",
       foodDesc: event.foodDesc ?? "",
       locationUrl: event.locationUrl ?? "",

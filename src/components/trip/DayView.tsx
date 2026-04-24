@@ -42,7 +42,7 @@ export default async function DayView({
 
         <EventFilterWrapper events={events} dayNumber={dayNumber} />
 
-        <CommonTipsSection tips={tips || []} dayNumber={dayNumber} isAdmin={isAdmin} />
+        <CommonTipsSection tips={tips || []} isAdmin={isAdmin} />
       </div>
     </TripLayout>
   );

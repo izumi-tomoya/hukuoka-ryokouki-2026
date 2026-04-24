@@ -27,7 +27,7 @@ export default async function TipsPage({ params }: { params: Promise<{ slug: str
       </header>
 
       <main className="mx-auto max-w-5xl px-6">
-        <TipsSection tips={tips} dayNumber={1} />
+        <TipsSection tips={tips} />
       </main>
     </div>
   );

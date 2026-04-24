@@ -1,11 +1,11 @@
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import { Home, Calendar, Compass, Info as InfoIcon } from 'lucide-react';
+import { Home, Calendar, Compass, Info as InfoIcon, LucideIcon } from 'lucide-react';
 
 interface NavItem {
   href: string;
   label: string;
-  icon: any;
+  icon: LucideIcon;
 }
 
 interface CategoryTabsProps {

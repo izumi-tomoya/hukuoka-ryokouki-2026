@@ -7,27 +7,33 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { User, Menu, X } from 'lucide-react';
 import { Session } from 'next-auth';
-import { getNavItems } from './navigationConfig';
+import { getNavItems, TripNavData } from './navigationConfig';
 import { getTripBySlug } from '@/features/trip/api/tripActions';
 
 interface HeaderProps {
-  isSecretMode: boolean;
   session: Session | null;
 }
 
-export default function Header({ isSecretMode, session }: HeaderProps) {
+export default function Header({ session }: HeaderProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [tripData, setTripData] = useState<any>(null);
+  const [tripData, setTripData] = useState<TripNavData | null>(null);
   const pathname = usePathname();
   const pathParts = pathname.split('/');
   const slug = pathParts[2] && pathParts[1] === 'trip' ? pathParts[2] : null;
 
   useEffect(() => {
+    let active = true;
     if (slug) {
-      getTripBySlug(slug).then(setTripData);
+      getTripBySlug(slug).then((data) => {
+        if (active) setTripData(data as unknown as TripNavData); // Cast for Prisma to interface mapping
+      });
     } else {
-      setTripData(null);
+      // Async reset to avoid cascading renders warning
+      Promise.resolve().then(() => {
+        if (active) setTripData(null);
+      });
     }
+    return () => { active = false; };
   }, [slug]);
 
   const navItems = getNavItems(tripData, !!session?.user?.isAdmin);

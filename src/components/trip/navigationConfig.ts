@@ -6,7 +6,15 @@ interface NavItem {
   icon: LucideIcon;
 }
 
-export const getNavItems = (trip: any | null, isAdmin: boolean): NavItem[] => {
+export interface TripNavData {
+  slug: string;
+  days: {
+    dayNumber: number;
+    events: unknown[];
+  }[];
+}
+
+export const getNavItems = (trip: TripNavData | null, isAdmin: boolean): NavItem[] => {
   const base = [{ href: '/', label: 'Portal', icon: Home }];
 
   if (!trip) return base;
@@ -14,8 +22,8 @@ export const getNavItems = (trip: any | null, isAdmin: boolean): NavItem[] => {
   const tripNav = [
     { href: `/trip/${trip.slug}`, label: 'Plan', icon: Home },
     ...trip.days
-      .filter((day: any) => day.events && day.events.length > 0)
-      .map((day: any) => ({
+      .filter((day) => day.events && day.events.length > 0)
+      .map((day) => ({
         href: `/trip/${trip.slug}/day/${day.dayNumber}`,
         label: `Day ${day.dayNumber}`,
         icon: Calendar

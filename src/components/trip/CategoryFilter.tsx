@@ -1,7 +1,6 @@
 "use client";
 
 import { useFilterStore } from "@/lib/store/useFilterStore";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 const CATEGORIES = [

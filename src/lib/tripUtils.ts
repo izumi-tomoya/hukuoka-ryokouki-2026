@@ -23,6 +23,7 @@ export function mapEventToTripEvent(event: EventWithStops): TripEvent {
     isYatai: event.isYatai,
     isConfirmed: isConfirmed ?? false,
     id: event.id,
+    weatherStats: (event as unknown as { weatherStats?: WeatherStats }).weatherStats ?? undefined,
     yataiStops: event.yataiStops.map((s): YataiStop => ({
       time: s.time,
       stop: s.stop,

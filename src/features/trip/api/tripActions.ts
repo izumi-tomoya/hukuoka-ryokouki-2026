@@ -107,7 +107,7 @@ export async function toggleEventConfirmation(eventId: string, isConfirmed: bool
   // 管理者以外も確認状態の切り替えは許可する場合、ここでのチェックは不要
   // 必要であれば await checkAdmin(); を追加してください
   try {
-    const res = await prisma.event.update({
+    await prisma.event.update({
       where: { id: eventId },
       data: { isConfirmed },
     });

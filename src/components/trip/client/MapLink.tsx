@@ -4,7 +4,7 @@ import { MapPin } from "lucide-react";
 import { getMapLink } from "@/lib/mapUtils";
 
 export default function MapLink({ url, label = "Google Map で見る" }: { url: string; label?: string }) {
-  const handleClick = (e: React.MouseEvent) => {
+  const handleClick = () => {
     // 試行する。アプリが開かなければブラウザで開く
     window.open(getMapLink(url), "_blank");
   };

@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import TabNavigation from "@/components/trip/TabNavigation";
 import DesktopHeader from "@/components/trip/DesktopHeader";
 import Footer from "@/components/trip/Footer";
-import EventDetailModal from "@/components/trip/client/EventDetailModal";
+import { DynamicEventModal } from "@/components/trip/client/DynamicEventModal";
 import "./globals.css";
 import { cookies } from "next/headers";
 import { SECRET_MODE_COOKIE_NAME } from "@/config/constants";
@@ -44,12 +45,14 @@ export default async function RootLayout({
       <body className="font-sans antialiased bg-background text-foreground flex flex-col min-h-screen">
         <SessionProvider session={session}>
           <DesktopHeader isSecretMode={isSecretMode} session={session} />
-          <main className="grow">
-            {children}
-          </main>
+          <Suspense fallback={<div className="flex-1 animate-pulse bg-stone-100" />}>
+            <main className="grow">
+              {children}
+            </main>
+          </Suspense>
           <Footer />
           <TabNavigation isSecretMode={isSecretMode} />
-          <EventDetailModal />
+          <DynamicEventModal />
         </SessionProvider>
       </body>
     </html>

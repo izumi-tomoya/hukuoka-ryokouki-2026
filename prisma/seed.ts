@@ -10,7 +10,7 @@ import {
   itoshimaEvents,
   itoshimaTips
 } from '../src/data/tripData';
-import { YataiStop } from "../src/features/trip/types/trip";
+import { YataiStop, TransitStep } from "../src/features/trip/types/trip";
 
 // Load .env file
 dotenv.config();
@@ -120,6 +120,20 @@ async function main() {
             order: sIndex,
           })),
         } : undefined,
+        transitSteps: event.transitSteps ? {
+          create: event.transitSteps.map((step: TransitStep, sIndex: number) => ({
+            time: step.time,
+            station: step.station,
+            mode: step.mode,
+            lineName: step.lineName,
+            duration: step.duration,
+            fare: step.fare,
+            platform: step.platform,
+            exit: step.exit,
+            isTransfer: step.isTransfer || false,
+            order: sIndex,
+          })),
+        } : undefined,
       },
     });
   }
@@ -141,6 +155,20 @@ async function main() {
         highlight: event.highlight || null,
         isYatai: event.isYatai || false,
         order: index,
+        transitSteps: event.transitSteps ? {
+          create: event.transitSteps.map((step: TransitStep, sIndex: number) => ({
+            time: step.time,
+            station: step.station,
+            mode: step.mode,
+            lineName: step.lineName,
+            duration: step.duration,
+            fare: step.fare,
+            platform: step.platform,
+            exit: step.exit,
+            isTransfer: step.isTransfer || false,
+            order: sIndex,
+          })),
+        } : undefined,
       },
     });
   }

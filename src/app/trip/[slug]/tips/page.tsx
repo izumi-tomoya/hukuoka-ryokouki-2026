@@ -13,7 +13,13 @@ export default async function TipsPage({ params }: { params: Promise<{ slug: str
   const trip = await getTripBySlug(slug);
   if (!trip) return notFound();
 
-  const tips = trip.tips.map((t) => ({ title: t.title, body: t.body, isWarning: t.isWarning }));
+  const tips = trip.tips.map((t) => ({ 
+    title: t.title, 
+    body: t.body, 
+    isWarning: t.isWarning,
+    category: t.category ?? undefined,
+    deepLevel: t.deepLevel
+  }));
 
   return (
     <div className="min-h-screen bg-stone-50 pb-20">

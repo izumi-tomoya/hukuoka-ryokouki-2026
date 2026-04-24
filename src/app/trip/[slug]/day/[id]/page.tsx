@@ -19,17 +19,17 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
   const themeDay = (dayNumber === 1 || dayNumber === 2) ? dayNumber as 1 | 2 : 1;
 
   return (
-    <main className="min-h-screen bg-[#FDFDFC] text-[#2D2D2D] p-6 md:p-12">
-      <header className="mb-12">
+    <main className="min-h-screen bg-[#FDFDFC] text-[#2D2D2D] p-4 md:p-12">
+      <header className="mb-8">
         <BentoTile>
-          <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em] mb-3 block">
+          <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em] mb-2 block">
             DAY {dayNumber}
           </span>
-          <h1 className="text-3xl font-light tracking-tight">
+          <h1 className="text-2xl font-light tracking-tight">
             {new Date(day.date).toLocaleDateString("ja-JP", { month: "numeric", day: "numeric" })}
           </h1>
-          {day.title && <p className="text-zinc-500 mt-2">{day.title}</p>}
-          {day.highlight && <p className="text-sm font-medium text-zinc-900 mt-4">{day.highlight}</p>}
+          {day.title && <p className="text-zinc-500 mt-1 text-sm">{day.title}</p>}
+          {day.highlight && <p className="text-xs font-medium text-zinc-900 mt-3">{day.highlight}</p>}
         </BentoTile>
       </header>
 
@@ -39,7 +39,13 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
         dayLabel={`DAY ${dayNumber}`}
         dayTitle={day.title ?? undefined}
         dayHighlight={day.highlight ?? undefined}
-        tips={trip.tips.map((t) => ({ title: t.title, body: t.body, isWarning: t.isWarning }))}
+        tips={trip.tips.map((t) => ({ 
+          title: t.title, 
+          body: t.body, 
+          isWarning: t.isWarning,
+          category: t.category ?? undefined,
+          deepLevel: t.deepLevel
+        }))}
         slug={slug}
       />
     </main>

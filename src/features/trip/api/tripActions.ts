@@ -11,6 +11,7 @@ async function checkAdmin() {
   }
 }
 
+// Force re-compilation after prisma generate
 export async function getTripBySlug(slug: string) {
   return prisma.trip.findUnique({
     where: { slug },
@@ -20,7 +21,10 @@ export async function getTripBySlug(slug: string) {
         include: {
           events: {
             orderBy: { order: 'asc' },
-            include: { yataiStops: { orderBy: { order: 'asc' } } },
+            include: { 
+              yataiStops: { orderBy: { order: 'asc' } },
+              transitSteps: { orderBy: { order: 'asc' } },
+            },
           },
         },
       },

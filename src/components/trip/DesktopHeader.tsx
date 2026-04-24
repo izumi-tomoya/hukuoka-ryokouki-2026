@@ -9,6 +9,7 @@ import { User, Menu, X } from 'lucide-react';
 import { Session } from 'next-auth';
 import { getNavItems, TripNavData } from './navigationConfig';
 import { getTripBySlug } from '@/features/trip/api/tripActions';
+import { LogoutButton } from './client/LogoutButton';
 
 interface HeaderProps {
   session: Session | null;
@@ -43,18 +44,20 @@ export default function Header({ session }: HeaderProps) {
       <div className="flex items-center justify-between px-6 py-4">
         <Link href="/" className="font-playfair text-xl font-bold text-zinc-900 tracking-tight">Memoir</Link>
         
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
           {session ? (
-            <div className="h-8 w-8 rounded-full bg-stone-100 border border-zinc-200 overflow-hidden flex items-center justify-center relative">
-              {session.user?.image ? (
-                <Image src={session.user.image} alt={session.user.name ?? "User"} fill sizes="32px" className="object-cover" />
-              ) : <User size={16} className="text-zinc-400" />}
-            </div>
+            <LogoutButton>
+              <div className="h-8 w-8 rounded-full bg-stone-100 border border-zinc-200 overflow-hidden flex items-center justify-center relative">
+                {session.user?.image ? (
+                  <Image src={session.user.image} alt={session.user.name ?? "User"} fill sizes="32px" className="object-cover" />
+                ) : <User size={16} className="text-zinc-400" />}
+              </div>
+            </LogoutButton>
           ) : (
             <Link href="/auth/signin" className="p-2 text-zinc-400"><User size={20} /></Link>
           )}
 
-          <button className="md:hidden p-2" onClick={() => setIsOpen(!isOpen)}>
+          <button className="md:hidden p-2 text-zinc-600" onClick={() => setIsOpen(!isOpen)}>
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
@@ -77,6 +80,11 @@ export default function Header({ session }: HeaderProps) {
 
       {isOpen && (
         <nav className="md:hidden px-6 py-4 border-t border-zinc-100 flex flex-col gap-2 bg-stone-50">
+          {!!session?.user?.isAdmin && (
+            <div className="px-4 py-2 text-[10px] font-black text-rose-500 uppercase tracking-widest">
+              Admin Mode Active
+            </div>
+          )}
           {navItems.map((item) => (
             <Link key={item.href} href={item.href} onClick={() => setIsOpen(false)} className="px-4 py-3 text-sm font-bold text-zinc-600 border border-zinc-100 rounded-2xl bg-white">
               {item.label}

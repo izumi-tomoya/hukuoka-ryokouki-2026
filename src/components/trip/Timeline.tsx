@@ -8,6 +8,7 @@ const EventCard = dynamic(() => import("@/components/trip/EventCard"), {
 interface TimelineProps {
   events: TripEvent[];
   dayNumber?: number;
+  isAdmin?: boolean;
 }
 
 const getTheme = (dayNumber: number) => {
@@ -33,7 +34,7 @@ const getTheme = (dayNumber: number) => {
   };
 };
 
-export default function Timeline({ events, dayNumber = 1 }: TimelineProps) {
+export default function Timeline({ events, dayNumber = 1, isAdmin }: TimelineProps) {
   const theme = getTheme(dayNumber);
 
   return (
@@ -65,7 +66,7 @@ export default function Timeline({ events, dayNumber = 1 }: TimelineProps) {
                 className="animate-in fade-in slide-in-from-bottom-3 duration-500"
                 style={{ animationDelay: `${Math.min(index * 70, 500)}ms` }}
               >
-                <EventCard event={event} />
+                <EventCard event={event} isAdmin={isAdmin} />
               </div>
             </div>
           </div>
@@ -77,4 +78,3 @@ export default function Timeline({ events, dayNumber = 1 }: TimelineProps) {
     </div>
   );
 }
-

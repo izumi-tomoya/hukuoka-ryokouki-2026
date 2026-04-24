@@ -7,10 +7,12 @@ import Timeline from "@/components/trip/Timeline";
 
 export default function EventFilterWrapper({ 
   events,
-  dayNumber
+  dayNumber,
+  isAdmin
 }: { 
   events: TripEvent[];
   dayNumber: 1 | 2;
+  isAdmin?: boolean;
 }) {
   const { activeCategory } = useFilterStore();
   
@@ -21,7 +23,7 @@ export default function EventFilterWrapper({
   return (
     <>
       <CategoryFilter />
-      <Timeline events={filteredEvents} dayNumber={dayNumber} />
+      <Timeline events={filteredEvents} dayNumber={dayNumber} isAdmin={isAdmin} />
     </>
   );
 }

@@ -2,13 +2,14 @@ import type { Prisma } from '@prisma/client';
 import type { TripEvent, EventType, TagType, YataiStop } from '@/features/trip/types/trip';
 
 type EventWithStops = Prisma.EventGetPayload<{
-  include: { yataiStops: true };
+  include: { 
+    yataiStops: true;
+    transitSteps: true;
+  };
 }>;
 
 export function mapEventToTripEvent(event: EventWithStops): TripEvent {
-  // Use type assertion as a fallback if the generated Prisma types are out of sync in the current environment
-  const isConfirmed = (event as unknown as { isConfirmed?: boolean }).isConfirmed;
-  
+  console.log("DEBUG: Mapping event:", event.title, "Tag:", event.tag, "Label:", event.tagLabel);
   return {
     time: event.time,
     type: event.type as EventType,
@@ -21,13 +22,39 @@ export function mapEventToTripEvent(event: EventWithStops): TripEvent {
     foodDesc: event.foodDesc ?? undefined,
     highlight: event.highlight ?? undefined,
     isYatai: event.isYatai,
-    isConfirmed: isConfirmed ?? false,
+    isConfirmed: event.isConfirmed,
     id: event.id,
     weatherStats: (event as unknown as { weatherStats?: WeatherStats }).weatherStats ?? undefined,
-    yataiStops: event.yataiStops.map((s): YataiStop => ({
+    status: event.status ?? undefined,
+    
+    // Memoir & Expense mapping
+    notes: event.notes ?? undefined,
+    actualPhotos: event.actualPhotos,
+    actualExpense: event.actualExpense ?? undefined,
+    plannedBudget: event.plannedBudget ?? undefined,
+    budget: event.plannedBudget ?? undefined, // Fallback for UI
+    
+    yataiStops: (event.yataiStops || []).map((s): YataiStop => ({
+      id: s.id,
       time: s.time,
       stop: s.stop,
       desc: s.desc,
+      isVisited: s.isVisited,
+      waitMinutes: s.waitMinutes ?? undefined,
+      liveStatus: s.liveStatus ?? undefined,
+    })),
+
+    transitSteps: (event.transitSteps || []).map((s): TransitStep => ({
+      id: s.id,
+      time: s.time,
+      station: s.station,
+      mode: s.mode as TransitStep['mode'],
+      lineName: s.lineName ?? undefined,
+      duration: s.duration ?? undefined,
+      fare: s.fare ?? undefined,
+      platform: s.platform ?? undefined,
+      exit: s.exit ?? undefined,
+      isTransfer: s.isTransfer,
     })),
   };
 }

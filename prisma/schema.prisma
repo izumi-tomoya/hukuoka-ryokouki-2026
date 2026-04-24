@@ -80,6 +80,7 @@ model Day {
   date      DateTime
   title     String?
   highlight String?
+  routeUrl  String? // Google Maps Directions URL
 
   events Event[]
 
@@ -105,17 +106,49 @@ model Event {
   isPending   Boolean @default(false)
   order       Int     @default(0)
 
-  yataiStops YataiStop[]
+  // Live features
+  status      String? // e.g., "Current", "Completed", "Next"
+  actualTime  DateTime?
+  
+  // Memoir & Expense features
+  notes         String?
+  actualPhotos  String[]
+  actualExpense Int?     @default(0)
+  plannedBudget Int?     @default(0)
+  
+  yataiStops   YataiStop[]
+  transitSteps TransitStep[]
+}
+
+model TransitStep {
+  id         String  @id @default(cuid())
+  eventId    String
+  event      Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  time       String
+  station    String
+  mode       String // walking, subway, train, bus, arrival
+  lineName   String?
+  duration   String?
+  fare       String?
+  platform   String?
+  exit       String?
+  isTransfer Boolean @default(false)
+  order      Int     @default(0)
 }
 
 model YataiStop {
-  id      String @id @default(cuid())
-  eventId String
-  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  time    String
-  stop    String
-  desc    String
-  order   Int    @default(0)
+  id          String  @id @default(cuid())
+  eventId     String
+  event       Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  time        String
+  stop        String
+  desc        String
+  order       Int     @default(0)
+  
+  // Yatai Live features
+  isVisited   Boolean @default(false)
+  waitMinutes Int?    @default(0)
+  liveStatus  String? // e.g., "Open", "Crowded", "Last Call"
 }
 
 model Tip {
@@ -126,4 +159,8 @@ model Tip {
   body      String
   isWarning Boolean @default(false)
   order     Int     @default(0)
+  
+  // Deep Fukuoka features
+  category  String? @default("General") // e.g., "Gourmet", "Hidden Gem", "2026 Trend"
+  deepLevel Int     @default(1) // 1-5
 }

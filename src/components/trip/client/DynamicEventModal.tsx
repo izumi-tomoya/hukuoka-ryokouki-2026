@@ -1,5 +1,7 @@
+'use client';
+
 import dynamic from 'next/dynamic';
 
-export const DynamicEventModal = dynamic(() => import('@/components/trip/client/EventDetailModal'), {
+export const DynamicEventModal = dynamic(() => import('./EventDetailModal'), {
   ssr: false,
 });

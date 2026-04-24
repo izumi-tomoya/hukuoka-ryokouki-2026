@@ -1,9 +1,12 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import NextAuth from "next-auth";
+import authConfig from "@/lib/auth.config";
+
+const { auth } = NextAuth(authConfig);
 
 export default auth((req) => {
   const { nextUrl } = req;
-  const isAdmin = req.auth?.user?.isAdmin;
+  const isAdmin = !!req.auth?.user?.isAdmin;
   const isTipsPage = nextUrl.pathname.includes("/tips");
 
   // 管理者専用ページへのアクセス制限

@@ -122,3 +122,27 @@ export async function toggleEventConfirmation(eventId: string, isConfirmed: bool
     return { success: false, error: String(error) };
   }
 }
+
+export async function addPhotoToEvent(eventId: string, photoUrl: string) {
+  try {
+    const event = await prisma.event.findUnique({
+      where: { id: eventId },
+      select: { photos: true }
+    });
+
+    if (!event) throw new Error("Event not found");
+
+    const newPhotos = [...event.photos, photoUrl];
+
+    await prisma.event.update({
+      where: { id: eventId },
+      data: { photos: newPhotos },
+    });
+
+    revalidatePath('/trip/[slug]/day/[id]', 'page');
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to add photo:', error);
+    return { success: false, error: String(error) };
+  }
+}

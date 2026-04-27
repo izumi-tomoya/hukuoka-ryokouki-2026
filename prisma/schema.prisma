@@ -112,6 +112,7 @@ model Event {
   
   // Memoir & Expense features
   notes         String?
+  photos        String[]
   actualPhotos  String[]
   actualExpense Int?     @default(0)
   plannedBudget Int?     @default(0)

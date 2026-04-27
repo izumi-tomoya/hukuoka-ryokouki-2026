@@ -1,4 +1,4 @@
-import NewTripForm from "@/components/trip/client/NewTripForm";
+import NewTripForm from "@/features/trip/components/client/NewTripForm";
 
 export default function NewTripPage() {
   return (

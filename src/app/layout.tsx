@@ -1,14 +1,11 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import Header from "@/components/trip/DesktopHeader";
-import Footer from "@/components/trip/Footer";
-import { DynamicEventModal } from "@/components/trip/client/DynamicEventModal";
+import Header from "@/features/trip/components/DesktopHeader";
+import Footer from "@/features/trip/components/Footer";
+import { DynamicEventModal } from "@/features/trip/components/client/DynamicEventModal";
 import "./globals.css";
-import { cookies } from "next/headers";
-import { SECRET_MODE_COOKIE_NAME } from "@/config/constants";
 import { auth } from "@/lib/auth";
 import { SessionProvider } from "next-auth/react";
-import { NavLinkProvider } from "@/components/trip/NavLinkProvider";
 
 export const metadata: Metadata = {
   title: {
@@ -36,17 +33,13 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookieStore = await cookies();
-  const isSecretMode = cookieStore.get(SECRET_MODE_COOKIE_NAME)?.value === "true";
   const session = await auth();
 
   return (
     <html lang="ja" suppressHydrationWarning>
       <body className="font-sans antialiased bg-background text-foreground flex flex-col min-h-screen">
         <SessionProvider session={session}>
-          <Header session={session}>
-             <NavLinkProvider isSecretMode={isSecretMode} />
-          </Header>
+          <Header session={session} />
           <Suspense fallback={<div className="flex-1 animate-pulse bg-stone-100" />}>
             <main className="grow">
               {children}

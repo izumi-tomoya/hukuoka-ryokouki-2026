@@ -1,20 +1,20 @@
-import { CheckCircle2, Luggage, Wallet, Phone, ClipboardList } from 'lucide-react';
-import TripLayout from '@/components/trip/TripLayout';
+import { Luggage } from 'lucide-react';
+import TripLayout from '@/features/trip/components/TripLayout';
 import { Container } from '@/components/ui/Container';
-import { MagazineCard } from '@/components/ui/MagazineCard';
 import { auth } from '@/lib/auth';
+import { getTripBySlug } from '@/features/trip/api/tripActions';
+import { notFound } from 'next/navigation';
+import TripWeatherSummary from '@/features/trip/components/TripWeatherSummary';
+import { SectionHeader } from '@/components/ui/SectionHeader';
+import PackingSection from '@/features/trip/components/client/PackingSection';
 
 export default async function TripInfoPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const session = await auth();
   const isAdmin = !!session?.user?.isAdmin;
 
-  const categories = [
-    { title: "必須の貴重品", icon: Wallet, items: ["航空券/チケット", "財布・クレジットカード", "保険証/身分証明書", "現金(予備含む)"] },
-    { title: "衣類・身だしなみ", icon: Luggage, items: ["着替え(2日分)", "歩きやすい靴", "羽織もの(体温調節用)", "洗面用具/メイク道具"] },
-    { title: "デジタル・ツール", icon: Phone, items: ["スマートフォン", "モバイルバッテリー", "充電ケーブル", "イヤホン"] },
-    { title: "その他", icon: ClipboardList, items: ["常備薬/絆創膏", "折りたたみ傘", "エコバッグ", "雨具/ハンカチ"] },
-  ];
+  const trip = await getTripBySlug(slug);
+  if (!trip) return notFound();
 
   return (
     <TripLayout 
@@ -23,29 +23,34 @@ export default async function TripInfoPage({ params }: { params: Promise<{ slug:
       isSecretMode={isAdmin} 
       title="Trip Essentials"
       subtitle="忘れ物はない？二人の旅を完璧に楽しむためのリスト"
+      days={trip.days}
     >
       <Container className="pb-24">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {categories.map((cat, i) => (
-            <MagazineCard key={i} className="flex flex-col gap-8">
-              <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-2xl bg-rose-50 flex items-center justify-center text-rose-500 shadow-sm">
-                  <cat.icon size={22} />
-                </div>
-                <h2 className="text-xl font-bold text-stone-900">{cat.title}</h2>
-              </div>
-              <ul className="space-y-4">
-                {cat.items.map((item, j) => (
-                  <li key={j} className="flex items-center gap-4 text-stone-600 font-medium">
-                    <div className="h-5 w-5 rounded-full bg-rose-50 flex items-center justify-center">
-                      <CheckCircle2 size={14} className="text-rose-400" />
-                    </div>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </MagazineCard>
-          ))}
+        <SectionHeader 
+          title="Weather Forecast" 
+          subtitle="福岡の天気予報を確認して服装を準備しよう"
+        />
+        <div className="mb-16">
+          <TripWeatherSummary location={trip.location} />
+        </div>
+
+        <SectionHeader 
+          title="Packing List" 
+          subtitle="快適な旅のためのチェックリスト（自動保存されます）"
+        />
+        
+        <PackingSection />
+
+        <div className="mt-16 bg-stone-900 rounded-[32px] p-8 md:p-12 text-center text-white">
+          <h3 className="text-2xl font-bold mb-4">Ready to Go?</h3>
+          <p className="text-stone-400 max-w-md mx-auto mb-8">
+            準備が整ったら、あとは思い切り楽しむだけ！<br />
+            二人の福岡旅行が最高の思い出になりますように。
+          </p>
+          <div className="inline-flex items-center gap-2 px-6 py-3 bg-rose-500 rounded-full font-bold text-sm">
+            <Luggage size={18} />
+            いってらっしゃい！
+          </div>
         </div>
       </Container>
     </TripLayout>

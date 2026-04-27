@@ -46,3 +46,6 @@ playwright/
 
 # prisma generated client
 prisma/client/
+
+# Local reference images
+/images_reference/

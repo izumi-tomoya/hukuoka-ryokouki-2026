@@ -9,15 +9,15 @@ interface Props {
 const paddingMap = {
   none: "",
   sm: "p-4",
-  md: "p-8",
-  lg: "p-12",
+  md: "p-4 md:p-8",
+  lg: "p-8 md:p-12",
 };
 
 export function MagazineCard({ children, className, padding = "md" }: Props) {
   return (
     <div
       className={cn(
-        "bg-white border border-stone-100 shadow-sm rounded-article transition-all hover:shadow-md",
+        "bg-white border border-stone-100 shadow-sm rounded-3xl md:rounded-article transition-all hover:shadow-md active:shadow-sm",
         paddingMap[padding],
         className
       )}

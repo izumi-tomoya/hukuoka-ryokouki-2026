@@ -1,6 +1,4 @@
 @import 'tailwindcss';
-@import 'tw-animate-css';
-@import 'shadcn/tailwind.css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -91,5 +89,15 @@
   
   button, input, select, textarea, a:not([class*="no-focus-ring"]) {
     @apply appearance-none outline-none focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }

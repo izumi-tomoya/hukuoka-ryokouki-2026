@@ -17,6 +17,17 @@ export async function getWeatherData(location: string) {
     
     // 天気テキストに基づいてアイコンをマッピング
     const conditionText = data.current.condition.text;
+    const conditionTextEng = data.current.condition.text.toLowerCase();
+    
+    let themeStatus = 'cloudy';
+    if (conditionTextEng.includes('sun') || conditionTextEng.includes('clear')) {
+      themeStatus = 'sunny';
+    } else if (conditionTextEng.includes('rain') || conditionTextEng.includes('drizzle')) {
+      themeStatus = 'rainy';
+    } else if (conditionTextEng.includes('snow')) {
+      themeStatus = 'snowy';
+    }
+
     const icon = conditionText.includes('晴') ? '☀️' : 
                  conditionText.includes('雨') ? '🌧️' : 
                  conditionText.includes('雪') ? '❄️' : '☁️';
@@ -24,6 +35,7 @@ export async function getWeatherData(location: string) {
     return {
       temp: Math.round(data.current.temp_c),
       condition: icon,
+      themeStatus,
     };
   } catch (e) {
     console.error("Weather API Exception:", e);

@@ -1,44 +1,43 @@
 import { Skeleton } from "@/components/ui/Skeleton";
 import { MagazineCard } from "@/components/ui/MagazineCard";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Bot } from "lucide-react";
 
 export default function AIAdvisorSkeleton() {
   return (
-    <section className="mt-16">
-      <div className="flex items-center gap-4 mb-8">
-        <div className="flex items-center gap-2">
-          <div className="h-10 w-10 rounded-2xl bg-stone-100 flex items-center justify-center text-stone-300">
+    <section className="mt-16 animate-fade-up">
+      <div className="flex items-center justify-between mb-8 px-2">
+        <div className="flex items-center gap-3">
+          <div className="h-10 w-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary/30">
             <Sparkles size={20} />
           </div>
           <div className="space-y-2">
             <Skeleton className="h-6 w-32" />
-            <Skeleton className="h-2 w-24" />
+            <Skeleton className="h-3 w-24" />
           </div>
         </div>
-        <div className="h-px flex-1 bg-stone-100" />
       </div>
 
-      <MagazineCard padding="none" className="overflow-hidden border-rose-100 shadow-xl shadow-rose-100/20">
-        {/* Chat Display Area Skeleton */}
-        <div className="h-[400px] p-6 space-y-6 bg-stone-50/30">
-          <div className="flex gap-4">
-            <Skeleton className="h-8 w-8 rounded-xl shrink-0" />
-            <Skeleton className="h-20 w-[60%] rounded-3xl rounded-tl-none" />
-          </div>
-          <div className="flex gap-4 flex-row-reverse">
-            <Skeleton className="h-8 w-8 rounded-xl shrink-0" />
-            <Skeleton className="h-12 w-[40%] rounded-3xl rounded-tr-none" />
-          </div>
-          <div className="flex gap-4">
-            <Skeleton className="h-8 w-8 rounded-xl shrink-0" />
-            <Skeleton className="h-16 w-[50%] rounded-3xl rounded-tl-none" />
-          </div>
+      <MagazineCard padding="none" className="overflow-hidden border-border opacity-60">
+        {/* Chat Area Skeleton */}
+        <div className="h-[450px] p-6 space-y-8 bg-secondary/10">
+          {[1, 2, 3].map((i) => (
+            <div 
+              key={i} 
+              className={`flex gap-4 ${i % 2 === 0 ? "flex-row-reverse" : "flex-row"}`}
+            >
+              <Skeleton className="h-8 w-8 rounded-xl shrink-0" />
+              <div className={`flex flex-col gap-2 ${i % 2 === 0 ? "items-end" : "items-start"} grow max-w-[70%]`}>
+                <Skeleton className={`h-16 w-full rounded-3xl ${i % 2 === 0 ? "rounded-tr-none" : "rounded-tl-none"}`} />
+                <Skeleton className="h-2 w-20" />
+              </div>
+            </div>
+          ))}
         </div>
 
         {/* Input Area Skeleton */}
-        <div className="p-4 bg-white border-t border-stone-50 flex gap-2">
-          <Skeleton className="h-11 flex-1 rounded-2xl" />
-          <Skeleton className="h-11 w-11 rounded-2xl shrink-0" />
+        <div className="p-5 bg-card border-t border-border flex gap-3">
+          <Skeleton className="h-12 grow rounded-2xl" />
+          <Skeleton className="h-12 w-12 rounded-2xl shrink-0" />
         </div>
       </MagazineCard>
     </section>

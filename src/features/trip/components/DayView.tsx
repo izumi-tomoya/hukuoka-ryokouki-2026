@@ -50,22 +50,22 @@ export default async function DayView({
         {/* Map Section */}
         <TripMap locations={uniqueLocations} />
 
-        <div className="flex flex-col md:flex-row items-start justify-between gap-6">
-          <div className="max-w-xs">
+        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-6">
+          <div className="grow max-w-sm">
             <BudgetSummary events={events} />
           </div>
 
           {uniqueLocations.length >= 2 && (
             <SafeLink
               href={routeUrl}
-              className="group flex items-center gap-4 px-8 py-5 rounded-[2.5rem] bg-white border border-rose-100 text-stone-900 transition-all hover:shadow-xl hover:border-rose-200 active:scale-95"
+              className="group flex items-center gap-4 px-8 py-5 rounded-[2.5rem] bg-card border border-border text-foreground transition-all hover:shadow-2xl hover:border-primary/50 active:scale-95"
             >
-              <div className="h-12 w-12 rounded-2xl bg-rose-50 flex items-center justify-center text-rose-500 group-hover:bg-rose-500 group-hover:text-white transition-all">
+              <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all">
                 <Map size={24} />
               </div>
               <div>
-                <span className="block text-[10px] font-black uppercase tracking-[0.3em] text-rose-400 mb-1">Navigation</span>
-                <span className="block text-sm font-bold tracking-tight group-hover:text-rose-600 transition-colors">
+                <span className="block text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground mb-1 group-hover:text-primary transition-colors">Navigation</span>
+                <span className="block text-sm font-bold tracking-tight">
                   今日の全ルートを表示
                 </span>
               </div>

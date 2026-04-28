@@ -27,25 +27,27 @@ export default function BudgetSummary({ events }: { events: TripEvent[] }) {
       padding="sm" 
       className={cn(
         "flex items-center gap-3 md:gap-4 transition-all",
-        isOverBudget ? "bg-amber-50 border-amber-200" : "bg-rose-50/50 border-rose-100"
+        isOverBudget 
+          ? "bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800" 
+          : "bg-rose-50/50 dark:bg-zinc-900 border-rose-100 dark:border-zinc-800"
       )}
     >
       <div className={cn(
         "h-10 w-10 md:h-12 md:w-12 rounded-xl md:rounded-2xl flex items-center justify-center shadow-sm transition-colors",
-        isOverBudget ? "bg-white text-amber-500" : "bg-white text-rose-500"
+        isOverBudget ? "bg-white dark:bg-zinc-800 text-amber-500" : "bg-white dark:bg-zinc-800 text-rose-500"
       )}>
         {isOverBudget ? <AlertCircle size={18} /> : <JapaneseYen size={18} />}
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] text-rose-400 mb-0.5 truncate">
+        <p className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] text-rose-400 dark:text-rose-500 mb-0.5 truncate">
           {hasActuals ? "Actual Expense" : "Planned Budget"}
         </p>
         <div className="flex items-baseline gap-1.5 md:gap-2">
-          <p className={cn("text-lg md:text-xl font-bold tracking-tight truncate", isOverBudget ? "text-amber-600" : "text-stone-900")}>
+          <p className={cn("text-lg md:text-xl font-bold tracking-tight truncate", isOverBudget ? "text-amber-600 dark:text-amber-400" : "text-stone-900 dark:text-zinc-100")}>
             ¥{(hasActuals ? actualTotal : plannedTotal).toLocaleString()}
           </p>
           {hasActuals && (
-            <span className="text-[9px] md:text-[10px] font-bold text-stone-400 truncate">
+            <span className="text-[9px] md:text-[10px] font-bold text-stone-400 dark:text-zinc-500 truncate">
               / ¥{plannedTotal.toLocaleString()}
             </span>
           )}

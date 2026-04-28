@@ -11,6 +11,7 @@ if (!prisma || !prisma.user) {
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
   ...authConfig,
+  secret: process.env.AUTH_SECRET,
+  trustHost: true,
   debug: process.env.NODE_ENV === "development",
-  trustHost: true, // Allow local domains like tizumi.local
 });

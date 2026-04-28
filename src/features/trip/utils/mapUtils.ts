@@ -25,7 +25,7 @@ export function extractLocationsFromEvents(events: TripEvent[], tips: Tip[] = []
     }
     
     // 3. 通常のイベントは店名やタイトルを使用
-    const skipTitles = ["出発", "到着", "ANA241便にて福岡へ出発", "ANA272便にて羽田へ"];
+    const skipTitles = ["出発", "到着", "羽田空港から福岡へ", "福岡空港から羽田へ"];
     if (e.title && skipTitles.includes(e.title)) return [];
     
     return [e.foodName || e.title];

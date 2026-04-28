@@ -168,7 +168,10 @@ model Tip {
   trip      Trip    @relation(fields: [tripId], references: [id], onDelete: Cascade)
   title     String
   body      String
+  venue     String? // 店名・場所名
+  imageUrl  String? // チケットのスクリーンショットなど
   isWarning Boolean @default(false)
+  isConfirmed Boolean @default(false)
   order     Int     @default(0)
   
   // Deep Fukuoka features

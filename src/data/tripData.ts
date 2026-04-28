@@ -55,8 +55,8 @@ export const day1Events: TripEvent[] = [
   {
     time: "07:30",
     type: "transport",
-    title: "ANA241便にて福岡へ",
-    desc: "羽田(07:30)発。空路、博多へ向かいます。✈️",
+    title: "羽田空港から福岡へ",
+    desc: "07:30発。空路、博多へ向かいます。✈️",
     tag: "transport",
     tagLabel: "Flight",
     isConfirmed: true,
@@ -375,8 +375,8 @@ export const day2Events: TripEvent[] = [
   {
     time: "20:45",
     type: "transport",
-    title: "ANA272便にて羽田へ",
-    desc: "福岡(20:45)発。二人の素晴らしい旅の締めくくりです。✈️",
+    title: "福岡空港から羽田へ",
+    desc: "20:45発。二人の素晴らしい旅の締めくくりです。✈️",
     tag: "transport",
     tagLabel: "Flight",
     isConfirmed: true,
@@ -398,7 +398,7 @@ export const day2Events: TripEvent[] = [
 
 export const day1Tips: Tip[] = [
   { title: "予約の確認", body: "ホテルオークラ福岡は朝食付です。チェックイン時に確認を。" },
-  { title: "フライト", body: "ANA241/272便です。座席は事前に確認済み。モバイル搭乗券を準備しましょう。" },
+  { title: "フライト", body: "往復のフライト座席は事前に確認済み。モバイル搭乗券を準備しましょう。" },
   { title: "移動", body: "福岡市内の移動は地下鉄が便利。ICカードのチャージを確認してください。" },
 ];
 

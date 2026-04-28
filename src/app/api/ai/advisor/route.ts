@@ -3,16 +3,24 @@ import { prisma } from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
 
+interface ChatMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
 /**
- * Google Gemini API (Main - Free Tier)
+ * Google Gemini API Call
  */
-async function callGemini(message: string, systemPrompt: string, history: any[]) {
+async function callGemini(message: string, systemPrompt: string, history: ChatMessage[], isPro = false) {
   const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GEMINI_API_KEY;
-  if (!apiKey) throw new Error('Gemini API Key (GOOGLE_GENERATIVE_AI_API_KEY or GEMINI_API_KEY) が設定されていません。');
+  if (!apiKey) throw new Error('GEMINI_API_KEY が設定されていません。');
+
+  // isPro が true の場合は Pro モデル、そうでない場合は高速な Flash モデルを使用
+  const model = isPro ? 'gemini-1.5-pro-latest' : 'gemini-1.5-flash-latest';
 
   const body = {
     contents: [
-      ...history.map((h: any) => ({
+      ...history.map((h) => ({
         role: h.role === 'assistant' ? 'model' : 'user',
         parts: [{ text: h.content }]
       })),
@@ -30,16 +38,15 @@ async function callGemini(message: string, systemPrompt: string, history: any[])
     }
   };
 
-  // 2026年現在の環境では gemini-flash-latest が推奨 (Gemini 3 Flash 相当)
-  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`, {
+  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(`Gemini API Error: ${response.status} ${JSON.stringify(errorData)}`);
+    const errorData = await response.json().catch(() => ({}));
+    throw { status: response.status, message: `Gemini ${model} failed`, data: errorData };
   }
 
   const data = await response.json();
@@ -47,9 +54,9 @@ async function callGemini(message: string, systemPrompt: string, history: any[])
 }
 
 /**
- * OpenAI API (Currently Commented Out in POST)
+ * OpenAI API Call
  */
-async function callOpenAI(message: string, systemPrompt: string, history: any[]) {
+async function callOpenAI(message: string, systemPrompt: string, history: ChatMessage[]) {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) throw new Error('OPENAI_API_KEY が設定されていません。');
 
@@ -63,17 +70,20 @@ async function callOpenAI(message: string, systemPrompt: string, history: any[])
       model: 'gpt-4o-mini',
       messages: [
         { role: 'system', content: systemPrompt },
-        ...history,
+        ...history.map(h => ({
+          role: h.role === 'assistant' ? 'assistant' : 'user',
+          content: h.content
+        })),
         { role: 'user', content: message }
       ],
-      max_tokens: 500,
+      max_tokens: 800,
       temperature: 0.7,
     })
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(`OpenAI API Error: ${response.status} ${JSON.stringify(errorData)}`);
+    const errorData = await response.json().catch(() => ({}));
+    throw { status: response.status, message: 'OpenAI failed', data: errorData };
   }
 
   const data = await response.json();
@@ -88,32 +98,25 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Slug and message are required' }, { status: 400 });
     }
 
-    // 旅のデータを取得
     const trip = await prisma.trip.findUnique({
       where: { slug },
       include: {
         days: {
           orderBy: { dayNumber: 'asc' },
-          include: {
-            events: {
-              orderBy: { order: 'asc' },
-            },
-          },
+          include: { events: { orderBy: { order: 'asc' } } },
         },
         tips: true,
       },
     });
 
-    if (!trip) {
-      return NextResponse.json({ error: 'Trip not found' }, { status: 404 });
-    }
+    if (!trip) return NextResponse.json({ error: 'Trip not found' }, { status: 404 });
 
     const itineraryContext = trip.days.map(day => {
       const events = day.events.map(e => `${e.time} ${e.title}`).join(', ');
       return `Day ${day.dayNumber}: ${events}`;
     }).join('\n');
 
-    const tipsContext = trip.tips.map(t => t.title).join(', ');
+    const tipsContext = trip.tips.map(t => `${t.title}: ${t.body}`).join('\n');
 
     const systemPrompt = `あなたは「福岡旅行 2026」の専属コンシェルジュです。
 上質でミニマル、情緒的なトーンで、二人の旅を美しく彩るアドバイスを行ってください。
@@ -121,7 +124,7 @@ export async function POST(req: Request) {
 【現在の旅行計画】
 ${itineraryContext}
 
-【お役立ち情報】
+【攻略情報・予約状況】
 ${tipsContext}
 
 【スタイルガイド】
@@ -131,42 +134,36 @@ ${tipsContext}
 - 過剰な装飾を避け、知的な美しさを。`;
 
     const trimmedHistory = history.slice(-6);
-
     let answer = "";
     let usedProvider = "";
 
-    // --- Gemini (メインプロバイダー) ---
+    // --- 自動振り分け・フォールバックロジック ---
+    
+    // Step 1: Gemini Flash (高速・無料枠)
     try {
-      if (geminiKey) {
-        answer = await callGemini(message, systemPrompt, trimmedHistory);
-        usedProvider = "gemini";
-      } else {
-        throw new Error("Gemini API Key missing");
-      }
-    } catch (geminiError: any) {
-      console.error("Gemini failed:", geminiError.message);
+      answer = await callGemini(message, systemPrompt, trimmedHistory, false);
+      usedProvider = "gemini-flash";
+    } catch (flashError: any) {
+      console.warn("Gemini Flash failed, falling back to OpenAI...", flashError.status || flashError.message);
       
-      // OpenAI バックアップ（必要に応じてコメントアウトを外して使用）
-      /*
+      // Step 2: OpenAI GPT-4o-mini (信頼性・バックアップ)
       try {
-        if (process.env.OPENAI_API_KEY) {
-          answer = await callOpenAI(message, systemPrompt, trimmedHistory);
-          usedProvider = "openai";
-        } else {
-          throw new Error("OpenAI API Key missing");
+        answer = await callOpenAI(message, systemPrompt, trimmedHistory);
+        usedProvider = "openai";
+      } catch (openAiError: any) {
+        console.warn("OpenAI failed, falling back to Gemini Pro...", openAiError.status || openAiError.message);
+        
+        // Step 3: Gemini Pro (最終手段・高精度)
+        try {
+          answer = await callGemini(message, systemPrompt, trimmedHistory, true);
+          usedProvider = "gemini-pro";
+        } catch (proError: any) {
+          console.error("All providers failed.");
+          answer = "申し訳ありません。現在コンシェルジュが大変混み合っております。少し時間をおいてから再度お声がけいただけますでしょうか。";
+          usedProvider = "none";
         }
-      } catch (openAiError) {
-        answer = "申し訳ありません。現在コンシェルジュが応答できません。";
-        usedProvider = "none";
       }
-      */
-      
-      answer = "申し訳ありません。現在コンシェルジュが少し席を外しております。時間をおいてもう一度お声がけいただけますか？";
-      usedProvider = "error";
     }
-
-    // 人工的な遅延
-    await new Promise(resolve => setTimeout(resolve, 800));
 
     return NextResponse.json({ 
       answer,
@@ -179,9 +176,7 @@ ${tipsContext}
     });
 
   } catch (error: any) {
-    console.error('AI Advisor Error:', error);
-    return NextResponse.json({ 
-      error: error.message || 'AIとの通信に失敗しました',
-    }, { status: 500 });
+    console.error('AI Advisor Fatal Error:', error);
+    return NextResponse.json({ error: 'AIとの通信中に予期せぬエラーが発生しました' }, { status: 500 });
   }
 }

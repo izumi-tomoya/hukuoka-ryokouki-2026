@@ -24,21 +24,21 @@ export default function TripLayout({
   isLoading 
 }: Props) {
   return (
-    <div className="min-h-screen bg-stone-50 pb-20">
+    <div className="min-h-screen bg-background text-foreground pb-20 transition-colors duration-500">
       <header className="px-6 pt-10 md:pt-16 pb-6 md:pb-8 mx-auto max-w-5xl">
         <div className="mb-8 md:mb-10 text-center md:text-left">
           {isLoading ? (
             <>
-              <Skeleton className="h-10 md:h-14 w-3/4 md:w-1/2 mb-4 mx-auto md:mx-0" />
-              <Skeleton className="h-4 w-1/2 md:w-1/3 mx-auto md:mx-0" />
+              <Skeleton className="h-10 md:h-14 w-3/4 md:w-1/2 mb-4 mx-auto md:mx-0 opacity-20" />
+              <Skeleton className="h-4 w-1/2 md:w-1/3 mx-auto md:mx-0 opacity-20" />
             </>
           ) : (
             <>
-              <h1 className="font-playfair text-3xl sm:text-4xl md:text-5xl font-extrabold text-stone-900 mb-3 md:mb-4 tracking-tight leading-tight">
+              <h1 className="font-playfair text-3xl sm:text-4xl md:text-5xl font-extrabold text-foreground mb-3 md:mb-4 tracking-tight leading-tight">
                 {title}
               </h1>
               {subtitle && (
-                <p className="text-stone-400 text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase">
+                <p className="text-muted-foreground text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase">
                   {subtitle}
                 </p>
               )}
@@ -48,10 +48,10 @@ export default function TripLayout({
 
         {isLoading ? (
           <div className="flex items-center justify-start md:justify-center gap-2 md:gap-3 mb-12 md:mb-16 overflow-hidden -mx-6 px-6 md:mx-0 md:px-0">
-            <Skeleton className="h-11 w-28 rounded-full shrink-0" />
-            <Skeleton className="h-11 w-28 rounded-full shrink-0" />
-            <Skeleton className="h-11 w-28 rounded-full shrink-0" />
-            <Skeleton className="h-11 w-28 rounded-full shrink-0" />
+            <Skeleton className="h-11 w-28 rounded-full shrink-0 opacity-20" />
+            <Skeleton className="h-11 w-28 rounded-full shrink-0 opacity-20" />
+            <Skeleton className="h-11 w-28 rounded-full shrink-0 opacity-20" />
+            <Skeleton className="h-11 w-28 rounded-full shrink-0 opacity-20" />
           </div>
         ) : (
           <CategoryTabs slug={slug} activePath={activePath} isSecretMode={isSecretMode} days={days} />
@@ -64,4 +64,3 @@ export default function TripLayout({
     </div>
   );
 }
-

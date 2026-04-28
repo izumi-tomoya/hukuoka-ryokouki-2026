@@ -176,3 +176,65 @@ export async function deletePhotoFromEvent(eventId: string, photoUrl: string) {
     return { success: false, error: String(error) };
   }
 }
+
+export async function createTipAction(tripId: string, data: { title: string; body: string; venue?: string; imageUrl?: string; isWarning: boolean; isConfirmed: boolean; category: string; deepLevel: number }) {
+  await checkAdmin();
+  try {
+    await prisma.tip.create({
+      data: {
+        tripId,
+        ...data,
+      },
+    });
+    revalidatePath('/trip/[slug]/tips', 'page');
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to create tip:', error);
+    return { success: false, error: '作成に失敗しました' };
+  }
+}
+
+export async function updateTipAction(tipId: string, data: { title: string; body: string; venue?: string; imageUrl?: string; isWarning: boolean; isConfirmed: boolean; category: string; deepLevel: number }) {
+  await checkAdmin();
+  try {
+    await prisma.tip.update({
+      where: { id: tipId },
+      data,
+    });
+    revalidatePath('/trip/[slug]/tips', 'page');
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to update tip:', error);
+    return { success: false, error: '更新に失敗しました' };
+  }
+}
+
+export async function toggleTipConfirmation(tipId: string, isConfirmed: boolean) {
+  await checkAdmin();
+  try {
+    await prisma.tip.update({
+      where: { id: tipId },
+      data: { isConfirmed },
+    });
+    revalidatePath('/trip/[slug]/tips', 'page');
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to toggle tip confirmation:', error);
+    return { success: false, error: String(error) };
+  }
+}
+
+export async function deleteTipAction(tipId: string) {
+  await checkAdmin();
+  try {
+    await prisma.tip.delete({
+      where: { id: tipId },
+    });
+    revalidatePath('/trip/[slug]/tips', 'page');
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to delete tip:', error);
+    return { success: false, error: '削除に失敗しました' };
+  }
+}
+

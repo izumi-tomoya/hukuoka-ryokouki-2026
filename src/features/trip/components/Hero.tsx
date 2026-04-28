@@ -1,53 +1,56 @@
-import SecretToggle from "@/features/trip/components/client/SecretToggle";
-import { TripCountdown } from "@/features/trip/components/client/TripCountdown";
-import { cookies } from "next/headers";
-import { SECRET_MODE_COOKIE_NAME } from "@/config/constants";
+import { TripNavData } from "../constants/navigationConfig";
 
 interface HeroProps {
-  title: string;
-  startDate: Date;
-  endDate: Date;
-  accentColor?: string;
+  trip: TripNavData;
 }
 
-export default async function Hero({ title, startDate, endDate }: HeroProps) {
-  const cookieStore = await cookies();
-  const isSecretMode = cookieStore.get(SECRET_MODE_COOKIE_NAME)?.value === "true";
-
-  const formatDate = (date: Date) => ({
-    date: `${date.getMonth() + 1}.${date.getDate()}`,
-    day: date.toLocaleDateString('ja-JP', { weekday: 'short' })
-  });
-
-  const startInfo = formatDate(new Date(startDate));
-  const endInfo = formatDate(new Date(endDate));
-
+export default function Hero({ trip }: HeroProps) {
   return (
-    <header className="relative overflow-hidden py-10 md:py-16 bg-background">
-      {/* 柔らかい背景の装飾 */}
-      <div className="absolute top-0 right-0 h-100 w-100 rounded-full bg-primary/10 blur-[120px] -translate-y-1/2 translate-x-1/4" />
-      <div className="absolute bottom-0 left-0 h-75 w-75 rounded-full bg-secondary/20 blur-[100px] translate-y-1/3 -translate-x-1/4" />
-
-      <div className="relative z-10 flex flex-col items-center px-6 text-center">
-        <SecretToggle isSecretMode={isSecretMode} />
-
-        <div className="mt-6 md:mt-8 mb-4 md:mb-6 animate-fade-up">
-          <span className="text-primary font-medium tracking-[0.2em] uppercase text-[11px] md:text-sm">
-            {startDate.getFullYear()} Trip
-          </span>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mt-2 tracking-tight leading-tight">
-            {title}
+    <div className="relative w-full overflow-hidden bg-background">
+      {/* Background Gradient */}
+      <div 
+        className="absolute inset-0 opacity-10 dark:opacity-20 transition-opacity duration-1000"
+        style={{ 
+          background: `linear-gradient(135deg, ${trip.accentColor || 'var(--primary)'} 0%, transparent 100%)` 
+        }}
+      />
+      
+      <div className="relative mx-auto max-w-5xl px-6 pt-24 pb-16 md:pt-32 md:pb-24">
+        <div className="flex flex-col items-center text-center md:items-start md:text-left">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-6 backdrop-blur-sm">
+            <span className="text-[10px] font-black tracking-[0.2em] text-primary uppercase">
+              Current Journey
+            </span>
+          </div>
+          
+          <h1 className="font-playfair text-5xl md:text-7xl font-black text-foreground tracking-tighter leading-none mb-6">
+            {trip.title}
           </h1>
-        </div>
-
-        <div className="flex gap-6 mb-6 md:mb-8 text-foreground/80 font-medium text-sm md:text-base">
-          <p>{startInfo.date} ({startInfo.day}) - {endInfo.date} ({endInfo.day})</p>
-        </div>
-
-        <div className="animate-fade-up delay-200">
-          <TripCountdown startDate={startDate} />
+          
+          <p className="max-w-xl text-lg md:text-xl text-muted-foreground font-medium leading-relaxed">
+            {trip.description || "この旅の物語を綴りましょう。ふたりで歩む新しい足跡。"}
+          </p>
+          
+          <div className="mt-10 flex flex-wrap items-center gap-6">
+            <div className="flex flex-col">
+              <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">Location</span>
+              <span className="text-sm font-bold text-foreground">{trip.location}</span>
+            </div>
+            <div className="w-px h-8 bg-border hidden sm:block" />
+            <div className="flex flex-col">
+              <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">Timeline</span>
+              <span className="text-sm font-bold text-foreground">
+                {new Date(trip.startDate).toLocaleDateString()} — {new Date(trip.endDate).toLocaleDateString()}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
-    </header>
+      
+      {/* Decorative Line */}
+      <div 
+        className="absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-border to-transparent" 
+      />
+    </div>
   );
 }

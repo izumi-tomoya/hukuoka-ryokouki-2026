@@ -57,15 +57,15 @@ export default function TransitTimeline({ steps, isAdmin = false }: Props) {
               <div className="relative flex-1 flex flex-col items-center">
                 {/* Dot */}
                 <div className={cn(
-                  "h-3 w-3 rounded-full border-2 border-white shadow-sm z-10",
-                  isArrival ? "bg-rose-600" : isWalking ? "bg-zinc-300" : getLineColor(step.mode)
+                  "h-3 w-3 rounded-full border-2 border-white dark:border-zinc-900 shadow-sm z-10",
+                  isArrival ? "bg-rose-600" : isWalking ? "bg-zinc-300 dark:bg-zinc-700" : getLineColor(step.mode)
                 )} />
                 
                 {/* Line */}
                 {!isLast && (
                   <div className={cn(
                     "w-1 flex-1 -mt-1 -mb-1",
-                    isWalking ? "border-l-2 border-dotted border-zinc-200" : getLineColor(step.mode)
+                    isWalking ? "border-l-2 border-dotted border-zinc-200 dark:border-zinc-800" : getLineColor(step.mode)
                   )} />
                 )}
               </div>
@@ -76,12 +76,12 @@ export default function TransitTimeline({ steps, isAdmin = false }: Props) {
               <div className="flex items-center justify-between gap-2">
                 <h5 className={cn(
                   "text-sm font-bold tracking-tight truncate",
-                  isArrival ? "text-rose-600" : "text-zinc-800"
+                  isArrival ? "text-rose-600 dark:text-rose-400" : "text-zinc-800 dark:text-zinc-100"
                 )}>
                   {maskStation(step.station, isAdmin)}
                 </h5>
                 {step.fare && (
-                  <span className="text-[10px] font-bold text-zinc-400 bg-zinc-100 px-1.5 py-0.5 rounded shrink-0">
+                  <span className="text-[10px] font-bold text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded shrink-0 transition-colors">
                     {step.fare}
                   </span>
                 )}
@@ -89,18 +89,18 @@ export default function TransitTimeline({ steps, isAdmin = false }: Props) {
 
               {/* Transit Detail Box */}
               {!isArrival && (
-                <div className="mt-2 bg-white rounded-xl p-3 border border-stone-200 shadow-sm">
+                <div className="mt-2 bg-white dark:bg-zinc-900 rounded-xl p-3 border border-stone-200 dark:border-zinc-800 shadow-sm transition-colors">
                   <div className="flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-full bg-stone-50 flex items-center justify-center border border-stone-100 shrink-0">
+                    <div className="h-8 w-8 rounded-full bg-stone-50 dark:bg-zinc-800 flex items-center justify-center border border-stone-100 dark:border-zinc-700 shrink-0">
                       {getModeIcon(step.mode)}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
-                        <span className="text-xs font-bold text-stone-800 truncate">
+                        <span className="text-xs font-bold text-stone-800 dark:text-zinc-200 truncate">
                           {maskLineName(step.lineName, isAdmin) || (isWalking ? "徒歩" : "")}
                         </span>
                         {step.duration && (
-                          <span className="text-[10px] font-bold text-stone-500 shrink-0">
+                          <span className="text-[10px] font-bold text-stone-500 dark:text-zinc-500 shrink-0">
                             {step.duration}
                           </span>
                         )}
@@ -109,19 +109,19 @@ export default function TransitTimeline({ steps, isAdmin = false }: Props) {
                       {(step.platform || step.exit) && (
                         <div className="mt-1 flex gap-2">
                           {step.platform && (
-                            <span className="text-[9px] font-bold text-stone-500 bg-stone-100 px-1 py-0.5 rounded">
+                            <span className="text-[9px] font-bold text-stone-500 dark:text-zinc-400 bg-stone-100 dark:bg-zinc-800 px-1 py-0.5 rounded">
                               {step.platform}
                             </span>
                           )}
                           {step.exit && (
-                            <span className="text-[9px] font-bold text-rose-700 bg-rose-50 border border-rose-100 px-1 py-0.5 rounded">
+                            <span className="text-[9px] font-bold text-rose-700 dark:text-rose-400 bg-rose-50 dark:bg-rose-900/20 border border-rose-100 dark:border-rose-900 px-1 py-0.5 rounded">
                               {step.exit}
                             </span>
                           )}
                         </div>
                       )}
                     </div>
-                    {isWalking && <ChevronRight size={12} className="text-stone-300" />}
+                    {isWalking && <ChevronRight size={12} className="text-stone-300 dark:text-zinc-600" />}
                   </div>
                 </div>
               )}

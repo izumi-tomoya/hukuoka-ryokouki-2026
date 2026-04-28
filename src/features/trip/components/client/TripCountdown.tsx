@@ -7,6 +7,7 @@ type Props = {
 };
 
 export const TripCountdown = ({ startDate }: Props) => {
+  const [mounted, setIsMounted] = useState(false);
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
@@ -15,9 +16,13 @@ export const TripCountdown = ({ startDate }: Props) => {
   });
 
   useEffect(() => {
+    setIsMounted(true);
     const targetDate = new Date(startDate);
+    
     const calculateTimeLeft = () => {
-      const difference = +targetDate - +new Date();
+      const now = new Date();
+      const difference = targetDate.getTime() - now.getTime();
+      
       if (difference > 0) {
         setTimeLeft({
           days: Math.floor(difference / (1000 * 60 * 60 * 24)),
@@ -25,6 +30,8 @@ export const TripCountdown = ({ startDate }: Props) => {
           minutes: Math.floor((difference / 1000 / 60) % 60),
           seconds: Math.floor((difference / 1000) % 60),
         });
+      } else {
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
       }
     };
 
@@ -32,6 +39,11 @@ export const TripCountdown = ({ startDate }: Props) => {
     const timer = setInterval(calculateTimeLeft, 1000);
     return () => clearInterval(timer);
   }, [startDate]);
+
+  // ハイドレーションエラーを防ぐため、マウントされるまでは何も表示しないかスケルトンを出す
+  if (!mounted) {
+    return <div className="h-10 w-40 animate-pulse bg-stone-100/50 rounded-lg" />;
+  }
 
   return (
     <div className="flex gap-3 md:gap-6">

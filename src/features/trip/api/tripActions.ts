@@ -25,6 +25,7 @@ export async function getTripBySlug(slug: string) {
             include: { 
               yataiStops: { orderBy: { order: 'asc' } },
               transitSteps: { orderBy: { order: 'asc' } },
+              photos: { orderBy: { createdAt: 'asc' } },
             },
           },
         },
@@ -126,18 +127,12 @@ export async function toggleEventConfirmation(eventId: string, isConfirmed: bool
 
 export async function addPhotoToEvent(eventId: string, photoUrl: string) {
   try {
-    const event = await prisma.event.findUnique({
-      where: { id: eventId },
-      select: { photos: true }
-    });
-
-    if (!event) throw new Error("Event not found");
-
-    const newPhotos = [...event.photos, photoUrl];
-
-    await prisma.event.update({
-      where: { id: eventId },
-      data: { photos: newPhotos },
+    await prisma.media.create({
+      data: {
+        url: photoUrl,
+        eventId: eventId,
+        type: 'image',
+      },
     });
 
     revalidatePath('/trip/[slug]/day/[id]', 'page');
@@ -151,22 +146,21 @@ export async function addPhotoToEvent(eventId: string, photoUrl: string) {
 
 export async function deletePhotoFromEvent(eventId: string, photoUrl: string) {
   try {
-    // 1. データベースからURLを削除
-    const event = await prisma.event.findUnique({
-      where: { id: eventId },
-      select: { photos: true }
+    // 1. データベースから該当するメディアを削除
+    const media = await prisma.media.findFirst({
+      where: { 
+        url: photoUrl,
+        eventId: eventId 
+      }
     });
 
-    if (!event) throw new Error("Event not found");
+    if (media) {
+      await prisma.media.delete({
+        where: { id: media.id }
+      });
+    }
 
-    const newPhotos = event.photos.filter(p => p !== photoUrl);
-
-    await prisma.event.update({
-      where: { id: eventId },
-      data: { photos: newPhotos },
-    });
-
-    // 2. Vercel Blob から実ファイルを削除（失敗してもDB更新を優先するためエラーは無視）
+    // 2. Vercel Blob から実ファイルを削除
     try {
       const token = process.env.BLOB_READ_WRITE_TOKEN;
       await del(photoUrl, { token });

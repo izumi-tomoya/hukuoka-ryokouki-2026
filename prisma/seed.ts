@@ -10,7 +10,7 @@ import {
   itoshimaEvents,
   itoshimaTips
 } from '../src/data/tripData';
-import { YataiStop, TransitStep } from "../src/features/trip/types/trip";
+import { YataiStop, TransitStep, TripEvent } from "../src/features/trip/types/trip";
 
 // Load .env file
 dotenv.config();
@@ -34,6 +34,65 @@ const pool = new pg.Pool({
 });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter, log: ['error', 'warn'] });
+
+async function createEvents(dayId: string, events: TripEvent[]) {
+  for (const [index, event] of events.entries()) {
+    const createdEvent = await prisma.event.create({
+      data: {
+        dayId: dayId,
+        time: event.time,
+        type: event.type,
+        title: event.title || null,
+        desc: event.desc || null,
+        tag: event.tag || null,
+        tagLabel: event.tagLabel || null,
+        locationUrl: event.locationUrl || null,
+        foodName: event.foodName || null,
+        foodDesc: event.foodDesc || null,
+        highlight: event.highlight || null,
+        isYatai: event.isYatai || false,
+        isConfirmed: event.isConfirmed || false,
+        order: index,
+        yataiStops: event.yataiStops ? {
+          create: event.yataiStops.map((stop: YataiStop, sIndex: number) => ({
+            time: stop.time,
+            stop: stop.stop,
+            desc: stop.desc,
+            order: sIndex,
+          })),
+        } : undefined,
+        transitSteps: event.transitSteps ? {
+          create: event.transitSteps.map((step: TransitStep, sIndex: number) => ({
+            time: step.time,
+            station: step.station,
+            mode: step.mode,
+            lineName: step.lineName,
+            duration: step.duration,
+            fare: step.fare,
+            platform: step.platform,
+            exit: step.exit,
+            isTransfer: step.isTransfer || false,
+            order: sIndex,
+          })),
+        } : undefined,
+      },
+    });
+
+    // Handle Photos integration to Media model
+    // 既存の tripData.ts に photos (文字列配列) がある場合、Media レコードとして作成
+    if (event.photos && Array.isArray(event.photos) && event.photos.length > 0) {
+      for (const photoUrl of (event.photos as unknown as string[])) {
+        await prisma.media.create({
+          data: {
+            url: photoUrl,
+            eventId: createdEvent.id,
+            type: 'image'
+          }
+        });
+      }
+    }
+  }
+}
 
 async function main() {
   console.log('🌱 Start seeding...');
@@ -95,83 +154,11 @@ async function main() {
 
   await prisma.event.deleteMany({ where: { dayId: { in: [d1.id, d2.id] } } });
 
-  // Add Day 1 Events
-  for (const [index, event] of day1Events.entries()) {
-    await prisma.event.create({
-      data: {
-        dayId: d1.id,
-        time: event.time,
-        type: event.type,
-        title: event.title || null,
-        desc: event.desc || null,
-        tag: event.tag || null,
-        tagLabel: event.tagLabel || null,
-        locationUrl: event.locationUrl || null,
-        foodName: event.foodName || null,
-        foodDesc: event.foodDesc || null,
-        highlight: event.highlight || null,
-        isYatai: event.isYatai || false,
-        order: index,
-        yataiStops: event.yataiStops ? {
-          create: event.yataiStops.map((stop: YataiStop, sIndex: number) => ({
-            time: stop.time,
-            stop: stop.stop,
-            desc: stop.desc,
-            order: sIndex,
-          })),
-        } : undefined,
-        transitSteps: event.transitSteps ? {
-          create: event.transitSteps.map((step: TransitStep, sIndex: number) => ({
-            time: step.time,
-            station: step.station,
-            mode: step.mode,
-            lineName: step.lineName,
-            duration: step.duration,
-            fare: step.fare,
-            platform: step.platform,
-            exit: step.exit,
-            isTransfer: step.isTransfer || false,
-            order: sIndex,
-          })),
-        } : undefined,
-      },
-    });
-  }
-
-  // Add Day 2 Events
-  for (const [index, event] of day2Events.entries()) {
-    await prisma.event.create({
-      data: {
-        dayId: d2.id,
-        time: event.time,
-        type: event.type,
-        title: event.title || null,
-        desc: event.desc || null,
-        tag: event.tag || null,
-        tagLabel: event.tagLabel || null,
-        locationUrl: event.locationUrl || null,
-        foodName: event.foodName || null,
-        foodDesc: event.foodDesc || null,
-        highlight: event.highlight || null,
-        isYatai: event.isYatai || false,
-        order: index,
-        transitSteps: event.transitSteps ? {
-          create: event.transitSteps.map((step: TransitStep, sIndex: number) => ({
-            time: step.time,
-            station: step.station,
-            mode: step.mode,
-            lineName: step.lineName,
-            duration: step.duration,
-            fare: step.fare,
-            platform: step.platform,
-            exit: step.exit,
-            isTransfer: step.isTransfer || false,
-            order: sIndex,
-          })),
-        } : undefined,
-      },
-    });
-  }
+  console.log('Adding Day 1 events...');
+  await createEvents(d1.id, day1Events);
+  
+  console.log('Adding Day 2 events...');
+  await createEvents(d2.id, day2Events);
 
   // Tips
   await prisma.tip.deleteMany({ where: { tripId: tripFukuoka.id } });
@@ -227,26 +214,7 @@ async function main() {
   });
 
   await prisma.event.deleteMany({ where: { dayId: di1.id } });
-
-  for (const [index, event] of itoshimaEvents.entries()) {
-    await prisma.event.create({
-      data: {
-        dayId: di1.id,
-        time: event.time,
-        type: event.type,
-        title: event.title || null,
-        desc: event.desc || null,
-        tag: event.tag || null,
-        tagLabel: event.tagLabel || null,
-        locationUrl: event.locationUrl || null,
-        foodName: event.foodName || null,
-        foodDesc: event.foodDesc || null,
-        highlight: event.highlight || null,
-        isYatai: event.isYatai || false,
-        order: index,
-      },
-    });
-  }
+  await createEvents(di1.id, itoshimaEvents);
 
   await prisma.tip.deleteMany({ where: { tripId: tripItoshima.id } });
   for (const [index, tip] of itoshimaTips.entries()) {

@@ -37,10 +37,32 @@ export default async function RootLayout({
 
   return (
     <html lang="ja" suppressHydrationWarning>
-      <body className="font-sans antialiased bg-background text-foreground flex flex-col min-h-screen">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var theme = localStorage.getItem('theme');
+                  var supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+                  if (!theme && supportDarkMode) theme = 'dark';
+                  if (theme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                  } else if (theme === 'light') {
+                    document.documentElement.classList.remove('dark');
+                  } else if (theme === 'system' || !theme) {
+                    if (supportDarkMode) document.documentElement.classList.add('dark');
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
+      <body className="font-sans antialiased bg-background dark:bg-zinc-950 text-foreground dark:text-zinc-100 flex flex-col min-h-screen transition-colors duration-300">
         <SessionProvider session={session}>
           <Header session={session} />
-          <Suspense fallback={<div className="flex-1 animate-pulse bg-stone-100" />}>
+          <Suspense fallback={<div className="flex-1 animate-pulse bg-stone-100 dark:bg-zinc-900" />}>
             <main className="grow">
               {children}
             </main>

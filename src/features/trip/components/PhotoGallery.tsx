@@ -1,9 +1,9 @@
 import { cn } from "@/lib/utils";
+import { TripMedia } from "../types/trip";
 import PhotoGalleryLightbox from "./client/PhotoGalleryLightbox";
-import PhotoUploadButton from "./client/PhotoUploadButton";
 
 interface PhotoGalleryProps {
-  photos: string[];
+  photos: TripMedia[];
   eventId?: string;
   className?: string;
 }

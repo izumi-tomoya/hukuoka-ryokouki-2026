@@ -5,9 +5,10 @@ import Image from 'next/image';
 import { X, ChevronLeft, ChevronRight, Maximize2, Trash2, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { deletePhotoFromEvent } from '@/features/trip/api/tripActions';
+import { TripMedia } from '../../types/trip';
 
 interface PhotoGalleryLightboxProps {
-  photos: string[];
+  photos: TripMedia[];
   eventId?: string;
 }
 
@@ -58,7 +59,7 @@ export default function PhotoGalleryLightbox({ photos, eventId }: PhotoGalleryLi
       )}>
         {photos.map((photo, i) => (
           <div
-            key={i}
+            key={photo.id}
             className={cn(
               "group relative overflow-hidden rounded-[2rem] border border-white shadow-sm transition-all hover:shadow-xl active:scale-[0.98]",
               photos.length % 3 !== 0 && i === 0 && photos.length > 2 ? "md:col-span-2 md:aspect-[21/9]" : "aspect-square"
@@ -69,7 +70,7 @@ export default function PhotoGalleryLightbox({ photos, eventId }: PhotoGalleryLi
               className="w-full h-full relative"
             >
               <Image
-                src={photo}
+                src={photo.url}
                 alt={`Travel moment ${i + 1}`}
                 fill
                 className="object-cover transition-transform duration-700 group-hover:scale-110"
@@ -84,7 +85,7 @@ export default function PhotoGalleryLightbox({ photos, eventId }: PhotoGalleryLi
             {/* Grid Delete Button (Hover) */}
             {eventId && (
               <button 
-                onClick={(e) => handleDelete(e, photo)}
+                onClick={(e) => handleDelete(e, photo.url)}
                 disabled={isDeleting}
                 className="absolute top-4 right-4 h-8 w-8 rounded-full bg-black/40 text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center hover:bg-rose-500 backdrop-blur-sm"
               >
@@ -108,7 +109,7 @@ export default function PhotoGalleryLightbox({ photos, eventId }: PhotoGalleryLi
           {/* Lightbox Delete Button */}
           {eventId && (
             <button 
-              onClick={(e) => handleDelete(e, photos[index])}
+              onClick={(e) => handleDelete(e, photos[index].url)}
               disabled={isDeleting}
               className="absolute top-8 left-8 z-10 flex items-center gap-2 px-4 py-2.5 rounded-full bg-white/5 text-rose-400 hover:bg-rose-500/20 transition-all border border-rose-500/20"
             >
@@ -133,7 +134,7 @@ export default function PhotoGalleryLightbox({ photos, eventId }: PhotoGalleryLi
 
           <div className="relative h-[80vh] w-[90vw] md:w-[70vw]">
             <Image
-              src={photos[index]}
+              src={photos[index].url}
               alt="Gallery Preview"
               fill
               className="object-contain animate-in zoom-in-95 duration-500"

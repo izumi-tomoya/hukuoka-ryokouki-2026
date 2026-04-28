@@ -3,40 +3,50 @@
 import { useState, useRef } from 'react';
 import { ImagePlus, Loader2 } from 'lucide-react';
 import { addPhotoToEvent } from '@/features/trip/api/tripActions';
+import imageCompression from 'browser-image-compression';
 
 interface PhotoUploadButtonProps {
   eventId?: string;
 }
 
 export default function PhotoUploadButton({ eventId }: PhotoUploadButtonProps) {
-  const [isUploading, setIsUploading] = useState(false);
+  const [status, setStatus] = useState<'idle' | 'compressing' | 'uploading'>('idle');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !eventId) return;
 
-    setIsUploading(true);
-    
     try {
-      // 1. Vercel Blob API Route にアップロード
+      // 1. 画像の圧縮 (軽量化)
+      setStatus('compressing');
+      const options = {
+        maxSizeMB: 0.8, // 1MB未満に抑える
+        maxWidthOrHeight: 1920, // フルHDサイズを上限にする
+        useWebWorker: true,
+      };
+      
+      const compressedFile = await imageCompression(file, options);
+      console.log(`Original size: ${(file.size / 1024 / 1024).toFixed(2)} MB`);
+      console.log(`Compressed size: ${(compressedFile.size / 1024 / 1024).toFixed(2)} MB`);
+
+      // 2. Vercel Blob API Route にアップロード
+      setStatus('uploading');
       const response = await fetch(
-        `/api/upload?filename=${encodeURIComponent(file.name)}`,
+        `/api/upload?filename=${encodeURIComponent(compressedFile.name)}`,
         {
           method: 'POST',
-          body: file,
+          body: compressedFile,
         },
       );
 
-      // JSONとして解析を試みる前にステータスをチェック
       if (!response.ok) {
         let errorMessage = 'Upload failed';
         try {
           const errorData = await response.json();
           errorMessage = errorData.details || errorData.error || errorMessage;
         } catch (e) {
-          // JSON解析に失敗した場合はステータステキストを使用
-          errorMessage = `Server error (${response.status}): ${response.statusText}`;
+          errorMessage = `Server error (${response.status})`;
         }
         throw new Error(errorMessage);
       }
@@ -44,19 +54,15 @@ export default function PhotoUploadButton({ eventId }: PhotoUploadButtonProps) {
       const data = await response.json();
       const imageUrl = data.url;
 
-      // 2. データベースを更新 (Server Action)
+      // 3. データベースを更新 (Server Action)
       const result = await addPhotoToEvent(eventId, imageUrl);
-      
       if (!result.success) throw new Error(result.error);
-
-      // 完了通知（オプション）
-      // alert('思い出が追加されました！');
       
     } catch (error: any) {
       console.error('Upload Error:', error);
       alert('アップロードに失敗しました: ' + (error.message || '不明なエラー'));
     } finally {
-      setIsUploading(false);
+      setStatus('idle');
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
@@ -75,13 +81,13 @@ export default function PhotoUploadButton({ eventId }: PhotoUploadButtonProps) {
       
       <button 
         onClick={() => fileInputRef.current?.click()}
-        disabled={isUploading}
+        disabled={status !== 'idle'}
         className="w-full flex items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-stone-200 py-6 text-[12px] font-bold text-stone-400 transition-all hover:border-rose-300 hover:bg-rose-50 hover:text-rose-500 group disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {isUploading ? (
+        {status !== 'idle' ? (
           <>
             <Loader2 size={20} className="animate-spin text-rose-500" />
-            <span>思い出を保存中...</span>
+            <span>{status === 'compressing' ? '画像を軽量化中...' : '思い出を保存中...'}</span>
           </>
         ) : (
           <>
@@ -90,7 +96,7 @@ export default function PhotoUploadButton({ eventId }: PhotoUploadButtonProps) {
             </div>
             <div className="text-left">
               <p className="text-stone-600 group-hover:text-rose-600">思い出の写真を追加する</p>
-              <p className="text-[10px] font-medium text-stone-400 group-hover:text-rose-400">誰でも投稿してシェアできます ✨</p>
+              <p className="text-[10px] font-medium text-stone-400 group-hover:text-rose-400">自動で軽量化してアップロードします ✨</p>
             </div>
           </>
         )}

@@ -103,13 +103,13 @@ export default function TripMap({ locations }: { locations: string[] }) {
         <MapContainer 
           center={center} 
           zoom={13} 
-          style={{ height: '100%', width: '100%', filter: 'sepia(0.2) contrast(0.9) brightness(1.05)' }}
+          style={{ height: '100%', width: '100%' }}
           scrollWheelZoom={false}
           zoomControl={false} // 標準のズームコントロールを隠す
         >
           <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" // より清潔感のあるタイル
+            attribution='&copy; Google Maps'
+            url="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}" // Google Maps の標準タイル
           />
           {markers.map((marker, idx) => (
             <Marker key={idx} position={marker.coords} icon={customIcon}>

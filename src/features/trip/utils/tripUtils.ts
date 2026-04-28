@@ -31,8 +31,12 @@ export function mapEventToTripEvent(event: EventWithStops): TripEvent {
     
     // Memoir & Expense mapping
     notes: event.notes ?? undefined,
-    photos: event.photos,
-    actualPhotos: event.actualPhotos,
+    photos: (event.photos || []).map(p => ({
+      id: p.id,
+      url: p.url,
+      type: p.type,
+      createdAt: p.createdAt
+    })),
     actualExpense: event.actualExpense ?? undefined,
     plannedBudget: plannedBudget,
     budget: plannedBudget,

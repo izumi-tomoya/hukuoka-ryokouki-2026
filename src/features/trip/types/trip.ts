@@ -46,6 +46,13 @@ export interface WeatherStats {
   humidity: number;
 }
 
+export interface TripMedia {
+  id: string;
+  url: string;
+  type: string;
+  createdAt: Date;
+}
+
 export interface TripEvent {
   id?: string;
   time: string;
@@ -69,8 +76,7 @@ export interface TripEvent {
   transitSteps?: TransitStep[];
   
   // OGP & Photos
-  photos?: string[]; // 計画段階の写真
-  actualPhotos?: string[]; // 実際の写真（思い出）
+  photos?: TripMedia[]; 
   locationUrl?: string;
   
   // Budget

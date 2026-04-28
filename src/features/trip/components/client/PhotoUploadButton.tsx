@@ -28,10 +28,21 @@ export default function PhotoUploadButton({ eventId }: PhotoUploadButtonProps) {
         },
       );
 
-      if (!response.ok) throw new Error('Upload failed');
+      // JSONとして解析を試みる前にステータスをチェック
+      if (!response.ok) {
+        let errorMessage = 'Upload failed';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.details || errorData.error || errorMessage;
+        } catch (e) {
+          // JSON解析に失敗した場合はステータステキストを使用
+          errorMessage = `Server error (${response.status}): ${response.statusText}`;
+        }
+        throw new Error(errorMessage);
+      }
       
-      const newBlob = await response.json();
-      const imageUrl = newBlob.url;
+      const data = await response.json();
+      const imageUrl = data.url;
 
       // 2. データベースを更新 (Server Action)
       const result = await addPhotoToEvent(eventId, imageUrl);
@@ -41,9 +52,9 @@ export default function PhotoUploadButton({ eventId }: PhotoUploadButtonProps) {
       // 完了通知（オプション）
       // alert('思い出が追加されました！');
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('Upload Error:', error);
-      alert('アップロードに失敗しました。BLOB_READ_WRITE_TOKENの設定を確認してください。');
+      alert('アップロードに失敗しました: ' + (error.message || '不明なエラー'));
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';

@@ -159,9 +159,8 @@ export default function EventDetailModal() {
 
                     {/* Photos */}
                     <div className="pt-6 border-t border-stone-100">
-                      <PhotoGallery photos={selectedEvent.photos || []} />
+                      <PhotoGallery photos={selectedEvent.photos || []} eventId={selectedEvent.id} />
                     </div>
-
                     </>
                     )}
                     </div>

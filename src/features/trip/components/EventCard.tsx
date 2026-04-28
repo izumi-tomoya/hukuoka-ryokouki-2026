@@ -72,7 +72,7 @@ function BasicCard({ event, isAdmin }: { event: TripEvent, isAdmin?: boolean }) 
         </div>
       )}
 
-      <PhotoGallery photos={event.photos || []} />
+      <PhotoGallery photos={event.photos || []} eventId={event.id} />
 
       {/* Memoir Section (The Journey's Memory) */}
       {hasMemoir && (

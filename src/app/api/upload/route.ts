@@ -4,18 +4,41 @@ import { NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request): Promise<NextResponse> {
-  const { searchParams } = new URL(request.url);
-  const filename = searchParams.get('filename');
+  try {
+    const token = process.env.BLOB_READ_WRITE_TOKEN;
 
-  if (!filename || !request.body) {
-    return NextResponse.json({ error: 'Filename and body are required' }, { status: 400 });
+    if (!token) {
+      return NextResponse.json({ 
+        error: 'BLOB_READ_WRITE_TOKEN が設定されていません。',
+        details: '.envファイルを確認し、サーバーを再起動してください。' 
+      }, { status: 500 });
+    }
+
+    const { searchParams } = new URL(request.url);
+    const filename = searchParams.get('filename');
+
+    if (!filename) {
+      return NextResponse.json({ error: 'Filename is required' }, { status: 400 });
+    }
+
+    const blob = await request.blob();
+
+    if (blob.size === 0) {
+      return NextResponse.json({ error: 'Body is empty' }, { status: 400 });
+    }
+
+    const result = await put(filename, blob, {
+      access: 'public',
+      token: token,
+    });
+
+    return NextResponse.json(result);
+
+  } catch (error: any) {
+    console.error('Blob Upload Error:', error);
+    return NextResponse.json({ 
+      error: 'アップロード中にエラーが発生しました。',
+      details: error.message 
+    }, { status: 500 });
   }
-
-  // 無料プランでも使えるように put を呼び出します
-  // 本番環境では BLOB_READ_WRITE_TOKEN 環境変数が必要です
-  const blob = await put(filename, request.body, {
-    access: 'public',
-  });
-
-  return NextResponse.json(blob);
 }

@@ -3,6 +3,7 @@
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { auth } from '@/lib/auth';
+import { del } from '@vercel/blob';
 
 async function checkAdmin() {
   const session = await auth();
@@ -140,9 +141,44 @@ export async function addPhotoToEvent(eventId: string, photoUrl: string) {
     });
 
     revalidatePath('/trip/[slug]/day/[id]', 'page');
+    revalidatePath('/trip/[slug]/memories', 'page');
     return { success: true };
   } catch (error) {
     console.error('Failed to add photo:', error);
+    return { success: false, error: String(error) };
+  }
+}
+
+export async function deletePhotoFromEvent(eventId: string, photoUrl: string) {
+  try {
+    // 1. データベースからURLを削除
+    const event = await prisma.event.findUnique({
+      where: { id: eventId },
+      select: { photos: true }
+    });
+
+    if (!event) throw new Error("Event not found");
+
+    const newPhotos = event.photos.filter(p => p !== photoUrl);
+
+    await prisma.event.update({
+      where: { id: eventId },
+      data: { photos: newPhotos },
+    });
+
+    // 2. Vercel Blob から実ファイルを削除（失敗してもDB更新を優先するためエラーは無視）
+    try {
+      const token = process.env.BLOB_READ_WRITE_TOKEN;
+      await del(photoUrl, { token });
+    } catch (blobError) {
+      console.error('Blob deletion failed:', blobError);
+    }
+
+    revalidatePath('/trip/[slug]/day/[id]', 'page');
+    revalidatePath('/trip/[slug]/memories', 'page');
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to delete photo:', error);
     return { success: false, error: String(error) };
   }
 }

@@ -88,7 +88,7 @@ export default async function MemoriesPage({ params }: { params: Promise<{ slug:
                     <div className="h-px flex-1 bg-stone-100" />
                     <span className="text-[10px] font-black uppercase tracking-widest text-stone-400">{event.time}</span>
                   </div>
-                  <PhotoGallery photos={event.photos} />
+                  <PhotoGallery photos={event.photos} eventId={event.id} />
                 </div>
               ))}
             </div>

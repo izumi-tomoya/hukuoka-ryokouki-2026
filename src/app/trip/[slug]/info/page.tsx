@@ -7,6 +7,9 @@ import { notFound } from 'next/navigation';
 import TripWeatherSummary from '@/features/trip/components/TripWeatherSummary';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import PackingSection from '@/features/trip/components/client/PackingSection';
+import EssentialTips from '@/features/trip/components/EssentialTips';
+import TransitDashboard from '@/features/trip/components/client/TransitDashboard';
+import AdventureCard from '@/features/trip/components/client/AdventureCard';
 
 export default async function TripInfoPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -32,6 +35,26 @@ export default async function TripInfoPage({ params }: { params: Promise<{ slug:
         />
         <div className="mb-16">
           <TripWeatherSummary location={trip.location} />
+        </div>
+
+        <SectionHeader 
+          title="Domestic Travel Tips" 
+          subtitle="国内旅行・福岡滞在をよりスムーズにするためのヒント"
+        />
+        <div className="mb-16">
+          <EssentialTips />
+        </div>
+
+        <SectionHeader 
+          title="Path Finder" 
+          subtitle="街を繋ぐ、ふたりの足跡。移動をよりスマートに。"
+        />
+        <div className="mb-16">
+          <TransitDashboard isSecretMode={isAdmin} />
+        </div>
+
+        <div className="mb-24">
+          <AdventureCard />
         </div>
 
         <SectionHeader 

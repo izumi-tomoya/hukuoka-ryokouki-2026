@@ -25,21 +25,27 @@ export function extractLocationsFromEvents(events: TripEvent[], tips: Tip[] = []
     }
     
     // 3. 通常のイベントは店名やタイトルを使用
-    const skipTitles = ["出発", "到着", "羽田空港から福岡へ", "福岡空港から羽田へ"];
+    const skipTitles = [
+      "出発", "到着", "羽田空港から福岡へ", "福岡空港から羽田へ", 
+      "🛬 福岡空港 到着", "福岡空港 到着", "出発：八王子から羽田へ",
+      "福岡空港ターミナル"
+    ];
     if (e.title && skipTitles.includes(e.title)) return [];
     
-    return [e.foodName || e.title];
+    const locationName = e.foodName || e.title;
+    // 絵文字を除去したクリーンな名前を返す
+    return [locationName.replace(/[\u1F600-\u1F64F]|[\u2700-\u27BF]|[\u1F300-\u1F5FF]|[\u1F680-\u1F6FF]|[\u2600-\u26FF]/g, '').trim()];
   });
 
   // 4. Tips（提案）から既知のスポット名を抽出
   const tipLocations = tips.flatMap(tip => {
     const foundSpots = KNOWN_SPOTS.filter(spot => 
-      tip.title.includes(spot) || tip.body.includes(spot)
+      tip.title.includes(spot) || (tip.venue && tip.venue.includes(spot))
     );
     return foundSpots;
   });
 
-  const allLocations = [...routeLocations, ...tipLocations].filter((loc): loc is string => !!loc && loc.length > 0);
+  const allLocations = [...routeLocations, ...tipLocations].filter((loc): loc is string => !!loc && loc.length > 0 && loc !== "到着" && loc !== "出発");
 
   // 重複を削除
   return allLocations.filter((loc, i) => allLocations.indexOf(loc) === i);

@@ -7,6 +7,7 @@ import { SectionHeader } from "@/components/ui/SectionHeader";
 import { MagazineCard } from "@/components/ui/MagazineCard";
 import PhotoUploadButton from "@/features/trip/components/client/PhotoUploadButton";
 import PhotoGallery from "@/features/trip/components/PhotoGallery";
+import GourmetAward from "@/features/trip/components/client/GourmetAward";
 import { Camera, Sparkles } from "lucide-react";
 
 export default async function MemoriesPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -74,6 +75,11 @@ export default async function MemoriesPage({ params }: { params: Promise<{ slug:
               </MagazineCard>
             ))}
           </div>
+        </div>
+
+        {/* Gourmet Award Section */}
+        <div className="mb-24">
+          <GourmetAward />
         </div>
 
         {/* Gallery Section */}

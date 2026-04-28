@@ -2,36 +2,37 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { Container } from "@/components/ui/Container";
 import TripWeatherSummarySkeleton from "@/features/trip/components/TripWeatherSummarySkeleton";
 import PackingListSkeleton from "@/features/trip/components/PackingListSkeleton";
+import TripLayout from "@/features/trip/components/TripLayout";
 
 export default function InfoLoading() {
   return (
-    <div className="min-h-screen bg-stone-50 pb-20">
-      <header className="px-6 pt-16 pb-8 mx-auto max-w-5xl">
-        {/* CategoryTabs Skeleton */}
-        <div className="flex flex-wrap items-center justify-center gap-3 mb-16">
-          <Skeleton className="h-12 w-28 rounded-full" />
-          <Skeleton className="h-12 w-28 rounded-full" />
-          <Skeleton className="h-12 w-28 rounded-full" />
-          <Skeleton className="h-12 w-28 rounded-full" />
-        </div>
-        
-        <div className="mt-12 text-center md:text-left">
-          <Skeleton className="h-14 w-3/4 md:w-1/2 mb-4 mx-auto md:mx-0" />
-          <Skeleton className="h-4 w-1/2 md:w-1/3 mx-auto md:mx-0" />
-        </div>
-      </header>
-
+    <TripLayout isLoading={true}>
       <Container className="pb-24">
         <div className="mb-16">
-          <Skeleton className="h-8 w-48 mb-8" />
+          <Skeleton className="h-8 w-48 mb-8 rounded-lg" />
           <TripWeatherSummarySkeleton />
         </div>
 
         <div className="mb-16">
-          <Skeleton className="h-8 w-48 mb-8" />
+          <Skeleton className="h-8 w-48 mb-8 rounded-lg" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="bg-white rounded-[2rem] p-6 border border-stone-100 flex gap-4">
+                <Skeleton className="h-12 w-12 rounded-2xl shrink-0" />
+                <div className="grow space-y-3">
+                  <Skeleton className="h-5 w-3/4 rounded-md" />
+                  <Skeleton className="h-4 w-full rounded-md" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="mb-16">
+          <Skeleton className="h-8 w-48 mb-8 rounded-lg" />
           <PackingListSkeleton />
         </div>
       </Container>
-    </div>
+    </TripLayout>
   );
 }

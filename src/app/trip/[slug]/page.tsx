@@ -8,7 +8,6 @@ import { auth } from "@/lib/auth";
 import { Container } from "@/components/ui/Container";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import TripWeatherSummary from "@/features/trip/components/TripWeatherSummary";
-import AIAdvisor from "@/features/trip/components/client/AIAdvisor";
 import { getWeatherData } from "@/lib/weather";
 import { cn } from "@/lib/utils";
 import { formatDateRange, formatDateWithWeekday } from "@/features/trip/utils/dateUtils";
@@ -92,9 +91,6 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
               <TripWeatherSummary location={trip.location} />
             </div>
           </div>
-
-          {/* ─── AI Advisor ─── */}
-          <AIAdvisor slug={slug} />
 
           {/* ─── Itinerary ─── */}
           <div>

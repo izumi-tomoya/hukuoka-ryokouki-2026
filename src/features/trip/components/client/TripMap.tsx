@@ -50,6 +50,21 @@ function cleanLocationName(name: string): string {
   return noEmoji.replace(/\(.*\)/g, '').trim();
 }
 
+// 内部用：地図操作コンポーネント
+const MapController = ({ markers, L }: { markers: any[], L: any }) => {
+  const { useMap } = require('react-leaflet');
+  const map = useMap();
+  
+  useEffect(() => {
+    if (markers.length > 0 && L && map) {
+      const bounds = L.latLngBounds(markers.map((m: any) => m.coords));
+      map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
+    }
+  }, [markers, L, map]);
+
+  return null;
+};
+
 export default function TripMap({ locations }: { locations: string[] }) {
   const [L, setL] = useState<any>(null);
   const [customIcon, setCustomIcon] = useState<any>(null);
@@ -104,9 +119,10 @@ export default function TripMap({ locations }: { locations: string[] }) {
           center={center} 
           zoom={13} 
           style={{ height: '100%', width: '100%' }}
-          scrollWheelZoom={false}
-          zoomControl={false} // 標準のズームコントロールを隠す
+          scrollWheelZoom={true}
+          zoomControl={true}
         >
+          <MapController markers={markers} L={L} />
           <TileLayer
             attribution='&copy; Google Maps'
             url="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}" // Google Maps の標準タイル
@@ -149,13 +165,41 @@ export default function TripMap({ locations }: { locations: string[] }) {
             <Navigation2 size={10} className="fill-rose-300" />
             Coordinates Synchronized
           </div>
-          <p className="text-[10px] font-medium text-stone-300 italic">Scale: 1:13,000 — Fukuoka Central</p>
+          <p className="text-[10px] font-medium text-stone-300 italic">Scale: Auto — Fukuoka Central</p>
         </div>
       </div>
 
       <style jsx global>{`
         .leaflet-container {
           background: #f5f5f4 !important;
+        }
+        .leaflet-control-zoom {
+          border: none !important;
+          margin-top: 24px !important;
+          margin-left: 20px !important;
+          display: flex !important;
+          flex-direction: column !important;
+          gap: 4px !important;
+        }
+        .leaflet-control-zoom-in, .leaflet-control-zoom-out {
+          background-color: rgba(28, 25, 23, 0.8) !important;
+          backdrop-filter: blur(8px) !important;
+          color: white !important;
+          border: 1px solid rgba(255, 255, 255, 0.1) !important;
+          width: 32px !important;
+          height: 32px !important;
+          line-height: 32px !important;
+          border-radius: 10px !important;
+          transition: all 0.3s ease !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          font-weight: bold !important;
+        }
+        .leaflet-control-zoom-in:hover, .leaflet-control-zoom-out:hover {
+          background-color: #f43f5e !important;
+          color: white !important;
+          transform: scale(1.1) !important;
         }
         .custom-popup .leaflet-popup-content-wrapper {
           border-radius: 1rem;

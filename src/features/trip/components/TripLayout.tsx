@@ -47,11 +47,11 @@ export default function TripLayout({
         </div>
 
         {isLoading ? (
-          <div className="flex items-center justify-start md:justify-center gap-2 md:gap-3 mb-12 md:mb-16 overflow-hidden -mx-6 px-6 md:mx-0 md:px-0">
-            <Skeleton className="h-11 w-28 rounded-full shrink-0 opacity-20" />
-            <Skeleton className="h-11 w-28 rounded-full shrink-0 opacity-20" />
-            <Skeleton className="h-11 w-28 rounded-full shrink-0 opacity-20" />
-            <Skeleton className="h-11 w-28 rounded-full shrink-0 opacity-20" />
+          <div className="flex items-center justify-start md:justify-center gap-2 md:gap-3 mb-8 md:mb-16 overflow-hidden -mx-4 px-4 md:mx-0 md:px-0">
+            <Skeleton className="h-11 w-28 rounded-full shrink-0 opacity-10" />
+            <Skeleton className="h-11 w-28 rounded-full shrink-0 opacity-10" />
+            <Skeleton className="h-11 w-28 rounded-full shrink-0 opacity-10" />
+            <Skeleton className="h-11 w-24 rounded-full shrink-0 opacity-5" />
           </div>
         ) : (
           <CategoryTabs slug={slug} activePath={activePath} isSecretMode={isSecretMode} days={days} />

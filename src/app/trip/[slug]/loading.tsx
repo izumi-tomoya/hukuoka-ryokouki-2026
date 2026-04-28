@@ -1,7 +1,6 @@
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Container } from "@/components/ui/Container";
 import TripWeatherSummarySkeleton from "@/features/trip/components/TripWeatherSummarySkeleton";
-import AIAdvisorSkeleton from "@/features/trip/components/AIAdvisorSkeleton";
 import TripLayout from "@/features/trip/components/TripLayout";
 import { MagazineCard } from "@/components/ui/MagazineCard";
 
@@ -33,9 +32,6 @@ export default function TripLoading() {
               <TripWeatherSummarySkeleton />
             </div>
           </MagazineCard>
-
-          {/* AI Advisor Skeleton */}
-          <AIAdvisorSkeleton />
 
           {/* Featured Sections Skeletons */}
           <div className="space-y-12">

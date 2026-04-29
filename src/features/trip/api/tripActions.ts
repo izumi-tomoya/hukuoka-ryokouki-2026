@@ -31,6 +31,8 @@ export async function getTripBySlug(slug: string) {
         },
       },
       tips: { orderBy: { order: 'asc' } },
+      packingItems: { orderBy: { order: 'asc' } },
+      gourmetAwards: { orderBy: { order: 'asc' } },
     },
   });
 }
@@ -235,6 +237,73 @@ export async function deleteTipAction(tipId: string) {
   } catch (error) {
     console.error('Failed to delete tip:', error);
     return { success: false, error: '削除に失敗しました' };
+  }
+}
+
+// --- Packing List Actions ---
+
+export async function addPackingItemAction(tripId: string, name: string, category: string) {
+  try {
+    await prisma.packingItem.create({
+      data: { tripId, name, category },
+    });
+    revalidatePath('/trip/[slug]/info', 'page'); // infoタブなどに表示予定
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: String(error) };
+  }
+}
+
+export async function togglePackingItemAction(id: string, isPacked: boolean) {
+  try {
+    await prisma.packingItem.update({
+      where: { id },
+      data: { isPacked },
+    });
+    revalidatePath('/trip/[slug]/info', 'page');
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: String(error) };
+  }
+}
+
+export async function deletePackingItemAction(id: string) {
+  try {
+    await prisma.packingItem.delete({
+      where: { id },
+    });
+    revalidatePath('/trip/[slug]/info', 'page');
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: String(error) };
+  }
+}
+
+// --- Gourmet Award Actions ---
+
+export async function addGourmetAwardAction(tripId: string, data: { category: string, title: string, comment?: string, imageUrl?: string, eventId?: string }) {
+  await checkAdmin();
+  try {
+    await prisma.gourmetAward.create({
+      data: { tripId, ...data },
+    });
+    revalidatePath('/trip/[slug]/memories', 'page');
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: String(error) };
+  }
+}
+
+export async function deleteGourmetAwardAction(id: string) {
+  await checkAdmin();
+  try {
+    await prisma.gourmetAward.delete({
+      where: { id },
+    });
+    revalidatePath('/trip/[slug]/memories', 'page');
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: String(error) };
   }
 }
 

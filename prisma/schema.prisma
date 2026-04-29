@@ -59,18 +59,42 @@ model Trip {
   id          String   @id @default(cuid())
   slug        String   @unique
   title       String
-  description String?
+  description String?  @db.Text
   startDate   DateTime
   endDate     DateTime
   location    String
-  image       String // gradient or image url
+  image       String   // gradient or image url
   accentColor String   @default("#F5C842")
-  status      String   @default("Upcoming") // Upcoming, Planning, Completed
+  status      String   @default("Upcoming") // Upcoming, Planning, Ongoing, Completed
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  days Day[]
-  tips Tip[]
+  days          Day[]
+  tips          Tip[]
+  packingItems  PackingItem[]
+  gourmetAwards GourmetAward[]
+}
+
+model PackingItem {
+  id        String  @id @default(cuid())
+  tripId    String
+  trip      Trip    @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  name      String
+  category  String  @default("Essential") // Essential, Clothing, Gadget, Toiletries, Other
+  isPacked  Boolean @default(false)
+  order     Int     @default(0)
+}
+
+model GourmetAward {
+  id        String  @id @default(cuid())
+  tripId    String
+  trip      Trip    @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  category  String  // e.g., "Best Ramen", "Best Street Food", "Most Romantic"
+  title     String  // 店名や料理名
+  comment   String? @db.Text
+  imageUrl  String?
+  eventId   String? // 紐付けるイベントID
+  order     Int     @default(0)
 }
 
 model Day {

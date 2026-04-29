@@ -1,80 +1,61 @@
-import { Luggage } from 'lucide-react';
-import TripLayout from '@/features/trip/components/TripLayout';
-import { Container } from '@/components/ui/Container';
-import { auth } from '@/lib/auth';
-import { getTripBySlug } from '@/features/trip/api/tripActions';
-import { notFound } from 'next/navigation';
-import TripWeatherSummary from '@/features/trip/components/TripWeatherSummary';
-import { SectionHeader } from '@/components/ui/SectionHeader';
-import PackingSection from '@/features/trip/components/client/PackingSection';
-import EssentialTips from '@/features/trip/components/EssentialTips';
-import TransitDashboard from '@/features/trip/components/client/TransitDashboard';
-import AdventureCard from '@/features/trip/components/client/AdventureCard';
+import { notFound, redirect } from "next/navigation";
+import { getTripBySlug } from "@/features/trip/api/tripActions";
+import TripLayout from "@/features/trip/components/TripLayout";
+import { Container } from "@/components/ui/Container";
+import { auth } from "@/lib/auth";
+import PackingList from "@/features/trip/components/client/PackingList";
+import TipsList from "@/features/trip/components/client/TipsList";
+import { SectionHeader } from "@/components/ui/SectionHeader";
+import type { PackingItem } from "@prisma/client";
 
 export default async function TripInfoPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const session = await auth();
-  const isAdmin = !!session?.user?.isAdmin;
-
   const trip = await getTripBySlug(slug);
   if (!trip) return notFound();
 
+  const session = await auth();
+  const isAdmin = !!session?.user?.isAdmin;
+
+  // getTripBySlug で include された最新のパッキングアイテムを使用します
+  const packingItems = trip.packingItems;
+
   return (
-    <TripLayout 
-      slug={slug} 
-      activePath={`/trip/${slug}/info`} 
-      isSecretMode={isAdmin} 
+    <TripLayout
+      slug={slug}
+      activePath={`/trip/${slug}/info`}
+      isSecretMode={isAdmin}
       title="Trip Essentials"
-      subtitle="忘れ物はない？二人の旅を完璧に楽しむためのリスト"
+      subtitle="旅の準備と必要な情報"
       days={trip.days}
     >
-      <Container className="pb-24">
-        <SectionHeader 
-          title="Weather Forecast" 
-          subtitle="福岡の天気予報を確認して服装を準備しよう"
-        />
-        <div className="mb-16">
-          <TripWeatherSummary location={trip.location} />
-        </div>
+      <Container className="pb-24 space-y-20">
+        {/* --- Packing Section --- */}
+        <section>
+          <SectionHeader title="Checklist" subtitle="準備を完璧に整えよう" />
+          <PackingList initialItems={packingItems} tripId={trip.id} />
+        </section>
 
-        <SectionHeader 
-          title="Domestic Travel Tips" 
-          subtitle="国内旅行・福岡滞在をよりスムーズにするためのヒント"
-        />
-        <div className="mb-16">
-          <EssentialTips />
-        </div>
-
-        <SectionHeader 
-          title="Path Finder" 
-          subtitle="街を繋ぐ、ふたりの足跡。移動をよりスマートに。"
-        />
-        <div className="mb-16">
-          <TransitDashboard isSecretMode={isAdmin} />
-        </div>
-
-        <div className="mb-24">
-          <AdventureCard />
-        </div>
-
-        <SectionHeader 
-          title="Packing List" 
-          subtitle="快適な旅のためのチェックリスト（自動保存されます）"
-        />
-        
-        <PackingSection />
-
-        <div className="mt-16 bg-stone-900 rounded-[32px] p-8 md:p-12 text-center text-white">
-          <h3 className="text-2xl font-bold mb-4">Ready to Go?</h3>
-          <p className="text-stone-400 max-w-md mx-auto mb-8">
-            準備が整ったら、あとは思い切り楽しむだけ！<br />
-            二人の福岡旅行が最高の思い出になりますように。
-          </p>
-          <div className="inline-flex items-center gap-2 px-6 py-3 bg-rose-500 rounded-full font-bold text-sm">
-            <Luggage size={18} />
-            いってらっしゃい！
+        {/* --- Booking & Knowledge Section --- */}
+        <section>
+          <SectionHeader title="Knowledge & Booking" subtitle="予約情報と現地の知恵" />
+          <div className="mt-8">
+            <TipsList 
+              initialTips={trip.tips.map(t => ({
+                id: t.id,
+                title: t.title,
+                body: t.body,
+                venue: t.venue ?? "",
+                imageUrl: t.imageUrl ?? "",
+                isWarning: t.isWarning,
+                isConfirmed: t.isConfirmed,
+                category: t.category ?? "General",
+                deepLevel: t.deepLevel,
+                order: t.order
+              }))} 
+              tripId={trip.id} 
+            />
           </div>
-        </div>
+        </section>
       </Container>
     </TripLayout>
   );

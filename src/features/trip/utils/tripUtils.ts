@@ -65,3 +65,40 @@ export function mapEventToTripEvent(event: EventWithStops): TripEvent {
     })),
   };
 }
+
+export interface BudgetStats {
+  totalPlanned: number;
+  totalActual: number;
+  byCategory: {
+    category: string;
+    planned: number;
+    actual: number;
+    color: string;
+  }[];
+}
+
+export function calculateBudgetStats(events: TripEvent[]): BudgetStats {
+  const categories = [
+    { id: 'food', label: '食事', color: '#F43F5E' },
+    { id: 'transport', label: '交通', color: '#3B82F6' },
+    { id: 'sightseeing', label: '観光', color: '#0EA5E9' },
+    { id: 'hotel', label: '宿泊', color: '#10B981' },
+    { id: 'shopping', label: 'お土産', color: '#EC4899' },
+    { id: 'basic', label: 'その他', color: '#71717A' },
+  ];
+
+  const totalPlanned = events.reduce((sum, e) => sum + (e.plannedBudget || 0), 0);
+  const totalActual = events.reduce((sum, e) => sum + (e.actualExpense || 0), 0);
+
+  const byCategory = categories.map(cat => {
+    const catEvents = events.filter(e => e.type === cat.id);
+    return {
+      category: cat.label,
+      planned: catEvents.reduce((sum, e) => sum + (e.plannedBudget || 0), 0),
+      actual: catEvents.reduce((sum, e) => sum + (e.actualExpense || 0), 0),
+      color: cat.color,
+    };
+  }).filter(c => c.planned > 0 || c.actual > 0);
+
+  return { totalPlanned, totalActual, byCategory };
+}

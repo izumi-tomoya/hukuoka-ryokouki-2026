@@ -21,7 +21,7 @@ export default function TripLoading() {
                   <Skeleton className="h-10 w-36 rounded-full" />
                 </div>
               </div>
-              <Skeleton className="h-40 w-56 rounded-[2.5rem] shrink-0 opacity-20" />
+              <Skeleton className="h-40 w-56 rounded-article shrink-0 opacity-20" />
             </div>
             
             <div className="mt-16 pt-12 border-t border-border">

@@ -14,14 +14,23 @@ import { formatDateRange, formatDateWithWeekday } from "@/features/trip/utils/da
 
 export default async function TripPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
+  
+  // 1. DBからトリップ情報を取得（ここが失敗すると404）
   const trip = await getTripBySlug(slug);
   if (!trip) return notFound();
 
-  const weather = await getWeatherData(trip.location);
+  // 2. 天気情報を取得（失敗してもデフォルト値で続行）
+  const weather = await getWeatherData(trip.location).catch(() => null);
   const themeStatus = weather?.themeStatus || 'sunny';
 
-  const session = await auth();
-  const isAdmin = !!session?.user?.isAdmin;
+  // 3. 認証情報を取得（Vercelの環境変数不足などで失敗しても一般ユーザーとして続行）
+  let isAdmin = false;
+  try {
+    const session = await auth();
+    isAdmin = !!session?.user?.isAdmin;
+  } catch (e) {
+    console.error("Auth failed on runtime:", e);
+  }
 
   const dateRange = formatDateRange(trip.startDate, trip.endDate);
 

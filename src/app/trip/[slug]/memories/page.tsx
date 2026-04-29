@@ -20,7 +20,7 @@ export default async function MemoriesPage({ params }: { params: Promise<{ slug:
 
   // 全てのイベントから写真が投稿されているイベントを抽出
   const eventsWithPhotos = trip.days.flatMap(day => 
-    day.events.filter(event => (event.photos?.length ?? 0) > 0 || (event.actualPhotos?.length ?? 0) > 0)
+    day.events.filter(event => (event.photos?.length ?? 0) > 0)
   );
 
   // 全てのイベント（写真がないものも含む）をリストアップして投稿可能にする

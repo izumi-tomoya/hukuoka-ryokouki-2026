@@ -14,7 +14,7 @@ async function checkAdmin() {
 
 // Force re-compilation after prisma generate
 export async function getTripBySlug(slug: string) {
-  return prisma.trip.findUnique({
+  const trip = await prisma.trip.findUnique({
     where: { slug },
     include: {
       days: {
@@ -31,10 +31,37 @@ export async function getTripBySlug(slug: string) {
         },
       },
       tips: { orderBy: { order: 'asc' } },
-      packingItems: { orderBy: { order: 'asc' } },
-      gourmetAwards: { orderBy: { order: 'asc' } },
     },
   });
+
+  if (!trip) return null;
+
+  // 型定義の反映遅延対策として、個別に取得してマージします
+  try {
+    const [packingItems, gourmetAwards] = await Promise.all([
+      (prisma as any).packingItem.findMany({
+        where: { tripId: trip.id },
+        orderBy: { order: 'asc' }
+      }),
+      (prisma as any).gourmetAward.findMany({
+        where: { tripId: trip.id },
+        orderBy: { order: 'asc' }
+      })
+    ]);
+
+    return {
+      ...trip,
+      packingItems,
+      gourmetAwards
+    };
+  } catch (e) {
+    console.error("Failed to fetch relations lazily:", e);
+    return {
+      ...trip,
+      packingItems: [],
+      gourmetAwards: []
+    };
+  }
 }
 
 export async function createTrip(formData: FormData) {

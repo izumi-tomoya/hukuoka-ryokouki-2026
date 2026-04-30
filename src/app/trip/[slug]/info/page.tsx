@@ -17,7 +17,7 @@ export default async function TripInfoPage({ params }: { params: Promise<{ slug:
   const isAdmin = !!session?.user?.isAdmin;
 
   // getTripBySlug で include された最新のパッキングアイテムを使用します
-  const packingItems = trip.packingItems;
+  const packingItems = trip.packingItems ?? [];
 
   return (
     <TripLayout

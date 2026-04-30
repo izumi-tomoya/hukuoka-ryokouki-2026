@@ -23,12 +23,12 @@ export default async function MemoriesPage({ params }: { params: Promise<{ slug:
   const isAdmin = !!session?.user?.isAdmin;
 
   // getTripBySlug で include された最新のアワード情報を使用します
-  const awards = trip.gourmetAwards;
+  const awards = trip.gourmetAwards ?? [];
 
   // 1. 全てのイベントを型安全な形式（TripEvent）にマッピング
-  const allTripEvents = trip.days.flatMap(day => 
+  const allTripEvents = trip.days?.flatMap(day => 
     day.events.map(event => mapEventToTripEvent(event as unknown as EventWithStops))
-  );
+  ) ?? [];
 
   // 2. 予算統計の計算
   const budgetStats = calculateBudgetStats(allTripEvents);
@@ -43,12 +43,11 @@ export default async function MemoriesPage({ params }: { params: Promise<{ slug:
       isSecretMode={isAdmin} 
       title="Travel Memories"
       subtitle="旅の瞬間を、永遠の記録に。"
-      days={trip.days}
+      days={trip.days ?? []}
     >
       <MemoriesContent 
         tripId={trip.id}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        awards={awards as any}
+        awards={awards}
         budgetStats={budgetStats}
         eventsWithPhotos={eventsWithPhotos}
         allEvents={allTripEvents}

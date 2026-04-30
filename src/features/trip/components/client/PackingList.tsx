@@ -187,7 +187,7 @@ export default function PackingList({ initialItems, tripId }: Props) {
               placeholder={`${activeTab === 'Gadget' ? '充電器、カメラなど...' : '持ち物を追加...'}`}
               value={newItemName}
               onChange={(e) => setNewItemName(e.target.value)}
-              className="w-full pl-6 pr-16 py-5 bg-secondary/50 border border-transparent rounded-[2rem] text-sm focus:ring-4 focus:ring-primary/10 focus:bg-card focus:border-primary/30 transition-all outline-none"
+              className="w-full pl-6 pr-16 py-5 bg-secondary/50 border border-transparent rounded-[2rem] text-sm focus:bg-card focus:border-primary/30 transition-all v2-focus"
             />
             <button 
               type="submit"

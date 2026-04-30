@@ -67,7 +67,7 @@ export function UserSettingsForm({ initialName, initialMotto }: UserSettingsForm
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-5 py-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl text-zinc-900 dark:text-zinc-100 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 transition-all"
+              className="w-full px-5 py-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl text-zinc-900 dark:text-zinc-100 text-sm font-medium transition-all v2-focus"
               placeholder="あなたの名前"
               required
             />
@@ -82,7 +82,7 @@ export function UserSettingsForm({ initialName, initialMotto }: UserSettingsForm
               value={motto}
               onChange={(e) => setMotto(e.target.value)}
               rows={3}
-              className="w-full px-5 py-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl text-zinc-900 dark:text-zinc-100 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 transition-all resize-none"
+              className="w-full px-5 py-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl text-zinc-900 dark:text-zinc-100 text-sm font-medium transition-all resize-none v2-focus"
               placeholder="例：一期一会を大切に。美味しいものを求めて。"
             />
           </div>

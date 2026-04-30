@@ -103,9 +103,9 @@ export default function EventDetailModal() {
                     <div className="space-y-4">
                       <div className="flex items-center gap-2">
                          <JapaneseYen size={14} className="text-muted-foreground" />
-                         <input type="number" value={budgetAmount} onChange={e => setBudgetAmount(e.target.value)} className="w-full p-3 text-sm bg-background border border-border rounded-xl focus:ring-4 focus:ring-primary/10 outline-none" placeholder="予算額" />
+                         <input type="number" value={budgetAmount} onChange={e => setBudgetAmount(e.target.value)} className="w-full p-3 text-sm bg-background border border-border rounded-xl v2-focus" placeholder="予算額" />
                       </div>
-                      <textarea value={noteText} onChange={e => setNoteText(e.target.value)} className="w-full p-3 text-sm bg-background border border-border rounded-xl focus:ring-4 focus:ring-primary/10 outline-none resize-none" rows={3} placeholder="思い出のメモ..." />
+                      <textarea value={noteText} onChange={e => setNoteText(e.target.value)} className="w-full p-3 text-sm bg-background border border-border rounded-xl resize-none v2-focus" rows={3} placeholder="思い出のメモ..." />
                     </div>
                   ) : (
                     <div className="space-y-2">

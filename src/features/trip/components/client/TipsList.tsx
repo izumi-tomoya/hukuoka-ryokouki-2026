@@ -232,7 +232,7 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
               placeholder="お店名、タイトル、予約情報..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-12 pr-4 py-3.5 bg-secondary/50 border-none rounded-2xl text-sm focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+              className="w-full pl-12 pr-4 py-3.5 bg-secondary/50 border-none rounded-2xl text-sm transition-all v2-focus"
             />
           </div>
 
@@ -358,7 +358,7 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
                   <input 
                     value={editingTip.venue || ''}
                     onChange={(e) => setEditingTip({ ...editingTip, venue: e.target.value })}
-                    className="w-full pl-12 pr-5 py-4 bg-secondary/50 border border-border rounded-2xl focus:ring-4 focus:ring-primary/10 outline-none transition-all"
+                    className="w-full pl-12 pr-5 py-4 bg-secondary/50 border border-border rounded-2xl transition-all v2-focus"
                     placeholder="例：福岡空港 / ヒルトン福岡"
                   />
                 </div>
@@ -370,7 +370,7 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
                   autoFocus
                   value={editingTip.title || ''}
                   onChange={(e) => setEditingTip({ ...editingTip, title: e.target.value })}
-                  className="w-full px-5 py-4 bg-secondary/50 border border-border rounded-2xl focus:ring-4 focus:ring-primary/10 outline-none transition-all"
+                  className="w-full px-5 py-4 bg-secondary/50 border border-border rounded-2xl transition-all v2-focus"
                   placeholder="例：搭乗券（tomoya） / 予約番号"
                   required
                 />
@@ -424,7 +424,7 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
                     type="number" min="1" max="5"
                     value={editingTip.deepLevel || 1}
                     onChange={(e) => setEditingTip({ ...editingTip, deepLevel: parseInt(e.target.value) })}
-                    className="w-full px-5 py-4 bg-secondary/50 border border-border rounded-2xl focus:ring-4 focus:ring-primary/10 outline-none"
+                    className="w-full px-5 py-4 bg-secondary/50 border border-border rounded-2xl v2-focus"
                   />
                 </div>
               </div>
@@ -435,7 +435,7 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
                   rows={3}
                   value={editingTip.body || ''}
                   onChange={(e) => setEditingTip({ ...editingTip, body: e.target.value })}
-                  className="w-full px-5 py-4 bg-secondary/50 border border-border rounded-2xl focus:ring-4 focus:ring-primary/10 outline-none transition-all resize-none"
+                  className="w-full px-5 py-4 bg-secondary/50 border border-border rounded-2xl transition-all resize-none v2-focus"
                   placeholder="予約番号や座席番号など..."
                   required
                 />

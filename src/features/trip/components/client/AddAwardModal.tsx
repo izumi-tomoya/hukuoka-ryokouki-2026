@@ -97,7 +97,7 @@ export default function AddAwardModal({ tripId, isOpen, onClose }: Props) {
                 autoFocus
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full px-5 py-4 bg-secondary/50 border border-border rounded-2xl focus:ring-4 focus:ring-primary/10 outline-none transition-all text-foreground placeholder:text-muted-foreground/50"
+                className="w-full px-5 py-4 bg-secondary/50 border border-border rounded-2xl transition-all text-foreground placeholder:text-muted-foreground/50 v2-focus"
                 placeholder="例：博多一双 / 元祖長浜屋"
                 required
               />
@@ -107,7 +107,7 @@ export default function AddAwardModal({ tripId, isOpen, onClose }: Props) {
               <select 
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full px-5 py-4 bg-secondary/50 border border-border rounded-2xl focus:ring-4 focus:ring-primary/10 outline-none appearance-none text-foreground dark:bg-card"
+                className="w-full px-5 py-4 bg-secondary/50 border border-border rounded-2xl appearance-none text-foreground dark:bg-card v2-focus"
               >
                 {CATEGORIES.map(c => <option key={c} value={c} className="bg-card text-foreground">{c}</option>)}
               </select>
@@ -123,7 +123,7 @@ export default function AddAwardModal({ tripId, isOpen, onClose }: Props) {
               rows={3}
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              className="w-full px-5 py-4 bg-secondary/50 border border-border rounded-2xl focus:ring-4 focus:ring-primary/10 outline-none transition-all resize-none text-foreground placeholder:text-muted-foreground/50"
+              className="w-full px-5 py-4 bg-secondary/50 border border-border rounded-2xl transition-all resize-none text-foreground placeholder:text-muted-foreground/50 v2-focus"
               placeholder="なぜこのお店が最高だったのか、二人の感想をメモしましょう..."
             />
           </div>

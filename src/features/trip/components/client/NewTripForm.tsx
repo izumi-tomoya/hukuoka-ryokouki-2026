@@ -7,7 +7,7 @@ import { Sparkles, MapPin, Palette } from 'lucide-react';
 
 const labelCls = 'block text-[9px] font-black tracking-[4px] text-muted-foreground uppercase mb-2 ml-1';
 const inputCls =
-  'w-full rounded-2xl bg-card border border-border px-4 py-3.5 text-[14px] font-medium text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/50 transition-all';
+  'w-full rounded-2xl bg-card border border-border px-4 py-3.5 text-[14px] font-medium text-foreground placeholder:text-muted-foreground/30 transition-all v2-focus';
 
 export default function NewTripForm() {
   const router = useRouter();
@@ -75,7 +75,7 @@ export default function NewTripForm() {
       <button
         type="submit"
         disabled={isPending}
-        className="w-full flex items-center justify-center gap-2.5 rounded-2xl bg-foreground text-background py-5 text-[13px] font-black uppercase tracking-widest transition-all hover:opacity-90 active:scale-[0.98] disabled:opacity-40 shadow-xl shadow-foreground/10 mt-2"
+        className="w-full flex items-center justify-center gap-2.5 rounded-2xl bg-foreground text-background py-5 text-[13px] font-black uppercase tracking-widest transition-all hover:opacity-90 active:scale-[0.98] disabled:opacity-40 shadow-xl shadow-foreground/10 mt-2 v2-focus"
       >
         <Sparkles size={16} className="text-amber-400" />
         {isPending ? 'CREATING...' : 'Create Your Story'}

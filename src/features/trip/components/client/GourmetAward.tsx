@@ -50,7 +50,7 @@ export default function GourmetAwardCard({ award, isAdmin }: Props) {
             <button 
               onClick={handleDelete}
               disabled={isPending}
-              className="p-2 bg-white/10 hover:bg-rose-500/20 rounded-xl transition-all opacity-0 group-hover:opacity-100"
+              className="p-2 bg-white/10 hover:bg-rose-500/20 rounded-xl transition-all opacity-0 group-hover:opacity-100 v2-focus"
             >
               <Trash2 size={16} className="text-white/60 group-hover:text-rose-400" />
             </button>

@@ -35,20 +35,20 @@ export function EditEventForm({ event, onSuccess }: Props) {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="space-y-2">
         <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">時間</label>
-        <input {...register("time")} className="w-full bg-background border border-border p-3 rounded-xl focus:ring-4 focus:ring-primary/10 outline-none text-foreground" />
+        <input {...register("time")} className="w-full bg-background border border-border p-3 rounded-xl text-foreground v2-focus" />
       </div>
       <div className="space-y-2">
         <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">タイトル / 料理名</label>
-        <input {...register("title")} className="w-full bg-background border border-border p-3 rounded-xl focus:ring-4 focus:ring-primary/10 outline-none text-foreground" />
+        <input {...register("title")} className="w-full bg-background border border-border p-3 rounded-xl text-foreground v2-focus" />
       </div>
       <div className="space-y-2">
         <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">説明</label>
-        <textarea {...register("desc")} className="w-full bg-background border border-border p-3 rounded-xl focus:ring-4 focus:ring-primary/10 outline-none text-foreground resize-none" rows={3} />
+        <textarea {...register("desc")} className="w-full bg-background border border-border p-3 rounded-xl text-foreground resize-none v2-focus" rows={3} />
       </div>
       {event.type === 'food' && (
         <div className="space-y-2">
           <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">料理の補足説明</label>
-          <textarea {...register("foodDesc")} className="w-full bg-background border border-border p-3 rounded-xl focus:ring-4 focus:ring-primary/10 outline-none text-foreground resize-none" rows={3} />
+          <textarea {...register("foodDesc")} className="w-full bg-background border border-border p-3 rounded-xl text-foreground resize-none v2-focus" rows={3} />
         </div>
       )}
       <Button type="submit" className="w-full h-14 rounded-xl text-xs font-black uppercase tracking-widest">保存</Button>

@@ -33,7 +33,7 @@ export default function ConfirmCheckbox({ eventId, initialConfirmed }: ConfirmCh
       onClick={handleToggle}
       disabled={isPending}
       className={cn(
-        "group flex h-7 w-7 items-center justify-center rounded-full border-2 transition-all duration-300",
+        "group flex h-7 w-7 items-center justify-center rounded-full border-2 transition-all duration-300 v2-focus",
         isConfirmed 
           ? "border-emerald-500 bg-emerald-500 shadow-md shadow-emerald-200" 
           : "border-stone-200 bg-white hover:border-emerald-300 hover:bg-emerald-50/30",

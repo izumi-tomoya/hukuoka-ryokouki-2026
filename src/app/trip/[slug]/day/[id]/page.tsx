@@ -12,10 +12,10 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
   const trip = await getTripBySlug(slug);
   if (!trip) return notFound();
 
-  const day = trip.days.find((d) => d.dayNumber === dayNumber);
+  const day = trip.days?.find((d) => d.dayNumber === dayNumber);
   if (!day) return notFound();
 
-  const events = day.events.map(mapEventToTripEvent);
+  const events = day.events?.map(mapEventToTripEvent) ?? [];
 
   const dateLabel = formatDateWithWeekday(day.date);
 
@@ -26,15 +26,15 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
       dayLabel={dateLabel}
       dayTitle={day.title ?? undefined}
       dayHighlight={day.highlight ?? undefined}
-      tips={trip.tips.map((t) => ({ 
+      tips={trip.tips?.map((t) => ({ 
         title: t.title, 
         body: t.body, 
         isWarning: t.isWarning,
         category: t.category ?? undefined,
         deepLevel: t.deepLevel
-      }))}
+      })) ?? []}
       slug={slug}
-      days={trip.days}
+      days={trip.days ?? []}
     />
   );
 }

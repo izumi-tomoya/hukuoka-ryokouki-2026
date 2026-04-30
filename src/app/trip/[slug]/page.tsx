@@ -142,7 +142,7 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="h-1 w-1 rounded-full bg-primary/40" />
-                        <span>{day.events.length} Moments</span>
+                        <span>{day.events?.length ?? 0} Moments</span>
                       </div>
                     </div>
                   </MagazineCard>

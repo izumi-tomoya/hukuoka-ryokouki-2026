@@ -61,7 +61,7 @@ export default function PhotoGalleryLightbox({ photos, eventId }: PhotoGalleryLi
           <div
             key={photo.id}
             className={cn(
-              "group relative overflow-hidden rounded-[2rem] border border-white shadow-sm transition-all hover:shadow-xl active:scale-[0.98]",
+              "group relative overflow-hidden rounded-[2rem] border border-border bg-muted shadow-sm transition-all hover:shadow-xl active:scale-[0.98]",
               photos.length % 3 !== 0 && i === 0 && photos.length > 2 ? "md:col-span-2 md:aspect-[21/9]" : "aspect-square"
             )}
           >

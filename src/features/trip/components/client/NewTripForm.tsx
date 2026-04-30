@@ -5,9 +5,9 @@ import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { Sparkles, MapPin, Palette } from 'lucide-react';
 
-const labelCls = 'block text-[9px] font-black tracking-[4px] text-stone-400 uppercase mb-2';
+const labelCls = 'block text-[9px] font-black tracking-[4px] text-muted-foreground uppercase mb-2 ml-1';
 const inputCls =
-  'w-full rounded-2xl bg-white ring-1 ring-stone-200 px-4 py-3.5 text-[14px] font-medium text-stone-800 placeholder:text-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-400/60 transition-all';
+  'w-full rounded-2xl bg-card border border-border px-4 py-3.5 text-[14px] font-medium text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/50 transition-all';
 
 export default function NewTripForm() {
   const router = useRouter();
@@ -25,7 +25,7 @@ export default function NewTripForm() {
   }
 
   return (
-    <form action={handleSubmit} className="space-y-5">
+    <form action={handleSubmit} className="space-y-6">
       <div>
         <label className={labelCls}>Trip Title</label>
         <input
@@ -36,12 +36,12 @@ export default function NewTripForm() {
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label className={labelCls}>Location</label>
           <div className="relative">
-            <MapPin size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-300" />
-            <input name="location" required placeholder="Okinawa" className={`${inputCls} pl-10`} />
+            <MapPin size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/40" />
+            <input name="location" required placeholder="Okinawa" className={`${inputCls} pl-11`} />
           </div>
         </div>
         <div>
@@ -49,13 +49,13 @@ export default function NewTripForm() {
           <div className="relative">
             <Palette
               size={14}
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-300 z-10"
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/40 z-10"
             />
             <input
               name="accentColor"
               type="color"
               defaultValue="#F5C842"
-              className="w-full h-12.5 rounded-2xl bg-white ring-1 ring-stone-200 pl-10 pr-3 cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-400/60 transition-all"
+              className="w-full h-[54px] rounded-2xl bg-card border border-border pl-11 pr-3 cursor-pointer focus:outline-none focus:ring-4 focus:ring-primary/10 transition-all"
             />
           </div>
         </div>
@@ -64,21 +64,21 @@ export default function NewTripForm() {
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className={labelCls}>Start Date</label>
-          <input name="startDate" type="date" required className={inputCls} />
+          <input name="startDate" type="date" required className={cn(inputCls, "appearance-none")} />
         </div>
         <div>
           <label className={labelCls}>End Date</label>
-          <input name="endDate" type="date" required className={inputCls} />
+          <input name="endDate" type="date" required className={cn(inputCls, "appearance-none")} />
         </div>
       </div>
 
       <button
         type="submit"
         disabled={isPending}
-        className="w-full flex items-center justify-center gap-2.5 rounded-2xl bg-[#0D0A06] py-4 text-[13px] font-bold text-white/90 transition-all hover:bg-stone-900 active:scale-[0.98] disabled:opacity-40 shadow-lg shadow-stone-900/20 mt-2"
+        className="w-full flex items-center justify-center gap-2.5 rounded-2xl bg-foreground text-background py-5 text-[13px] font-black uppercase tracking-widest transition-all hover:opacity-90 active:scale-[0.98] disabled:opacity-40 shadow-xl shadow-foreground/10 mt-2"
       >
-        <Sparkles size={15} className="text-amber-400" />
-        {isPending ? '作成中...' : '旅のしおりを作成する'}
+        <Sparkles size={16} className="text-amber-400" />
+        {isPending ? 'CREATING...' : 'Create Your Story'}
       </button>
     </form>
   );

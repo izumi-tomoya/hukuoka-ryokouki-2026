@@ -97,20 +97,23 @@ export default function AddAwardModal({ tripId, isOpen, onClose }: Props) {
                 autoFocus
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full px-5 py-4 bg-secondary/50 border border-border rounded-2xl focus:ring-4 focus:ring-primary/10 outline-none transition-all"
+                className="w-full px-5 py-4 bg-secondary/50 border border-border rounded-2xl focus:ring-4 focus:ring-primary/10 outline-none transition-all text-foreground placeholder:text-muted-foreground/50"
                 placeholder="例：博多一双 / 元祖長浜屋"
                 required
               />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2 relative">
               <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Category</label>
               <select 
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full px-5 py-4 bg-secondary/50 border border-border rounded-2xl focus:ring-4 focus:ring-primary/10 outline-none appearance-none"
+                className="w-full px-5 py-4 bg-secondary/50 border border-border rounded-2xl focus:ring-4 focus:ring-primary/10 outline-none appearance-none text-foreground dark:bg-card"
               >
-                {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                {CATEGORIES.map(c => <option key={c} value={c} className="bg-card text-foreground">{c}</option>)}
               </select>
+              <div className="absolute right-5 bottom-4 pointer-events-none text-muted-foreground">
+                <Star size={16} />
+              </div>
             </div>
           </div>
 
@@ -120,7 +123,7 @@ export default function AddAwardModal({ tripId, isOpen, onClose }: Props) {
               rows={3}
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              className="w-full px-5 py-4 bg-secondary/50 border border-border rounded-2xl focus:ring-4 focus:ring-primary/10 outline-none transition-all resize-none"
+              className="w-full px-5 py-4 bg-secondary/50 border border-border rounded-2xl focus:ring-4 focus:ring-primary/10 outline-none transition-all resize-none text-foreground placeholder:text-muted-foreground/50"
               placeholder="なぜこのお店が最高だったのか、二人の感想をメモしましょう..."
             />
           </div>

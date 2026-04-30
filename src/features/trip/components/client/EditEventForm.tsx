@@ -32,26 +32,26 @@ export function EditEventForm({ event, onSuccess }: Props) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-4">
-      <div>
-        <label className="block text-sm font-medium text-stone-700">時間</label>
-        <input {...register("time")} className="w-full border p-2 rounded" />
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <div className="space-y-2">
+        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">時間</label>
+        <input {...register("time")} className="w-full bg-background border border-border p-3 rounded-xl focus:ring-4 focus:ring-primary/10 outline-none text-foreground" />
       </div>
-      <div>
-        <label className="block text-sm font-medium text-stone-700">タイトル / 料理名</label>
-        <input {...register("title")} className="w-full border p-2 rounded" />
+      <div className="space-y-2">
+        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">タイトル / 料理名</label>
+        <input {...register("title")} className="w-full bg-background border border-border p-3 rounded-xl focus:ring-4 focus:ring-primary/10 outline-none text-foreground" />
       </div>
-      <div>
-        <label className="block text-sm font-medium text-stone-700">説明</label>
-        <textarea {...register("desc")} className="w-full border p-2 rounded" rows={3} />
+      <div className="space-y-2">
+        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">説明</label>
+        <textarea {...register("desc")} className="w-full bg-background border border-border p-3 rounded-xl focus:ring-4 focus:ring-primary/10 outline-none text-foreground resize-none" rows={3} />
       </div>
       {event.type === 'food' && (
-        <div>
-          <label className="block text-sm font-medium text-stone-700">料理の補足説明</label>
-          <textarea {...register("foodDesc")} className="w-full border p-2 rounded" rows={3} />
+        <div className="space-y-2">
+          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">料理の補足説明</label>
+          <textarea {...register("foodDesc")} className="w-full bg-background border border-border p-3 rounded-xl focus:ring-4 focus:ring-primary/10 outline-none text-foreground resize-none" rows={3} />
         </div>
       )}
-      <Button type="submit" className="w-full">保存</Button>
+      <Button type="submit" className="w-full h-14 rounded-xl text-xs font-black uppercase tracking-widest">保存</Button>
     </form>
   );
 }

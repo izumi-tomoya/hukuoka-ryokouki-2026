@@ -27,8 +27,8 @@ export default function TabNavigation({ isSecretMode }: TabNavigationProps) {
   ];
 
   return (
-    <nav className="fixed bottom-4 left-4 right-4 z-50 md:hidden">
-      <div className="flex items-center justify-between gap-1 rounded-full bg-white/70 px-4 py-2 shadow-sm ring-1 ring-zinc-100 backdrop-blur-2xl">
+    <nav className="fixed bottom-6 left-4 right-4 z-50 md:hidden">
+      <div className="flex items-center justify-between gap-1 rounded-full bg-card/70 px-4 py-2.5 shadow-2xl ring-1 ring-border/50 backdrop-blur-2xl">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
@@ -37,13 +37,13 @@ export default function TabNavigation({ isSecretMode }: TabNavigationProps) {
               key={item.href}
               href={item.href}
               className={cn(
-                'flex flex-col items-center gap-1 rounded-full px-4 py-2 transition-all',
+                'flex flex-col items-center gap-1 rounded-full px-4 py-2.5 transition-all',
                 isActive 
-                  ? 'bg-zinc-900 text-white' 
-                  : 'text-zinc-400 hover:text-zinc-900'
+                  ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-110' 
+                  : 'text-muted-foreground hover:text-foreground active:scale-95'
               )}
             >
-              <Icon size={18} />
+              <Icon size={18} strokeWidth={isActive ? 3 : 2} />
             </Link>
           );
         })}

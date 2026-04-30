@@ -4,6 +4,26 @@ import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { auth } from '@/lib/auth';
 import { del } from '@vercel/blob';
+import { Prisma } from '@prisma/client';
+
+export type TripWithRelations = Prisma.TripGetPayload<{
+  include: {
+    days: {
+      include: {
+        events: {
+          include: { 
+            yataiStops: true,
+            transitSteps: true,
+            photos: true,
+          },
+        },
+      },
+    },
+    tips: true,
+    packingItems: true,
+    gourmetAwards: true,
+  },
+}>;
 
 async function checkAdmin() {
   const session = await auth();
@@ -13,7 +33,7 @@ async function checkAdmin() {
 }
 
 // Force re-compilation after prisma generate
-export async function getTripBySlug(slug: string) {
+export async function getTripBySlug(slug: string): Promise<TripWithRelations | null> {
   const trip = await prisma.trip.findUnique({
     where: { slug },
     include: {
@@ -50,17 +70,17 @@ export async function getTripBySlug(slug: string) {
     ]);
 
     return {
-      ...trip,
+      ...(trip as any),
       packingItems,
       gourmetAwards
-    };
+    } as TripWithRelations;
   } catch (e) {
     console.error("Failed to fetch relations lazily:", e);
     return {
-      ...trip,
+      ...(trip as any),
       packingItems: [],
       gourmetAwards: []
-    };
+    } as TripWithRelations;
   }
 }
 

@@ -7,9 +7,11 @@ import {
   day2Events, 
   day1Tips, 
   day2Tips,
+  packingList,
   itoshimaEvents,
   itoshimaTips
 } from '../src/data/tripData';
+import { LOCATION_COORDINATES } from '../src/features/trip/utils/locationCatalog';
 import { YataiStop, TransitStep, TripEvent } from "../src/features/trip/types/trip";
 
 // Load .env file
@@ -98,6 +100,18 @@ async function main() {
   console.log('🌱 Start seeding...');
 
   // ==========================================
+  // 0. Location Master
+  // ==========================================
+  console.log('Adding Location master data...');
+  for (const [name, [lat, lng]] of Object.entries(LOCATION_COORDINATES)) {
+    await prisma.location.upsert({
+      where: { name },
+      update: { lat, lng },
+      create: { name, lat, lng },
+    });
+  }
+
+  // ==========================================
   // 1. 福岡プラン (fukuoka-2026)
   // ==========================================
   const tripFukuoka = await prisma.trip.upsert({
@@ -159,6 +173,20 @@ async function main() {
   
   console.log('Adding Day 2 events...');
   await createEvents(d2.id, day2Events);
+
+  // Packing Items
+  await prisma.packingItem.deleteMany({ where: { tripId: tripFukuoka.id } });
+  for (const [index, item] of packingList.entries()) {
+    await prisma.packingItem.create({
+      data: {
+        tripId: tripFukuoka.id,
+        name: item.name,
+        category: item.category,
+        order: index,
+        isPacked: false,
+      },
+    });
+  }
 
   // Tips
   await prisma.tip.deleteMany({ where: { tripId: tripFukuoka.id } });

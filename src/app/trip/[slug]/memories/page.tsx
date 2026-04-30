@@ -39,11 +39,13 @@ export default async function MemoriesPage({ params }: { params: Promise<{ slug:
   return (
     <TripLayout 
       slug={slug} 
+      tripId={trip.id}
       activePath={`/trip/${slug}/memories`} 
       isSecretMode={isAdmin} 
       title="Travel Memories"
       subtitle="旅の瞬間を、永遠の記録に。"
       days={trip.days ?? []}
+      events={allTripEvents}
     >
       <MemoriesContent 
         tripId={trip.id}

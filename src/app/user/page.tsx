@@ -38,7 +38,7 @@ export default async function UserPage() {
   });
 
   return (
-    <div className="min-h-screen bg-[#FDFCFB] dark:bg-zinc-950 pt-24 pb-12 transition-colors">
+    <div className="min-h-screen bg-memoir-bg dark:bg-background pt-24 pb-12 transition-colors">
       <Container>
         <SectionHeader 
           title="User Profile" 

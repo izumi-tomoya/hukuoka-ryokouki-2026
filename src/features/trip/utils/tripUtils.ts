@@ -11,6 +11,16 @@ type EventWithStops = Prisma.EventGetPayload<{
 export function mapEventToTripEvent(event: EventWithStops): TripEvent {
   // Use plannedBudget if budget is not provided, or vice versa for backward compatibility
   const plannedBudget = event.plannedBudget ?? undefined;
+  const reservationText = [
+    event.tagLabel,
+    event.desc,
+    event.foodDesc,
+    event.highlight,
+  ].filter(Boolean).join(" ");
+  const isReservationLike =
+    event.type === "food" ||
+    (event.type === "hotel" && /朝食|チェックイン|ホテル/.test(event.title || "")) ||
+    /予約|Reserved|確認済み/i.test(reservationText);
 
   return {
     time: event.time,
@@ -24,7 +34,7 @@ export function mapEventToTripEvent(event: EventWithStops): TripEvent {
     foodDesc: event.foodDesc ?? undefined,
     highlight: event.highlight ?? undefined,
     isYatai: event.isYatai,
-    isConfirmed: event.isConfirmed,
+    isConfirmed: event.isConfirmed || isReservationLike,
     id: event.id,
     weatherStats: (event as unknown as { weatherStats?: WeatherStats }).weatherStats ?? undefined,
     status: event.status ?? undefined,

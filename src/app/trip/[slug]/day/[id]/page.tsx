@@ -3,6 +3,7 @@ import DayView from "@/features/trip/components/DayView";
 import { getTripBySlug } from "@/features/trip/api/tripActions";
 import { mapEventToTripEvent } from "@/features/trip/utils/tripUtils";
 import { formatDateWithWeekday } from "@/features/trip/utils/dateUtils";
+import { auth } from "@/lib/auth";
 
 export default async function DayPage({ params }: { params: Promise<{ slug: string; id: string }> }) {
   const { slug, id } = await params;
@@ -16,6 +17,8 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
   if (!day) return notFound();
 
   const events = day.events?.map(mapEventToTripEvent) ?? [];
+  const session = await auth();
+  const isAdmin = !!session?.user?.isAdmin;
 
   const dateLabel = formatDateWithWeekday(day.date);
 
@@ -35,6 +38,7 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
       })) ?? []}
       slug={slug}
       days={trip.days ?? []}
+      isAdmin={isAdmin}
     />
   );
 }

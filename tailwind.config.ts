@@ -15,10 +15,38 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
+        card: {
+          DEFAULT: "var(--card)",
+          foreground: "var(--card-foreground)",
         },
+        popover: {
+          DEFAULT: "var(--popover)",
+          foreground: "var(--popover-foreground)",
+        },
+        primary: {
+          DEFAULT: "var(--primary)",
+          foreground: "var(--primary-foreground)",
+        },
+        secondary: {
+          DEFAULT: "var(--secondary)",
+          foreground: "var(--secondary-foreground)",
+        },
+        muted: {
+          DEFAULT: "var(--muted)",
+          foreground: "var(--muted-foreground)",
+        },
+        accent: {
+          DEFAULT: "var(--accent)",
+          foreground: "var(--accent-foreground)",
+        },
+        destructive: {
+          DEFAULT: "var(--destructive)",
+          foreground: "var(--destructive-foreground)",
+        },
+        border: "var(--border)",
+        input: "var(--input)",
+        ring: "var(--ring)",
+        focus: "var(--ring)",
         memoir: {
           bg: "#FDFCFB",
           rose: "#FDE8EE",
@@ -29,23 +57,36 @@ const config: Config = {
       borderRadius: {
         article: "2.5rem",
         inner: "1.5rem",
+        logo: "2.2rem",
+        "4xl": "2rem",
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
       animation: {
-        'fade-in': 'fade-in 0.3s ease-in-out',
-        'slide-in-from-top': 'slide-in-from-top 0.3s ease-out',
-        'slide-in-from-bottom': 'slide-in-from-bottom 0.3s ease-out',
+        "fade-in": "fade-in 0.3s ease-in-out",
+        "slide-in-from-top": "slide-in-from-top 0.3s ease-out",
+        "slide-in-from-bottom": "slide-in-from-bottom 0.3s ease-out",
       },
       keyframes: {
-        'fade-in': { from: { opacity: '0' }, to: { opacity: '1' } },
-        'slide-in-from-top': { from: { transform: 'translateY(-1rem)' }, to: { transform: 'translateY(0)' } },
-        'slide-in-from-bottom': { from: { transform: 'translateY(1rem)' }, to: { transform: 'translateY(0)' } },
+        "fade-in": {
+          from: { opacity: "0" },
+          to: { opacity: "1" },
+        },
+        "slide-in-from-top": {
+          from: { transform: "translateY(-1rem)" },
+          to: { transform: "translateY(0)" },
+        },
+        "slide-in-from-bottom": {
+          from: { transform: "translateY(1rem)" },
+          to: { transform: "translateY(0)" },
+        },
       },
     },
   },
-  plugins: [tailwindAnimate],
+  plugins: [
+    tailwindAnimate,
+  ],
 };
 
 export default config;

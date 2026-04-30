@@ -75,6 +75,17 @@ model Trip {
   gourmetAwards GourmetAward[]
 }
 
+model Location {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  lat       Float
+  lng       Float
+  address   String?
+  category  String?  // e.g., "Station", "Airport", "Restaurant", "Sightseeing"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model PackingItem {
   id        String  @id @default(cuid())
   tripId    String

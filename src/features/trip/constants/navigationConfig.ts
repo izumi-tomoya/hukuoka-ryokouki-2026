@@ -1,4 +1,4 @@
-import { Home, Calendar, Compass, Info as InfoIcon, LucideIcon, Camera } from 'lucide-react';
+import { Home, Calendar, Compass, Info as InfoIcon, LucideIcon, Camera, LifeBuoy } from 'lucide-react';
 
 interface NavItem {
   href: string;
@@ -28,6 +28,7 @@ export const getNavItems = (trip: TripNavData | null, isAdmin: boolean): NavItem
         label: `Day ${day.dayNumber}`,
         icon: Calendar
       })),
+    { href: `/trip/${trip.slug}/assist`, label: 'Assist', icon: LifeBuoy },
     { href: `/trip/${trip.slug}/memories`, label: 'Memories', icon: Camera },
     { href: `/trip/${trip.slug}/info`, label: 'Info', icon: InfoIcon },
     ...(isAdmin ? [{ href: `/trip/${trip.slug}/tips`, label: 'Tips', icon: Compass }] : []),

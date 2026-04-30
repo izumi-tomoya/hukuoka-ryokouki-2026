@@ -6,7 +6,6 @@ import TripLayout from "@/features/trip/components/TripLayout";
 import { TripCountdown } from "@/features/trip/components/client/TripCountdown";
 import { auth } from "@/lib/auth";
 import { Container } from "@/components/ui/Container";
-import { SectionHeader } from "@/components/ui/SectionHeader";
 import TripWeatherSummary from "@/features/trip/components/TripWeatherSummary";
 import { getWeatherData } from "@/lib/weather";
 import { cn } from "@/lib/utils";
@@ -32,17 +31,29 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
 
   const dateRange = formatDateRange(trip.startDate, trip.endDate);
 
+  const allTripEvents = trip.days?.flatMap(day => 
+    day.events.map(event => ({
+      id: event.id,
+      time: event.time,
+      title: event.title,
+      foodName: event.foodName
+    }))
+  ) ?? [];
+
   return (
     <TripLayout 
       slug={slug} 
+      tripId={trip.id}
       activePath={`/trip/${slug}`} 
       isSecretMode={isAdmin} 
       title={trip.title}
       subtitle={`${trip.location} / ${dateRange}`}
       days={trip.days}
+      events={allTripEvents as any}
+      tips={trip.tips as any}
     >
       <Container className="pb-24">
-        <div className="grid grid-cols-1 gap-16">
+        <div className="grid grid-cols-1 gap-10 md:gap-16">
           {/* ─── Hero / Overview Card ─── */}
           <MagazineCard padding="lg" className="relative overflow-hidden border-border shadow-xl shadow-primary/5 dark:shadow-none">
             <div className={cn(
@@ -53,13 +64,13 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
               themeStatus === 'snowy' && "bg-indigo-500"
             )} />
             
-            <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-12">
-              <div className="max-w-xl">
-                <div className="flex items-center gap-3 text-primary text-[10px] font-black uppercase tracking-[0.4em] mb-8">
+            <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8 lg:gap-12">
+              <div className="min-w-0 max-w-xl">
+                <div className="flex items-center gap-3 text-primary text-[10px] font-black uppercase tracking-[0.18em] sm:tracking-[0.4em] mb-6 md:mb-8">
                   <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-                  Upcoming Chapter
+                  <span className="truncate">Upcoming Chapter</span>
                 </div>
-                <h3 className="font-playfair text-4xl md:text-6xl font-black text-foreground mb-8 leading-tight tracking-tighter">
+                <h3 className="break-words font-playfair text-3xl sm:text-4xl md:text-6xl font-black text-foreground mb-6 md:mb-8 leading-tight tracking-tight">
                   この旅が、<br />ふたりの新しい記憶になる。
                 </h3>
                 {trip.description && (
@@ -79,8 +90,8 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
                 </div>
               </div>
               
-              <div className="shrink-0 flex flex-col items-center p-8 md:p-10 rounded-article bg-primary/5 border border-primary/10 backdrop-blur-md shadow-inner">
-                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-6">
+              <div className="w-full lg:w-auto shrink-0 flex flex-col items-center p-6 md:p-10 rounded-[1.5rem] md:rounded-article bg-primary/5 border border-primary/10 backdrop-blur-md shadow-inner">
+                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.18em] sm:tracking-[0.3em] text-primary mb-6">
                   <Clock size={12} />
                   Departure In
                 </div>
@@ -88,7 +99,7 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
               </div>
             </div>
             
-            <div className="mt-16 pt-12 border-t border-border">
+            <div className="mt-10 md:mt-16 pt-8 md:pt-12 border-t border-border">
               <div className="flex items-center gap-3 mb-8">
                 <div className="h-2 w-2 rounded-full bg-primary" />
                 <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Local Forecast</span>
@@ -101,7 +112,7 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
           <div className="space-y-12">
             <div className="flex items-center gap-4">
               <div className="h-px grow bg-border" />
-              <h2 className="font-playfair text-2xl md:text-3xl font-black text-foreground text-center px-4">
+              <h2 className="font-playfair text-2xl md:text-3xl font-black text-foreground text-center px-2 sm:px-4">
                 The Path We Take
               </h2>
               <div className="h-px grow bg-border" />

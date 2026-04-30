@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import Header from "@/features/trip/components/DesktopHeader";
 import Footer from "@/features/trip/components/Footer";
 import { DynamicEventModal } from "@/features/trip/components/client/DynamicEventModal";
+import PwaRegistrar from "@/features/trip/components/client/PwaRegistrar";
 import "./globals.css";
 import { auth } from "@/lib/auth";
 import { SessionProvider } from "next-auth/react";
@@ -69,6 +70,7 @@ export default async function RootLayout({
           </Suspense>
           <Footer />
           <DynamicEventModal />
+          <PwaRegistrar />
         </SessionProvider>
       </body>
     </html>

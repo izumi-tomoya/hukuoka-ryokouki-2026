@@ -14,31 +14,31 @@ export default function BudgetDashboard({ stats }: Props) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3 mb-8 px-2">
-        <div className="h-10 w-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
+      <div className="flex items-center gap-3 mb-6 md:mb-8 px-0 sm:px-2">
+        <div className="h-10 w-10 shrink-0 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
           <Wallet size={22} />
         </div>
-        <div>
-          <h2 className="text-2xl font-black text-foreground leading-none tracking-tight">Financial Overview</h2>
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mt-1">Trip Budget Tracking</p>
+        <div className="min-w-0">
+          <h2 className="break-words text-2xl font-black text-foreground leading-none tracking-tight">Financial Overview</h2>
+          <p className="text-[10px] font-black uppercase tracking-[0.14em] sm:tracking-[0.2em] text-muted-foreground mt-1">Trip Budget Tracking</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* ─── Total Summary ─── */}
-        <MagazineCard padding="lg" className="lg:col-span-1 flex flex-col justify-between relative overflow-hidden group">
+        <MagazineCard padding="lg" className="min-w-0 lg:col-span-1 flex flex-col justify-between relative overflow-hidden group">
           <div className={cn(
             "absolute top-0 right-0 w-32 h-32 blur-[80px] -translate-y-1/2 translate-x-1/2 opacity-20 transition-colors duration-1000",
             isOverBudget ? "bg-rose-500" : "bg-emerald-500"
           )} />
           
           <div>
-            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Total Actual Expense</span>
+            <span className="text-[10px] font-black uppercase tracking-[0.14em] sm:tracking-widest text-muted-foreground">Total Actual Expense</span>
             <div className="mt-2 flex items-baseline gap-2">
-              <span className="text-5xl font-playfair font-black text-foreground">¥{totalActual.toLocaleString()}</span>
+              <span className="break-words text-4xl sm:text-5xl font-playfair font-black text-foreground">¥{totalActual.toLocaleString()}</span>
             </div>
             <div className={cn(
-              "mt-4 inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest",
+              "mt-4 inline-flex max-w-full items-center gap-2 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.12em] sm:tracking-widest",
               isOverBudget ? "bg-rose-500/10 text-rose-500" : "bg-emerald-500/10 text-emerald-500"
             )}>
               {isOverBudget ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
@@ -46,8 +46,8 @@ export default function BudgetDashboard({ stats }: Props) {
             </div>
           </div>
 
-          <div className="mt-12 pt-8 border-t border-border">
-            <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-2">
+          <div className="mt-8 md:mt-12 pt-6 md:pt-8 border-t border-border">
+            <div className="flex justify-between gap-3 text-[10px] font-black uppercase tracking-[0.12em] sm:tracking-widest text-muted-foreground mb-2">
               <span>Planned Budget</span>
               <span>¥{totalPlanned.toLocaleString()}</span>
             </div>
@@ -64,9 +64,9 @@ export default function BudgetDashboard({ stats }: Props) {
         </MagazineCard>
 
         {/* ─── Breakdown ─── */}
-        <MagazineCard padding="lg" className="lg:col-span-2">
-          <div className="flex items-center justify-between mb-8">
-            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground flex items-center gap-2">
+        <MagazineCard padding="lg" className="min-w-0 lg:col-span-2">
+          <div className="flex items-center justify-between mb-6 md:mb-8">
+            <h3 className="text-xs font-black uppercase tracking-[0.14em] sm:tracking-[0.2em] text-muted-foreground flex items-center gap-2">
               <PieChart size={14} /> Category Breakdown
             </h3>
           </div>
@@ -77,7 +77,7 @@ export default function BudgetDashboard({ stats }: Props) {
               {byCategory.map((cat, i) => (
                 <div key={i} className="group">
                   <div className="flex justify-between text-[11px] font-bold mb-2">
-                    <span className="text-foreground">{cat.category}</span>
+                    <span className="break-words text-foreground">{cat.category}</span>
                     <span className="text-muted-foreground">¥{cat.actual.toLocaleString()}</span>
                   </div>
                   <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
@@ -94,13 +94,13 @@ export default function BudgetDashboard({ stats }: Props) {
             </div>
 
             {/* Stats List */}
-            <div className="bg-secondary/20 rounded-3xl p-6 border border-border/50">
+            <div className="bg-secondary/20 rounded-3xl p-4 sm:p-6 border border-border/50">
               <div className="space-y-4">
                 {byCategory.map((cat, i) => (
-                  <div key={i} className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
+                  <div key={i} className="flex items-center justify-between gap-3">
+                    <div className="min-w-0 flex items-center gap-3">
                       <div className="w-2 h-2 rounded-full" style={{ backgroundColor: cat.color }} />
-                      <span className="text-xs font-medium text-muted-foreground">{cat.category}</span>
+                      <span className="truncate text-xs font-medium text-muted-foreground">{cat.category}</span>
                     </div>
                     <span className="text-xs font-black text-foreground">
                       {Math.round((cat.actual / totalActual) * 100)}%

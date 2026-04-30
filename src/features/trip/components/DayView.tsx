@@ -1,4 +1,3 @@
-import { auth } from "@/lib/auth";
 import { getDirectionsUrl } from "@/lib/mapUtils";
 import { Map } from "lucide-react";
 import type { TripEvent, Tip } from "@/features/trip/types/trip";
@@ -9,6 +8,8 @@ import TripLayout from "@/features/trip/components/TripLayout";
 import { SafeLink } from "@/features/trip/components/client/SafeLink";
 import TripMap from "./client/TripMap";
 import { extractLocationsFromEvents } from "@/features/trip/utils/mapUtils";
+import ActionSummary from "@/features/trip/components/ActionSummary";
+import { getAllLocations } from "@/features/trip/api/tripActions";
 
 interface DayViewProps {
   events: TripEvent[];
@@ -19,6 +20,7 @@ interface DayViewProps {
   tips?: Tip[];
   slug: string;
   days?: { dayNumber: number }[];
+  isAdmin?: boolean;
 }
 
 export default async function DayView({
@@ -30,11 +32,14 @@ export default async function DayView({
   tips,
   slug,
   days,
+  isAdmin = false,
 }: DayViewProps) {
-  const session = await auth();
-  const isAdmin = !!session?.user?.isAdmin;
-
-  const uniqueLocations = extractLocationsFromEvents(events, tips, isAdmin);
+  const [locationMaster] = await Promise.all([
+    getAllLocations()
+  ]);
+  
+  const locationNames = (locationMaster || []).map(l => l.name);
+  const uniqueLocations = extractLocationsFromEvents(events, tips, isAdmin, locationNames);
   const routeUrl = getDirectionsUrl(uniqueLocations);
 
   return (
@@ -48,7 +53,9 @@ export default async function DayView({
     >
       <div className="space-y-12">
         {/* Map Section */}
-        <TripMap locations={uniqueLocations} />
+        <TripMap events={events} isAdmin={isAdmin} locationMaster={locationMaster || []} />
+
+        <ActionSummary events={events} isAdmin={isAdmin} locationNames={locationNames} />
 
         <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-6">
           <div className="grow max-w-sm">

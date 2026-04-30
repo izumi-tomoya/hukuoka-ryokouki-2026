@@ -8,6 +8,7 @@ export const day1Events: TripEvent[] = [
     desc: "静寂の八王子駅から、二人の旅が始まります。羽田までは約1時間45分の移動です。",
     tag: "transport",
     tagLabel: "Departure",
+    locationUrl: "https://www.google.com/maps/search/?api=1&query=八王子駅",
     transitSteps: [
       {
         time: "04:33",
@@ -62,6 +63,7 @@ export const day1Events: TripEvent[] = [
     desc: "07:30発。雲の上で、これからの二人の時間に想いを馳せて。✈️",
     tag: "transport",
     tagLabel: "Flight",
+    locationUrl: "https://www.google.com/maps/dir/?api=1&origin=羽田空港&destination=福岡空港&travelmode=transit",
     isConfirmed: true,
   },
   {
@@ -71,6 +73,7 @@ export const day1Events: TripEvent[] = [
     desc: "福岡に到着！降機後、地下鉄駅へ。11時のランチ予約に向けて移動を開始します。",
     tag: "sightseeing",
     tagLabel: "Arrival",
+    locationUrl: "https://www.google.com/maps/search/?api=1&query=福岡空港",
     transitSteps: [
       {
         time: "09:45",
@@ -102,6 +105,7 @@ export const day1Events: TripEvent[] = [
     desc: "中洲川端から天神へ。西鉄の急行で太宰府を目指します。",
     tag: "transport",
     tagLabel: "Transit",
+    locationUrl: "https://www.google.com/maps/dir/?api=1&origin=中洲川端駅&destination=太宰府駅&travelmode=transit",
     transitSteps: [
       {
         time: "10:08",
@@ -159,6 +163,20 @@ export const day1Events: TripEvent[] = [
     desc: "太宰府天満宮に隣接。美しい建築と展示をゆっくり見学。",
     tag: "sightseeing",
     tagLabel: "Culture",
+    locationUrl: "https://www.google.com/maps/search/?api=1&query=九州国立博物館",
+    transitSteps: [
+      {
+        time: "13:50",
+        station: "和牛めんたい 神楽",
+        mode: "walking",
+        duration: "徒歩10分",
+      },
+      {
+        time: "14:00",
+        station: "九州国立博物館",
+        mode: "arrival",
+      }
+    ]
   },
   {
     time: "15:00",
@@ -166,7 +184,9 @@ export const day1Events: TripEvent[] = [
     title: "🏨 ホテルオークラ福岡 チェックイン",
     desc: "ホテルに戻りチェックイン。一休みしてから夜の街へ。",
     tag: "hotel",
-    tagLabel: "Okura",
+    tagLabel: "Reserved",
+    isConfirmed: true,
+    locationUrl: "https://www.google.com/maps/dir/?api=1&origin=太宰府駅&destination=ホテルオークラ福岡&travelmode=transit",
     transitSteps: [
       {
         time: "14:30",
@@ -209,7 +229,7 @@ export const day1Events: TripEvent[] = [
     foodName: "🐟 海鮮屋 はじめの一歩 キャナルシティ博多店",
     foodDesc: "【予約済み】ごまさば＋イカ活造り。博多の味を堪能。予約番号：#10356",
     highlight: "🌟 キャナルシティ内なので、噴水ショーもセットで！",
-    locationUrl: "https://hajimeno-ippo.info/",
+    locationUrl: "https://www.google.com/maps/search/?api=1&query=キャナルシティ博多+はじめの一歩",
     tag: "food",
     tagLabel: "Reserved",
     isConfirmed: true,
@@ -235,6 +255,7 @@ export const day1Events: TripEvent[] = [
     tag: "night",
     tagLabel: "Night View",
     isYatai: true,
+    locationUrl: "https://www.google.com/maps/dir/?api=1&origin=キャナルシティ博多&destination=中洲屋台街&travelmode=walking",
     transitSteps: [
       {
         time: "20:30",
@@ -262,17 +283,19 @@ export const day2Events: TripEvent[] = [
     title: "🍳 オークラで朝食",
     desc: "ホテルでのゆったりとした朝食。フレンチトーストが絶品です。",
     tag: "hotel",
-    tagLabel: "Breakfast",
+    tagLabel: "Reserved",
+    isConfirmed: true,
   },
   {
     time: "12:00",
     type: "food",
     title: "水たき 長野",
     foodName: "🍲 水たき 長野",
-    foodDesc: "博多名物の絶品水炊き。伝統の味を二人の記憶に。",
+    foodDesc: "【予約済み】博多名物の絶品水炊き。伝統の味を二人の記憶に。",
     locationUrl: "https://tabelog.com/fukuoka/A4001/A400102/40000010/",
     tag: "food",
-    tagLabel: "Lunch",
+    tagLabel: "Reserved",
+    isConfirmed: true,
     transitSteps: [
       {
         time: "11:45",
@@ -360,7 +383,8 @@ export const day2Events: TripEvent[] = [
     foodName: "🍜 牧のうどん 空港店",
     foodDesc: "旅の〆は博多のソウルフード。スープを吸う麺が特徴。",
     tag: "food",
-    tagLabel: "Dinner",
+    tagLabel: "Reserved",
+    isConfirmed: true,
     transitSteps: [
       {
         time: "17:30",
@@ -409,6 +433,38 @@ export const day1Tips: Tip[] = [
 export const day2Tips: Tip[] = [
   { title: "水たき長野", body: "支払いは現金のみなので注意してください。" },
   { title: "お土産", body: "福岡空港で最後にまとめて購入するのがスムーズです。" },
+];
+
+export const packingList = [
+  // 必需品
+  { name: "スマートフォン", category: "Essential" },
+  { name: "身分証明書・免許証", category: "Essential" },
+  { name: "航空券（モバイル搭乗券）", category: "Essential" },
+  { name: "現金（屋台や一部店舗用）", category: "Essential" },
+  { name: "クレジットカード", category: "Essential" },
+  { name: "交通系ICカード（nimoca/SUGOCA等）", category: "Essential" },
+  { name: "健康保険証", category: "Essential" },
+  
+  // 衣類
+  { name: "着替え（2日分）", category: "Clothing" },
+  { name: "下着・靴下", category: "Clothing" },
+  { name: "パジャマ（ホテルにあるが、こだわりがあれば）", category: "Clothing" },
+  { name: "歩きやすい靴", category: "Clothing" },
+  { name: "羽織もの（朝晩の冷え込み対策）", category: "Clothing" },
+  
+  // ガジェット
+  { name: "モバイルバッテリー（必須！）", category: "Gadget" },
+  { name: "充電ケーブル（スマホ・ウォッチ用）", category: "Gadget" },
+  { name: "ACアダプター", category: "Gadget" },
+  { name: "カメラ・SDカード", category: "Gadget" },
+  { name: "ワイヤレスイヤホン", category: "Gadget" },
+  
+  // その他
+  { name: "常備薬（胃薬・鎮痛剤など）", category: "Other" },
+  { name: "折りたたみ傘", category: "Other" },
+  { name: "エコバッグ（お土産用）", category: "Other" },
+  { name: "除菌シート・ハンドジェル", category: "Other" },
+  { name: "ハンカチ・ティッシュ", category: "Other" },
 ];
 
 export const itoshimaEvents: TripEvent[] = [];

@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { auth } from '@/lib/auth';
 import { del } from '@vercel/blob';
 import { Prisma } from '@prisma/client';
+import { eventSchema } from '@/lib/formvalidation/eventSchema';
 
 export type TripWithRelations = Prisma.TripGetPayload<{
   include: {
@@ -32,7 +33,6 @@ async function checkAdmin() {
   }
 }
 
-// Force re-compilation after prisma generate
 export async function getTripBySlug(slug: string): Promise<TripWithRelations | null> {
   const trip = await prisma.trip.findUnique({
     where: { slug },
@@ -51,37 +51,12 @@ export async function getTripBySlug(slug: string): Promise<TripWithRelations | n
         },
       },
       tips: { orderBy: { order: 'asc' } },
+      packingItems: { orderBy: { order: 'asc' } },
+      gourmetAwards: { orderBy: { order: 'asc' } },
     },
   });
 
-  if (!trip) return null;
-
-  // 型定義の反映遅延対策として、個別に取得してマージします
-  try {
-    const [packingItems, gourmetAwards] = await Promise.all([
-      (prisma as any).packingItem.findMany({
-        where: { tripId: trip.id },
-        orderBy: { order: 'asc' }
-      }),
-      (prisma as any).gourmetAward.findMany({
-        where: { tripId: trip.id },
-        orderBy: { order: 'asc' }
-      })
-    ]);
-
-    return {
-      ...(trip as any),
-      packingItems,
-      gourmetAwards
-    } as TripWithRelations;
-  } catch (e) {
-    console.error("Failed to fetch relations lazily:", e);
-    return {
-      ...(trip as any),
-      packingItems: [],
-      gourmetAwards: []
-    } as TripWithRelations;
-  }
+  return trip as TripWithRelations | null;
 }
 
 export async function createTrip(formData: FormData) {
@@ -92,7 +67,6 @@ export async function createTrip(formData: FormData) {
   const startDate = new Date(formData.get('startDate') as string);
   const endDate = new Date(formData.get('endDate') as string);
 
-  // Generate a simple slug
   const slug = `${title.toLowerCase().replace(/\s+/g, '-')}-${Date.now().toString().slice(-4)}`;
 
   try {
@@ -123,7 +97,15 @@ export async function getTrips() {
   });
 }
 
-import { eventSchema } from '@/lib/formvalidation/eventSchema';
+export async function getAllLocations() {
+  if (!("location" in prisma)) {
+    return [];
+  }
+  const db = prisma as unknown as {
+    location: { findMany: () => Promise<Array<{ id: string; name: string; lat: number; lng: number }>> };
+  };
+  return await db.location.findMany();
+}
 
 export async function updateEventAction(eventId: string, data: unknown) {
   await checkAdmin();
@@ -159,8 +141,6 @@ export async function updateEventAction(eventId: string, data: unknown) {
 }
 
 export async function toggleEventConfirmation(eventId: string, isConfirmed: boolean) {
-  // 管理者以外も確認状態の切り替えは許可する場合、ここでのチェックは不要
-  // 必要であれば await checkAdmin(); を追加してください
   try {
     await prisma.event.update({
       where: { id: eventId },
@@ -195,7 +175,6 @@ export async function addPhotoToEvent(eventId: string, photoUrl: string) {
 
 export async function deletePhotoFromEvent(eventId: string, photoUrl: string) {
   try {
-    // 1. データベースから該当するメディアを削除
     const media = await prisma.media.findFirst({
       where: { 
         url: photoUrl,
@@ -209,7 +188,6 @@ export async function deletePhotoFromEvent(eventId: string, photoUrl: string) {
       });
     }
 
-    // 2. Vercel Blob から実ファイルを削除
     try {
       const token = process.env.BLOB_READ_WRITE_TOKEN;
       await del(photoUrl, { token });
@@ -287,16 +265,15 @@ export async function deleteTipAction(tipId: string) {
   }
 }
 
-// --- Packing List Actions ---
-
 export async function addPackingItemAction(tripId: string, name: string, category: string) {
   try {
     await prisma.packingItem.create({
       data: { tripId, name, category },
     });
-    revalidatePath('/trip/[slug]/info', 'page'); // infoタブなどに表示予定
+    revalidatePath('/trip/[slug]/info', 'page');
     return { success: true };
   } catch (error) {
+    console.error('Failed to add packing item:', error);
     return { success: false, error: String(error) };
   }
 }
@@ -310,6 +287,7 @@ export async function togglePackingItemAction(id: string, isPacked: boolean) {
     revalidatePath('/trip/[slug]/info', 'page');
     return { success: true };
   } catch (error) {
+    console.error('Failed to toggle packing item:', error);
     return { success: false, error: String(error) };
   }
 }
@@ -322,11 +300,10 @@ export async function deletePackingItemAction(id: string) {
     revalidatePath('/trip/[slug]/info', 'page');
     return { success: true };
   } catch (error) {
+    console.error('Failed to delete packing item:', error);
     return { success: false, error: String(error) };
   }
 }
-
-// --- Gourmet Award Actions ---
 
 export async function addGourmetAwardAction(tripId: string, data: { category: string, title: string, comment?: string, imageUrl?: string, eventId?: string }) {
   await checkAdmin();
@@ -353,4 +330,3 @@ export async function deleteGourmetAwardAction(id: string) {
     return { success: false, error: String(error) };
   }
 }
-

@@ -19,6 +19,7 @@ import { EditEventForm } from './EditEventForm';
 import TransitTimeline from '../TransitTimeline';
 import PhotoGallery from '../PhotoGallery';
 import PhotoUploadButton from './PhotoUploadButton';
+import { ExternalSpotInfo } from './ExternalSpotInfo';
 
 export default function EventDetailModal() {
   const { isOpen, selectedEvent, closeModal } = useModalStore();
@@ -88,6 +89,42 @@ export default function EventDetailModal() {
                       : (isFood ? selectedEvent.foodDesc : selectedEvent.desc)}
                   </p>
                 </MagazineCard>
+
+                {/* External Info from HotPepper */}
+                {isFood && (selectedEvent.foodName || selectedEvent.title) && (
+                  <ExternalSpotInfo name={selectedEvent.foodName || selectedEvent.title || ""} />
+                )}
+
+                {/* Related Tips for this specific shop/event */}
+                {tripTips && tripTips.length > 0 && (
+                  <div className="space-y-3">
+                    {tripTips.filter(tip => {
+                      const eventName = (selectedEvent.foodName || selectedEvent.title || "").toLowerCase();
+                      const venue = (tip.venue || "").toLowerCase();
+                      const tipTitle = (tip.title || "").toLowerCase();
+                      return (venue && eventName.includes(venue)) || 
+                             (tipTitle && eventName.includes(tipTitle)) || 
+                             (venue && venue.includes(eventName));
+                    }).map((tip, idx) => (
+                      <MagazineCard key={idx} padding="sm" className={cn("border-l-4", tip.isWarning ? "border-l-rose-500 bg-rose-50/10" : "border-l-amber-400 bg-amber-50/10")}>
+                        <div className="flex items-start gap-3">
+                          {tip.isWarning ? (
+                            <AlertTriangle size={16} className="text-rose-500 shrink-0 mt-0.5" />
+                          ) : (
+                            <Lightbulb size={16} className="text-amber-500 shrink-0 mt-0.5" />
+                          )}
+                          <div className="min-w-0">
+                            <div className="text-[10px] font-black uppercase tracking-wider text-muted-foreground mb-1">
+                              {tip.isWarning ? "Attention" : "Pro Advice"}
+                            </div>
+                            <div className="text-xs font-bold text-foreground mb-1">{tip.title}</div>
+                            <p className="text-[11px] text-muted-foreground leading-relaxed italic">{tip.body}</p>
+                          </div>
+                        </div>
+                      </MagazineCard>
+                    ))}
+                  </div>
+                )}
 
                 {/* Journal & Budget */}
                 <MagazineCard padding="sm">

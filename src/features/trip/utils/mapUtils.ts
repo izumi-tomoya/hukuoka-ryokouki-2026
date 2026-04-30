@@ -1,14 +1,12 @@
 import { TripEvent, Tip } from "@/features/trip/types/trip";
+import { cleanLocationName } from "@/features/trip/utils/locationCatalog";
 
-// 福岡の主要スポット名のリスト（これらが Tip に含まれていれば抽出する）
-const KNOWN_SPOTS = [
-  '博多駅', '福岡空港', '天神', '中洲', '大濠公園', '福岡タワー', 
-  '太宰府', '糸島', 'キャナルシティ', 'マリンメッセ', 'ホテルオークラ福岡',
-  '神楽', '九州国立博物館', '水たき 長野', '牧のうどん', 'はじめの一歩',
-  '志賀島', '能古島', '門司港', 'ヒルトン', 'CLOUDS'
-];
-
-export function extractLocationsFromEvents(events: TripEvent[], tips: Tip[] = [], isAdmin: boolean = false): string[] {
+export function extractLocationsFromEvents(
+  events: TripEvent[], 
+  tips: Tip[] = [], 
+  isAdmin: boolean = false,
+  knownSpots: string[] = []
+): string[] {
   const routeLocations = events.flatMap(e => {
     // 管理者でない場合、サプライズイベントは場所を抽出しない
     if (!isAdmin && e.tag === 'surprise') return [];
@@ -28,18 +26,17 @@ export function extractLocationsFromEvents(events: TripEvent[], tips: Tip[] = []
     const skipTitles = [
       "出発", "到着", "羽田空港から福岡へ", "福岡空港から羽田へ", 
       "🛬 福岡空港 到着", "福岡空港 到着", "出発：八王子から羽田へ",
-      "福岡空港ターミナル"
+      "福岡空港ターミナル", "空路、福岡へ"
     ];
     if (e.title && skipTitles.includes(e.title)) return [];
     
     const locationName = e.foodName || e.title;
-    // 絵文字を除去したクリーンな名前を返す
-    return [locationName.replace(/[\u1F600-\u1F64F]|[\u2700-\u27BF]|[\u1F300-\u1F5FF]|[\u1F680-\u1F6FF]|[\u2600-\u26FF]/g, '').trim()];
+    return locationName ? [cleanLocationName(locationName)] : [];
   });
 
   // 4. Tips（提案）から既知のスポット名を抽出
   const tipLocations = tips.flatMap(tip => {
-    const foundSpots = KNOWN_SPOTS.filter(spot => 
+    const foundSpots = knownSpots.filter(spot => 
       tip.title.includes(spot) || (tip.venue && tip.venue.includes(spot))
     );
     return foundSpots;

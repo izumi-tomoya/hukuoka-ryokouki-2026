@@ -4,10 +4,10 @@ import Image from "next/image";
 
 export default function SignInPage() {
   return (
-    <div className="min-h-screen bg-[#fafaf9] flex items-center justify-center p-6 relative overflow-hidden">
+    <div className="min-h-screen bg-background flex items-center justify-center p-6 relative overflow-hidden">
       {/* Decorative Background Elements */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-rose-50/50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-stone-100 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 pointer-events-none" />
+      <div className="absolute top-0 right-0 w-125 h-125 bg-rose-50/50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-100 h-100 bg-stone-100 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 pointer-events-none" />
       
       {/* Large background text like a magazine */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden select-none">
@@ -19,8 +19,8 @@ export default function SignInPage() {
           
           {/* Brand Logo/Icon */}
           <div className="mx-auto h-20 w-20 mb-10 relative">
-            <div className="absolute inset-0 bg-rose-500 rounded-[2.5rem] rotate-6 opacity-10 animate-pulse" />
-            <div className="absolute inset-0 bg-white rounded-[2.2rem] shadow-sm border border-rose-50 flex items-center justify-center text-rose-500 relative z-10">
+            <div className="absolute inset-0 bg-rose-500 rounded-article rotate-6 opacity-10 animate-pulse" />
+            <div className="inset-0 bg-white rounded-logo shadow-sm border border-rose-50 flex items-center justify-center text-rose-500 absolute z-10">
               <Sparkles size={32} />
             </div>
           </div>
@@ -33,7 +33,7 @@ export default function SignInPage() {
               <p className="text-[10px] font-black uppercase tracking-[0.4em] text-rose-400">Exclusive Access</p>
               <div className="h-px w-8 bg-rose-100" />
             </div>
-            <p className="text-sm font-medium text-stone-500 leading-relaxed max-w-[240px] mx-auto pt-2">
+            <p className="text-sm font-medium text-stone-500 leading-relaxed max-w-60 mx-auto pt-2">
               旅の続きを、ふたりで。<br />
               新しい記憶を刻む準備はできましたか？
             </p>
@@ -49,12 +49,12 @@ export default function SignInPage() {
           >
             <button 
               type="submit" 
-              className="group relative w-full overflow-hidden rounded-[2rem] bg-stone-900 p-[1px] transition-all hover:shadow-2xl hover:shadow-stone-200 active:scale-[0.98]"
+              className="group relative w-full overflow-hidden rounded-4xl bg-stone-900 p-px transition-all hover:shadow-2xl hover:shadow-stone-200 active:scale-[0.98]"
             >
               {/* Button inner gradient effect */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-stone-800 to-stone-700 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute inset-0 bg-linear-to-tr from-stone-800 to-stone-700 opacity-0 group-hover:opacity-100 transition-opacity" />
               
-              <div className="relative bg-stone-900 group-hover:bg-transparent rounded-[1.95rem] py-5 px-8 flex items-center justify-center gap-4 transition-colors">
+              <div className="relative bg-stone-900 group-hover:bg-transparent rounded-inner py-5 px-8 flex items-center justify-center gap-4 transition-colors">
                 <div className="h-6 w-6 rounded-full bg-white flex items-center justify-center shrink-0 shadow-sm">
                   <Image src="https://www.google.com/favicon.ico" alt="G" width={14} height={14} />
                 </div>

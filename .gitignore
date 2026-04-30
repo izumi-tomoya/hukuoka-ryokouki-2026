@@ -49,3 +49,14 @@ prisma/client/
 
 # Local reference images
 /images_reference/
+
+# AI coding tool work files
+.claude/
+.mcp.json
+.vscode/
+
+# Debug screenshots (placed in src/ during development)
+src/**/*.png
+src/**/*.jpg
+src/**/*.jpeg
+src/**/*.webp

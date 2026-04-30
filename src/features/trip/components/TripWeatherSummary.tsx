@@ -10,13 +10,14 @@ interface ForecastDay {
   condition: string;
   humidity: number;
   rainChance: number;
+  wind?: number;
 }
 
 const getIcon = (condition: string) => {
   const c = condition.toLowerCase();
-  if (c.includes("sunny") || c.includes("clear")) return <Sun className="text-amber-500" size={24} />;
-  if (c.includes("rain") || c.includes("drizzle")) return <CloudRain className="text-sky-500" size={24} />;
-  if (c.includes("thunder")) return <CloudLightning className="text-purple-500" size={24} />;
+  if (c.includes("sunny") || c.includes("clear") || c.includes("☀️")) return <Sun className="text-amber-500" size={24} />;
+  if (c.includes("rain") || c.includes("drizzle") || c.includes("🌧️")) return <CloudRain className="text-sky-500" size={24} />;
+  if (c.includes("thunder") || c.includes("⛈️")) return <CloudLightning className="text-purple-500" size={24} />;
   return <Cloud className="text-stone-400" size={24} />;
 };
 

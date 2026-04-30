@@ -1,0 +1,53 @@
+name: CI — Fukuoka Trip 2026
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# デプロイは Vercel に委譲しているため、CI は品質チェックのみ担う。
+# ビルドは Vercel が main push 時に自動実行するので重複させない。
+
+jobs:
+  quality:
+    name: Type Check & Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Cache bun dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      # 型生成（スキーマから TypeScript 型を生成するのみ、DB 接続は不要）
+      - name: Generate Prisma Client
+        run: bunx prisma generate
+        env:
+          DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
+
+      # TypeScript の型エラーを検出
+      - name: Type Check
+        run: bunx tsc --noEmit
+
+      # ESLint でコードの品質を確認
+      - name: Lint
+        run: bun run lint
+
+      # Prisma Mock を使ったユニットテスト（実 DB への接続なし）
+      - name: Test
+        run: bun test

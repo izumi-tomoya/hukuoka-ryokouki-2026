@@ -1,24 +1,32 @@
 /**
  * 渡された URL を適切なマップアプリの形式へ変換する
+ * Qiita記事を参考に、iOS/Android ネイティブアプリへの遷移を最適化
  */
 export const getMapLink = (url: string): string => {
   if (typeof window === 'undefined') return url;
 
-  // iOS/Android ならネイティブアプリへ飛ばす URL Scheme を優先
-  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  const userAgent = navigator.userAgent;
+  const isiOS = /iPhone|iPad|iPod/i.test(userAgent);
+  const isAndroid = /Android/i.test(userAgent);
   
-  if (isMobile) {
-    // 経路検索 (directions) の場合
+  if (isiOS) {
+    // iOSの場合、Apple Maps (maps://) か Google Maps (comgooglemaps://) かを選択可能
+    // ここでは汎用性を考え、標準的な場所検索や経路検索を Apple Maps 形式に変換する
     if (url.includes('google.com/maps/dir')) {
-      return url.replace('https://www.google.com/maps/dir/', 'comgooglemaps://?saddr=')
-                .replace('&origin=', '')
-                .replace('&destination=', '&daddr=')
-                .replace('&waypoints=', '&waypoints=');
+      return url.replace('https://www.google.com/maps/dir/?api=1&', 'maps://?');
     }
-    // 通常の地図表示
-    if (url.includes('google.com/maps')) {
-      return url.replace('https://www.google.com/maps', 'comgooglemaps://');
+    if (url.includes('google.com/maps/search')) {
+      return url.replace('https://www.google.com/maps/search/?api=1&query=', 'maps://?q=');
     }
+    // Apple Maps の標準リンク
+    return url.replace('https://www.google.com/maps', 'maps://');
+  }
+
+  if (isAndroid) {
+    // Androidの場合、google.navigation: などのインテントも使えるが、
+    // 基本的には https:// リンクでアプリが自動起動するため、そのままでも機能する。
+    // 明示的にアプリを呼び出す場合は URL を google.navigation: に変換するなどの処理が可能。
+    return url;
   }
 
   return url;

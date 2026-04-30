@@ -2,6 +2,8 @@
 
 import { useLayoutEffect, useState } from "react";
 
+import { getMapLink } from "@/lib/mapUtils";
+
 interface SafeLinkProps {
   href: string;
   children: React.ReactNode;
@@ -21,7 +23,7 @@ export function SafeLink({ href, children, className }: SafeLinkProps) {
 
   return (
     <a 
-      href={href} 
+      href={getMapLink(href)} 
       target="_blank" 
       rel="noopener noreferrer" 
       className={className}

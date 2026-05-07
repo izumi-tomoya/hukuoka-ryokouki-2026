@@ -95,10 +95,10 @@ export default function TripMap({
     .filter((m): m is {
       name: string;
       coords: [number, number];
-      address?: string | null;
-      category?: string | null;
-      locationUrl?: string;
-      description?: string;
+      address: string | null | undefined;
+      category: string | null | undefined;
+      locationUrl: string | undefined;
+      description: string | undefined;
       rawTitle: string;
       time: string;
     } => m.coords !== null)

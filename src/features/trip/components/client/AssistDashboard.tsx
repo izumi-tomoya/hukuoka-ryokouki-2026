@@ -179,7 +179,7 @@ export default function AssistDashboard({ trip, events, tips, weatherLabel, weat
   const settlement = computeSettlement(sortedEvents, payers);
   const temperatureSummary = summarizeTemperature(temperatureLogs);
   const briefingEvents = nextEvent ? sortedEvents.filter((event) => event.dayNumber === nextEvent.dayNumber) : [];
-  const packingRecommendations = buildPackingRecommendations(sortedEvents, weatherData, []);
+  const packingRecommendations = buildPackingRecommendations(sortedEvents, weatherData ?? null, []);
   const aiFallbackPrompt = {
     rain: "雨で外歩きが厳しい",
     crowd: "混雑を避けたい",

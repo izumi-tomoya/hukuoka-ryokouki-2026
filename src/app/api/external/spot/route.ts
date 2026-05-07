@@ -61,7 +61,9 @@ export async function GET(request: Request) {
     if (allowCoords) {
       const nearby = await searchNearbySpots(lat as number, lng as number, keyword);
       const matched =
-        nearby.find((spot) => keyword.includes(spot.name) || spot.name.includes(keyword)) || nearby[0];
+        nearby.find((spot: { name: string; address: string; category?: string; lat: string; lng: string }) => 
+          keyword.includes(spot.name) || spot.name.includes(keyword)
+        ) || nearby[0];
 
       if (matched) {
         return NextResponse.json({

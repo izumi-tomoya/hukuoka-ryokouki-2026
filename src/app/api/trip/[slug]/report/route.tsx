@@ -16,7 +16,8 @@ export async function GET(
   }
 
   try {
-    const stream = await renderToStream(React.createElement(TripReportDocument, { trip }));
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const stream = await renderToStream(React.createElement(TripReportDocument, { trip }) as any);
     const response = new NextResponse(stream as never);
     response.headers.set("Content-Type", "application/pdf");
     response.headers.set("Content-Disposition", `attachment; filename="${slug}-report.pdf"`);

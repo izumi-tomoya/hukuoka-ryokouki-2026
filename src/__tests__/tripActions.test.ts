@@ -8,6 +8,8 @@
  */
 
 import { prismaMock } from './helpers/prismaMock';
+import { Trip, Event, PackingItem, Tip } from '@prisma/client';
+import { TripWithRelations } from '@/features/trip/api/tripActions';
 
 // ---- 外部依存のモック ----
 
@@ -55,7 +57,7 @@ describe('getTrips()', () => {
     const mockTrips = [
       { id: 'trip-1', title: '福岡旅行', slug: 'fukuoka-2026', startDate: new Date('2026-05-24'), status: 'Upcoming' },
       { id: 'trip-2', title: '糸島ドライブ', slug: 'itoshima-drive', startDate: new Date('2026-04-10'), status: 'Completed' },
-    ] as any;
+    ] as unknown as Trip[];
 
     prismaMock.trip.findMany.mockResolvedValue(mockTrips);
 
@@ -79,7 +81,7 @@ describe('getTripBySlug()', () => {
       title: '福岡旅行',
       days: [],
       tips: [],
-    } as any;
+    } as unknown as TripWithRelations;
 
     prismaMock.trip.findUnique.mockResolvedValue(mockTrip);
     // packingItem / gourmetAward は lazy fetch されるので、any キャスト経由で呼ばれる
@@ -111,7 +113,7 @@ describe('getTripBySlug()', () => {
 
 describe('toggleEventConfirmation()', () => {
   it('isConfirmed を true に更新できる', async () => {
-    prismaMock.event.update.mockResolvedValue({} as any);
+    prismaMock.event.update.mockResolvedValue({} as unknown as Event);
 
     const result = await toggleEventConfirmation('event-1', true);
 
@@ -142,7 +144,7 @@ describe('toggleEventConfirmation()', () => {
 
 describe('addPackingItemAction()', () => {
   it('PackingItem を正常に作成できる', async () => {
-    prismaMock.packingItem.create.mockResolvedValue({} as any);
+    prismaMock.packingItem.create.mockResolvedValue({} as unknown as PackingItem);
 
     const result = await addPackingItemAction('trip-1', 'モバイルバッテリー', 'Gadget');
 
@@ -166,7 +168,7 @@ describe('addPackingItemAction()', () => {
 
 describe('togglePackingItemAction()', () => {
   it('isPacked を true に更新できる', async () => {
-    prismaMock.packingItem.update.mockResolvedValue({} as any);
+    prismaMock.packingItem.update.mockResolvedValue({} as unknown as PackingItem);
 
     const result = await togglePackingItemAction('item-1', true);
 
@@ -180,7 +182,7 @@ describe('togglePackingItemAction()', () => {
 
 describe('deletePackingItemAction()', () => {
   it('PackingItem を削除できる', async () => {
-    prismaMock.packingItem.delete.mockResolvedValue({} as any);
+    prismaMock.packingItem.delete.mockResolvedValue({} as unknown as PackingItem);
 
     const result = await deletePackingItemAction('item-1');
 
@@ -205,7 +207,7 @@ describe('createTipAction()', () => {
 
   it('管理者なら Tip を作成できる', async () => {
     (auth as jest.Mock).mockResolvedValue(mockAdminSession);
-    prismaMock.tip.create.mockResolvedValue({} as any);
+    prismaMock.tip.create.mockResolvedValue({} as unknown as Tip);
 
     const result = await createTipAction('trip-1', tipData);
 
@@ -226,7 +228,7 @@ describe('createTipAction()', () => {
 describe('deleteTipAction()', () => {
   it('管理者なら Tip を削除できる', async () => {
     (auth as jest.Mock).mockResolvedValue(mockAdminSession);
-    prismaMock.tip.delete.mockResolvedValue({} as any);
+    prismaMock.tip.delete.mockResolvedValue({} as unknown as Tip);
 
     const result = await deleteTipAction('tip-1');
 

@@ -6,10 +6,15 @@ import { CommonTipsSection } from "@/features/trip/components/CommonTipsSection"
 import BudgetSummary from "@/features/trip/components/BudgetSummary";
 import TripLayout from "@/features/trip/components/TripLayout";
 import { SafeLink } from "@/features/trip/components/client/SafeLink";
-import TripMap from "./client/TripMap";
+import dynamic from "next/dynamic";
 import { extractLocationsFromEvents } from "@/features/trip/utils/mapUtils";
 import ActionSummary from "@/features/trip/components/ActionSummary";
 import { getAllLocations } from "@/features/trip/api/tripActions";
+
+const TripMap = dynamic(() => import("./client/TripMap"), { 
+  ssr: false,
+  loading: () => <div className="h-80 w-full animate-pulse bg-secondary/20 rounded-[3.5rem]" />
+});
 
 interface DayViewProps {
   events: TripEvent[];

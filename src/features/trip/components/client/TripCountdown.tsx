@@ -16,7 +16,7 @@ export const TripCountdown = ({ startDate }: Props) => {
   });
 
   useEffect(() => {
-    setIsMounted(true);
+    const mountId = setTimeout(() => setIsMounted(true), 0);
     const targetDate = new Date(startDate);
     
     const calculateTimeLeft = () => {
@@ -37,7 +37,10 @@ export const TripCountdown = ({ startDate }: Props) => {
 
     calculateTimeLeft();
     const timer = setInterval(calculateTimeLeft, 1000);
-    return () => clearInterval(timer);
+    return () => {
+      clearTimeout(mountId);
+      clearInterval(timer);
+    };
   }, [startDate]);
 
   // ハイドレーションエラーを防ぐため、マウントされるまでは何も表示しないかスケルトンを出す

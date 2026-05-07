@@ -1,10 +1,9 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { X, ChevronLeft, ChevronRight, Play, Pause, Sparkles, MapPin, Clock } from 'lucide-react';
 import Image from 'next/image';
-import { cn } from '@/lib/utils';
-import { motion, AnimatePresence, m } from 'framer-motion';
+import { AnimatePresence, m } from 'framer-motion';
 
 interface Photo {
   url: string;

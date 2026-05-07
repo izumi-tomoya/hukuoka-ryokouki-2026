@@ -8,6 +8,12 @@ interface NavItem {
 
 export interface TripNavData {
   slug: string;
+  title?: string;
+  description?: string | null;
+  location?: string;
+  startDate?: Date | string;
+  endDate?: Date | string;
+  accentColor?: string;
   days: {
     dayNumber: number;
     events: unknown[];

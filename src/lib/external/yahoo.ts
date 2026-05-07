@@ -3,6 +3,17 @@
  * 周辺のスポットを検索する
  */
 
+interface YahooFeature {
+  Name: string;
+  Property: {
+    Address: string;
+    Genre?: Array<{ Name: string }>;
+  };
+  Geometry: {
+    Coordinates: string;
+  };
+}
+
 export async function searchNearbySpots(lat: number, lng: number, keyword: string = "") {
   const clientId = process.env.YAHOO_CLIENT_ID;
   if (!clientId) return [];
@@ -14,7 +25,7 @@ export async function searchNearbySpots(lat: number, lng: number, keyword: strin
     if (!res.ok) return [];
 
     const data = await res.json();
-    return data.Feature?.map((f: any) => ({
+    return data.Feature?.map((f: YahooFeature) => ({
       name: f.Name,
       address: f.Property.Address,
       category: f.Property.Genre?.[0]?.Name,

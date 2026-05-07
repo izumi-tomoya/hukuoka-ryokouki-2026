@@ -5,6 +5,7 @@ type EventWithStops = Prisma.EventGetPayload<{
   include: { 
     yataiStops: true;
     transitSteps: true;
+    photos: true;
   };
 }>;
 

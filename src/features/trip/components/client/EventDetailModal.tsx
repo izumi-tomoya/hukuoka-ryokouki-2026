@@ -14,15 +14,17 @@ import {
   FileText,
   JapaneseYen,
   Route,
+  AlertTriangle,
+  Lightbulb,
 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { EditEventForm } from './EditEventForm';
 import TransitTimeline from '../TransitTimeline';
 import PhotoGallery from '../PhotoGallery';
-import PhotoUploadButton from './PhotoUploadButton';
 import { ExternalSpotInfo } from './ExternalSpotInfo';
 
 export default function EventDetailModal() {
-  const { isOpen, selectedEvent, closeModal } = useModalStore();
+  const { isOpen, selectedEvent, closeModal, tripTips } = useModalStore();
   const { getNote, setNote, getBudget, setBudget } = useEventUserStore();
   const { data: session } = useSession();
   const isAdmin = !!session?.user?.isAdmin;

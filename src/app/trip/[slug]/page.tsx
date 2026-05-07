@@ -11,6 +11,7 @@ import { getWeatherData } from "@/lib/weather";
 import { cn } from "@/lib/utils";
 import { formatDateRange, formatDateWithWeekday } from "@/features/trip/utils/dateUtils";
 import { MagazineCard } from "@/components/ui/MagazineCard";
+import { TripEvent, Tip } from "@/features/trip/types/trip";
 
 export default async function TripPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -32,12 +33,12 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
   const dateRange = formatDateRange(trip.startDate, trip.endDate);
 
   const allTripEvents = trip.days?.flatMap(day => 
-    day.events.map(event => ({
+    day.events?.map(event => ({
       id: event.id,
       time: event.time,
       title: event.title,
       foodName: event.foodName
-    }))
+    })) ?? []
   ) ?? [];
 
   return (
@@ -49,8 +50,8 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
       title={trip.title}
       subtitle={`${trip.location} / ${dateRange}`}
       days={trip.days}
-      events={allTripEvents as any}
-      tips={trip.tips as any}
+      events={allTripEvents as TripEvent[]}
+      tips={trip.tips as Tip[]}
     >
       <Container className="pb-24">
         <div className="grid grid-cols-1 gap-10 md:gap-16">

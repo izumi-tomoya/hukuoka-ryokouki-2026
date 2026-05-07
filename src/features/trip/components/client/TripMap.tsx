@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import dynamic from 'next/dynamic';
 import 'leaflet/dist/leaflet.css';
 import { MagazineCard } from '@/components/ui/MagazineCard';
 import { MapPin, Navigation2 } from 'lucide-react';
@@ -9,26 +8,26 @@ import TripMapSkeleton from '../TripMapSkeleton';
 import { TripEvent } from '@/features/trip/types/trip';
 import { cleanLocationName } from '@/features/trip/utils/locationCatalog';
 import type { Location } from '@prisma/client';
+import type Leaflet from 'leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 
-// SSR を無効化
-const MapContainer = dynamic(() => import('react-leaflet').then((mod) => mod.MapContainer), { ssr: false });
-const TileLayer = dynamic(() => import('react-leaflet').then((mod) => mod.TileLayer), { ssr: false });
-const Marker = dynamic(() => import('react-leaflet').then((mod) => mod.Marker), { ssr: false });
-const Popup = dynamic(() => import('react-leaflet').then((mod) => mod.Popup), { ssr: false });
+interface MapMarker {
+  name: string;
+  coords: [number, number];
+}
 
-const MapController = ({ markers, L }: { markers: any[], L: any }) => {
-  const { useMap } = require('react-leaflet');
+function MapController({ markers, L }: { markers: MapMarker[], L: typeof Leaflet }) {
   const map = useMap();
   
   useEffect(() => {
     if (markers.length > 0 && L && map) {
-      const bounds = L.latLngBounds(markers.map((m: any) => m.coords));
+      const bounds = L.latLngBounds(markers.map((m) => m.coords));
       map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
     }
   }, [markers, L, map]);
 
   return null;
-};
+}
 
 export default function TripMap({ 
   events, 
@@ -39,8 +38,8 @@ export default function TripMap({
   isAdmin?: boolean,
   locationMaster?: Location[]
 }) {
-  const [L, setL] = useState<any>(null);
-  const [customIcon, setCustomIcon] = useState<any>(null);
+  const [L, setL] = useState<typeof Leaflet | null>(null);
+  const [customIcon, setCustomIcon] = useState<Leaflet.DivIcon | null>(null);
 
   useEffect(() => {
     import('leaflet').then((leaflet) => {
@@ -51,7 +50,7 @@ export default function TripMap({
         iconSize: [16, 16],
         iconAnchor: [8, 8],
       });
-      setCustomIcon(icon);
+      setCustomIcon(icon as Leaflet.DivIcon);
     });
   }, []);
 

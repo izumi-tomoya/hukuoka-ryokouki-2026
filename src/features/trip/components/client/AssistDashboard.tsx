@@ -132,21 +132,31 @@ export default function AssistDashboard({ trip, events, tips, weatherLabel }: As
   const [checkedEventIds, setCheckedEventIds] = useState<string[]>([]);
 
   useEffect(() => {
-    setMounted(true);
+    // Avoid synchronous setState in effect warning
+    const mountId = setTimeout(() => setMounted(true), 0);
     
     // Load data from localStorage after mounting
     try {
       const savedNotes = localStorage.getItem(notesKey);
-      if (savedNotes) setNotes(JSON.parse(savedNotes));
+      if (savedNotes) {
+        const parsed = JSON.parse(savedNotes);
+        setTimeout(() => setNotes(parsed), 0);
+      }
       
       const savedCheckins = localStorage.getItem(checkinsKey);
-      if (savedCheckins) setCheckedEventIds(JSON.parse(savedCheckins));
+      if (savedCheckins) {
+        const parsed = JSON.parse(savedCheckins);
+        setTimeout(() => setCheckedEventIds(parsed), 0);
+      }
     } catch (e) {
       console.error("Failed to load from localStorage", e);
     }
 
     const timer = window.setInterval(() => setNow(new Date()), 30_000);
-    return () => window.clearInterval(timer);
+    return () => {
+      clearTimeout(mountId);
+      window.clearInterval(timer);
+    };
   }, [notesKey, checkinsKey]);
 
   const sortedEvents = useMemo(

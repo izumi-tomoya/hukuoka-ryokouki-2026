@@ -8,6 +8,11 @@ interface ChatMessage {
   content: string;
 }
 
+interface ApiError extends Error {
+  status?: number;
+  data?: unknown;
+}
+
 /**
  * Google Gemini API Call
  */
@@ -45,7 +50,10 @@ async function callGemini(message: string, systemPrompt: string, history: ChatMe
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    throw { status: response.status, message: `Gemini ${model} failed`, data: errorData };
+    const error = new Error(`Gemini ${model} failed: ${response.status}`) as ApiError;
+    error.status = response.status;
+    error.data = errorData;
+    throw error;
   }
 
   const data = await response.json();
@@ -82,7 +90,10 @@ async function callOpenAI(message: string, systemPrompt: string, history: ChatMe
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    throw { status: response.status, message: 'OpenAI failed', data: errorData };
+    const error = new Error(`OpenAI failed: ${response.status}`) as ApiError;
+    error.status = response.status;
+    error.data = errorData;
+    throw error;
   }
 
   const data = await response.json();
@@ -142,22 +153,25 @@ ${tipsContext}
     try {
       answer = await callGemini(message, systemPrompt, trimmedHistory, false);
       usedProvider = "gemini-flash";
-    } catch (flashError: any) {
-      console.warn("Gemini Flash failed, falling back to Gemini Pro...", flashError.status || flashError.message);
+    } catch (flashError: unknown) {
+      const err = flashError as ApiError;
+      console.warn("Gemini Flash failed, falling back to Gemini Pro...", err.status || err.message || "unknown error");
       
       // Step 2: Gemini Pro (高精度・第2候補)
       try {
         answer = await callGemini(message, systemPrompt, trimmedHistory, true);
         usedProvider = "gemini-pro";
-      } catch (proError: any) {
-        console.warn("Gemini Pro failed, falling back to OpenAI (Last Resort)...", proError.status || proError.message);
+      } catch (proError: unknown) {
+        const pErr = proError as ApiError;
+        console.warn("Gemini Pro failed, falling back to OpenAI (Last Resort)...", pErr.status || pErr.message || "unknown error");
         
         // Step 3: OpenAI GPT-4o-mini (最後の砦)
         try {
           answer = await callOpenAI(message, systemPrompt, trimmedHistory);
           usedProvider = "openai";
-        } catch (openAiError: any) {
-          console.error("All providers failed.");
+        } catch (openAiError: unknown) {
+          const oErr = openAiError as ApiError;
+          console.error("All providers failed.", oErr.message || "unknown error");
           answer = "申し訳ありません。現在すべてのコンシェルジュが応答できません。少し時間をおいてから再度お声がけいただけますでしょうか。";
           usedProvider = "none";
         }
@@ -174,8 +188,9 @@ ${tipsContext}
       ]
     });
 
-  } catch (error: any) {
-    console.error('AI Advisor Fatal Error:', error);
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error('AI Advisor Fatal Error:', err.message || "unknown fatal error");
     return NextResponse.json({ error: 'AIとの通信中に予期せぬエラーが発生しました' }, { status: 500 });
   }
 }

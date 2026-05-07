@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react';
 import { MagazineCard } from '@/components/ui/MagazineCard';
 import { Button } from '@/components/ui/button';
-import { X, Trophy, Star, MessageSquare, Camera, Check, Loader2, Upload } from 'lucide-react';
+import { X, Trophy, Star, Camera, Check, Loader2, Upload } from 'lucide-react';
 import { addGourmetAwardAction } from '../../api/tripActions';
 import Image from 'next/image';
 
@@ -45,7 +45,7 @@ export default function AddAwardModal({ tripId, isOpen, onClose }: Props) {
       const res = await fetch('/api/upload', { method: 'POST', body: formData });
       const data = await res.json();
       if (data.url) setImageUrl(data.url);
-    } catch (err) {
+    } catch {
       alert('アップロードに失敗しました');
     } finally {
       setIsUploading(false);

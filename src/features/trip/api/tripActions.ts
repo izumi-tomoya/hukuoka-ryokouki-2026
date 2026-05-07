@@ -98,13 +98,12 @@ export async function getTrips() {
 }
 
 export async function getAllLocations() {
-  if (!("location" in prisma)) {
+  try {
+    return await prisma.location.findMany();
+  } catch (error) {
+    console.error('Failed to fetch locations:', error);
     return [];
   }
-  const db = prisma as unknown as {
-    location: { findMany: () => Promise<Array<{ id: string; name: string; lat: number; lng: number }>> };
-  };
-  return await db.location.findMany();
 }
 
 export async function updateEventAction(eventId: string, data: unknown) {

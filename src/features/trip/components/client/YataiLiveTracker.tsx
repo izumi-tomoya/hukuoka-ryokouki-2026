@@ -1,7 +1,7 @@
 "use client";
 
 import { YataiStop } from "@/features/trip/types/trip";
-import { Clock, MapPin } from "lucide-react";
+import { Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface YataiLiveTrackerProps {

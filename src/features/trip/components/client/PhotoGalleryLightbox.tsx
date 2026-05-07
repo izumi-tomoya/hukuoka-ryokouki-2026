@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { X, ChevronLeft, ChevronRight, Maximize2, Trash2, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -16,6 +16,9 @@ export default function PhotoGalleryLightbox({ photos, eventId }: PhotoGalleryLi
   const [index, setIndex] = useState<number | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  const next = useCallback(() => setIndex((prev) => (prev === null ? null : (prev + 1) % photos.length)), [photos.length]);
+  const prev = useCallback(() => setIndex((prev) => (prev === null ? null : (prev - 1 + photos.length) % photos.length)), [photos.length]);
+
   // ESCキーで閉じる
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -25,10 +28,8 @@ export default function PhotoGalleryLightbox({ photos, eventId }: PhotoGalleryLi
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [index]);
+  }, [index, next, prev]);
 
-  const next = () => setIndex((prev) => (prev === null ? null : (prev + 1) % photos.length));
-  const prev = () => setIndex((prev) => (prev === null ? null : (prev - 1 + photos.length) % photos.length));
 
   const handleDelete = async (e: React.MouseEvent, url: string) => {
     e.stopPropagation();

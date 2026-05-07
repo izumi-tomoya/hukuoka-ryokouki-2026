@@ -45,7 +45,7 @@ export default function PhotoUploadButton({ eventId }: PhotoUploadButtonProps) {
         try {
           const errorData = await response.json();
           errorMessage = errorData.details || errorData.error || errorMessage;
-        } catch (e) {
+        } catch {
           errorMessage = `Server error (${response.status})`;
         }
         throw new Error(errorMessage);
@@ -58,9 +58,10 @@ export default function PhotoUploadButton({ eventId }: PhotoUploadButtonProps) {
       const result = await addPhotoToEvent(eventId, imageUrl);
       if (!result.success) throw new Error(result.error);
       
-    } catch (error: any) {
-      console.error('Upload Error:', error);
-      alert('アップロードに失敗しました: ' + (error.message || '不明なエラー'));
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "unknown upload error";
+      console.error('Upload Error:', message);
+      alert('アップロードに失敗しました: ' + message);
     } finally {
       setStatus('idle');
       if (fileInputRef.current) fileInputRef.current.value = '';

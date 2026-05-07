@@ -4,6 +4,7 @@ import { createTrip } from '@/features/trip/api/tripActions';
 import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { Sparkles, MapPin, Palette } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const labelCls = 'block text-[9px] font-black tracking-[4px] text-muted-foreground uppercase mb-2 ml-1';
 const inputCls =

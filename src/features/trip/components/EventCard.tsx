@@ -96,7 +96,7 @@ function BasicCard({ event, isAdmin }: { event: TripEvent, isAdmin?: boolean }) 
               <div className="grid grid-cols-2 gap-3 mt-4">
                 {event.actualPhotos.map((photo, i) => (
                   <div key={i} className="aspect-square relative rounded-[1.5rem] overflow-hidden border border-border shadow-inner group/photo">
-                    <Image src={photo} alt="Memory" fill sizes="(max-width: 768px) 50vw, 25vw" className="object-cover transition-transform duration-700 group-hover/photo:scale-110" />
+                    <Image src={photo.url} alt="Memory" fill sizes="(max-width: 768px) 50vw, 25vw" className="object-cover transition-transform duration-700 group-hover/photo:scale-110" />
                   </div>
                 ))}
               </div>

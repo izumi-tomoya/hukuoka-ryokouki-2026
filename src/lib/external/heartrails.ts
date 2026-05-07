@@ -34,7 +34,7 @@ export async function getNearestStations(lat: number, lng: number) {
 
     const data = await res.json();
     return data.response.station || [];
-  } catch (e) {
+  } catch {
     return [];
   }
 }

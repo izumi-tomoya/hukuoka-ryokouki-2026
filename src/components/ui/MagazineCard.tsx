@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 
 interface Props {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   className?: string;
   padding?: "none" | "sm" | "md" | "lg";
 }

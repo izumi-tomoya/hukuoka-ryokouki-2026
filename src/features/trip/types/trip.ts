@@ -37,6 +37,7 @@ export interface TransitStep {
   platform?: string;
   exit?: string;
   isTransfer?: boolean;
+  desc?: string; // Additional description for the step
 }
 
 export interface WeatherStats {
@@ -77,6 +78,7 @@ export interface TripEvent {
   
   // OGP & Photos
   photos?: TripMedia[]; 
+  actualPhotos?: TripMedia[]; // Photos uploaded by users
   locationUrl?: string;
   
   // Budget
@@ -95,9 +97,14 @@ export interface TripEvent {
 }
 
 export interface Tip {
+  id?: string;
   title: string;
   body: string;
+  venue?: string;
+  imageUrl?: string;
   isWarning?: boolean;
+  isConfirmed?: boolean;
   category?: string;
   deepLevel?: number;
+  order?: number;
 }

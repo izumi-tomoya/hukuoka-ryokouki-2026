@@ -24,7 +24,7 @@ export default function Hero({ trip }: HeroProps) {
           </div>
           
           <h1 className="font-playfair text-5xl md:text-7xl font-black text-foreground tracking-tighter leading-none mb-6">
-            {trip.title}
+            {trip.title || "Untitled Trip"}
           </h1>
           
           <p className="max-w-xl text-lg md:text-xl text-muted-foreground font-medium leading-relaxed">
@@ -34,13 +34,13 @@ export default function Hero({ trip }: HeroProps) {
           <div className="mt-10 flex flex-wrap items-center gap-6">
             <div className="flex flex-col">
               <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">Location</span>
-              <span className="text-sm font-bold text-foreground">{trip.location}</span>
+              <span className="text-sm font-bold text-foreground">{trip.location || "Unknown"}</span>
             </div>
             <div className="w-px h-8 bg-border hidden sm:block" />
             <div className="flex flex-col">
               <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">Timeline</span>
               <span className="text-sm font-bold text-foreground">
-                {new Date(trip.startDate).toLocaleDateString()} — {new Date(trip.endDate).toLocaleDateString()}
+                {trip.startDate ? new Date(trip.startDate).toLocaleDateString() : "TBD"} — {trip.endDate ? new Date(trip.endDate).toLocaleDateString() : "TBD"}
               </span>
             </div>
           </div>

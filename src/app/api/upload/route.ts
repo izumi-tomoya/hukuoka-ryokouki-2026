@@ -34,11 +34,12 @@ export async function POST(request: Request): Promise<NextResponse> {
 
     return NextResponse.json(result);
 
-  } catch (error: any) {
-    console.error('Blob Upload Error:', error);
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error('Blob Upload Error:', err.message || "unknown upload error");
     return NextResponse.json({ 
       error: 'アップロード中にエラーが発生しました。',
-      details: error.message 
+      details: err.message || "不明なエラー"
     }, { status: 500 });
   }
 }

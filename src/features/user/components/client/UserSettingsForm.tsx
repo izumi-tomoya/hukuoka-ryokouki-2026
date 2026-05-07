@@ -20,7 +20,9 @@ export function UserSettingsForm({ initialName, initialMotto }: UserSettingsForm
   // テーマの初期化（localStorageなどから取得）
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | 'system' | null;
-    if (savedTheme) setTheme(savedTheme);
+    if (savedTheme) {
+      setTimeout(() => setTheme(savedTheme), 0);
+    }
   }, []);
 
   const applyTheme = (newTheme: 'light' | 'dark' | 'system') => {
@@ -40,13 +42,14 @@ export function UserSettingsForm({ initialName, initialMotto }: UserSettingsForm
     setMessage(null);
 
     try {
-      const result = await updateUserProfile({ name, motto });
+      const result = await updateUserProfile({ name, motto }) as { success: boolean; error?: string };
       if (result.success) {
         setMessage({ type: 'success', text: 'プロフィールを更新しました' });
       } else {
         setMessage({ type: 'error', text: result.error || '更新に失敗しました' });
       }
-    } catch (error) {
+    } catch (error: unknown) {
+      console.error('Update Profile Error:', error);
       setMessage({ type: 'error', text: 'エラーが発生しました' });
     } finally {
       setIsLoading(false);
@@ -102,7 +105,7 @@ export function UserSettingsForm({ initialName, initialMotto }: UserSettingsForm
               <button
                 key={item.id}
                 type="button"
-                onClick={() => applyTheme(item.id as any)}
+                onClick={() => applyTheme(item.id as 'light' | 'dark' | 'system')}
                 className={`flex flex-col items-center gap-2 p-4 rounded-2xl border transition-all ${
                   theme === item.id
                     ? 'bg-zinc-900 text-white border-zinc-900 dark:bg-white dark:text-zinc-900'

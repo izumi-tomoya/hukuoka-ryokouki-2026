@@ -4,6 +4,7 @@ import { getWeatherData } from "@/lib/weather";
 import { getTripBySlug } from "@/features/trip/api/tripActions";
 import TripLayout from "@/features/trip/components/TripLayout";
 import AssistDashboard from "@/features/trip/components/client/AssistDashboard";
+import { ensureDate } from "@/features/trip/utils/dateUtils";
 
 export default async function TripAssistPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -18,7 +19,7 @@ export default async function TripAssistPage({ params }: { params: Promise<{ slu
     day.events.map((event) => ({
       id: event.id,
       dayNumber: day.dayNumber,
-      date: day.date.toISOString(),
+      date: ensureDate(day.date).toISOString(),
       time: event.time,
       type: event.type,
       title: event.title || event.foodName || "Untitled",
@@ -55,8 +56,8 @@ export default async function TripAssistPage({ params }: { params: Promise<{ slu
           slug: trip.slug,
           title: trip.title,
           location: trip.location,
-          startDate: trip.startDate.toISOString(),
-          endDate: trip.endDate.toISOString(),
+          startDate: ensureDate(trip.startDate).toISOString(),
+          endDate: ensureDate(trip.endDate).toISOString(),
         }}
         events={events}
         tips={trip.tips.map((tip) => ({
@@ -69,7 +70,8 @@ export default async function TripAssistPage({ params }: { params: Promise<{ slu
           isConfirmed: tip.isConfirmed,
           category: tip.category || undefined,
         }))}
-        weatherLabel={weather ? `${trip.location}: ${weather.condition} ${weather.temp}°C / ${weather.themeStatus}` : null}
+        weatherLabel={weather ? `${trip.location}: ${weather.current.condition} ${weather.current.temp}°C / ${weather.themeStatus}` : null}
+        weatherData={weather}
       />
     </TripLayout>
   );

@@ -29,6 +29,21 @@ export default async function MemoriesPage({ params }: { params: Promise<{ slug:
   const allTripEvents = trip.days?.flatMap(day => 
     day.events.map(event => mapEventToTripEvent(event as unknown as EventWithStops))
   ) ?? [];
+  const insightEvents = trip.days.flatMap((day) =>
+    day.events.map((event) => ({
+      id: event.id,
+      dayNumber: day.dayNumber,
+      date: new Date(day.date).toISOString(),
+      time: event.time,
+      type: event.type,
+      title: event.title || event.foodName || "Untitled",
+      desc: event.desc || event.foodDesc || undefined,
+      locationUrl: event.locationUrl || undefined,
+      isConfirmed: event.isConfirmed,
+      plannedBudget: event.plannedBudget || 0,
+      actualExpense: event.actualExpense || 0,
+    }))
+  );
 
   // 2. 予算統計の計算
   const budgetStats = calculateBudgetStats(allTripEvents);
@@ -53,6 +68,7 @@ export default async function MemoriesPage({ params }: { params: Promise<{ slug:
         budgetStats={budgetStats}
         eventsWithPhotos={eventsWithPhotos}
         allEvents={allTripEvents}
+        insightEvents={insightEvents}
         isAdmin={isAdmin}
       />
     </TripLayout>

@@ -1,13 +1,16 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { GourmetAward } from "@prisma/client";
 import { Download, FileText, Sparkles } from "lucide-react";
 import { MagazineCard } from "@/components/ui/MagazineCard";
 import type { BudgetStats } from "@/features/trip/utils/tripUtils";
 import type { TripEvent } from "@/features/trip/types/trip";
+import { loadExpensePayers, loadTemperatureLogs, type TemperatureLogEntry } from "@/features/trip/utils/clientTripStorage";
+import { computeSettlement, summarizeTemperature, TEMPERATURE_MOOD_NARRATIVES } from "@/features/trip/utils/tripInsights";
 
 interface Props {
+  tripId: string;
   awards: GourmetAward[];
   budgetStats: BudgetStats;
   allEvents: TripEvent[];
@@ -18,11 +21,47 @@ function yen(value: number) {
   return `¥${value.toLocaleString()}`;
 }
 
-export default function TravelReportPanel({ awards, budgetStats, allEvents, photoCount }: Props) {
+export default function TravelReportPanel({ tripId, awards, budgetStats, allEvents, photoCount }: Props) {
+  const [logs, setLogs] = useState<TemperatureLogEntry[]>(() =>
+    typeof window === "undefined" ? [] : loadTemperatureLogs(tripId)
+  );
+  const [payers, setPayers] = useState<Record<string, "shared" | "you" | "partner">>(() =>
+    typeof window === "undefined" ? {} : loadExpensePayers(tripId)
+  );
+
+  useEffect(() => {
+    const sync = () => {
+      setLogs(loadTemperatureLogs(tripId));
+      setPayers(loadExpensePayers(tripId));
+    };
+    window.addEventListener("storage", sync);
+    return () => window.removeEventListener("storage", sync);
+  }, [tripId]);
+
   const report = useMemo(() => {
     const visited = allEvents.filter((event) => event.isConfirmed).length;
     const topFood = awards[0]?.title || allEvents.find((event) => event.type === "food")?.title || "未選定";
     const memoLines = allEvents.filter((event) => event.notes).slice(0, 4).map((event) => `- ${event.time} ${event.notes}`);
+    const settlement = computeSettlement(
+      allEvents.map((event) => ({
+        id: event.id || "",
+        dayNumber: 0,
+        date: new Date().toISOString(),
+        time: event.time,
+        type: event.type,
+        title: event.title || event.foodName || "Untitled",
+        desc: event.desc || event.foodDesc || undefined,
+        actualExpense: event.actualExpense || 0,
+      })),
+      payers
+    );
+    const temperature = summarizeTemperature(logs);
+    const moodLine =
+      logs.length > 0 ? `旅の温度: ${TEMPERATURE_MOOD_NARRATIVES[temperature.topMood]}が多く、また来たい登録は${temperature.revisitCount}件。` : "";
+    const energyNotes = logs
+      .filter((log) => log.note)
+      .slice(0, 3)
+      .map((log) => `- ${log.eventTime} ${log.note}`);
 
     return [
       "Travel Report",
@@ -30,11 +69,15 @@ export default function TravelReportPanel({ awards, budgetStats, allEvents, phot
       `チェック済み: ${visited}`,
       `写真: ${photoCount}`,
       `実績支出: ${yen(budgetStats.totalActual)}`,
+      `精算: ${settlement.instruction}`,
       `ベストグルメ: ${topFood}`,
+      moodLine,
       memoLines.length > 0 ? "メモ:" : "",
       ...memoLines,
+      energyNotes.length > 0 ? "温度ログ:" : "",
+      ...energyNotes,
     ].filter(Boolean).join("\n");
-  }, [allEvents, awards, budgetStats.totalActual, photoCount]);
+  }, [allEvents, awards, budgetStats.totalActual, logs, payers, photoCount]);
 
   const download = () => {
     const blob = new Blob([report], { type: "text/plain;charset=utf-8" });

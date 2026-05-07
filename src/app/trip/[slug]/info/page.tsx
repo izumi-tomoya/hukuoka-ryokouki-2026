@@ -6,6 +6,8 @@ import { auth } from "@/lib/auth";
 import PackingList from "@/features/trip/components/client/PackingList";
 import TipsList from "@/features/trip/components/client/TipsList";
 import { SectionHeader } from "@/components/ui/SectionHeader";
+import SmartPackingSuggestions from "@/features/trip/components/client/SmartPackingSuggestions";
+import { getWeatherData } from "@/lib/weather";
 
 export default async function TripInfoPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -17,6 +19,22 @@ export default async function TripInfoPage({ params }: { params: Promise<{ slug:
 
   // getTripBySlug で include された最新のパッキングアイテムを使用します
   const packingItems = trip.packingItems ?? [];
+  const weather = await getWeatherData(trip.location).catch(() => null);
+  const insightEvents = trip.days.flatMap((day) =>
+    day.events.map((event) => ({
+      id: event.id,
+      dayNumber: day.dayNumber,
+      date: new Date(day.date).toISOString(),
+      time: event.time,
+      type: event.type,
+      title: event.title || event.foodName || "Untitled",
+      desc: event.desc || event.foodDesc || undefined,
+      locationUrl: event.locationUrl || undefined,
+      isConfirmed: event.isConfirmed,
+      plannedBudget: event.plannedBudget || 0,
+      actualExpense: event.actualExpense || 0,
+    }))
+  );
 
   return (
     <TripLayout
@@ -31,7 +49,17 @@ export default async function TripInfoPage({ params }: { params: Promise<{ slug:
         {/* --- Packing Section --- */}
         <section>
           <SectionHeader title="Checklist" subtitle="準備を完璧に整えよう" />
+          <div className="mt-8">
+            <SmartPackingSuggestions
+              tripId={trip.id}
+              itemNames={packingItems.map((item) => item.name)}
+              events={insightEvents}
+              weatherData={weather}
+            />
+          </div>
+          <div className="mt-8">
           <PackingList initialItems={packingItems} tripId={trip.id} />
+          </div>
         </section>
 
         {/* --- Booking & Knowledge Section --- */}

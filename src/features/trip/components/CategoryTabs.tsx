@@ -49,14 +49,8 @@ export default function CategoryTabs({ slug, activePath, isSecretMode, days }: C
   return (
     <div 
       ref={containerRef}
-      className="flex items-center justify-start lg:justify-center gap-2 md:gap-3 mb-8 md:mb-16 overflow-x-auto no-scrollbar scroll-smooth -mx-4 px-4 md:mx-0 md:px-0"
-      style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}
+      className="relative flex items-center justify-start lg:justify-center gap-2 md:gap-3 mb-8 md:mb-16 overflow-x-auto no-scrollbar scroll-smooth -mx-4 px-6 md:mx-0 md:px-0"
     >
-      <style jsx>{`
-        div::-webkit-scrollbar {
-          display: none;
-        }
-      `}</style>
       {navItems.map((item) => {
         const isBase = item.href === `/trip/${slug}`;
         const isActive = isBase ? activePath === item.href : activePath.startsWith(item.href);
@@ -66,7 +60,7 @@ export default function CategoryTabs({ slug, activePath, isSecretMode, days }: C
           <Link
             key={item.href}
             href={item.href}
-            ref={isActive ? activeTabRef : null}
+            ref={isActive ? activeTabRef : undefined}
             className={cn(
               "flex min-h-11 shrink-0 items-center gap-2 rounded-full border px-5 py-3 text-[10px] font-black uppercase tracking-[0.14em] transition-all sm:px-6 md:px-8 md:py-4 md:text-xs md:tracking-[0.2em]",
               isActive

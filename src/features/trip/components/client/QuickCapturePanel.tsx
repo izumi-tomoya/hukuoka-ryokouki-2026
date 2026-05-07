@@ -6,16 +6,19 @@ import { MagazineCard } from '@/components/ui/MagazineCard';
 import { cn } from '@/lib/utils';
 import { addPhotoToEvent } from '@/features/trip/api/tripActions';
 import { TripEvent } from '@/features/trip/types/trip';
+import { appendTemperatureLog, TEMPERATURE_MOODS, type TemperatureMood } from '@/features/trip/utils/clientTripStorage';
 
 interface Props {
+  tripId: string;
   events: TripEvent[];
 }
 
-export default function QuickCapturePanel({ events }: Props) {
+export default function QuickCapturePanel({ tripId, events }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedEventId, setSelectedEventId] = useState<string>(events[0]?.id || '');
   const [note, setNote] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [mood, setMood] = useState<TemperatureMood>('calm');
   const [isPending, startTransition] = useTransition();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -23,11 +26,28 @@ export default function QuickCapturePanel({ events }: Props) {
     if (!selectedEventId || (!note && !imageUrl)) return;
 
     startTransition(async () => {
+      const targetEvent = events.find((event) => event.id === selectedEventId);
+
+      if (targetEvent && note.trim()) {
+        appendTemperatureLog(tripId, {
+          eventId: selectedEventId,
+          eventTitle: targetEvent.title || targetEvent.foodName || 'Untitled',
+          eventTime: targetEvent.time,
+          mood,
+          energy: mood === 'tired' ? 2 : mood === 'joy' ? 5 : 3,
+          revisit: mood === 'again',
+          note: note.trim(),
+        });
+      }
+
       // 本来は画像アップロード後にURLを取得しますが、ここではデモ的にURLを直接入れるか、
       // 既存のActionを呼び出します（既存のActionに合わせて調整が必要な場合があります）
-      await addPhotoToEvent(selectedEventId, imageUrl || 'https://images.unsplash.com/photo-1506744038136-46273834b3fb');
+      if (imageUrl) {
+        await addPhotoToEvent(selectedEventId, imageUrl);
+      }
       setNote('');
       setImageUrl('');
+      setMood('calm');
       setIsOpen(false);
     });
   };
@@ -99,9 +119,36 @@ export default function QuickCapturePanel({ events }: Props) {
               </div>
             </div>
 
+            <div className="space-y-2">
+              <label className="text-[9px] font-black uppercase tracking-widest text-white/40">Temperature</label>
+              <div className="grid grid-cols-5 gap-2">
+                {Object.entries(TEMPERATURE_MOODS).map(([value, config]) => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => setMood(value as TemperatureMood)}
+                    className={cn(
+                      "min-h-11 rounded-2xl border px-2 text-[10px] font-black uppercase tracking-[0.14em] transition-colors",
+                      mood === value ? "border-primary bg-primary text-black" : "border-white/10 bg-white/5 text-white/70"
+                    )}
+                  >
+                    <span className="block text-sm">{config.emoji}</span>
+                    <span>{config.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Photo Preview (Placeholder) */}
             <div className="space-y-2">
               <label className="text-[9px] font-black uppercase tracking-widest text-white/40">Add Photo</label>
+              <input
+                type="url"
+                value={imageUrl}
+                onChange={(event) => setImageUrl(event.target.value)}
+                placeholder="画像URLを貼ると、そのまま保存できます"
+                className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm placeholder:text-white/20 focus:outline-hidden focus:ring-1 focus:ring-primary"
+              />
               <div className="flex gap-3">
                 <button 
                   type="button"

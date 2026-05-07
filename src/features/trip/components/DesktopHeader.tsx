@@ -43,7 +43,7 @@ export default function Header({ session }: HeaderProps) {
       <div className="flex items-center justify-between px-6 py-4">
         <Link href="/" className="font-playfair text-xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">Memoir</Link>
         
-        <nav className="hidden lg:flex items-center gap-1">
+        <nav className="hidden md:flex items-center gap-1">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
@@ -71,14 +71,14 @@ export default function Header({ session }: HeaderProps) {
             <Link href="/auth/signin" className="p-2 text-zinc-400 dark:text-zinc-500"><User size={20} /></Link>
           )}
 
-          <button className="lg:hidden p-2 text-zinc-600 dark:text-zinc-400" onClick={() => setIsOpen(!isOpen)}>
+          <button className="md:hidden p-2 text-zinc-600 dark:text-zinc-400" onClick={() => setIsOpen(!isOpen)}>
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
       </div>
 
       {isOpen && (
-        <nav className="lg:hidden px-4 sm:px-6 py-6 border-t border-zinc-100 dark:border-zinc-800 flex flex-col gap-3 bg-white dark:bg-zinc-900 shadow-xl animate-in fade-in slide-in-from-top-4 duration-300">
+        <nav className="md:hidden px-4 sm:px-6 py-6 border-t border-zinc-100 dark:border-zinc-800 flex flex-col gap-3 bg-white dark:bg-zinc-900 shadow-xl animate-in fade-in slide-in-from-top-4 duration-300">
           {session?.user && (
             <Link 
               href="/user" 

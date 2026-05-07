@@ -41,6 +41,7 @@ export default function EventDetailModal() {
 
   const isSurpriseTag = selectedEvent.tag === 'surprise';
   const isFood = selectedEvent.type === 'food';
+  const shouldShowExternalSpotInfo = ['food', 'hotel', 'sightseeing', 'shopping'].includes(selectedEvent.type);
 
   const handleSaveUserData = () => {
     if (selectedEvent.id) {
@@ -92,9 +93,14 @@ export default function EventDetailModal() {
                   </p>
                 </MagazineCard>
 
-                {/* External Info from HotPepper */}
-                {isFood && (selectedEvent.foodName || selectedEvent.title) && (
-                  <ExternalSpotInfo name={selectedEvent.foodName || selectedEvent.title || ""} />
+                {/* External / location info */}
+                {shouldShowExternalSpotInfo && (selectedEvent.foodName || selectedEvent.title) && (
+                  <ExternalSpotInfo
+                    name={selectedEvent.foodName || selectedEvent.title || ""}
+                    category={selectedEvent.type}
+                    description={isFood ? selectedEvent.foodDesc || selectedEvent.desc : selectedEvent.desc}
+                    locationUrl={selectedEvent.locationUrl}
+                  />
                 )}
 
                 {/* Related Tips for this specific shop/event */}

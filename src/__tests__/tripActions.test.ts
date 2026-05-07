@@ -8,8 +8,24 @@
  */
 
 import { mockPrisma } from './helpers/prismaMock';
-import { Trip, Event, PackingItem, Tip } from '@prisma/client';
-import { TripWithRelations } from '@/features/trip/api/tripActions';
+import { 
+  Trip, 
+  Event, 
+  PackingItem, 
+  Tip 
+} from '@prisma/client';
+import { 
+  getTrips,
+  getTripBySlug,
+  toggleEventConfirmation,
+  addPackingItemAction,
+  togglePackingItemAction,
+  deletePackingItemAction,
+  createTipAction,
+  deleteTipAction,
+  TripWithRelations
+} from '@/features/trip/api/tripActions';
+import { auth } from '@/lib/auth';
 
 // ---- 外部依存のモック ----
 
@@ -23,22 +39,10 @@ jest.mock('next/cache', () => ({
   revalidatePath: jest.fn(),
 }));
 
-// next-auth の auth() をスタブ化（デフォルトは管理者セッションとして振る舞う）
+// next-auth の auth() をスタブ化
 jest.mock('@/lib/auth', () => ({
   auth: jest.fn(),
 }));
-
-import { auth } from '@/lib/auth';
-import {
-  getTrips,
-  getTripBySlug,
-  toggleEventConfirmation,
-  addPackingItemAction,
-  togglePackingItemAction,
-  deletePackingItemAction,
-  createTipAction,
-  deleteTipAction,
-} from '@/features/trip/api/tripActions';
 
 // 管理者セッションのフィクスチャ
 const mockAdminSession = {

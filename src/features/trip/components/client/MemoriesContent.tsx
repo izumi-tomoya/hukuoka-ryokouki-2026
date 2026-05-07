@@ -14,6 +14,9 @@ import TravelReportPanel from './TravelReportPanel';
 import { Camera, Sparkles, Trophy, Play, Plus, Heart } from 'lucide-react';
 import { BudgetStats } from '@/features/trip/utils/tripUtils';
 import type { TripEvent } from '@/features/trip/types/trip';
+import SettlementPanel from './SettlementPanel';
+import TemperatureTimeline from './TemperatureTimeline';
+import type { InsightEvent } from '@/features/trip/utils/tripInsights';
 
 interface Props {
   tripId: string;
@@ -21,6 +24,7 @@ interface Props {
   budgetStats: BudgetStats;
   eventsWithPhotos: TripEvent[];
   allEvents: TripEvent[];
+  insightEvents: InsightEvent[];
   isAdmin: boolean;
 }
 
@@ -30,6 +34,7 @@ export default function MemoriesContent({
   budgetStats, 
   eventsWithPhotos, 
   allEvents, 
+  insightEvents,
   isAdmin 
 }: Props) {
   const [isAwardModalOpen, setIsAwardModalOpen] = useState(false);
@@ -70,7 +75,16 @@ export default function MemoriesContent({
       </section>
 
       <section className="animate-in fade-in slide-in-from-bottom-6 duration-1000">
+        <SettlementPanel tripId={tripId} events={insightEvents} />
+      </section>
+
+      <section className="animate-in fade-in slide-in-from-bottom-6 duration-1000">
+        <TemperatureTimeline tripId={tripId} />
+      </section>
+
+      <section className="animate-in fade-in slide-in-from-bottom-6 duration-1000">
         <TravelReportPanel
+          tripId={tripId}
           awards={awards}
           budgetStats={budgetStats}
           allEvents={allEvents}

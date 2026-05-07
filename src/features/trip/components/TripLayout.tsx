@@ -84,7 +84,7 @@ export default function TripLayout({
 
         {/* --- Global Quick Capture --- */}
         {!isLoading && tripId && events.length > 0 && isSecretMode && (
-        <QuickCapturePanel events={events} />
+        <QuickCapturePanel tripId={tripId} events={events} />
         )}
       </div>
     </LazyMotion>

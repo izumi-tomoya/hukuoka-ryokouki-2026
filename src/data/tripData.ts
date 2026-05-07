@@ -431,7 +431,7 @@ export const day1Tips: Tip[] = [
 ];
 
 export const day2Tips: Tip[] = [
-  { title: "水たき長野", body: "支払いは現金のみなので注意してください。" },
+  { title: "水たき長野", body: "支払いは現金のみなので注意してください。", isWarning: true },
   { title: "お土産", body: "福岡空港で最後にまとめて購入するのがスムーズです。" },
 ];
 

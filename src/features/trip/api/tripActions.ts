@@ -42,7 +42,7 @@ export async function getTripBySlug(slug: string): Promise<TripWithRelations | n
         include: {
           events: {
             orderBy: { order: 'asc' },
-            include: { 
+            include: {
               yataiStops: { orderBy: { order: 'asc' } },
               transitSteps: { orderBy: { order: 'asc' } },
               photos: { orderBy: { createdAt: 'asc' } },
@@ -56,7 +56,10 @@ export async function getTripBySlug(slug: string): Promise<TripWithRelations | n
     },
   });
 
-  return trip as TripWithRelations | null;
+  if (!trip) return null;
+
+  // JSON 化してシリアライズ可能なプレーンオブジェクトに変換（RSC/Hydrationエラー対策）
+  return JSON.parse(JSON.stringify(trip)) as TripWithRelations;
 }
 
 export async function createTrip(formData: FormData) {

@@ -50,4 +50,4 @@ jobs:
 
       # Prisma Mock を使ったユニットテスト（実 DB への接続なし）
       - name: Test
-        run: bun test
+        run: bun run test

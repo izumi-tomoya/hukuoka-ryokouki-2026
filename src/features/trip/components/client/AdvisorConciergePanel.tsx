@@ -83,19 +83,19 @@ export default function AdvisorConciergePanel({ slug }: Props) {
     <MagazineCard className="border-primary/20">
       <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-primary">
         <MessageCircleHeart size={13} />
-        AI Concierge
+        Travel Concierge
       </div>
 
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
-          <h3 className="font-playfair text-3xl font-black text-foreground">AI コンシェルジュ</h3>
+          <h3 className="font-playfair text-3xl font-black text-foreground">旅のコンシェルジュ</h3>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
             旅程と予約情報を見ながら、次の一手を短く返します。
           </p>
         </div>
         <div className="inline-flex items-center gap-2 rounded-full bg-secondary/40 px-4 py-2 text-[10px] font-black uppercase tracking-[0.16em] text-muted-foreground">
           <Sparkles size={12} className="text-primary" />
-          {provider.includes("gemma") || provider === "local-ai" ? "Local AI" : provider}
+          {provider === "none" ? "Standby" : "Private Guide"}
         </div>
       </div>
 
@@ -144,7 +144,7 @@ export default function AdvisorConciergePanel({ slug }: Props) {
           onChange={(event) => setInput(event.target.value)}
           rows={2}
           placeholder="今の予定で、何を優先すべき？"
-          className="min-h-14 flex-1 resize-none rounded-[1.5rem] border border-border bg-background px-4 py-4 text-sm outline-none focus:border-primary"
+          className="min-h-14 flex-1 resize-none rounded-3xl border border-border bg-background px-4 py-4 text-sm outline-none focus:border-primary"
         />
         <button
           type="submit"

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { generateTravelTextWithFallback } from "@/lib/aiProvider";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -6,54 +7,6 @@ export const dynamic = "force-dynamic";
 interface ChatMessage {
   role: "user" | "assistant";
   content: string;
-}
-
-interface ApiError extends Error {
-  status?: number;
-  data?: unknown;
-}
-
-const LOCAL_AI_MODELS = ["gemma-4-26b-a4b-it", "gemma-4-31b-it"] as const;
-
-async function callLocalAi(model: string, message: string, systemPrompt: string, history: ChatMessage[]) {
-  const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GEMINI_API_KEY;
-  if (!apiKey) throw new Error("GEMINI_API_KEY が設定されていません。");
-
-  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      contents: [
-        ...history.map((item) => ({
-          role: item.role === "assistant" ? "model" : "user",
-          parts: [{ text: item.content }],
-        })),
-        {
-          role: "user",
-          parts: [{ text: message }],
-        },
-      ],
-      systemInstruction: {
-        parts: [{ text: systemPrompt }],
-      },
-      generationConfig: {
-        temperature: 0.7,
-        topP: 0.9,
-        maxOutputTokens: 700,
-      },
-    }),
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    const error = new Error(`Local AI ${model} failed: ${response.status}`) as ApiError;
-    error.status = response.status;
-    error.data = errorData;
-    throw error;
-  }
-
-  const data = await response.json();
-  return data.candidates?.[0]?.content?.parts?.map((part: { text?: string }) => part.text || "").join("\n").trim() || "";
 }
 
 export async function POST(req: Request) {
@@ -94,8 +47,8 @@ export async function POST(req: Request) {
       .map((tip) => `${tip.title}${tip.category ? ` [${tip.category}]` : ""}: ${tip.body}`)
       .join("\n");
 
-    const systemPrompt = `あなたは「${trip.title}」の専属AIコンシェルジュです。
-彩様と泉様の旅が、静かで上質、かつ淀みなく進むようサポートしてください。
+    const systemPrompt = `あなたは「${trip.title}」の専属コンシェルジュです。
+知里様と智也様の旅が、静かで上質、かつ淀みなく進むようサポートしてください。
 
 【人格とトーン】
 - 二人旅の空気感を壊さない、控えめながらも的確な「大人のコンシェルジュ」。
@@ -112,6 +65,7 @@ export async function POST(req: Request) {
 【制約】
 - 日本語で回答する。
 - 2〜5文程度に収める（短すぎず、長すぎず）。
+- **読みやすさを考慮し、適宜改行（空行）を挟んで読みやすくすること。**
 - 不明なことは断定せず、選択肢を提示して寄り添う。
 - 危険や遅延リスクがある場合は、冒頭で短く警告する。
 
@@ -123,20 +77,29 @@ ${itineraryContext}
 予約・知識:
 ${tipsContext}`;
 
-    const trimmedHistory = history.slice(-8);
+    const trimmedHistory = history
+      .filter((item) => (item.role === "user" || item.role === "assistant") && item.content.trim())
+      .slice(-8);
 
     let answer = "";
     let usedProvider = "";
+    let providerSource = "";
 
-    for (const model of LOCAL_AI_MODELS) {
-      try {
-        answer = await callLocalAi(model, message, systemPrompt, trimmedHistory);
-        usedProvider = model;
-        break;
-      } catch (error) {
-        const err = error as ApiError;
-        console.warn("Local AI fallback:", model, err.status || err.message || "unknown error");
-      }
+    try {
+      const result = await generateTravelTextWithFallback({
+        prompt: message,
+        systemInstruction: systemPrompt,
+        history: trimmedHistory,
+        maxOutputTokens: 700,
+        temperature: 0.7,
+        topP: 0.9,
+      });
+
+      answer = result.text;
+      usedProvider = `${result.provider}:${result.model}`;
+      providerSource = result.source;
+    } catch (error) {
+      console.warn("Travel advisor fallback exhausted:", error);
     }
 
     if (!answer) {
@@ -147,6 +110,7 @@ ${tipsContext}`;
     return NextResponse.json({
       answer,
       provider: usedProvider,
+      providerSource,
       history: [
         ...history,
         { role: "user", content: message },

@@ -20,6 +20,50 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## AI Config
+
+Travel AI routes support both local `Ollama` and hosted `Gemini API`.
+
+### Provider Selection
+
+```bash
+AI_PROVIDER=auto
+```
+
+- `auto`: Try local Ollama first. If no usable local Gemma model is found, fall back to Gemini API.
+- `local`: Use Ollama only.
+- `google`: Use Gemini API only.
+
+### Local Ollama
+
+```bash
+OLLAMA_BASE_URL=http://127.0.0.1:11434
+LOCAL_AI_MODELS=gemma-4-26b-a4b-it,gemma-4-31b-it
+```
+
+If `LOCAL_AI_MODELS` is not set, the app auto-discovers installed `Gemma` models from Ollama and sorts them with this priority:
+
+1. `gemma-4-26b-a4b-it`
+2. `gemma-4-31b-it`
+3. other installed Gemma models
+
+### Google Gemini API
+
+```bash
+GOOGLE_GENERATIVE_AI_API_KEY=your_key
+GOOGLE_AI_MODELS=gemma-4-26b-a4b-it,gemma-4-31b-it,gemini-2.5-flash-lite,gemini-2.5-flash,gemma-3-27b-it
+```
+
+If `GOOGLE_AI_MODELS` is not set, the app uses the same priority as above. In practice, the free-tier-friendly hosted fallbacks are:
+
+1. `gemini-2.5-flash-lite`
+2. `gemini-2.5-flash`
+3. `gemma-3-27b-it`
+
+`gemini-1.5-flash-latest` is intentionally not the default fallback anymore because current Google docs list `Gemini 1.5 Flash` as deprecated.
+
+`GET /api/ai/models` returns the preferred provider, effective provider, local installed models, and Google-available models for the configured API key.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState } from 'react';
 import { toggleEventConfirmation } from '@/features/trip/api/tripActions';
 import { Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -12,20 +12,23 @@ interface ConfirmCheckboxProps {
 
 export default function ConfirmCheckbox({ eventId, initialConfirmed }: ConfirmCheckboxProps) {
   const [isConfirmed, setIsConfirmed] = useState(initialConfirmed);
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
 
   const handleToggle = async (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent opening the detail modal
     
     const nextState = !isConfirmed;
     setIsConfirmed(nextState); // Optimistic update
+    setIsPending(true);
 
-    startTransition(async () => {
+    try {
       const result = await toggleEventConfirmation(eventId, nextState);
       if (!result.success) {
         setIsConfirmed(isConfirmed); // Rollback on error
       }
-    });
+    } finally {
+      setIsPending(false);
+    }
   };
 
   return (

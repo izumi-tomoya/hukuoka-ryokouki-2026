@@ -140,7 +140,7 @@ export default function TripMap({
 
   if (markers.length === 0) {
     return (
-      <MagazineCard className="h-80 flex flex-col items-center justify-center text-stone-400 bg-stone-50 border-stone-100 rounded-[3rem] shadow-sm">
+      <MagazineCard className="h-80 flex flex-col items-center justify-center text-stone-400 bg-secondary/30 border-border/50 rounded-[3rem] shadow-sm">
         <MapPin size={32} className="mb-2 opacity-20" />
         <p className="text-[10px] font-black uppercase tracking-widest">No matching locations for map</p>
       </MagazineCard>
@@ -151,7 +151,7 @@ export default function TripMap({
 
   return (
     <div className="group relative">
-      <div className="relative h-80 w-full rounded-[3.5rem] overflow-hidden border border-rose-100 shadow-2xl shadow-rose-100/20 bg-stone-50 ring-1 ring-rose-100/50">
+      <div className="relative h-80 w-full rounded-[3.5rem] overflow-hidden border border-rose-100 shadow-2xl shadow-rose-100/20 bg-secondary/30 ring-1 ring-rose-100/50">
         <MapContainer 
           center={center} 
           zoom={13} 

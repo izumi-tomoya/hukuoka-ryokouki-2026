@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Plus, Lock } from 'lucide-react';
 import { getTrips } from '@/features/trip/api/tripActions';
+import { MagazineCard } from '@/components/ui/MagazineCard';
 
 export default async function PortalPage() {
   const trips = await getTrips();
@@ -51,7 +52,7 @@ export default async function PortalPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
           {trips.map((trip) => (
             <Link key={trip.id} href={`/trip/${trip.slug}`} className="group relative block">
-              <div className="relative h-full overflow-hidden rounded-[32px] md:rounded-[40px] bg-card p-8 md:p-10 border border-border transition-all duration-500 hover:shadow-2xl hover:shadow-primary/5 dark:hover:shadow-primary/20 hover:-translate-y-2 active:scale-[0.98]">
+              <MagazineCard className="relative h-full overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-primary/5 dark:hover:shadow-primary/20 hover:-translate-y-2 active:scale-[0.98] p-8 md:p-10" padding="none">
                 {/* Accent line */}
                 <div
                   className="absolute top-0 left-0 right-0 h-1.5"
@@ -79,7 +80,7 @@ export default async function PortalPage() {
                     <Plus size={14} />
                   </div>
                 </div>
-              </div>
+              </MagazineCard>
             </Link>
           ))}
 

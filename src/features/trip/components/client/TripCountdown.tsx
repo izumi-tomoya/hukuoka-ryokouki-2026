@@ -45,7 +45,7 @@ export const TripCountdown = ({ startDate }: Props) => {
 
   // ハイドレーションエラーを防ぐため、マウントされるまでは何も表示しないかスケルトンを出す
   if (!mounted) {
-    return <div className="h-10 w-40 animate-pulse bg-stone-100/50 rounded-lg" />;
+    return <div className="h-10 w-40 animate-pulse bg-muted/25 rounded-lg" />;
   }
 
   return (

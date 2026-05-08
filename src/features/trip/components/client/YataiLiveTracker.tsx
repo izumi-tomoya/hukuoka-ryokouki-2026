@@ -27,14 +27,14 @@ export default function YataiLiveTracker({ stops }: YataiLiveTrackerProps) {
           <div key={i} className="relative flex gap-4 group">
             {/* Connecting line */}
             {i !== stops.length - 1 && (
-              <div className="absolute left-[13px] top-6 bottom-[-24px] w-px bg-stone-100 group-hover:bg-rose-100 transition-colors" />
+              <div className="absolute left-[13px] top-6 bottom-[-24px] w-px bg-muted/50 group-hover:bg-rose-100 transition-colors" />
             )}
 
             <div className={cn(
               "z-10 h-7 w-7 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 transition-all shadow-sm border-2",
               stop.isVisited 
                 ? "bg-stone-800 text-white border-stone-800" 
-                : "bg-white text-stone-400 border-stone-100 group-hover:border-rose-200 group-hover:text-rose-500"
+                : "bg-white text-stone-400 border-border/50 group-hover:border-rose-200 group-hover:text-rose-500"
             )}>
               {i + 1}
             </div>
@@ -47,7 +47,7 @@ export default function YataiLiveTracker({ stops }: YataiLiveTrackerProps) {
                 )}>
                   {stop.stop}
                 </h4>
-                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-stone-50 text-[9px] font-bold text-stone-400">
+                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-secondary/30 text-[9px] font-bold text-stone-400">
                   <Clock size={10} />
                   {stop.time}
                 </div>

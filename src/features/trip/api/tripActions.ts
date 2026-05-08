@@ -34,32 +34,37 @@ async function checkAdmin() {
 }
 
 export async function getTripBySlug(slug: string): Promise<TripWithRelations | null> {
-  const trip = await prisma.trip.findUnique({
-    where: { slug },
-    include: {
-      days: {
-        orderBy: { dayNumber: 'asc' },
-        include: {
-          events: {
-            orderBy: { order: 'asc' },
-            include: {
-              yataiStops: { orderBy: { order: 'asc' } },
-              transitSteps: { orderBy: { order: 'asc' } },
-              photos: { orderBy: { createdAt: 'asc' } },
+  try {
+    const trip = await prisma.trip.findUnique({
+      where: { slug },
+      include: {
+        days: {
+          orderBy: { dayNumber: 'asc' },
+          include: {
+            events: {
+              orderBy: { order: 'asc' },
+              include: {
+                yataiStops: { orderBy: { order: 'asc' } },
+                transitSteps: { orderBy: { order: 'asc' } },
+                photos: { orderBy: { createdAt: 'asc' } },
+              },
             },
           },
         },
+        tips: { orderBy: { order: 'asc' } },
+        packingItems: { orderBy: { order: 'asc' } },
+        gourmetAwards: { orderBy: { order: 'asc' } },
       },
-      tips: { orderBy: { order: 'asc' } },
-      packingItems: { orderBy: { order: 'asc' } },
-      gourmetAwards: { orderBy: { order: 'asc' } },
-    },
-  });
+    });
 
-  if (!trip) return null;
+    if (!trip) return null;
 
-  // JSON 化してシリアライズ可能なプレーンオブジェクトに変換（RSC/Hydrationエラー対策）
-  return JSON.parse(JSON.stringify(trip)) as TripWithRelations;
+    // JSON 化してシリアライズ可能なプレーンオブジェクトに変換（RSC/Hydrationエラー対策）
+    return JSON.parse(JSON.stringify(trip)) as TripWithRelations;
+  } catch (error) {
+    console.error('Failed to fetch trip by slug:', error);
+    return null;
+  }
 }
 
 export async function createTrip(formData: FormData) {
@@ -95,9 +100,14 @@ export async function createTrip(formData: FormData) {
 }
 
 export async function getTrips() {
-  return await prisma.trip.findMany({
-    orderBy: { startDate: 'desc' },
-  });
+  try {
+    return await prisma.trip.findMany({
+      orderBy: { startDate: 'desc' },
+    });
+  } catch (error) {
+    console.error('Failed to fetch trips:', error);
+    return [];
+  }
 }
 
 export async function getAllLocations() {

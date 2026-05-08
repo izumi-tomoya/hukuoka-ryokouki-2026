@@ -4,7 +4,7 @@ import { MapPin } from "lucide-react";
 export default function TripMapSkeleton() {
   return (
     <div className="group relative opacity-60">
-      <div className="relative h-80 w-full rounded-[3.5rem] overflow-hidden border border-rose-100 shadow-xl shadow-rose-100/10 bg-stone-50">
+      <div className="relative h-80 w-full rounded-[3.5rem] overflow-hidden border border-rose-100 shadow-xl shadow-rose-100/10 bg-secondary/30">
         <Skeleton className="h-full w-full" />
         
         {/* Floating Label Skeleton at Top Left */}

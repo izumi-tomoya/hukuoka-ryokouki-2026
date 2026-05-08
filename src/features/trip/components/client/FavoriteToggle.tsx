@@ -17,7 +17,7 @@ export default function FavoriteToggle({ eventId }: { eventId: string }) {
       }}
       className={cn(
         "flex h-8 w-8 items-center justify-center rounded-full transition-all",
-        favorite ? "bg-amber-100" : "bg-stone-100 hover:bg-stone-200"
+        favorite ? "bg-amber-100" : "bg-muted/50 hover:bg-stone-200"
       )}
     >
       <Star

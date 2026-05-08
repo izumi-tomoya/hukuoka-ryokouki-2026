@@ -16,7 +16,7 @@ const ADVENTURES = [
     title: "レンズを通さない景色",
     desc: "10分間だけ、スマホを閉じて。目の前に広がる景色と、隣にいる人の声だけを記憶に焼き付ける。",
     icon: Wind,
-    theme: "text-stone-500 bg-stone-50"
+    theme: "text-stone-500 bg-secondary/30"
   },
   {
     title: "偶然の香りに誘われて",

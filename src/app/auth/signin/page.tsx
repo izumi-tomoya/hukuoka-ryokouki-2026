@@ -2,7 +2,53 @@ import { signIn } from "@/lib/auth";
 import { LogIn, Sparkles, Map } from "lucide-react";
 import Image from "next/image";
 
-export default function SignInPage() {
+const signInErrorMessages: Record<string, string> = {
+  OAuthSignin: "Google 認証の開始に失敗しました。承認済みリダイレクト URI を確認してください。",
+  OAuthCallbackError: "Google からの戻り処理に失敗しました。OAuth 設定か callback URL が一致していない可能性があります。",
+  OAuthCreateAccount: "アカウント作成に失敗しました。データベース接続と Prisma の Account/User テーブルを確認してください。",
+  OAuthAccountNotLinked: "同じメールアドレスの別ログイン方法が既に登録されています。",
+  AccessDenied: "この Google アカウントではアクセスが許可されませんでした。",
+  Configuration: "認証設定に不足があります。AUTH_SECRET、AUTH_GOOGLE_ID、AUTH_GOOGLE_SECRET を確認してください。",
+  Verification: "認証リンクの検証に失敗しました。もう一度お試しください。",
+  SessionRequired: "このページを見るにはログインが必要です。",
+};
+
+type SearchParams = Promise<{
+  callbackUrl?: string | string[];
+  error?: string | string[];
+}>;
+
+function firstParam(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+function getSignInErrorMessage(error: string | undefined) {
+  if (!error) return null;
+  return signInErrorMessages[error] || `ログインに失敗しました。もう一度お試しください。(${error})`;
+}
+
+function getSafeRedirectTo(callbackUrl: string | undefined) {
+  if (!callbackUrl) return "/";
+  if (callbackUrl.startsWith("/") && !callbackUrl.startsWith("//")) return callbackUrl;
+
+  try {
+    const url = new URL(callbackUrl);
+    const authOrigin = process.env.AUTH_URL ? new URL(process.env.AUTH_URL).origin : null;
+    if (authOrigin && url.origin === authOrigin) {
+      return `${url.pathname}${url.search}${url.hash}`;
+    }
+  } catch {
+    return "/";
+  }
+
+  return "/";
+}
+
+export default async function SignInPage({ searchParams }: { searchParams: SearchParams }) {
+  const params = await searchParams;
+  const errorMessage = getSignInErrorMessage(firstParam(params.error));
+  const redirectTo = getSafeRedirectTo(firstParam(params.callbackUrl));
+
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-6 relative overflow-hidden">
       {/* Decorative Background Elements */}
@@ -38,12 +84,18 @@ export default function SignInPage() {
               新しい記憶を刻む準備はできましたか？
             </p>
           </div>
+
+          {errorMessage && (
+            <div className="mb-8 rounded-3xl border border-rose-200 bg-rose-50 px-5 py-4 text-left text-xs font-bold leading-relaxed text-rose-700">
+              {errorMessage}
+            </div>
+          )}
           
           {/* Sign In Button */}
           <form
             action={async () => {
               "use server";
-              await signIn("google", { redirectTo: "/" });
+              await signIn("google", { redirectTo });
             }}
             className="space-y-6"
           >

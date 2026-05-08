@@ -5,7 +5,7 @@ import { MagazineCard } from '@/components/ui/MagazineCard';
 import { Trophy, Quote, Trash2, Award, Star } from 'lucide-react';
 import Image from 'next/image';
 import { deleteGourmetAwardAction } from '../../api/tripActions';
-import { useTransition } from 'react';
+import { useState } from 'react';
 
 interface Props {
   award: GourmetAward;
@@ -13,13 +13,16 @@ interface Props {
 }
 
 export default function GourmetAwardCard({ award, isAdmin }: Props) {
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!window.confirm('このアワードを削除しますか？')) return;
-    startTransition(async () => {
+    setIsPending(true);
+    try {
       await deleteGourmetAwardAction(award.id);
-    });
+    } finally {
+      setIsPending(false);
+    }
   };
 
   return (

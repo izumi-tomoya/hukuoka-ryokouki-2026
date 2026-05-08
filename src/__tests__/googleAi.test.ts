@@ -11,8 +11,8 @@ describe("parseGoogleTravelAiModels()", () => {
   });
 
   it("trims values and removes duplicates while preserving order", () => {
-    expect(parseGoogleTravelAiModels(" gemma-4-26b-a4b-it , gemma-4-26b-a4b-it, gemini-2.5-flash-lite ")).toEqual([
-      "gemma-4-26b-a4b-it",
+    expect(parseGoogleTravelAiModels(" gemini-3.1-flash-lite , gemini-3.1-flash-lite, gemini-2.5-flash-lite ")).toEqual([
+      "gemini-3.1-flash-lite",
       "gemini-2.5-flash-lite",
     ]);
   });
@@ -51,11 +51,11 @@ describe("getGoogleTravelAiModelsConfig()", () => {
   });
 
   it("prefers GOOGLE_AI_MODELS over GEMINI_MODELS", () => {
-    process.env.GOOGLE_AI_MODELS = "gemma-4-26b-a4b-it,gemini-2.5-flash-lite";
-    process.env.GEMINI_MODELS = "gemma-3-27b-it";
+    process.env.GOOGLE_AI_MODELS = "gemini-3.1-flash-lite,gemini-2.5-flash-lite";
+    process.env.GEMINI_MODELS = "gemini-3-flash-preview";
 
     expect(getGoogleTravelAiModelsConfig()).toEqual({
-      models: ["gemma-4-26b-a4b-it", "gemini-2.5-flash-lite"],
+      models: ["gemini-3.1-flash-lite", "gemini-2.5-flash-lite"],
       source: "GOOGLE_AI_MODELS",
     });
   });

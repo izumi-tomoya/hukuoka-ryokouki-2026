@@ -92,7 +92,7 @@ export default function PhotoUploadButton({ eventId }: PhotoUploadButtonProps) {
           </>
         ) : (
           <>
-            <div className="h-10 w-10 rounded-full bg-stone-50 flex items-center justify-center group-hover:bg-rose-100 transition-colors">
+            <div className="h-10 w-10 rounded-full bg-secondary/30 flex items-center justify-center group-hover:bg-rose-100 transition-colors">
               <ImagePlus size={20} className="text-stone-400 group-hover:text-rose-500" />
             </div>
             <div className="text-left">

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState } from 'react';
 import { PackingItem } from '@prisma/client';
 import { MagazineCard } from '@/components/ui/MagazineCard';
 import { 
@@ -33,7 +33,7 @@ export default function PackingList({ initialItems, tripId }: Props) {
   const [items, setItems] = useState(initialItems);
   const [activeTab, setActiveTab] = useState('Essential');
   const [newItemName, setNewItemName] = useState('');
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
 
   const filteredItems = items.filter(item => item.category === activeTab);
   const totalCount = items.length;
@@ -44,14 +44,17 @@ export default function PackingList({ initialItems, tripId }: Props) {
     // 楽観的アップデート
     setItems(items.map(item => item.id === id ? { ...item, isPacked: !currentStatus } : item));
     
-    startTransition(async () => {
+    setIsPending(true);
+    try {
       await togglePackingItemAction(id, !currentStatus);
-    });
+    } finally {
+      setIsPending(false);
+    }
   };
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newItemName.trim()) return;
+    if (!newItemName.trim() || isPending) return;
 
     const tempId = `temp-${Date.now()}`;
     const newItem = {
@@ -66,16 +69,22 @@ export default function PackingList({ initialItems, tripId }: Props) {
     setItems([...items, newItem]);
     setNewItemName('');
 
-    startTransition(async () => {
+    setIsPending(true);
+    try {
       await addPackingItemAction(tripId, newItemName, activeTab);
-    });
+    } finally {
+      setIsPending(false);
+    }
   };
 
   const handleDelete = async (id: string) => {
     setItems(items.filter(item => item.id !== id));
-    startTransition(async () => {
+    setIsPending(true);
+    try {
       await deletePackingItemAction(id);
-    });
+    } finally {
+      setIsPending(false);
+    }
   };
 
   return (

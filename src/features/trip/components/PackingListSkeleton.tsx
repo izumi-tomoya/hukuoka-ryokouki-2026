@@ -5,7 +5,7 @@ export default function PackingListSkeleton() {
   return (
     <div className="space-y-8 opacity-60">
       {/* ─── Progress Overview Skeleton ─── */}
-      <MagazineCard padding="lg" className="bg-stone-50/50 dark:bg-zinc-900 border-stone-100 dark:border-zinc-800">
+      <MagazineCard padding="lg" className="bg-secondary/15 dark:bg-background border-border/50 dark:border-border">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
             <Skeleton className="h-8 w-48" />

@@ -13,13 +13,16 @@ type GenerateTravelTextOptions = {
   maxOutputTokens?: number;
   temperature?: number;
   topP?: number;
+  modelPreference?: "default" | "fast";
+  maxModelAttempts?: number;
+  timeoutMs?: number;
 };
 
 export type TravelAiProvider = "local" | "google";
 
 export type TravelAiRuntime = {
   provider: TravelAiProvider;
-  models: string[];
+  models: readonly string[];
   source: string;
 };
 
@@ -90,6 +93,40 @@ export async function resolveTravelAiRuntime() {
   } satisfies TravelAiRuntime;
 }
 
+function parseModelSize(model: string) {
+  const lower = model.toLowerCase();
+  const match = lower.match(/(?:^|[-_:])(\d+(?:\.\d+)?)b(?:$|[-_:])/u) || lower.match(/(\d+(?:\.\d+)?)\s*b/u);
+
+  return match ? Number(match[1]) : 0;
+}
+
+function getFastModelScore(model: string) {
+  const lower = model.toLowerCase();
+
+  if (lower === "gemini-3.1-flash-lite") return 0;
+  if (lower === "gemini-3.1-flash-lite-preview") return 1;
+  if (lower === "gemini-3-flash-preview") return 2;
+  if (lower === "gemini-2.5-flash-lite") return 3;
+  if (lower === "gemini-2.5-flash") return 4;
+  if (lower.includes("flash-lite")) return 5;
+  if (lower.includes("flash")) return 6;
+
+  const size = parseModelSize(lower);
+  if (size > 0) return 10 + size;
+
+  if (lower === "gemma3" || lower === "gemma3:latest") return 12;
+  if (lower.includes("gemma")) return 30;
+
+  return 40;
+}
+
+export function prioritizeTravelAiModelsForFastResponse(models: readonly string[]) {
+  return models
+    .map((model, index) => ({ model, index, score: getFastModelScore(model) }))
+    .sort((left, right) => left.score - right.score || left.index - right.index)
+    .map((item) => item.model);
+}
+
 export async function generateTravelTextWithFallback({
   prompt,
   systemInstruction,
@@ -97,11 +134,17 @@ export async function generateTravelTextWithFallback({
   maxOutputTokens,
   temperature,
   topP,
+  modelPreference = "default",
+  maxModelAttempts,
+  timeoutMs,
 }: GenerateTravelTextOptions) {
   const runtime = await resolveTravelAiRuntime();
   const errors: Array<{ model: string; status?: number; message: string }> = [];
+  const preferredModels =
+    modelPreference === "fast" ? prioritizeTravelAiModelsForFastResponse(runtime.models) : runtime.models;
+  const models = maxModelAttempts ? preferredModels.slice(0, maxModelAttempts) : preferredModels;
 
-  for (const model of runtime.models) {
+  for (const model of models) {
     try {
       const text =
         runtime.provider === "local"
@@ -113,6 +156,7 @@ export async function generateTravelTextWithFallback({
               maxOutputTokens,
               temperature,
               topP,
+              timeoutMs,
             })
           : await generateGoogleText({
               model,
@@ -122,6 +166,7 @@ export async function generateTravelTextWithFallback({
               maxOutputTokens,
               temperature,
               topP,
+              timeoutMs,
             });
 
       return {
@@ -136,7 +181,7 @@ export async function generateTravelTextWithFallback({
       errors.push({
         model,
         status: err.status,
-        message: err.message,
+        message: err.message || String(error),
       });
     }
   }

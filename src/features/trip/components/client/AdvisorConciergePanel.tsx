@@ -1,6 +1,6 @@
 "use client";
 
-import { startTransition, useState } from "react";
+import { useState } from "react";
 import { Loader2, MessageCircleHeart, Send, Sparkles } from "lucide-react";
 import { MagazineCard } from "@/components/ui/MagazineCard";
 import { cn } from "@/lib/utils";
@@ -104,9 +104,7 @@ export default function AdvisorConciergePanel({ slug }: Props) {
           <button
             key={prompt}
             onClick={() => {
-              startTransition(() => {
-                void ask(prompt);
-              });
+              void ask(prompt);
             }}
             disabled={isPending}
             className="rounded-full border border-border bg-secondary/20 px-4 py-2 text-xs font-black text-foreground transition-colors hover:border-primary/40 disabled:opacity-50"
@@ -116,43 +114,47 @@ export default function AdvisorConciergePanel({ slug }: Props) {
         ))}
       </div>
 
-      <div className="mt-6 max-h-96 space-y-3 overflow-y-auto rounded-[1.75rem] border border-border bg-secondary/10 p-4">
+      <div className="mt-6 max-h-96 space-y-4 overflow-y-auto no-scrollbar rounded-[1.75rem] border border-border bg-secondary/10 p-4 dark:bg-card/30">
         {messages.map((message, index) => (
           <div
             key={`${message.role}-${index}`}
             className={cn(
-              "rounded-[1.25rem] px-4 py-3 text-sm leading-relaxed",
+              "rounded-[1.25rem] px-5 py-4 text-sm leading-relaxed transition-all",
               message.role === "assistant"
-                ? "mr-6 bg-white text-foreground shadow-sm"
-                : "ml-6 bg-foreground text-background"
+                ? "mr-8 bg-card text-card-foreground shadow-sm border border-border/40 dark:bg-card/80 dark:border-border/50"
+                : "ml-8 bg-primary text-primary-foreground shadow-md font-medium"
             )}
           >
-            {message.content}
+            {message.content.split("\n").map((line, i) => (
+              <p key={i} className={cn(i !== 0 && "mt-2")}>
+                {line}
+              </p>
+            ))}
           </div>
         ))}
         {isPending && (
-          <div className="mr-6 flex items-center gap-2 rounded-[1.25rem] bg-white px-4 py-3 text-sm text-muted-foreground shadow-sm">
-            <Loader2 size={16} className="animate-spin" />
-            考えています
+          <div className="mr-8 flex items-center gap-2 rounded-[1.25rem] bg-card/80 px-5 py-4 text-sm text-muted-foreground shadow-sm border border-border/40 backdrop-blur-sm">
+            <Loader2 size={16} className="animate-spin text-primary" />
+            知里様と智也様に最適な案を考えています...
           </div>
         )}
       </div>
 
-      <form onSubmit={onSubmit} className="mt-5 flex gap-3">
+      <form onSubmit={onSubmit} className="mt-6 flex gap-3">
         <textarea
           value={input}
           onChange={(event) => setInput(event.target.value)}
           rows={2}
           placeholder="今の予定で、何を優先すべき？"
-          className="min-h-14 flex-1 resize-none rounded-3xl border border-border bg-background px-4 py-4 text-sm outline-none focus:border-primary"
+          className="min-h-14 flex-1 resize-none rounded-3xl border border-border bg-card px-4 py-4 text-sm outline-none transition-all focus:border-primary focus:ring-1 focus:ring-primary/20 dark:bg-background/50"
         />
         <button
           type="submit"
           disabled={isPending || !input.trim()}
-          className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[1.25rem] bg-foreground text-background transition-transform active:scale-[0.98] disabled:opacity-40"
+          className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[1.25rem] bg-primary text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:brightness-110 active:scale-95 disabled:opacity-40 disabled:shadow-none"
           aria-label="送信"
         >
-          <Send size={16} />
+          <Send size={18} />
         </button>
       </form>
     </MagazineCard>

@@ -1,4 +1,5 @@
 import { Skeleton } from "@/components/ui/Skeleton";
+import { Container } from "@/components/ui/Container";
 import EventCardSkeleton from "@/features/trip/components/EventCardSkeleton";
 import BudgetSummarySkeleton from "@/features/trip/components/BudgetSummarySkeleton";
 import TripMapSkeleton from "@/features/trip/components/TripMapSkeleton";
@@ -8,7 +9,7 @@ import TripLayout from "@/features/trip/components/TripLayout";
 export default function DayLoading() {
   return (
     <TripLayout isLoading={true}>
-      <div className="space-y-12">
+      <Container className="pb-24 space-y-12">
         {/* Map Skeleton */}
         <TripMapSkeleton />
 
@@ -48,7 +49,7 @@ export default function DayLoading() {
 
         {/* Tips Skeleton */}
         <TipsSectionSkeleton />
-      </div>
+      </Container>
     </TripLayout>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition } from "react";
+import { useState } from "react";
 import { toggleSecretModeAction } from "@/features/trip/api/secretMode";
 import { ShieldCheck } from "lucide-react";
 
@@ -9,12 +9,15 @@ interface SecretToggleProps {
 }
 
 export default function SecretToggle({ isSecretMode }: SecretToggleProps) {
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
 
-  const handleToggle = () => {
-    startTransition(async () => {
+  const handleToggle = async () => {
+    setIsPending(true);
+    try {
       await toggleSecretModeAction();
-    });
+    } finally {
+      setIsPending(false);
+    }
   };
 
   return (

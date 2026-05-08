@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState } from 'react';
 import { MagazineCard } from '@/components/ui/MagazineCard';
 import { Button } from '@/components/ui/button';
 import { X, Trophy, Star, Camera, Check, Loader2, Upload } from 'lucide-react';
@@ -29,7 +29,7 @@ export default function AddAwardModal({ tripId, isOpen, onClose }: Props) {
   const [comment, setComment] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [isUploading, setIsUploading] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
 
   if (!isOpen) return null;
 
@@ -52,9 +52,10 @@ export default function AddAwardModal({ tripId, isOpen, onClose }: Props) {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    startTransition(async () => {
+    setIsPending(true);
+    try {
       const res = await addGourmetAwardAction(tripId, {
         title,
         category,
@@ -69,7 +70,9 @@ export default function AddAwardModal({ tripId, isOpen, onClose }: Props) {
       } else {
         alert(res.error);
       }
-    });
+    } finally {
+      setIsPending(false);
+    }
   };
 
   return (

@@ -50,17 +50,20 @@ If `LOCAL_AI_MODELS` is not set, the app auto-discovers installed `Gemma` models
 ### Google Gemini API
 
 ```bash
+AI_PROVIDER=google
 GOOGLE_GENERATIVE_AI_API_KEY=your_key
-GOOGLE_AI_MODELS=gemma-4-26b-a4b-it,gemma-4-31b-it,gemini-2.5-flash-lite,gemini-2.5-flash,gemma-3-27b-it
+GOOGLE_AI_MODELS=gemini-3.1-flash-lite,gemini-3.1-flash-lite-preview,gemini-3-flash-preview,gemini-2.5-flash-lite,gemini-2.5-flash
 ```
 
-If `GOOGLE_AI_MODELS` is not set, the app uses the same priority as above. In practice, the free-tier-friendly hosted fallbacks are:
+If `GOOGLE_AI_MODELS` is not set, the app prioritizes free-tier-friendly hosted models with large token limits:
 
-1. `gemini-2.5-flash-lite`
-2. `gemini-2.5-flash`
-3. `gemma-3-27b-it`
+1. `gemini-3.1-flash-lite`
+2. `gemini-3.1-flash-lite-preview`
+3. `gemini-3-flash-preview`
+4. `gemini-2.5-flash-lite`
+5. `gemini-2.5-flash`
 
-`gemini-1.5-flash-latest` is intentionally not the default fallback anymore because current Google docs list `Gemini 1.5 Flash` as deprecated.
+Google's free tier has free input/output tokens, but it is rate-limited and free-tier content may be used to improve Google's products. `gemini-1.5-flash-latest` is intentionally not the default fallback anymore because current Google docs list `Gemini 1.5 Flash` as deprecated.
 
 `GET /api/ai/models` returns the preferred provider, effective provider, local installed models, and Google-available models for the configured API key.
 

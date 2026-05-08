@@ -1,4 +1,4 @@
-import { PREFERRED_TRAVEL_AI_CANDIDATES } from "@/lib/travelAiPreferences";
+import { PREFERRED_LOCAL_TRAVEL_AI_CANDIDATES } from "@/lib/travelAiPreferences";
 
 type ChatMessage = {
   role: "user" | "assistant";
@@ -55,6 +55,7 @@ type GenerateTextOptions = {
   maxOutputTokens?: number;
   temperature?: number;
   topP?: number;
+  timeoutMs?: number;
 };
 
 export const DEFAULT_LOCAL_TRAVEL_AI_MODELS = ["gemma3"] as const;
@@ -129,8 +130,12 @@ function parseModelSize(model: LocalAiModelMetadata) {
 
 function sortGemmaModels(models: LocalAiModelMetadata[]) {
   return [...models].sort((left, right) => {
-    const preferredLeftIndex = PREFERRED_TRAVEL_AI_CANDIDATES.indexOf(left.model as (typeof PREFERRED_TRAVEL_AI_CANDIDATES)[number]);
-    const preferredRightIndex = PREFERRED_TRAVEL_AI_CANDIDATES.indexOf(right.model as (typeof PREFERRED_TRAVEL_AI_CANDIDATES)[number]);
+    const preferredLeftIndex = PREFERRED_LOCAL_TRAVEL_AI_CANDIDATES.indexOf(
+      left.model as (typeof PREFERRED_LOCAL_TRAVEL_AI_CANDIDATES)[number]
+    );
+    const preferredRightIndex = PREFERRED_LOCAL_TRAVEL_AI_CANDIDATES.indexOf(
+      right.model as (typeof PREFERRED_LOCAL_TRAVEL_AI_CANDIDATES)[number]
+    );
     if (preferredLeftIndex !== -1 || preferredRightIndex !== -1) {
       if (preferredLeftIndex === -1) return 1;
       if (preferredRightIndex === -1) return -1;
@@ -246,41 +251,50 @@ export async function generateLocalText({
   maxOutputTokens = 700,
   temperature = 0.7,
   topP = 0.9,
+  timeoutMs,
 }: GenerateTextOptions) {
-  const response = await fetch(`${getOllamaBaseUrl()}/api/chat`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    cache: "no-store",
-    body: JSON.stringify({
-      model,
-      stream: false,
-      messages: buildMessages(prompt, history, systemInstruction),
-      options: {
-        num_predict: maxOutputTokens,
-        temperature,
-        top_p: topP,
+  const controller = timeoutMs ? new AbortController() : undefined;
+  const timeout = controller ? setTimeout(() => controller.abort(), timeoutMs) : undefined;
+
+  try {
+    const response = await fetch(`${getOllamaBaseUrl()}/api/chat`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-    }),
-  });
+      cache: "no-store",
+      signal: controller?.signal,
+      body: JSON.stringify({
+        model,
+        stream: false,
+        messages: buildMessages(prompt, history, systemInstruction),
+        options: {
+          num_predict: maxOutputTokens,
+          temperature,
+          top_p: topP,
+        },
+      }),
+    });
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    const error = new Error(`Local AI ${model} failed: ${response.status}`) as LocalAiError;
-    error.status = response.status;
-    error.data = errorData;
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      const error = new Error(`Local AI ${model} failed: ${response.status}`) as LocalAiError;
+      error.status = response.status;
+      error.data = errorData;
+      throw error;
+    }
+
+    const data = (await response.json()) as OllamaChatResponse;
+    const text = data.message?.content?.trim() || "";
+
+    if (text) {
+      return text;
+    }
+
+    const error = new Error(`Local AI ${model} returned no text (${data.done_reason || "unknown"})`) as LocalAiError;
+    error.data = data;
     throw error;
+  } finally {
+    if (timeout) clearTimeout(timeout);
   }
-
-  const data = (await response.json()) as OllamaChatResponse;
-  const text = data.message?.content?.trim() || "";
-
-  if (text) {
-    return text;
-  }
-
-  const error = new Error(`Local AI ${model} returned no text (${data.done_reason || "unknown"})`) as LocalAiError;
-  error.data = data;
-  throw error;
 }

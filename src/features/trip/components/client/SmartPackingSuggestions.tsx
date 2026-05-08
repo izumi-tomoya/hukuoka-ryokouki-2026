@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useMemo, useState } from "react";
 import { Loader2, Plus, Sparkles, Umbrella, BatteryCharging, Shirt, Package2 } from "lucide-react";
 import { MagazineCard } from "@/components/ui/MagazineCard";
 import { cn } from "@/lib/utils";
@@ -29,7 +29,7 @@ export default function SmartPackingSuggestions({ tripId, itemNames, events, wea
   const [suggestions, setSuggestions] = useState(() =>
     buildPackingRecommendations(events, weatherData, itemNames)
   );
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
   const [addingName, setAddingName] = useState<string | null>(null);
 
   const headline = useMemo(() => {
@@ -38,13 +38,19 @@ export default function SmartPackingSuggestions({ tripId, itemNames, events, wea
     return "旅程に合わせて持ち物を補強";
   }, [weatherData]);
 
-  const addSuggestion = (name: string, category: string) => {
+  const addSuggestion = async (name: string, category: string) => {
+    if (isPending) return;
     setAddingName(name);
-    startTransition(async () => {
+    setIsPending(true);
+    try {
       await addPackingItemAction(tripId, name, category);
       setSuggestions((current) => current.filter((item) => item.name !== name));
       setAddingName(null);
-    });
+    } catch (err) {
+      console.error('Failed to add suggested item:', err);
+    } finally {
+      setIsPending(false);
+    }
   };
 
   if (suggestions.length === 0) return null;

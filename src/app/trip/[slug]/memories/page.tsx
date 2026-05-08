@@ -4,10 +4,12 @@ import TripLayout from "@/features/trip/components/TripLayout";
 import { auth } from "@/lib/auth";
 import { calculateBudgetStats, mapEventToTripEvent } from "@/features/trip/utils/tripUtils";
 import MemoriesContent from "@/features/trip/components/client/MemoriesContent";
+import type { MemoryReelPhoto } from "@/features/trip/components/client/MemoryReel";
 import type { Prisma } from "@prisma/client";
+import { Container } from "@/components/ui/Container";
 
 type EventWithStops = Prisma.EventGetPayload<{
-  include: { 
+  include: {
     yataiStops: true;
     transitSteps: true;
     photos: true;
@@ -22,12 +24,10 @@ export default async function MemoriesPage({ params }: { params: Promise<{ slug:
   const session = await auth();
   const isAdmin = !!session?.user?.isAdmin;
 
-  // getTripBySlug で include された最新のアワード情報を使用します
   const awards = trip.gourmetAwards ?? [];
 
-  // 1. 全てのイベントを型安全な形式（TripEvent）にマッピング
-  const allTripEvents = trip.days?.flatMap(day => 
-    day.events.map(event => mapEventToTripEvent(event as unknown as EventWithStops))
+  const allTripEvents = trip.days?.flatMap((day) =>
+    day.events.map((event) => mapEventToTripEvent(event as unknown as EventWithStops))
   ) ?? [];
   const insightEvents = trip.days.flatMap((day) =>
     day.events.map((event) => ({
@@ -45,32 +45,57 @@ export default async function MemoriesPage({ params }: { params: Promise<{ slug:
     }))
   );
 
-  // 2. 予算統計の計算
-  const budgetStats = calculateBudgetStats(allTripEvents);
+  const albumPhotos: MemoryReelPhoto[] = trip.days.flatMap((day) =>
+    day.events.flatMap((event) => {
+      const title = event.title || event.foodName || day.title || trip.location;
+      const description = event.desc || event.foodDesc || event.highlight || event.notes || undefined;
+      const location = event.title || event.foodName || day.title || trip.location;
+      const dayLabel = `Day ${day.dayNumber}`;
+      const dateLabel = new Date(day.date).toLocaleDateString("ja-JP", {
+        month: "long",
+        day: "numeric",
+        weekday: "short",
+      });
 
-  // 3. 写真があるイベントを抽出（ここも TripEvent 形式に統一）
-  const eventsWithPhotos = allTripEvents.filter(event => (event.photos?.length ?? 0) > 0);
+      return (event.photos || []).map((photo) => ({
+        url: photo.url,
+        title,
+        time: event.time,
+        dateLabel,
+        location,
+        description,
+        dayLabel,
+      }));
+    })
+  );
+
+  const budgetStats = calculateBudgetStats(allTripEvents);
+  const eventsWithPhotos = allTripEvents.filter((event) => (event.photos?.length ?? 0) > 0);
 
   return (
-    <TripLayout 
-      slug={slug} 
+    <TripLayout
+      slug={slug}
       tripId={trip.id}
-      activePath={`/trip/${slug}/memories`} 
-      isSecretMode={isAdmin} 
+      activePath={`/trip/${slug}/memories`}
+      isSecretMode={isAdmin}
       title="Travel Memories"
       subtitle="旅の瞬間を、永遠の記録に。"
       days={trip.days ?? []}
       events={allTripEvents}
     >
-      <MemoriesContent 
-        tripId={trip.id}
-        awards={awards}
-        budgetStats={budgetStats}
-        eventsWithPhotos={eventsWithPhotos}
-        allEvents={allTripEvents}
-        insightEvents={insightEvents}
-        isAdmin={isAdmin}
-      />
+      <Container className="pb-24">
+        <MemoriesContent
+          tripId={trip.id}
+          tripSlug={slug}
+          awards={awards}
+          budgetStats={budgetStats}
+          eventsWithPhotos={eventsWithPhotos}
+          allEvents={allTripEvents}
+          insightEvents={insightEvents}
+          albumPhotos={albumPhotos}
+          isAdmin={isAdmin}
+        />
+      </Container>
     </TripLayout>
   );
 }

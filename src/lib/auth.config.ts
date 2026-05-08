@@ -30,5 +30,6 @@ export default {
   },
   pages: {
     signIn: "/auth/signin",
+    error: "/auth/signin",
   },
 } satisfies NextAuthConfig;

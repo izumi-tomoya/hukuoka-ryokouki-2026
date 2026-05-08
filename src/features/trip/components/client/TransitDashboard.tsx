@@ -31,7 +31,7 @@ export default function TransitDashboard({ isSecretMode }: TransitDashboardProps
       desc: "地上123mの聖域から、活気ある街へ。最適なルートをその手に。",
       url: "https://www.nishitetsu.jp/bus/rosen/paypaydome/",
       icon: Map,
-      color: "bg-stone-100 text-stone-700",
+      color: "bg-muted/50 text-stone-700",
       secret: true
     }
   ];
@@ -52,7 +52,7 @@ export default function TransitDashboard({ isSecretMode }: TransitDashboardProps
             rel="noopener noreferrer"
             className="group block"
           >
-            <MagazineCard padding="md" className="h-full border-stone-100 shadow-sm transition-all duration-500 hover:shadow-xl hover:shadow-stone-200/50 hover:-translate-y-1">
+            <MagazineCard padding="md" className="h-full border-border/50 shadow-sm transition-all duration-500 hover:shadow-xl hover:shadow-stone-200/50 hover:-translate-y-1">
               <div className="flex flex-col h-full">
                 <div className={`w-12 h-12 rounded-2xl ${route.color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500`}>
                   <route.icon size={24} />

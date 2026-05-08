@@ -5,6 +5,7 @@ import { getTripBySlug } from "@/features/trip/api/tripActions";
 import TripLayout from "@/features/trip/components/TripLayout";
 import AssistDashboard from "@/features/trip/components/client/AssistDashboard";
 import { ensureDate } from "@/features/trip/utils/dateUtils";
+import { Container } from "@/components/ui/Container";
 
 export default async function TripAssistPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -50,29 +51,31 @@ export default async function TripAssistPage({ params }: { params: Promise<{ slu
       subtitle="当日の判断と重要情報"
       days={trip.days}
     >
-      <AssistDashboard
-        trip={{
-          id: trip.id,
-          slug: trip.slug,
-          title: trip.title,
-          location: trip.location,
-          startDate: ensureDate(trip.startDate).toISOString(),
-          endDate: ensureDate(trip.endDate).toISOString(),
-        }}
-        events={events}
-        tips={trip.tips.map((tip) => ({
-          id: tip.id,
-          title: tip.title,
-          body: tip.body,
-          venue: tip.venue || undefined,
-          imageUrl: tip.imageUrl || undefined,
-          isWarning: tip.isWarning,
-          isConfirmed: tip.isConfirmed,
-          category: tip.category || undefined,
-        }))}
-        weatherLabel={weather ? `${trip.location}: ${weather.current.condition} ${weather.current.temp}°C / ${weather.themeStatus}` : null}
-        weatherData={weather}
-      />
+      <Container className="pb-24">
+        <AssistDashboard
+          trip={{
+            id: trip.id,
+            slug: trip.slug,
+            title: trip.title,
+            location: trip.location,
+            startDate: ensureDate(trip.startDate).toISOString(),
+            endDate: ensureDate(trip.endDate).toISOString(),
+          }}
+          events={events}
+          tips={trip.tips.map((tip) => ({
+            id: tip.id,
+            title: tip.title,
+            body: tip.body,
+            venue: tip.venue || undefined,
+            imageUrl: tip.imageUrl || undefined,
+            isWarning: tip.isWarning,
+            isConfirmed: tip.isConfirmed,
+            category: tip.category || undefined,
+          }))}
+          weatherLabel={weather ? `${trip.location}: ${weather.current.condition} ${weather.current.temp}°C / ${weather.themeStatus}` : null}
+          weatherData={weather}
+        />
+      </Container>
     </TripLayout>
   );
 }

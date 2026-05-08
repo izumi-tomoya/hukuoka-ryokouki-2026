@@ -43,7 +43,7 @@ export function YataiCourseSelector({ eventId, onSuccess }: { eventId: string, o
   return (
     <div className="space-y-4">
       {YATAI_COURSES.map(course => (
-        <div key={course.id} className="bg-white p-4 rounded-2xl border border-stone-100">
+        <div key={course.id} className="bg-white p-4 rounded-2xl border border-border/50">
           <p className="text-xs font-bold text-stone-900 mb-1">{course.title} Course</p>
           <p className="text-[10px] text-stone-500 italic mb-4">{course.desc}</p>
           <div className="space-y-2 mb-4">

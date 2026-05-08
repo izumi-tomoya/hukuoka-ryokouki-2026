@@ -1,4 +1,4 @@
-import { PREFERRED_TRAVEL_AI_CANDIDATES } from "@/lib/travelAiPreferences";
+import { PREFERRED_GOOGLE_TRAVEL_AI_CANDIDATES } from "@/lib/travelAiPreferences";
 
 type ChatMessage = {
   role: "user" | "assistant";
@@ -42,6 +42,7 @@ type GenerateTextOptions = {
   maxOutputTokens?: number;
   temperature?: number;
   topP?: number;
+  timeoutMs?: number;
 };
 
 export interface GoogleAiError extends Error {
@@ -60,7 +61,7 @@ export type GoogleModelMetadata = {
   supportedGenerationMethods: string[];
 };
 
-export const DEFAULT_GOOGLE_TRAVEL_AI_MODELS = [...PREFERRED_TRAVEL_AI_CANDIDATES] as const;
+export const DEFAULT_GOOGLE_TRAVEL_AI_MODELS = [...PREFERRED_GOOGLE_TRAVEL_AI_CANDIDATES] as const;
 
 const GOOGLE_TRAVEL_AI_MODEL_ENV_KEYS = ["GOOGLE_AI_MODELS", "GEMINI_MODELS"] as const;
 const GOOGLE_MODELS_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models";
@@ -184,6 +185,7 @@ export async function generateGoogleText({
   maxOutputTokens = 700,
   temperature = 0.7,
   topP = 0.9,
+  timeoutMs,
 }: GenerateTextOptions) {
   if (unavailableGoogleModels.has(model)) {
     const error = new Error(`Google AI ${model} is marked unavailable`) as GoogleAiError;
@@ -211,41 +213,49 @@ export async function generateGoogleText({
     };
   }
 
-  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-goog-api-key": apiKey,
-    },
-    cache: "no-store",
-    body: JSON.stringify(payload),
-  });
+  const controller = timeoutMs ? new AbortController() : undefined;
+  const timeout = controller ? setTimeout(() => controller.abort(), timeoutMs) : undefined;
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    const error = new Error(`Google AI ${model} failed: ${response.status}`) as GoogleAiError;
-    error.status = response.status;
-    error.data = errorData;
-    if (response.status === 404) {
-      unavailableGoogleModels.add(model);
+  try {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-goog-api-key": apiKey,
+      },
+      cache: "no-store",
+      signal: controller?.signal,
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      const error = new Error(`Google AI ${model} failed: ${response.status}`) as GoogleAiError;
+      error.status = response.status;
+      error.data = errorData;
+      if (response.status === 404) {
+        unavailableGoogleModels.add(model);
+      }
+      throw error;
     }
+
+    const data = (await response.json()) as GenerateContentResponse;
+    const text =
+      data.candidates?.[0]?.content?.parts
+        ?.map((part) => part.text || "")
+        .join("\n")
+        .trim() || "";
+
+    if (text) {
+      return text;
+    }
+
+    const error = new Error(
+      `Google AI ${model} returned no text (${data.candidates?.[0]?.finishReason || data.promptFeedback?.blockReason || "unknown"})`
+    ) as GoogleAiError;
+    error.data = data;
     throw error;
+  } finally {
+    if (timeout) clearTimeout(timeout);
   }
-
-  const data = (await response.json()) as GenerateContentResponse;
-  const text =
-    data.candidates?.[0]?.content?.parts
-      ?.map((part) => part.text || "")
-      .join("\n")
-      .trim() || "";
-
-  if (text) {
-    return text;
-  }
-
-  const error = new Error(
-    `Google AI ${model} returned no text (${data.candidates?.[0]?.finishReason || data.promptFeedback?.blockReason || "unknown"})`
-  ) as GoogleAiError;
-  error.data = data;
-  throw error;
 }

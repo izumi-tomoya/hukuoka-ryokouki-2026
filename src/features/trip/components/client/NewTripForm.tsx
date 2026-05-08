@@ -1,7 +1,7 @@
 'use client';
 
 import { createTrip } from '@/features/trip/api/tripActions';
-import { useTransition } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Sparkles, MapPin, Palette } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -12,17 +12,20 @@ const inputCls =
 
 export default function NewTripForm() {
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
 
-  function handleSubmit(formData: FormData) {
-    startTransition(async () => {
+  async function handleSubmit(formData: FormData) {
+    setIsPending(true);
+    try {
       const result = await createTrip(formData);
       if (result.success) {
         router.push(`/trip/${result.slug}`);
       } else {
         alert(result.error);
       }
-    });
+    } finally {
+      setIsPending(false);
+    }
   }
 
   return (

@@ -11,6 +11,7 @@ import { computeSettlement, summarizeTemperature, TEMPERATURE_MOOD_NARRATIVES } 
 
 interface Props {
   tripId: string;
+  tripSlug: string;
   awards: GourmetAward[];
   budgetStats: BudgetStats;
   allEvents: TripEvent[];
@@ -21,13 +22,14 @@ function yen(value: number) {
   return `¥${value.toLocaleString()}`;
 }
 
-export default function TravelReportPanel({ tripId, awards, budgetStats, allEvents, photoCount }: Props) {
+export default function TravelReportPanel({ tripId, tripSlug, awards, budgetStats, allEvents, photoCount }: Props) {
   const [logs, setLogs] = useState<TemperatureLogEntry[]>(() =>
     typeof window === "undefined" ? [] : loadTemperatureLogs(tripId)
   );
   const [payers, setPayers] = useState<Record<string, "shared" | "you" | "partner">>(() =>
     typeof window === "undefined" ? {} : loadExpensePayers(tripId)
   );
+  const [isPdfLoading, setIsPdfLoading] = useState(false);
 
   useEffect(() => {
     const sync = () => {
@@ -89,6 +91,45 @@ export default function TravelReportPanel({ tripId, awards, budgetStats, allEven
     URL.revokeObjectURL(url);
   };
 
+  const downloadPdf = async () => {
+    setIsPdfLoading(true);
+    try {
+      let response = await fetch(`/api/trip/${tripSlug}/report`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ temperatureLogs: logs }),
+      });
+
+      if (!response.ok) {
+        response = await fetch(`/api/trip/${tripSlug}/report`);
+      }
+
+      if (!response.ok) {
+        const detail = await response
+          .clone()
+          .json()
+          .then((data) => JSON.stringify(data))
+          .catch(async () => await response.text().catch(() => ""));
+        console.error("PDF album generation failed", { status: response.status, detail });
+        alert(`PDF アルバムの生成に失敗しました。${detail || `status: ${response.status}`}`);
+        return;
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${tripSlug}-report.pdf`;
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("PDF album download failed", error);
+      alert("PDF アルバムの生成に失敗しました。");
+    } finally {
+      setIsPdfLoading(false);
+    }
+  };
+
   return (
     <MagazineCard className="border-primary/20">
       <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
@@ -108,6 +149,14 @@ export default function TravelReportPanel({ tripId, awards, budgetStats, allEven
         >
           <Download size={14} />
           Download
+        </button>
+        <button
+          onClick={downloadPdf}
+          disabled={isPdfLoading}
+          className="inline-flex items-center justify-center gap-2 rounded-2xl border border-border px-5 py-3 text-[10px] font-black uppercase tracking-widest text-foreground transition-transform active:scale-[0.98] disabled:opacity-50"
+        >
+          <FileText size={14} />
+          {isPdfLoading ? "Building PDF" : "PDF Album"}
         </button>
       </div>
       <div className="mt-8 rounded-[1.5rem] border border-border bg-secondary/30 p-5">

@@ -39,9 +39,9 @@ export default function Header({ session }: HeaderProps) {
   const navItems = getNavItems(tripData, !!session?.user?.isAdmin);
 
   return (
-    <header className="sticky top-0 z-50 bg-white dark:bg-zinc-900 border-b border-zinc-100 dark:border-zinc-800 transition-colors">
+    <header className="sticky top-0 z-50 bg-white dark:bg-background border-b border-zinc-100 dark:border-border transition-colors">
       <div className="flex items-center justify-between px-6 py-4">
-        <Link href="/" className="font-playfair text-xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">Memoir</Link>
+        <Link href="/" className="font-playfair text-xl font-bold text-zinc-900 dark:text-foreground tracking-tight">Memoir</Link>
         
         <nav className="hidden md:flex items-center gap-1">
           {navItems.map((item) => {
@@ -50,7 +50,7 @@ export default function Header({ session }: HeaderProps) {
               <Link 
                 key={item.href} 
                 href={item.href}
-                className={cn("px-4 py-2 text-sm font-bold transition-colors rounded-full", isActive ? "bg-primary text-white" : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800")}
+                className={cn("px-4 py-2 text-sm font-bold transition-colors rounded-full", isActive ? "bg-primary text-white" : "text-zinc-500 dark:text-muted-foreground hover:text-zinc-900 dark:hover:text-foreground hover:bg-zinc-100 dark:hover:bg-card")}
               >
                 {item.label}
               </Link>
@@ -61,38 +61,38 @@ export default function Header({ session }: HeaderProps) {
         <div className="flex items-center gap-2">
           {session ? (
             <Link href="/user">
-              <div className="h-8 w-8 rounded-full bg-stone-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 overflow-hidden flex items-center justify-center relative hover:ring-2 hover:ring-primary/20 transition-all">
+              <div className="h-8 w-8 rounded-full bg-muted/50 dark:bg-card border border-zinc-200 dark:border-border/60 overflow-hidden flex items-center justify-center relative hover:ring-2 hover:ring-primary/20 transition-all">
                 {session.user?.image ? (
                   <Image src={session.user.image} alt={session.user.name ?? "User"} fill sizes="32px" className="object-cover" />
                 ) : <User size={16} className="text-zinc-400" />}
               </div>
             </Link>
           ) : (
-            <Link href="/auth/signin" className="p-2 text-zinc-400 dark:text-zinc-500"><User size={20} /></Link>
+            <Link href="/auth/signin" className="p-2 text-zinc-400 dark:text-muted-foreground"><User size={20} /></Link>
           )}
 
-          <button className="md:hidden p-2 text-zinc-600 dark:text-zinc-400" onClick={() => setIsOpen(!isOpen)}>
+          <button className="md:hidden p-2 text-zinc-600 dark:text-muted-foreground" onClick={() => setIsOpen(!isOpen)}>
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
       </div>
 
       {isOpen && (
-        <nav className="md:hidden px-4 sm:px-6 py-6 border-t border-zinc-100 dark:border-zinc-800 flex flex-col gap-3 bg-white dark:bg-zinc-900 shadow-xl animate-in fade-in slide-in-from-top-4 duration-300">
+        <nav className="md:hidden px-4 sm:px-6 py-6 border-t border-zinc-100 dark:border-border flex flex-col gap-3 bg-white dark:bg-background shadow-xl animate-in fade-in slide-in-from-top-4 duration-300">
           {session?.user && (
             <Link 
               href="/user" 
               onClick={() => setIsOpen(false)}
-              className="flex items-center gap-3 px-5 py-4 bg-stone-50 dark:bg-zinc-800 border border-zinc-100 dark:border-zinc-700 rounded-2xl mb-2"
+              className="flex items-center gap-3 px-5 py-4 bg-secondary/30 dark:bg-card border border-zinc-100 dark:border-border/60 rounded-2xl mb-2"
             >
-              <div className="h-10 w-10 rounded-full bg-stone-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 overflow-hidden flex items-center justify-center relative">
+              <div className="h-10 w-10 rounded-full bg-muted/50 dark:bg-card border border-zinc-200 dark:border-border/60 overflow-hidden flex items-center justify-center relative">
                 {session.user?.image ? (
                   <Image src={session.user.image} alt={session.user.name ?? "User"} fill sizes="40px" className="object-cover" />
                 ) : <User size={20} className="text-zinc-400" />}
               </div>
               <div>
-                <div className="text-sm font-bold text-zinc-900 dark:text-zinc-100">{session.user.name || "ユーザー"}</div>
-                <div className="text-[10px] text-zinc-500 dark:text-zinc-400">{session.user.isAdmin ? "管理者" : "一般ユーザー"}</div>
+                <div className="text-sm font-bold text-zinc-900 dark:text-foreground">{session.user.name || "ユーザー"}</div>
+                <div className="text-[10px] text-zinc-500 dark:text-muted-foreground">{session.user.isAdmin ? "管理者" : "一般ユーザー"}</div>
               </div>
             </Link>
           )}
@@ -112,7 +112,7 @@ export default function Header({ session }: HeaderProps) {
                   "px-5 py-4 text-sm font-bold border rounded-2xl transition-all",
                   isActive 
                     ? "bg-rose-50 border-rose-100 text-rose-600 shadow-sm" 
-                    : "text-zinc-600 border-zinc-50 bg-stone-50/50"
+                    : "text-zinc-600 border-zinc-50 bg-secondary/15"
                 )}
               >
                 {item.label}

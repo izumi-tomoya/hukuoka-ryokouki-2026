@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState } from 'react';
 import { Camera, MessageSquare, X, Send, Loader2, Sparkles, Image as ImageIcon } from 'lucide-react';
 import { MagazineCard } from '@/components/ui/MagazineCard';
 import { cn } from '@/lib/utils';
@@ -19,13 +19,14 @@ export default function QuickCapturePanel({ tripId, events }: Props) {
   const [note, setNote] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [mood, setMood] = useState<TemperatureMood>('calm');
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedEventId || (!note && !imageUrl)) return;
+    if (!selectedEventId || (!note && !imageUrl) || isPending) return;
 
-    startTransition(async () => {
+    setIsPending(true);
+    try {
       const targetEvent = events.find((event) => event.id === selectedEventId);
 
       if (targetEvent && note.trim()) {
@@ -41,7 +42,7 @@ export default function QuickCapturePanel({ tripId, events }: Props) {
       }
 
       // 本来は画像アップロード後にURLを取得しますが、ここではデモ的にURLを直接入れるか、
-      // 既存のActionを呼び出します（既存のActionに合わせて調整が必要な場合があります）
+      // 既存のActionを呼び出します
       if (imageUrl) {
         await addPhotoToEvent(selectedEventId, imageUrl);
       }
@@ -49,7 +50,11 @@ export default function QuickCapturePanel({ tripId, events }: Props) {
       setImageUrl('');
       setMood('calm');
       setIsOpen(false);
-    });
+    } catch (err) {
+      console.error('Failed to capture quick memoir:', err);
+    } finally {
+      setIsPending(false);
+    }
   };
 
   return (

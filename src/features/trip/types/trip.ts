@@ -45,6 +45,8 @@ export interface WeatherStats {
   condition: string;
   uvIndex: number;
   humidity: number;
+  rainChance?: number;
+  windSpeed?: number;
 }
 
 export interface TripMedia {

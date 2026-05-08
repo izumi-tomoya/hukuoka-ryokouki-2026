@@ -1,13 +1,19 @@
 import NewTripForm from "@/features/trip/components/client/NewTripForm";
+import { Container } from "@/components/ui/Container";
+import { SectionHeader } from "@/components/ui/SectionHeader";
 
 export default function NewTripPage() {
   return (
-    <main className="min-h-screen bg-[#FDFDFC] p-6 md:p-12 max-w-2xl mx-auto">
-      <header className="mb-12">
-        <h1 className="text-3xl font-light tracking-tight text-zinc-900 mb-2">Create New Journey</h1>
-        <p className="text-zinc-500">新しい冒険の記録を始めましょう。</p>
-      </header>
-      <NewTripForm />
-    </main>
+    <div className="min-h-screen bg-memoir-bg dark:bg-background pt-24 pb-12 transition-colors">
+      <Container className="max-w-2xl">
+        <SectionHeader 
+          title="Create New Journey" 
+          subtitle="新しい冒険の記録を始めましょう。" 
+        />
+        <div className="bg-white dark:bg-zinc-900 p-8 md:p-10 rounded-[2.5rem] border border-zinc-200 dark:border-zinc-800 shadow-sm">
+          <NewTripForm />
+        </div>
+      </Container>
+    </div>
   );
 }

@@ -5,6 +5,7 @@ import EventFilterWrapper from "@/features/trip/components/client/EventFilterWra
 import { CommonTipsSection } from "@/features/trip/components/CommonTipsSection";
 import BudgetSummary from "@/features/trip/components/BudgetSummary";
 import TripLayout from "@/features/trip/components/TripLayout";
+import { Container } from "@/components/ui/Container";
 import { SafeLink } from "@/features/trip/components/client/SafeLink";
 import { DynamicTripMap } from "./client/DynamicTripMap";
 import { extractLocationsFromEvents } from "@/features/trip/utils/mapUtils";
@@ -51,7 +52,7 @@ export default async function DayView({
       subtitle={`${dayLabel || ''} — ${dayHighlight || ''}`}
       days={days}
     >
-      <div className="space-y-12">
+      <Container className="pb-24 space-y-12">
         {/* Map Section */}
         <DynamicTripMap events={events} isAdmin={isAdmin} locationMaster={locationMaster || []} />
 
@@ -83,7 +84,7 @@ export default async function DayView({
         <EventFilterWrapper events={events} dayNumber={dayNumber as 1 | 2} isAdmin={isAdmin} />
 
         <CommonTipsSection tips={tips || []} isAdmin={isAdmin} />
-      </div>
+      </Container>
     </TripLayout>
   );
 }

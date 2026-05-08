@@ -25,9 +25,12 @@ import {
   ShieldAlert,
   Smartphone,
   Sparkles,
+  Sun,
   Ticket,
   TimerReset,
   Train,
+  Umbrella,
+  Wind,
 } from "lucide-react";
 import {
   appendTemperatureLog,
@@ -79,6 +82,11 @@ type AssistDashboardProps = {
       tempMin: number;
       text?: string;
       condition?: string;
+      rainChance?: number;
+      uvIndex?: number;
+      windSpeed?: number;
+      sunrise?: string;
+      sunset?: string;
     }>;
   } | null;
 };
@@ -142,6 +150,7 @@ export default function AssistDashboard({ trip, events, tips, weatherLabel, weat
   const [aiTrigger, setAiTrigger] = useState<Trigger>("rain");
   const [aiSuggestions, setAiSuggestions] = useState<Array<{ title: string; reason: string; action: string }>>([]);
   const [isAiLoading, setIsAiLoading] = useState(false);
+  const [isPdfLoading, setIsPdfLoading] = useState(false);
 
   const notesKey = `memoir:shared-notes:${trip.id}`;
   const checkinsKey = `memoir:event-checkins:${trip.id}`;
@@ -282,14 +291,57 @@ export default function AssistDashboard({ trip, events, tips, weatherLabel, weat
     URL.revokeObjectURL(url);
   };
 
+  const downloadPdf = async () => {
+    setIsPdfLoading(true);
+    try {
+      const [{ pdf }, { default: AssistReportDocument }] = await Promise.all([
+        import("@react-pdf/renderer"),
+        import("@/features/trip/components/pdf/AssistReportDocument"),
+      ]);
+
+      const blob = await pdf(
+        <AssistReportDocument
+          trip={trip}
+          events={sortedEvents}
+          tips={tips}
+          temperatureLogs={temperatureLogs}
+          notes={notes}
+          reportText={reportText}
+          actualTotal={currency(actualTotal)}
+          settlementText={settlement.instruction}
+        />
+      ).toBlob();
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${trip.slug}-report.pdf`;
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("PDF download failed", error);
+      alert("PDF 生成に失敗しました。温度ログなしの通常版でも失敗しています。");
+    } finally {
+      setIsPdfLoading(false);
+    }
+  };
+
   if (!mounted) {
     return (
       <div className="space-y-6 pb-24">
-        <MagazineCard className="h-64 animate-pulse bg-secondary/20" />
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-          <MagazineCard className="h-40 animate-pulse bg-secondary/10" />
-          <MagazineCard className="h-40 animate-pulse bg-secondary/10" />
-          <MagazineCard className="h-40 animate-pulse bg-secondary/10" />
+        <div className="grid gap-6 lg:grid-cols-[1.25fr_0.75fr]">
+          <MagazineCard className="h-56 animate-pulse bg-secondary/20" />
+          <MagazineCard className="h-56 animate-pulse bg-secondary/10" />
+        </div>
+        <MagazineCard className="h-32 animate-pulse bg-secondary/10" />
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <MagazineCard className="h-44 animate-pulse bg-secondary/10" />
+          <MagazineCard className="h-44 animate-pulse bg-secondary/10" />
+        </div>
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          <MagazineCard className="h-36 animate-pulse bg-secondary/10" />
+          <MagazineCard className="h-36 animate-pulse bg-secondary/10" />
+          <MagazineCard className="h-36 animate-pulse bg-secondary/10" />
         </div>
       </div>
     );
@@ -305,7 +357,7 @@ export default function AssistDashboard({ trip, events, tips, weatherLabel, weat
                 <Clock size={13} />
                 <span className="truncate">Next Move Briefing</span>
               </div>
-              <h2 className="break-words font-playfair text-[1.75rem] font-black leading-tight text-foreground sm:text-3xl md:text-5xl">
+              <h2 className="wrap-break-word font-playfair text-[1.75rem] font-black leading-tight text-foreground sm:text-3xl md:text-5xl">
                 {nextEvent ? nextEvent.title : "予定は登録されていません"}
               </h2>
               {nextEvent && (
@@ -316,7 +368,7 @@ export default function AssistDashboard({ trip, events, tips, weatherLabel, weat
               )}
             </div>
 
-            <div className="w-full shrink-0 rounded-[1.5rem] border border-border bg-secondary/40 p-4 text-center sm:rounded-[2rem] sm:p-6 md:w-auto md:min-w-44">
+            <div className="w-full shrink-0 rounded-3xl border border-border bg-secondary/40 p-4 text-center sm:rounded-[2rem] sm:p-6 md:w-auto md:min-w-44">
               <div
                 className={cn(
                   "text-2xl font-black tracking-tight sm:text-3xl",
@@ -336,7 +388,7 @@ export default function AssistDashboard({ trip, events, tips, weatherLabel, weat
               {nextEvent.transitSteps.slice(0, 4).map((step, index) => (
                 <div key={`${step.time}-${index}`} className="min-w-0 rounded-2xl border border-border bg-background/60 p-4">
                   <div className="text-[10px] font-black uppercase tracking-widest text-primary">{step.time}</div>
-                  <div className="mt-1 break-words font-bold text-foreground">{step.station}</div>
+                  <div className="mt-1 wrap-break-word font-bold text-foreground">{step.station}</div>
                   <div className="mt-1 text-xs font-medium text-muted-foreground">
                     {[step.lineName, step.duration, step.platform || step.exit].filter(Boolean).join(" / ")}
                   </div>
@@ -443,7 +495,7 @@ export default function AssistDashboard({ trip, events, tips, weatherLabel, weat
             onChange={(event) => setTemperatureNote(event.target.value)}
             placeholder="いま残したい感情を一言"
             rows={3}
-            className="mt-4 w-full rounded-[1.5rem] border border-border bg-background px-4 py-4 text-sm outline-none focus:border-primary"
+            className="mt-4 w-full rounded-3xl border border-border bg-background px-4 py-4 text-sm outline-none focus:border-primary"
           />
           <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <button
@@ -459,11 +511,70 @@ export default function AssistDashboard({ trip, events, tips, weatherLabel, weat
               Save Log
             </button>
           </div>
-          <div className="mt-5 rounded-[1.5rem] border border-border bg-secondary/20 p-4 text-sm text-muted-foreground">
+          <div className="mt-5 rounded-3xl border border-border bg-secondary/20 p-4 text-sm text-muted-foreground">
             直近ログ {temperatureSummary.highlightedLogs.length} 件。最頻値は <span className="font-black text-foreground">{TEMPERATURE_MOODS[temperatureSummary.topMood].label}</span>。
           </div>
         </MagazineCard>
       </section>
+
+      {weatherData?.forecast && (
+        <section>
+          <MagazineCard className="min-w-0 overflow-hidden">
+            <div className="mb-5 flex items-center justify-between">
+              <div className="inline-flex items-center gap-2 rounded-full border border-sky-500/20 bg-sky-500/10 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-sky-600">
+                <CloudRain size={13} />
+                Extended Forecast
+              </div>
+              <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                Next {weatherData.forecast.length} Days
+              </div>
+            </div>
+            <div className="relative">
+              <div className="flex gap-3 overflow-x-auto pb-4 no-scrollbar sm:grid sm:grid-cols-2 sm:overflow-visible sm:pb-0 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
+                {weatherData.forecast.map((day) => (
+                  <div
+                    key={day.date}
+                    className="flex min-w-32 flex-col items-center rounded-2xl border border-border bg-secondary/20 p-4 transition-colors hover:bg-secondary/30 sm:min-w-0"
+                  >
+                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                      {new Date(day.date).toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric', weekday: 'short' })}
+                    </span>
+                    <span className="my-2 text-3xl" role="img" aria-label={day.text}>
+                      {day.condition}
+                    </span>
+                    <div className="flex items-baseline gap-1.5 font-bold">
+                      <span className="text-sm text-foreground">{day.tempMax}°</span>
+                      <span className="text-xs text-muted-foreground">/ {day.tempMin}°</span>
+                    </div>
+                    <span className="mt-1 text-[10px] font-bold text-foreground line-clamp-1">
+                      {day.text}
+                    </span>
+                    <div className="mt-3 w-full space-y-1.5 border-t border-border/50 pt-3">
+                      <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-tight text-muted-foreground">
+                        <span className="flex items-center gap-1"><Umbrella size={10} className="text-sky-500" /> Rain</span>
+                        <span className="text-foreground">{day.rainChance}%</span>
+                      </div>
+                      <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-tight text-muted-foreground">
+                        <span className="flex items-center gap-1"><Sun size={10} className="text-amber-500" /> UV</span>
+                        <span className="text-foreground">{day.uvIndex}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-tight text-muted-foreground">
+                        <span className="flex items-center gap-1"><Wind size={10} className="text-stone-400" /> Wind</span>
+                        <span className="text-foreground">{day.windSpeed}m/s</span>
+                      </div>
+                      <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-tight text-muted-foreground">
+                        <span className="text-[8px]">Rise/Set</span>
+                        <span className="text-[8px] text-foreground">{day.sunrise} / {day.sunset}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-linear-to-l from-card to-transparent sm:hidden" />
+            </div>
+          </MagazineCard>
+        </section>
+      )}
 
       <section className="grid gap-6 lg:grid-cols-3">
         <MagazineCard className="min-w-0">
@@ -485,11 +596,11 @@ export default function AssistDashboard({ trip, events, tips, weatherLabel, weat
               </button>
             ))}
           </div>
-          <div className="mt-6 rounded-[1.5rem] border border-border bg-secondary/25 p-4 text-sm leading-relaxed text-muted-foreground">
+          <div className="mt-6 rounded-3xl border border-border bg-secondary/25 p-4 text-sm leading-relaxed text-muted-foreground">
             {delayInsight.narrative}
           </div>
           {delayInsight.conflict && (
-            <div className="mt-4 rounded-[1.5rem] border border-rose-500/20 bg-rose-500/5 p-4">
+            <div className="mt-4 rounded-3xl border border-rose-500/20 bg-rose-500/5 p-4">
               <div className="text-[10px] font-black uppercase tracking-[0.16em] text-rose-500">Late Risk</div>
               <div className="mt-2 text-sm font-black text-foreground">{delayInsight.conflict.time} {delayInsight.conflict.title}</div>
               <p className="mt-2 text-xs leading-relaxed text-muted-foreground">約 {delayInsight.conflict.latenessMinutes} 分遅れの見込みです。</p>
@@ -536,21 +647,21 @@ export default function AssistDashboard({ trip, events, tips, weatherLabel, weat
             ))}
           </div>
           {isAiLoading ? (
-            <div className="mt-5 flex min-h-40 items-center justify-center rounded-[1.5rem] border border-border bg-secondary/20 text-muted-foreground">
+            <div className="mt-5 flex min-h-40 items-center justify-center rounded-3xl border border-border bg-secondary/20 text-muted-foreground">
               <Loader2 size={18} className="animate-spin" />
             </div>
           ) : (
             <div className="mt-5 space-y-3">
               {aiSuggestions.length > 0 ? (
                 aiSuggestions.map((item) => (
-                  <div key={item.title} className="rounded-[1.5rem] border border-border p-4">
+                  <div key={item.title} className="rounded-3xl border border-border p-4">
                     <div className="text-sm font-black text-foreground">{item.title}</div>
                     <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{item.reason}</p>
                     <div className="mt-3 text-xs font-bold text-primary">{item.action}</div>
                   </div>
                 ))
               ) : (
-                <div className="rounded-[1.5rem] border border-border bg-secondary/20 p-4 text-sm leading-relaxed text-muted-foreground">
+                <div className="rounded-3xl border border-border bg-secondary/20 p-4 text-sm leading-relaxed text-muted-foreground">
                   トリガーを押すと、現在の旅程から近い代替案を提案します。
                 </div>
               )}
@@ -662,7 +773,7 @@ export default function AssistDashboard({ trip, events, tips, weatherLabel, weat
           {notes.length > 0 && (
             <div className="mt-6 space-y-2 border-t border-border pt-6">
               {notes.slice(0, 4).map((note) => (
-                <div key={note.id} className="break-words rounded-2xl bg-secondary/30 p-4 text-sm font-medium text-muted-foreground">
+                <div key={note.id} className="wrap-break-word rounded-2xl bg-secondary/30 p-4 text-sm font-medium text-muted-foreground">
                   {note.body}
                 </div>
               ))}
@@ -674,7 +785,7 @@ export default function AssistDashboard({ trip, events, tips, weatherLabel, weat
       <section className="grid gap-6 lg:grid-cols-3">
         <MagazineCard className="min-w-0 lg:col-span-2">
           <div className="mb-6 flex items-center gap-3">
-            <CloudRain className="shrink-0 text-primary" />
+            <AlertTriangle className="shrink-0 text-amber-500" />
             <h3 className="text-lg font-black">注意事項</h3>
           </div>
           <div className="grid gap-3 md:grid-cols-2">
@@ -683,7 +794,7 @@ export default function AssistDashboard({ trip, events, tips, weatherLabel, weat
                 <div className="flex items-start gap-2">
                   <AlertTriangle size={16} className="mt-0.5 shrink-0 text-amber-500" />
                   <div className="min-w-0">
-                    <div className="break-words text-sm font-black">{tip.title}</div>
+                    <div className="wrap-break-word text-sm font-black">{tip.title}</div>
                     <p className="mt-1 line-clamp-3 text-xs leading-relaxed text-muted-foreground">{tip.body}</p>
                   </div>
                 </div>
@@ -697,7 +808,7 @@ export default function AssistDashboard({ trip, events, tips, weatherLabel, weat
             <FileText className="shrink-0 text-primary" />
             <h3 className="text-lg font-black">旅レポート</h3>
           </div>
-          <div className="break-words rounded-2xl border border-border bg-secondary/20 p-4 text-xs leading-relaxed text-muted-foreground whitespace-pre-wrap">
+          <div className="wrap-break-word rounded-2xl border border-border bg-secondary/20 p-4 text-xs leading-relaxed text-muted-foreground whitespace-pre-wrap">
             {reportText}
           </div>
           <button
@@ -707,17 +818,18 @@ export default function AssistDashboard({ trip, events, tips, weatherLabel, weat
             <Download size={14} />
             TXTをダウンロード
           </button>
-          <a
-            href={`/api/trip/${trip.slug}/report`}
+          <button
+            onClick={downloadPdf}
+            disabled={isPdfLoading}
             className="mt-3 flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl border border-border px-4 py-3 text-[10px] font-black uppercase tracking-[0.16em] text-foreground sm:tracking-widest"
           >
             <FileText size={14} />
-            PDFをダウンロード
-          </a>
+            {isPdfLoading ? "PDFを生成中" : "PDFをダウンロード"}
+          </button>
         </MagazineCard>
       </section>
 
-      <section className="rounded-[1.5rem] border border-border bg-secondary/20 p-4 sm:rounded-[2rem] sm:p-5">
+      <section className="rounded-3xl border border-border bg-secondary/20 p-4 sm:rounded-[2rem] sm:p-5">
         <div className="flex flex-col gap-2 text-xs font-bold leading-relaxed text-muted-foreground sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
           <Smartphone size={16} className="shrink-0 text-primary" />
           <span>このサイトはホーム画面追加とオフラインキャッシュに対応しました。</span>

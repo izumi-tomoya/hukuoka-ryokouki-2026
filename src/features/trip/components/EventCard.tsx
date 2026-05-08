@@ -5,12 +5,26 @@ import PhotoGallery from '@/features/trip/components/PhotoGallery';
 import WeatherStatsDisplay from '@/features/trip/components/WeatherStats';
 import { MagazineCard } from '@/components/ui/MagazineCard';
 import { cn } from '@/lib/utils';
-import { MapPin, Utensils, Star, Bus, ShoppingBag, Eye, Moon, Home, MessageSquareQuote, JapaneseYen } from 'lucide-react';
+import {
+  MapPin,
+  Utensils,
+  Star,
+  Bus,
+  ShoppingBag,
+  Eye,
+  Moon,
+  Home,
+  MessageSquareQuote,
+  JapaneseYen,
+  ExternalLink,
+} from 'lucide-react';
 import ClickableCard from '@/features/trip/components/client/ClickableCard';
 import ConfirmCheckbox from '@/features/trip/components/client/ConfirmCheckbox';
 import YataiLiveTracker from '@/features/trip/components/client/YataiLiveTracker';
 import { SafeLink } from '@/features/trip/components/client/SafeLink';
 import Image from 'next/image';
+import { ExternalSpotInfo } from '@/features/trip/components/client/ExternalSpotInfo';
+import { getLocationCoordinates } from '@/features/trip/utils/locationCatalog';
 
 const tagConfig: Record<string, { className: string; icon: React.ElementType }> = {
   food: { className: 'bg-rose-500/10 text-rose-500 border-rose-500/20', icon: Utensils },
@@ -39,14 +53,26 @@ function TagBadge({ tag, label }: { tag: string; label: string }) {
   );
 }
 
-function BasicCard({ event, isAdmin }: { event: TripEvent, isAdmin?: boolean }) {
+function BasicCard({ event, isAdmin }: { event: TripEvent; isAdmin?: boolean }) {
   const hasMemoir = !!(event.notes || (event.actualPhotos && event.actualPhotos.length > 0));
   const isSurprise = event.tag === 'surprise';
+  const isFood = event.type === 'food';
+
+  const coords = getLocationCoordinates(event.foodName || event.title || '');
 
   return (
-    <MagazineCard className={cn("h-full relative overflow-hidden", event.isConfirmed && 'opacity-60 grayscale-[0.5]')}>
+    <MagazineCard
+      className={cn(
+        'h-full relative overflow-hidden transition-all duration-500',
+        event.isConfirmed && 'opacity-60 grayscale-[0.5]'
+      )}
+    >
       <div className="flex justify-between items-start mb-4 md:mb-6 relative z-10">
-        {event.tag && event.tagLabel ? <TagBadge tag={event.tag} label={event.tagLabel} /> : <div />}
+        {event.tag && event.tagLabel ? (
+          <TagBadge tag={event.tag} label={event.tagLabel} />
+        ) : (
+          <div />
+        )}
         <div className="flex gap-2">
           {event.actualExpense !== undefined && event.actualExpense > 0 && (
             <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary text-[10px] font-bold text-muted-foreground border border-border">
@@ -54,17 +80,36 @@ function BasicCard({ event, isAdmin }: { event: TripEvent, isAdmin?: boolean }) 
               {event.actualExpense.toLocaleString()}
             </div>
           )}
-          {isAdmin && event.id && <ConfirmCheckbox eventId={event.id} initialConfirmed={!!event.isConfirmed} />}
+          {isAdmin && event.id && (
+            <ConfirmCheckbox eventId={event.id} initialConfirmed={!!event.isConfirmed} />
+          )}
         </div>
       </div>
 
       <div className="relative z-10">
-        <h3 className="font-playfair text-lg md:text-2xl font-black text-foreground tracking-tight leading-snug mb-3">
-          {(!isAdmin && isSurprise) ? "✨ Surprise Spot" : event.title}
-        </h3>
-        <p className="text-[13px] md:text-sm leading-relaxed text-muted-foreground font-medium mb-6 line-clamp-2">
-          {(!isAdmin && isSurprise) ? "当日までのお楽しみ。ふたりの特別な時間が待っています。" : event.desc}
-        </p>
+        <div className="md:grid md:grid-cols-[1fr_auto] md:gap-8 items-start">
+          <div className="min-w-0">
+            <h3 className="font-playfair text-xl md:text-3xl font-black text-foreground tracking-tight leading-snug mb-3">
+              {!isAdmin && isSurprise ? '✨ Surprise Spot' : event.title}
+            </h3>
+            <p className="text-[13px] md:text-base leading-relaxed text-muted-foreground font-medium mb-6 line-clamp-3">
+              {!isAdmin && isSurprise
+                ? '当日までのお楽しみ。ふたりの特別な時間が待っています。'
+                : event.desc}
+            </p>
+          </div>
+
+          {event.locationUrl && (isAdmin || !isSurprise) && (
+            <div className="hidden md:block">
+              <SafeLink
+                href={event.locationUrl}
+                className="flex items-center justify-center w-12 h-12 rounded-full border border-border bg-background text-primary hover:bg-primary hover:text-white transition-all shadow-sm"
+              >
+                <MapPin size={20} />
+              </SafeLink>
+            </div>
+          )}
+        </div>
 
         {event.isYatai && event.yataiStops && event.id && (
           <div className="mb-6 md:mb-8">
@@ -72,7 +117,35 @@ function BasicCard({ event, isAdmin }: { event: TripEvent, isAdmin?: boolean }) 
           </div>
         )}
 
-        <PhotoGallery photos={event.photos || []} eventId={event.id} />
+        {/* HotPepper Gourmet Integration */}
+        {isFood && (isAdmin || !isSurprise) && (
+          <div className="mb-8 animate-in fade-in slide-in-from-top-2 duration-700">
+            <ExternalSpotInfo
+              name={event.foodName || event.title || ''}
+              lat={coords ? coords[0] : undefined}
+              lng={coords ? coords[1] : undefined}
+              category={event.type}
+              address={event.desc}
+              locationUrl={event.locationUrl}
+              compact={false}
+            />
+          </div>
+        )}
+
+        <div className={cn(isFood && 'md:grid md:grid-cols-2 md:gap-6')}>
+          <PhotoGallery photos={event.photos || []} eventId={event.id} />
+
+          {event.highlight && (
+            <div className="mt-4 md:mt-0 p-4 md:p-6 rounded-[2rem] bg-amber-50/50 border border-amber-100 flex flex-col justify-center">
+              <div className="flex items-center gap-2 mb-2 text-[10px] font-black text-amber-600 uppercase tracking-widest">
+                <Star size={12} /> Highlight
+              </div>
+              <p className="text-sm font-bold text-amber-900 leading-relaxed italic">
+                &ldquo;{event.highlight}&rdquo;
+              </p>
+            </div>
+          )}
+        </div>
 
         {/* Memoir Section */}
         {hasMemoir && (
@@ -81,22 +154,33 @@ function BasicCard({ event, isAdmin }: { event: TripEvent, isAdmin?: boolean }) 
               <div className="h-px grow bg-border" />
               <div className="flex items-center gap-2 px-3 py-1 rounded-full border border-border bg-secondary/50">
                 <MessageSquareQuote size={12} className="text-primary" />
-                <span className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground">Memory Card</span>
+                <span className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground">
+                  Memory Card
+                </span>
               </div>
               <div className="h-px grow bg-border" />
             </div>
-            
+
             {event.notes && (
-              <p className="font-playfair text-base md:text-lg italic text-foreground leading-relaxed mb-6 text-center px-4">
+              <p className="font-playfair text-lg md:text-2xl italic text-foreground leading-relaxed mb-6 text-center px-4">
                 &ldquo;{event.notes}&rdquo;
               </p>
             )}
 
             {event.actualPhotos && event.actualPhotos.length > 0 && (
-              <div className="grid grid-cols-2 gap-3 mt-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-4">
                 {event.actualPhotos.map((photo, i) => (
-                  <div key={i} className="aspect-square relative rounded-[1.5rem] overflow-hidden border border-border shadow-inner group/photo">
-                    <Image src={photo.url} alt="Memory" fill sizes="(max-width: 768px) 50vw, 25vw" className="object-cover transition-transform duration-700 group-hover/photo:scale-110" />
+                  <div
+                    key={i}
+                    className="aspect-square relative rounded-3xl overflow-hidden border border-border shadow-inner group/photo"
+                  >
+                    <Image
+                      src={photo.url}
+                      alt="Memory"
+                      fill
+                      sizes="(max-width: 768px) 50vw, 33vw"
+                      className="object-cover transition-transform duration-700 group-hover/photo:scale-110"
+                    />
                   </div>
                 ))}
               </div>
@@ -105,19 +189,29 @@ function BasicCard({ event, isAdmin }: { event: TripEvent, isAdmin?: boolean }) 
         )}
 
         <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-6">
-          {event.locationUrl && (isAdmin || !isSurprise) && (
-            <SafeLink 
-              href={event.locationUrl} 
-              className="inline-flex items-center gap-2 text-[10px] font-black text-primary hover:text-primary/80 tracking-widest uppercase transition-colors"
-            >
-              <MapPin size={14} /> Open Maps
-            </SafeLink>
-          )}
+          <div className="flex items-center gap-4">
+            {event.locationUrl && (isAdmin || !isSurprise) && (
+              <SafeLink
+                href={event.locationUrl}
+                className="inline-flex items-center gap-2 text-[10px] font-black text-primary hover:text-primary/80 tracking-widest uppercase transition-colors"
+              >
+                <MapPin size={14} /> Open Maps
+              </SafeLink>
+            )}
+            {isFood && event.locationUrl && (
+              <SafeLink
+                href={event.locationUrl}
+                className="inline-flex items-center gap-2 text-[10px] font-black text-rose-500 hover:text-rose-600 tracking-widest uppercase transition-colors"
+              >
+                <ExternalLink size={14} /> Restaurant Web
+              </SafeLink>
+            )}
+          </div>
           {event.access && <AccessRow chips={event.access} />}
         </div>
-        
+
         {event.weatherStats && (
-          <div className="mt-4">
+          <div className="mt-6 md:mt-8">
             <WeatherStatsDisplay stats={event.weatherStats} />
           </div>
         )}
@@ -126,7 +220,7 @@ function BasicCard({ event, isAdmin }: { event: TripEvent, isAdmin?: boolean }) 
   );
 }
 
-export default function EventCard({ event, isAdmin }: { event: TripEvent, isAdmin?: boolean }) {
+export default function EventCard({ event, isAdmin }: { event: TripEvent; isAdmin?: boolean }) {
   return (
     <ClickableCard event={event}>
       <BasicCard event={event} isAdmin={isAdmin} />

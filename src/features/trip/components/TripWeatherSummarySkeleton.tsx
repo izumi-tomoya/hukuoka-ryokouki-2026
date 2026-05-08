@@ -3,21 +3,34 @@ import { MagazineCard } from "@/components/ui/MagazineCard";
 
 export default function TripWeatherSummarySkeleton() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8 opacity-60">
-      {[1, 2, 3].map((i) => (
-        <MagazineCard key={i} padding="sm" className="bg-stone-50/50 dark:bg-zinc-900 border-stone-100 dark:border-zinc-800 flex flex-col items-center">
-          <Skeleton className="h-3 w-16 mb-6 rounded-full" />
-          <Skeleton className="h-10 w-10 mb-6 rounded-xl" />
-          <div className="flex items-baseline gap-1 mb-6">
-            <Skeleton className="h-8 w-12" />
-            <Skeleton className="h-4 w-6" />
-          </div>
-          <div className="w-full pt-4 border-t border-stone-100 dark:border-zinc-800 flex justify-between gap-4">
-            <Skeleton className="h-3 w-10" />
-            <Skeleton className="h-3 w-10" />
-          </div>
-        </MagazineCard>
-      ))}
+    <div className="relative mt-8 opacity-60">
+      <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar sm:grid sm:grid-cols-2 sm:overflow-visible sm:pb-0 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
+        {[1, 2, 3, 4, 5, 6, 7].map((i) => (
+          <MagazineCard
+            key={i}
+            padding="sm"
+            className="flex min-w-37.5 flex-col items-center border-border/50 bg-secondary/15 dark:border-border dark:bg-background sm:min-w-0"
+          >
+            <Skeleton className="mb-4 h-3 w-16 rounded-full" />
+            <Skeleton className="mb-4 h-8 w-8 rounded-xl" />
+            <div className="mb-1 flex items-baseline gap-1">
+              <Skeleton className="h-8 w-12" />
+              <Skeleton className="h-4 w-6" />
+            </div>
+            <Skeleton className="mb-4 h-3 w-12" />
+            <div className="w-full space-y-2 border-t border-border/50 pt-4 dark:border-border">
+              <div className="flex justify-between">
+                <Skeleton className="h-3 w-10" />
+                <Skeleton className="h-3 w-8" />
+              </div>
+              <div className="flex justify-between">
+                <Skeleton className="h-3 w-12" />
+                <Skeleton className="h-3 w-8" />
+              </div>
+            </div>
+          </MagazineCard>
+        ))}
+      </div>
     </div>
   );
 }

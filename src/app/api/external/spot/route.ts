@@ -10,8 +10,11 @@ function normalizeKeyword(keyword: string) {
 }
 
 function isGourmetLike(name: string, category?: string | null) {
+  // category が明示的に food 系なら即 true
+  if (category && /^(food|gourmet|restaurant|cafe)$/i.test(category)) return true;
+
   const text = `${name} ${category || ""}`;
-  return /食|グルメ|レストラン|居酒屋|カフェ|喫茶|ラーメン|うどん|寿司|焼肉|ホテル/.test(text);
+  return /食|グルメ|レストラン|居酒屋|カフェ|喫茶|ラーメン|うどん|そば|寿司|焼肉|ホテル|海鮮|めんたい|和牛|水たき|水炊き|うなぎ|天ぷら|定食|弁当|焼き鳥|焼鳥|串|刺身|ちゃんぽん|博多|屋台|もつ鍋|鍋|カレー|バーガー|ピザ|イタリア|フレンチ|中華|韓国/.test(text);
 }
 
 export async function GET(request: Request) {
@@ -52,8 +55,13 @@ export async function GET(request: Request) {
             gourmet.card?.includes("可") ? "カード可" : "",
             gourmet.barrier_free?.includes("あり") ? "バリアフリー" : "",
             gourmet.pet?.includes("可") ? "ペット可" : "",
+            gourmet.parking?.includes("あり") ? "駐車場あり" : "",
+            gourmet.private_room?.includes("あり") ? "個室あり" : "",
           ].filter(Boolean),
           couponUrl: gourmet.coupon || "",
+          lunch: gourmet.lunch || "",
+          midnight: gourmet.midnight || "",
+          stationName: gourmet.station_name || "",
         });
       }
     }

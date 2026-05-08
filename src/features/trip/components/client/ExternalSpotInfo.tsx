@@ -13,6 +13,11 @@ import {
   Ticket,
   Navigation,
   Store,
+  ParkingSquare,
+  DoorOpen,
+  UtensilsCrossed,
+  Moon,
+  Train,
 } from 'lucide-react';
 import { MagazineCard } from '@/components/ui/MagazineCard';
 import Image from 'next/image';
@@ -38,6 +43,9 @@ interface SpotInfo {
   category: string;
   tags: string[];
   couponUrl: string;
+  lunch?: string;
+  midnight?: string;
+  stationName?: string;
   nearby?: NearbySpot[];
 }
 
@@ -128,7 +136,7 @@ export function ExternalSpotInfo({
   return (
     <MagazineCard
       padding={compact ? 'sm' : 'sm'}
-      className={cn('overflow-hidden border-rose-500/10 bg-rose-500/5', compact && 'rounded-[1.5rem]')}
+      className={cn('overflow-hidden border-rose-500/10 bg-rose-500/5', compact && 'rounded-3xl')}
     >
       <div className="flex flex-col gap-4">
         {display.image && !compact && (
@@ -172,15 +180,27 @@ export function ExternalSpotInfo({
               <div className="text-[11px] text-muted-foreground">{display.address || address}</div>
             </div>
           )}
+          {display.stationName && (
+            <div className="flex items-center gap-3">
+              <Train size={14} className="shrink-0 text-rose-500" />
+              <div className="text-[11px] text-muted-foreground">{display.stationName}駅近</div>
+            </div>
+          )}
         </div>
 
-        {(tags.length > 0 || display.category) && (
+        {(tags.length > 0 || display.category || display.lunch || display.midnight) && (
           <div className="flex flex-wrap gap-2 pt-1">
             {(display.category && !tags.includes(display.category) ? [display.category, ...tags] : tags).slice(0, compact ? 3 : 5).map((tag) => (
               <div key={tag} className="rounded-full bg-white/80 px-2 py-0.5 text-[9px] font-bold text-rose-500">
                 {tag}
               </div>
             ))}
+            {display.lunch?.includes("あり") && (
+              <div className="flex items-center gap-1 rounded-full bg-orange-50 px-2 py-0.5 text-[9px] font-bold text-orange-600"><UtensilsCrossed size={10} /> ランチ</div>
+            )}
+            {display.midnight?.includes("あり") && (
+              <div className="flex items-center gap-1 rounded-full bg-violet-50 px-2 py-0.5 text-[9px] font-bold text-violet-600"><Moon size={10} /> 深夜</div>
+            )}
             {display.tags.some((tag) => tag.includes('Wi-Fi')) && (
               <div className="flex items-center gap-1 rounded-full bg-sky-50 px-2 py-0.5 text-[9px] font-bold text-sky-600"><Wifi size={10} /> Wi-Fi</div>
             )}
@@ -192,6 +212,12 @@ export function ExternalSpotInfo({
             )}
             {display.tags.some((tag) => tag.includes('ペット')) && (
               <div className="flex items-center gap-1 rounded-full bg-indigo-50 px-2 py-0.5 text-[9px] font-bold text-indigo-600"><Dog size={10} /> Pet OK</div>
+            )}
+            {display.tags.some((tag) => tag.includes('駐車場')) && (
+              <div className="flex items-center gap-1 rounded-full bg-slate-50 px-2 py-0.5 text-[9px] font-bold text-slate-600"><ParkingSquare size={10} /> 駐車場</div>
+            )}
+            {display.tags.some((tag) => tag.includes('個室')) && (
+              <div className="flex items-center gap-1 rounded-full bg-pink-50 px-2 py-0.5 text-[9px] font-bold text-pink-600"><DoorOpen size={10} /> 個室</div>
             )}
           </div>
         )}
@@ -216,6 +242,7 @@ export function ExternalSpotInfo({
               href={display.url || locationUrl}
               target="_blank"
               rel="noopener noreferrer"
+              suppressHydrationWarning
               className="flex items-center justify-center gap-2 rounded-xl border border-rose-100 bg-white py-3 text-[10px] font-black uppercase tracking-widest text-rose-500 transition-all hover:bg-rose-50"
             >
               {display.source === 'hotpepper' ? '詳細を見る' : '外部リンク'}
@@ -227,6 +254,7 @@ export function ExternalSpotInfo({
               href={locationUrl}
               target="_blank"
               rel="noopener noreferrer"
+              suppressHydrationWarning
               className="flex items-center justify-center gap-2 rounded-xl bg-rose-500 py-3 text-[10px] font-black uppercase tracking-widest text-white transition-all hover:bg-rose-600"
             >
               地図で開く
@@ -238,6 +266,7 @@ export function ExternalSpotInfo({
               href={display.couponUrl}
               target="_blank"
               rel="noopener noreferrer"
+              suppressHydrationWarning
               className="flex items-center justify-center gap-2 rounded-xl bg-rose-500 py-3 text-[10px] font-black uppercase tracking-widest text-white transition-all hover:bg-rose-600"
             >
               クーポン

@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { MagazineCard } from '@/components/ui/MagazineCard';
-import { Sun, Cloud, CloudRain, CloudLightning, Droplets, Umbrella } from 'lucide-react';
+import { Sun, Cloud, CloudRain, CloudLightning, Umbrella, Wind } from 'lucide-react';
 import TripWeatherSummarySkeleton from './TripWeatherSummarySkeleton';
 
 interface ForecastDay {
@@ -10,7 +10,10 @@ interface ForecastDay {
   condition: string;
   humidity: number;
   rainChance: number;
-  wind?: number;
+  windSpeed?: number;
+  uvIndex?: number;
+  sunrise?: string;
+  sunset?: string;
 }
 
 const getIcon = (condition: string) => {
@@ -36,25 +39,40 @@ export default function TripWeatherSummary({ location }: { location: string }) {
   if (!forecast) return <TripWeatherSummarySkeleton />;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
-      {forecast.map((day) => (
-        <MagazineCard key={day.date} padding="sm" className="bg-stone-50/50 dark:bg-zinc-900 border-stone-100 dark:border-zinc-800 flex flex-col items-center text-center transition-colors">
-          <p className="text-[10px] font-black uppercase tracking-widest text-rose-400 dark:text-rose-500 mb-4">
-            {new Date(day.date).toLocaleDateString('ja-JP', { month: 'short', day: 'numeric' })}
-          </p>
-          
-          <div className="mb-4">{getIcon(day.condition)}</div>
-          
-          <p className="text-2xl font-bold text-stone-900 dark:text-zinc-100 tracking-tight mb-4">
-            {day.temp.max}°<span className="text-stone-400 dark:text-zinc-500 text-sm font-medium">/{day.temp.min}°</span>
-          </p>
+    <div className="relative mt-8">
+      {/* Mobile: Horizontal Scroll, Desktop: Grid */}
+      <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar sm:grid sm:grid-cols-2 sm:overflow-visible sm:pb-0 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
+        {forecast.map((day) => (
+          <MagazineCard 
+            key={day.date} 
+            padding="sm" 
+            className="flex min-w-37.5 flex-col items-center border-border/50 bg-secondary/15 text-center transition-colors dark:border-border dark:bg-background sm:min-w-0"
+          >
+            <p className="mb-4 text-[10px] font-black uppercase tracking-widest text-rose-400 dark:text-rose-500">
+              {new Date(day.date).toLocaleDateString('ja-JP', { month: 'short', day: 'numeric', weekday: 'short' })}
+            </p>
+            
+            <div className="mb-4">{getIcon(day.condition)}</div>
+            
+            <p className="mb-1 tracking-tight text-2xl font-bold text-stone-900 dark:text-foreground">
+              {day.temp.max}°<span className="text-sm font-medium text-stone-400 dark:text-muted-foreground">/{day.temp.min}°</span>
+            </p>
+            <p className="mb-4 text-[10px] font-bold text-muted-foreground">{day.condition}</p>
 
-          <div className="w-full pt-4 border-t border-stone-100 dark:border-zinc-800 flex justify-between items-center text-[10px] font-bold text-stone-400 dark:text-zinc-500 uppercase tracking-widest">
-            <span className="flex items-center gap-1"><Umbrella size={12} /> {day.rainChance}%</span>
-            <span className="flex items-center gap-1"><Droplets size={12} /> {day.humidity}%</span>
-          </div>
-        </MagazineCard>
-      ))}
+            <div className="w-full space-y-2 border-t border-border/50 pt-4 dark:border-border">
+              <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-widest text-stone-400 dark:text-muted-foreground">
+                <span className="flex items-center gap-1"><Umbrella size={12} className="text-sky-500" /> {day.rainChance}%</span>
+                <span className="flex items-center gap-1"><Sun size={12} className="text-amber-500" /> {day.uvIndex}</span>
+              </div>
+              <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-widest text-stone-400 dark:text-muted-foreground">
+                <span className="flex items-center gap-1"><Wind size={12} className="text-stone-400" /> {day.windSpeed}m/s</span>
+                <span className="text-[9px]">{day.sunrise}</span>
+              </div>
+            </div>
+          </MagazineCard>
+        ))}
+      </div>
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-12 bg-linear-to-l from-background to-transparent sm:hidden" />
     </div>
   );
 }

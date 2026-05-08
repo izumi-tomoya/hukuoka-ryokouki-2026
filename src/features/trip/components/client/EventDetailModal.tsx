@@ -22,6 +22,7 @@ import { EditEventForm } from './EditEventForm';
 import TransitTimeline from '../TransitTimeline';
 import PhotoGallery from '../PhotoGallery';
 import { ExternalSpotInfo } from './ExternalSpotInfo';
+import { getLocationCoordinates } from '@/features/trip/utils/locationCatalog';
 
 export default function EventDetailModal() {
   const { isOpen, selectedEvent, closeModal, tripTips } = useModalStore();
@@ -42,6 +43,7 @@ export default function EventDetailModal() {
   const isSurpriseTag = selectedEvent.tag === 'surprise';
   const isFood = selectedEvent.type === 'food';
   const shouldShowExternalSpotInfo = ['food', 'hotel', 'sightseeing', 'shopping'].includes(selectedEvent.type);
+  const coords = getLocationCoordinates(selectedEvent.foodName || selectedEvent.title || '');
 
   const handleSaveUserData = () => {
     if (selectedEvent.id) {
@@ -97,6 +99,8 @@ export default function EventDetailModal() {
                 {shouldShowExternalSpotInfo && (selectedEvent.foodName || selectedEvent.title) && (
                   <ExternalSpotInfo
                     name={selectedEvent.foodName || selectedEvent.title || ""}
+                    lat={coords ? coords[0] : undefined}
+                    lng={coords ? coords[1] : undefined}
                     category={selectedEvent.type}
                     description={isFood ? selectedEvent.foodDesc || selectedEvent.desc : selectedEvent.desc}
                     locationUrl={selectedEvent.locationUrl}

@@ -1,12 +1,34 @@
 import { NextResponse } from "next/server";
 import { generateTravelTextWithFallback } from "@/lib/aiProvider";
+import { compactAdvisorAnswer } from "@/lib/advisorResponse";
 import { prisma } from "@/lib/prisma";
+import { searchGourmet } from "@/lib/external/hotpepper";
+import { cleanLocationName, getLocationCoordinates } from "@/features/trip/utils/locationCatalog";
 
 export const dynamic = "force-dynamic";
+
+const ADVISOR_MAX_OUTPUT_TOKENS = 220;
+const ADVISOR_MAX_ANSWER_SENTENCES = 3;
+const ADVISOR_MAX_ANSWER_CHARACTERS = 260;
+const ADVISOR_MAX_HISTORY_MESSAGES = 4;
+const ADVISOR_MAX_EVENTS_PER_DAY = 8;
+const ADVISOR_MAX_TIPS = 8;
+const ADVISOR_MAX_TIP_BODY_CHARACTERS = 90;
+const ADVISOR_MAX_MODEL_ATTEMPTS = 2;
+const ADVISOR_AI_TIMEOUT_MS = 10_000;
 
 interface ChatMessage {
   role: "user" | "assistant";
   content: string;
+}
+
+function truncateContextText(value: string | null | undefined, maxCharacters: number) {
+  if (!value) return "";
+
+  const normalized = value.replace(/\s+/g, " ").trim();
+  if (Array.from(normalized).length <= maxCharacters) return normalized;
+
+  return `${Array.from(normalized).slice(0, maxCharacters - 1).join("").trim()}…`;
 }
 
 export async function POST(req: Request) {
@@ -23,20 +45,73 @@ export async function POST(req: Request) {
 
     const trip = await prisma.trip.findUnique({
       where: { slug },
-      include: {
+      select: {
+        title: true,
+        location: true,
         days: {
           orderBy: { dayNumber: "asc" },
-          include: { events: { orderBy: { order: "asc" } } },
+          select: {
+            dayNumber: true,
+            events: {
+              orderBy: { order: "asc" },
+              select: {
+                time: true,
+                type: true,
+                title: true,
+                foodName: true,
+                isConfirmed: true,
+              },
+            },
+          },
         },
-        tips: { orderBy: { order: "asc" } },
+        tips: {
+          orderBy: { order: "asc" },
+          select: {
+            title: true,
+            category: true,
+            body: true,
+            isWarning: true,
+          },
+        },
       },
     });
 
     if (!trip) return NextResponse.json({ error: "Trip not found" }, { status: 404 });
 
+    const foodEvents = trip.days
+      .flatMap((day) => day.events.filter((e) => e.type === "food"))
+      .slice(0, 4);
+
+    const hotpepperResults = await Promise.allSettled(
+      foodEvents.map(async (event) => {
+        const name = cleanLocationName(event.foodName || event.title || "");
+        if (!name) return null;
+        const coords = getLocationCoordinates(event.foodName || event.title || "");
+        const result = await Promise.race([
+          searchGourmet(name, coords?.[0], coords?.[1]),
+          new Promise<null>((resolve) => setTimeout(() => resolve(null), 2000)),
+        ]);
+        if (!result) return null;
+        const features = [
+          result.wifi?.includes("あり") ? "Wi-Fi○" : "",
+          result.card?.includes("可") ? "カード○" : "",
+          result.private_room?.includes("あり") ? "個室○" : "",
+          result.lunch?.includes("あり") ? "ランチ○" : "",
+          result.midnight?.includes("あり") ? "深夜○" : "",
+        ].filter(Boolean).join(" ");
+        return `${event.title || event.foodName}: 予算${result.budget} / 営業${result.open}${features ? ` / ${features}` : ""}`;
+      })
+    );
+
+    const hotpepperContext = hotpepperResults
+      .map((r) => (r.status === "fulfilled" ? r.value : null))
+      .filter(Boolean)
+      .join("\n");
+
     const itineraryContext = trip.days
       .map((day) => {
         const events = day.events
+          .slice(0, ADVISOR_MAX_EVENTS_PER_DAY)
           .map((event) => `${event.time} ${event.title || event.foodName || "Untitled"}${event.isConfirmed ? " [fixed]" : ""}`)
           .join(" / ");
         return `Day ${day.dayNumber}: ${events}`;
@@ -44,7 +119,11 @@ export async function POST(req: Request) {
       .join("\n");
 
     const tipsContext = trip.tips
-      .map((tip) => `${tip.title}${tip.category ? ` [${tip.category}]` : ""}: ${tip.body}`)
+      .slice(0, ADVISOR_MAX_TIPS)
+      .map((tip) => {
+        const label = [tip.category, tip.isWarning ? "warning" : ""].filter(Boolean).join("/");
+        return `${tip.title}${label ? ` [${label}]` : ""}: ${truncateContextText(tip.body, ADVISOR_MAX_TIP_BODY_CHARACTERS)}`;
+      })
       .join("\n");
 
     const systemPrompt = `あなたは「${trip.title}」の専属コンシェルジュです。
@@ -52,7 +131,7 @@ export async function POST(req: Request) {
 
 【人格とトーン】
 - 二人旅の空気感を壊さない、控えめながらも的確な「大人のコンシェルジュ」。
-- 丁寧語を用いつつ、事務的すぎない、情景が浮かぶような情緒ある表現を好みます。
+- 丁寧語を用いつつ、事務的すぎない。ただし余韻や情景描写より、次に取る行動を優先します。
 
 【回答の指針】
 1. **予約と実務の優先**: [fixed] マークの付いた予定は確定した大切な時間として扱い、それを軸に周辺の調整案を提示してください。
@@ -64,8 +143,10 @@ export async function POST(req: Request) {
 
 【制約】
 - 日本語で回答する。
-- 2〜5文程度に収める（短すぎず、長すぎず）。
-- **読みやすさを考慮し、適宜改行（空行）を挟んで読みやすくすること。**
+- 1回答は最大3文、260字以内。短いほどよい。
+- 1文目に結論、2文目以降に理由か次の行動を入れる。
+- 質問に関係する情報だけ使い、旅程や予約情報を列挙しない。
+- Markdown見出し、箇条書き、長い前置き、一般論、空行は使わない。
 - 不明なことは断定せず、選択肢を提示して寄り添う。
 - 危険や遅延リスクがある場合は、冒頭で短く警告する。
 
@@ -75,11 +156,11 @@ export async function POST(req: Request) {
 ${itineraryContext}
 
 予約・知識:
-${tipsContext}`;
+${tipsContext}${hotpepperContext ? `\n\nグルメ情報（HotPepper）:\n${hotpepperContext}` : ""}`;
 
     const trimmedHistory = history
       .filter((item) => (item.role === "user" || item.role === "assistant") && item.content.trim())
-      .slice(-8);
+      .slice(-ADVISOR_MAX_HISTORY_MESSAGES);
 
     let answer = "";
     let usedProvider = "";
@@ -90,12 +171,18 @@ ${tipsContext}`;
         prompt: message,
         systemInstruction: systemPrompt,
         history: trimmedHistory,
-        maxOutputTokens: 700,
-        temperature: 0.7,
+        maxOutputTokens: ADVISOR_MAX_OUTPUT_TOKENS,
+        temperature: 0.45,
         topP: 0.9,
+        modelPreference: "fast",
+        maxModelAttempts: ADVISOR_MAX_MODEL_ATTEMPTS,
+        timeoutMs: ADVISOR_AI_TIMEOUT_MS,
       });
 
-      answer = result.text;
+      answer = compactAdvisorAnswer(result.text, {
+        maxSentences: ADVISOR_MAX_ANSWER_SENTENCES,
+        maxCharacters: ADVISOR_MAX_ANSWER_CHARACTERS,
+      });
       usedProvider = `${result.provider}:${result.model}`;
       providerSource = result.source;
     } catch (error) {

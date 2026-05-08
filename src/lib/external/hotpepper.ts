@@ -12,7 +12,7 @@ export async function searchGourmet(keyword: string, lat?: number, lng?: number)
     let url = `https://webservice.recruit.co.jp/hotpepper/gourmet/v1/?key=${apiKey}&keyword=${encodeURIComponent(keyword)}&format=json&count=1`;
     
     if (lat && lng) {
-      url += `&lat=${lat}&lng=${lng}&range=3`; // 2000m以内
+      url += `&lat=${lat}&lng=${lng}&range=4`; // 2000m以内（range: 1=300m, 2=500m, 3=1000m, 4=2000m, 5=3000m）
     }
 
     const res = await fetch(url);
@@ -37,6 +37,11 @@ export async function searchGourmet(keyword: string, lat?: number, lng?: number)
       card: shop.card,
       wifi: shop.wifi,
       coupon: shop.coupon_urls.pc,
+      parking: shop.parking,
+      private_room: shop.private_room,
+      lunch: shop.lunch,
+      midnight: shop.midnight,
+      station_name: shop.station_name,
     };
   } catch (e) {
     console.error("HotPepper Error:", e);

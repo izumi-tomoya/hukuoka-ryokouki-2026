@@ -54,9 +54,8 @@ function isReserved(event: TripEvent) {
 }
 
 export default function ActionSummary({ events, isAdmin = false, locationNames = [] }: Props) {
-  const visibleEvents = events.filter((event) => isAdmin || event.tag !== "surprise");
-  const mappedCount = visibleEvents.filter(ev => hasMapPoint(ev, locationNames)).length;
-  const reservedCount = visibleEvents.filter(isReserved).length;
+  const mappedCount = events.filter(ev => hasMapPoint(ev, locationNames)).length;
+  const reservedCount = events.filter(isReserved).length;
 
   return (
     <MagazineCard className="min-w-0 border-primary/10 bg-card">
@@ -72,7 +71,7 @@ export default function ActionSummary({ events, isAdmin = false, locationNames =
         </div>
         <div className="grid grid-cols-2 gap-2 text-xs font-black sm:flex">
           <div className="rounded-2xl bg-secondary/50 px-4 py-3 text-center text-muted-foreground">
-            地図 {mappedCount}/{visibleEvents.length}
+            地図 {mappedCount}/{events.length}
           </div>
           <div className="rounded-2xl bg-emerald-500/10 px-4 py-3 text-center text-emerald-600">
             予約 {reservedCount}
@@ -81,8 +80,9 @@ export default function ActionSummary({ events, isAdmin = false, locationNames =
       </div>
 
       <div className="grid gap-3">
-        {visibleEvents.map((event, index) => {
-          const mapped = hasMapPoint(event, locationNames);
+        {events.map((event, index) => {
+          const isSurprise = event.tag === "surprise" && !isAdmin;
+          const mapped = !isSurprise && hasMapPoint(event, locationNames);
           const reserved = isReserved(event);
           const routeCount = event.transitSteps?.length || 0;
 
@@ -105,11 +105,11 @@ export default function ActionSummary({ events, isAdmin = false, locationNames =
                 <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                   <div className="min-w-0">
                     <h3 className="break-words text-base font-black text-foreground">
-                      {event.tag === "surprise" && !isAdmin ? "Surprise Spot" : eventLabel(event)}
+                      {isSurprise ? "🎁 Surprise Spot" : eventLabel(event)}
                     </h3>
                     {(event.desc || event.foodDesc) && (
                       <p className="mt-1 line-clamp-2 text-sm font-medium leading-relaxed text-muted-foreground">
-                        {event.foodDesc || event.desc}
+                        {isSurprise ? "当日までのお楽しみ。ふたりの特別な時間が待っています。" : (event.foodDesc || event.desc)}
                       </p>
                     )}
                   </div>

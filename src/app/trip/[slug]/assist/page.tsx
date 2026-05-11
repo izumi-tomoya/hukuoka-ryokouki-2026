@@ -24,7 +24,9 @@ export default async function TripAssistPage({ params }: { params: Promise<{ slu
       time: event.time,
       type: event.type,
       title: event.title || event.foodName || "Untitled",
+      formalName: event.formalName || undefined,
       desc: event.desc || event.foodDesc || undefined,
+      tag: event.tag || undefined,
       locationUrl: event.locationUrl || undefined,
       isConfirmed: event.isConfirmed,
       plannedBudget: event.plannedBudget || 0,
@@ -72,6 +74,7 @@ export default async function TripAssistPage({ params }: { params: Promise<{ slu
             isConfirmed: tip.isConfirmed,
             category: tip.category || undefined,
           }))}
+          isAdmin={isAdmin}
           weatherLabel={weather ? `${trip.location}: ${weather.current.condition} ${weather.current.temp}°C / ${weather.themeStatus}` : null}
           weatherData={weather}
         />

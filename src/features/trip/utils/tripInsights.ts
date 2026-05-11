@@ -16,7 +16,9 @@ export type InsightEvent = {
   time: string;
   type: string;
   title: string;
+  formalName?: string;
   desc?: string;
+  tag?: string;
   locationUrl?: string;
   isConfirmed?: boolean;
   plannedBudget?: number;
@@ -82,6 +84,7 @@ export interface EmergencyLink {
   label: string;
   href?: string;
   description: string;
+  isSecret?: boolean;
 }
 
 export interface EmergencySnapshot {
@@ -333,59 +336,78 @@ export function buildPackingRecommendations(
   return suggestions.slice(0, 6);
 }
 
-export function buildEmergencySnapshot(trip: { location: string }, events: InsightEvent[], tips: InsightTip[]): EmergencySnapshot {
+const googleMapsUrl = (name: string, location: string) =>
+  `https://www.google.com/maps/search/${encodeURIComponent(`${name} ${location}`)}`;
+
+export function buildEmergencySnapshot(
+  trip: { location: string }, 
+  events: InsightEvent[], 
+  tips: InsightTip[],
+  isAdmin: boolean = false
+): EmergencySnapshot {
+  const mask = (val: string, secret: boolean) => (!isAdmin && secret ? "当日までのお楽しみ" : val);
+  const maskLabel = (val: string, secret: boolean) => (!isAdmin && secret ? "🎁 Surprise Spot" : val);
+
   const hotels = events
     .filter((event) => event.type === "hotel")
-    .slice(0, 2)
     .map((event) => ({
-      label: event.title,
-      href: event.locationUrl,
-      description: event.desc || `${event.time} 予定`,
+      label: maskLabel(event.title, event.tag === "surprise"),
+      href: !isAdmin && event.tag === "surprise" 
+        ? undefined 
+        : (event.locationUrl || googleMapsUrl(event.formalName || event.title, trip.location)),
+      description: mask(event.desc || `${event.time} 予定`, event.tag === "surprise"),
+      isSecret: event.tag === "surprise",
     }));
 
   const flights = events
     .filter((event) => /空港|flight|フライト|✈|🛬/i.test(`${event.title} ${event.desc || ""}`))
-    .slice(0, 3)
     .map((event) => ({
-      label: event.title,
-      href: event.locationUrl,
-      description: `${event.time} / ${event.desc || trip.location}`,
+      label: maskLabel(event.title, event.tag === "surprise"),
+      href: !isAdmin && event.tag === "surprise" 
+        ? undefined 
+        : (event.locationUrl || googleMapsUrl(event.title, trip.location)),
+      description: mask(`${event.time} / ${event.desc || trip.location}`, event.tag === "surprise"),
+      isSecret: event.tag === "surprise",
     }));
 
   const reservations = [
     ...events
       .filter((event) => event.isConfirmed)
-      .slice(0, 4)
       .map((event) => ({
-        label: event.title,
-        href: event.locationUrl,
-        description: `${event.time} / ${event.desc || "予約済み"}`,
+        label: maskLabel(event.title, event.tag === "surprise"),
+        href: !isAdmin && event.tag === "surprise" 
+          ? undefined 
+          : (event.locationUrl || googleMapsUrl(event.formalName || event.title, trip.location)),
+        description: mask(`${event.time} / ${event.desc || "予約済み"}`, event.tag === "surprise"),
+        isSecret: event.tag === "surprise",
       })),
     ...tips
-      .filter((tip) => tip.category === "Reservation" || tip.isConfirmed || tip.imageUrl)
-      .slice(0, 3)
+      .filter((tip) => tip.category === "Reservation" || tip.isConfirmed || tip.imageUrl || tip.venue)
       .map((tip) => ({
         label: tip.title,
-        href: tip.imageUrl,
+        href: tip.imageUrl || (tip.venue ? googleMapsUrl(tip.venue, trip.location) : undefined),
         description: tip.body,
       })),
-  ].slice(0, 6);
+  ];
 
   const warnings = tips
     .filter((tip) => tip.isWarning)
     .map((tip) => `${tip.title}: ${tip.body}`)
-    .slice(0, 4);
+    .slice(0, 8);
 
   const contacts = Array.from(
     new Set(
       [
-        ...events.map((event) => `${event.title} ${event.desc || ""}`),
+        ...events.map((event) => {
+          if (!isAdmin && event.tag === "surprise") return "";
+          return `${event.title} ${event.desc || ""}`;
+        }),
         ...tips.map((tip) => `${tip.title} ${tip.body}`),
       ]
         .flatMap((text) => text.match(PHONE_REGEX) || [])
         .map((phone) => phone.trim())
     )
-  ).slice(0, 4);
+  ).filter(Boolean).slice(0, 4);
 
   return { hotels, flights, reservations, warnings, contacts };
 }

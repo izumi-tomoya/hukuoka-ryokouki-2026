@@ -27,6 +27,7 @@ export function mapEventToTripEvent(event: EventWithStops): TripEvent {
     time: event.time,
     type: event.type as EventType,
     title: event.title ?? undefined,
+    formalName: event.formalName ?? undefined,
     desc: event.desc ?? undefined,
     tag: (event.tag ?? undefined) as TagType | undefined,
     tagLabel: event.tagLabel ?? undefined,

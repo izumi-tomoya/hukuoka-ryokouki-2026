@@ -72,24 +72,30 @@ export default function TripMap({
       const cleaned = cleanLocationName(title);
       
       // シークレット判定
-      const isSecret = !isAdmin && (cleaned.includes('ヒルトン') || cleaned.includes('CLOUDS') || cleaned.includes('サプライズ') || (event.tag === 'surprise'));
+      const isSecret = !isAdmin && (event.tag === 'surprise' || cleaned.includes('サプライズ'));
       
       // データベースから取得したマスタから座標を検索
+      // formalName があれば優先、なければ cleaned で検索
+      const searchName = event.formalName ? cleanLocationName(event.formalName) : cleaned;
+      
       const spot = locationMaster.find(loc => {
         const cleanedMaster = cleanLocationName(loc.name);
-        return cleaned.includes(cleanedMaster) || cleanedMaster.includes(cleaned);
+        return searchName.includes(cleanedMaster) || cleanedMaster.includes(searchName);
       });
       
       const displayName = isSecret ? '🎁 Surprise Spot' : title;
+      const displayDesc = isSecret ? '当日までのお楽しみ' : (event.foodDesc || event.desc || event.highlight);
+
       return {
         name: displayName,
-        coords: spot ? [spot.lat, spot.lng] as [number, number] : null,
-        address: spot?.address,
-        category: spot?.category,
-        locationUrl: event.locationUrl,
-        description: event.foodDesc || event.desc || event.highlight,
-        rawTitle: title,
+        coords: isSecret ? null : (spot ? [spot.lat, spot.lng] as [number, number] : null),
+        address: isSecret ? null : spot?.address,
+        category: isSecret ? 'Surprise' : spot?.category,
+        locationUrl: isSecret ? undefined : event.locationUrl,
+        description: displayDesc,
+        rawTitle: isSecret ? 'Surprise' : title,
         time: event.time,
+        isSecret,
       };
     })
     .filter((m): m is {
@@ -101,13 +107,14 @@ export default function TripMap({
       description: string | undefined;
       rawTitle: string;
       time: string;
+      isSecret: boolean;
     } => m.coords !== null)
     .reduce<MapMarker[]>((acc, marker) => {
       const existing = acc.find((item) => item.name === marker.name && item.coords[0] === marker.coords[0] && item.coords[1] === marker.coords[1]);
 
       if (existing) {
         existing.events.push({
-          title: marker.rawTitle,
+          title: marker.name, // DisplayNameを使用（シークレット時は🎁 Surprise Spot）
           time: marker.time,
           description: marker.description,
           locationUrl: marker.locationUrl,
@@ -127,7 +134,7 @@ export default function TripMap({
         locationUrl: marker.locationUrl,
         description: marker.description,
         events: [{
-          title: marker.rawTitle,
+          title: marker.name, // DisplayNameを使用
           time: marker.time,
           description: marker.description,
           locationUrl: marker.locationUrl,
@@ -232,15 +239,24 @@ export default function TripMap({
             )}
 
             <div className="mt-6 max-h-[28rem] overflow-y-auto pr-1 overscroll-contain">
-              <ExternalSpotInfo
-                name={selectedMarker.events[0]?.title || selectedMarker.name}
-                lat={selectedMarker.coords[0]}
-                lng={selectedMarker.coords[1]}
-                category={selectedMarker.category || undefined}
-                address={selectedMarker.address || undefined}
-                description={selectedMarker.description || selectedMarker.events[0]?.description}
-                locationUrl={selectedMarker.locationUrl}
-              />
+              {!selectedMarker.isSecret && (
+                <ExternalSpotInfo
+                  name={selectedMarker.events[0]?.title || selectedMarker.name}
+                  lat={selectedMarker.coords[0]}
+                  lng={selectedMarker.coords[1]}
+                  category={selectedMarker.category || undefined}
+                  address={selectedMarker.address || undefined}
+                  description={selectedMarker.description || selectedMarker.events[0]?.description}
+                  locationUrl={selectedMarker.locationUrl}
+                />
+              )}
+              {selectedMarker.isSecret && (
+                <div className="flex flex-col items-center justify-center p-8 rounded-[2rem] bg-rose-50 border border-dashed border-rose-200">
+                  <Star size={24} className="text-rose-400 mb-3" />
+                  <p className="text-xs font-bold text-rose-900">Surprise Spot</p>
+                  <p className="text-[10px] text-rose-400 mt-1 uppercase tracking-widest">当日までのお楽しみ</p>
+                </div>
+              )}
             </div>
           </MagazineCard>
         ) : (

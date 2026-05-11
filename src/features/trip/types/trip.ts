@@ -61,6 +61,7 @@ export interface TripEvent {
   time: string;
   type: EventType;
   title?: string;
+  formalName?: string; // 正式名称（Google Maps 検索等に使用）
   desc?: string;
   tag?: TagType;
   tagLabel?: string;

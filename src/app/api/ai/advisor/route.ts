@@ -4,6 +4,7 @@ import { compactAdvisorAnswer } from "@/lib/advisorResponse";
 import { prisma } from "@/lib/prisma";
 import { searchGourmet } from "@/lib/external/hotpepper";
 import { cleanLocationName, getLocationCoordinates } from "@/features/trip/utils/locationCatalog";
+import { auth } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -33,6 +34,9 @@ function truncateContextText(value: string | null | undefined, maxCharacters: nu
 
 export async function POST(req: Request) {
   try {
+    const session = await auth();
+    const isAdmin = !!session?.user?.isAdmin;
+
     const { slug, message, history = [] } = (await req.json()) as {
       slug?: string;
       message?: string;
@@ -58,7 +62,9 @@ export async function POST(req: Request) {
                 time: true,
                 type: true,
                 title: true,
+                formalName: true,
                 foodName: true,
+                tag: true,
                 isConfirmed: true,
               },
             },
@@ -112,7 +118,11 @@ export async function POST(req: Request) {
       .map((day) => {
         const events = day.events
           .slice(0, ADVISOR_MAX_EVENTS_PER_DAY)
-          .map((event) => `${event.time} ${event.title || event.foodName || "Untitled"}${event.isConfirmed ? " [fixed]" : ""}`)
+          .map((event) => {
+            const isSecret = !isAdmin && event.tag === "surprise";
+            const displayName = isSecret ? "🎁 Surprise Spot" : (event.title || event.foodName || "Untitled");
+            return `${event.time} ${displayName}${event.isConfirmed ? " [fixed]" : ""}`;
+          })
           .join(" / ");
         return `Day ${day.dayNumber}: ${events}`;
       })

@@ -45,6 +45,7 @@ async function createEvents(dayId: string, events: TripEvent[]) {
         time: event.time,
         type: event.type,
         title: event.title || null,
+        formalName: event.formalName || null,
         desc: event.desc || null,
         tag: event.tag || null,
         tagLabel: event.tagLabel || null,

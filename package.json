@@ -11,6 +11,9 @@
     "lint": "eslint",
     "test": "jest"
   },
+  "prisma": {
+    "seed": "bun prisma/seed.ts"
+  },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.2",
     "@base-ui/react": "^1.4.1",

@@ -1,7 +1,10 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { MagazineCard } from '@/components/ui/MagazineCard';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Skeleton } from '@/components/ui/Skeleton';
 import { cn } from '@/lib/utils';
 import {
   AlertTriangle,
@@ -32,7 +35,14 @@ import {
   TimerReset,
   Train,
   Umbrella,
+  Users,
   Wind,
+  Zap,
+  MapPin,
+  ChevronRight,
+  TrendingUp,
+  Receipt,
+  StickyNote,
 } from 'lucide-react';
 import {
   appendTemperatureLog,
@@ -68,8 +78,9 @@ type AssistDashboardProps = {
     startDate: string;
     endDate: string;
   };
-  events: InsightEvent[];
+  events: (InsightEvent & { formalName?: string; tag?: string })[];
   tips: InsightTip[];
+  isAdmin?: boolean;
   weatherLabel?: string | null;
   weatherData?: {
     themeStatus?: string;
@@ -118,10 +129,25 @@ function mapsSearchUrl(query: string, base: string) {
   return `https://www.google.com/maps/search/${encodeURIComponent(`${query} near ${base}`)}`;
 }
 
+// --- Animation Variants ---
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1, delayChildren: 0.05 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 15 },
+  visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100, damping: 20 } },
+};
+
 export default function AssistDashboard({
   trip,
   events,
   tips,
+  isAdmin = false,
   weatherLabel,
   weatherData,
 }: AssistDashboardProps) {
@@ -130,6 +156,8 @@ export default function AssistDashboard({
   const [delayMinutes, setDelayMinutes] = useState(0);
   const [skippedIds, setSkippedIds] = useState<string[]>([]);
   const [noteBody, setNoteBody] = useState('');
+  const [activeTab, setActiveTab] = useState('spotlight');
+  
   const [notes, setNotes] = useState<SharedNote[]>(() => {
     if (typeof window === 'undefined') return [];
     try {
@@ -166,14 +194,10 @@ export default function AssistDashboard({
   const checkinsKey = `memoir:event-checkins:${trip.id}`;
 
   useEffect(() => {
-    const mountId = setTimeout(() => setMounted(true), 0);
-
+    setMounted(true);
     const timer = window.setInterval(() => setNow(new Date()), 30_000);
-    return () => {
-      clearTimeout(mountId);
-      window.clearInterval(timer);
-    };
-  }, [checkinsKey, notesKey, trip.id]);
+    return () => window.clearInterval(timer);
+  }, []);
 
   const sortedEvents = useMemo(
     () =>
@@ -194,11 +218,14 @@ export default function AssistDashboard({
   const minutesToNext = nextTime
     ? Math.round((nextTime.getTime() - now.getTime()) / 60_000) - delayMinutes
     : null;
-  const currentBase = nextEvent?.transitSteps?.[0]?.station || nextEvent?.title || trip.location;
+
+  const isNextSurprise = !isAdmin && nextEvent?.tag === 'surprise';
+  const currentBase = nextEvent?.transitSteps?.[0]?.station || nextEvent?.formalName || nextEvent?.title || trip.location;
+  
   const warningTips = tips.filter((tip) => tip.isWarning || tip.category === 'Warning');
   const actualTotal = sortedEvents.reduce((sum, event) => sum + (event.actualExpense || 0), 0);
   const delayInsight = computeDelayInsight(activeEvents, nextIndex, delayMinutes);
-  const emergencySnapshot = buildEmergencySnapshot(trip, sortedEvents, tips);
+  const emergencySnapshot = buildEmergencySnapshot(trip, sortedEvents, tips, isAdmin);
   const emergencyMemo = buildEmergencyMemo(trip, emergencySnapshot);
   const settlement = computeSettlement(sortedEvents, payers);
   const temperatureSummary = summarizeTemperature(temperatureLogs);
@@ -206,12 +233,6 @@ export default function AssistDashboard({
     ? sortedEvents.filter((event) => event.dayNumber === nextEvent.dayNumber)
     : [];
   const packingRecommendations = buildPackingRecommendations(sortedEvents, weatherData ?? null, []);
-  const aiFallbackPrompt = {
-    rain: '雨で外歩きが厳しい',
-    crowd: '混雑を避けたい',
-    tired: '疲れているので移動を減らしたい',
-    budget: '予算を抑えたい',
-  };
 
   const reportText = [
     `${trip.title} 旅メモ`,
@@ -248,6 +269,7 @@ export default function AssistDashboard({
 
   const copyEmergencyCard = async () => {
     await navigator.clipboard?.writeText(emergencyMemo);
+    alert('緊急連絡先をコピーしました');
   };
 
   const saveTemperatureEntry = () => {
@@ -340,7 +362,7 @@ export default function AssistDashboard({
       URL.revokeObjectURL(url);
     } catch (error) {
       console.error('PDF download failed', error);
-      alert('PDF 生成に失敗しました。温度ログなしの通常版でも失敗しています。');
+      alert('PDF 生成に失敗しました。');
     } finally {
       setIsPdfLoading(false);
     }
@@ -348,632 +370,581 @@ export default function AssistDashboard({
 
   if (!mounted) {
     return (
-      <div className="space-y-6 pb-24">
-        <div className="grid gap-6 lg:grid-cols-[1.25fr_0.75fr]">
-          <MagazineCard className="h-56 animate-pulse bg-secondary/20" />
-          <MagazineCard className="h-56 animate-pulse bg-secondary/10" />
+      <div className="flex flex-col gap-6 lg:gap-8 pb-32">
+        <div className="sticky top-0 z-50 -mx-4 px-4 py-3 backdrop-blur-xl bg-background/80 border-b border-border/40">
+          <Skeleton className="w-full h-14 rounded-2xl" />
         </div>
-        <MagazineCard className="h-32 animate-pulse bg-secondary/10" />
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          <MagazineCard className="h-44 animate-pulse bg-secondary/10" />
-          <MagazineCard className="h-44 animate-pulse bg-secondary/10" />
-        </div>
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          <MagazineCard className="h-36 animate-pulse bg-secondary/10" />
-          <MagazineCard className="h-36 animate-pulse bg-secondary/10" />
-          <MagazineCard className="h-36 animate-pulse bg-secondary/10" />
+        <Skeleton className="w-full h-96 rounded-[2.5rem]" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Skeleton className="w-full h-64 rounded-[2.5rem]" />
+          <Skeleton className="w-full h-64 rounded-[2.5rem]" />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 pb-24 sm:space-y-8 lg:space-y-10">
-      <section className="grid gap-6 lg:grid-cols-[1.25fr_0.75fr]">
-        <MagazineCard className="min-w-0 border-primary/20 bg-card">
-          <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between md:gap-8">
-            <div className="min-w-0">
-              <div className="mb-4 inline-flex max-w-full items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-primary sm:px-4 sm:tracking-[0.2em]">
-                <Clock size={13} />
-                <span className="truncate">Next Move Briefing</span>
-              </div>
-              <h2 className="wrap-break-word font-playfair text-[1.75rem] font-black leading-tight text-foreground sm:text-3xl md:text-5xl">
-                {nextEvent ? nextEvent.title : '予定は登録されていません'}
-              </h2>
-              {nextEvent && (
-                <p className="mt-4 text-sm font-medium leading-relaxed text-muted-foreground">
-                  {nextEvent.time} / Day {nextEvent.dayNumber}
-                  {nextEvent.desc ? ` - ${nextEvent.desc}` : ''}
-                </p>
-              )}
-            </div>
+    <div className="flex flex-col gap-6 lg:gap-8 pb-32">
+      {/* --- Sticky Navigation Tabs --- */}
+      <div className="sticky top-0 z-50 -mx-4 px-4 py-3 backdrop-blur-xl bg-background/80 border-b border-border/40">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="w-full flex justify-between bg-secondary/20 p-1 rounded-2xl border border-border/40">
+            <TabsTrigger value="spotlight" className="flex-1 gap-2 rounded-xl py-2.5">
+              <Sparkles size={16} />
+              <span className="hidden sm:inline">Now</span>
+            </TabsTrigger>
+            <TabsTrigger value="safety" className="flex-1 gap-2 rounded-xl py-2.5">
+              <ShieldAlert size={16} />
+              <span className="hidden sm:inline">Safety</span>
+            </TabsTrigger>
+            <TabsTrigger value="tools" className="flex-1 gap-2 rounded-xl py-2.5">
+              <Zap size={16} />
+              <span className="hidden sm:inline">Tools</span>
+            </TabsTrigger>
+            <TabsTrigger value="logistics" className="flex-1 gap-2 rounded-xl py-2.5">
+              <Receipt size={16} />
+              <span className="hidden sm:inline">Reports</span>
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </div>
 
-            <div className="w-full shrink-0 rounded-3xl border border-border bg-secondary/40 p-4 text-center sm:rounded-[2rem] sm:p-6 md:w-auto md:min-w-44">
-              <div
-                className={cn(
-                  'text-2xl font-black tracking-tight sm:text-3xl',
-                  minutesToNext !== null && minutesToNext < 0 ? 'text-rose-500' : 'text-foreground'
-                )}
-              >
-                {minutesToNext === null ? '--' : formatMinutes(minutesToNext)}
-              </div>
-              <div className="mt-2 text-[10px] font-black uppercase tracking-[0.16em] text-muted-foreground sm:tracking-[0.25em]">
-                delay {delayMinutes} min
-              </div>
-            </div>
-          </div>
+      <AnimatePresence mode="wait">
+        {/* --- Spotlight Tab: Main Info --- */}
+        {activeTab === 'spotlight' && (
+          <motion.div
+            key="spotlight"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            className="space-y-6"
+          >
+            {/* Spotlight Hero Section */}
+            <motion.div variants={itemVariants}>
+              <MagazineCard padding="none" className="relative overflow-hidden border-none bg-linear-to-br from-primary/5 via-background to-secondary/20 shadow-2xl shadow-primary/5">
+                <div className="flex flex-col md:flex-row">
+                  <div className="flex-1 p-8 md:p-12">
+                    <div className="mb-8 flex items-center gap-4">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary shadow-lg shadow-primary/20 text-primary-foreground">
+                        <Clock size={20} className="animate-pulse" />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Next Move</span>
+                        <span className="text-xs font-bold text-muted-foreground">Starts in {minutesToNext === null ? '--' : formatMinutes(minutesToNext).replace('あと', '')}</span>
+                      </div>
+                    </div>
 
-          {nextEvent?.transitSteps && nextEvent.transitSteps.length > 0 && (
-            <div className="mt-6 grid gap-3 border-t border-border pt-6 sm:mt-8 sm:pt-8 md:grid-cols-2">
-              {nextEvent.transitSteps.slice(0, 4).map((step, index) => (
-                <div
-                  key={`${step.time}-${index}`}
-                  className="min-w-0 rounded-2xl border border-border bg-background/60 p-4"
-                >
-                  <div className="text-[10px] font-black uppercase tracking-widest text-primary">
-                    {step.time}
+                    <h2 className="font-playfair text-4xl md:text-6xl font-black leading-tight text-foreground tracking-tight mb-6">
+                      {nextEvent ? (isNextSurprise ? '🎁 Surprise Spot' : nextEvent.title) : '予定はありません'}
+                    </h2>
+
+                    {nextEvent && (
+                      <div className="flex flex-wrap gap-3 mb-10">
+                        <span className="inline-flex items-center gap-2 rounded-full bg-secondary/40 px-4 py-2 text-xs font-black text-foreground border border-border/40 backdrop-blur-md">
+                          <TimerReset size={14} className="text-primary" />
+                          {nextEvent.time}
+                        </span>
+                        <span className="inline-flex items-center gap-2 rounded-full bg-secondary/40 px-4 py-2 text-xs font-black text-foreground border border-border/40 backdrop-blur-md">
+                          <Sparkles size={14} className="text-amber-500" />
+                          Day {nextEvent.dayNumber}
+                        </span>
+                        {nextEvent.isConfirmed && (
+                          <span className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-4 py-2 text-xs font-black text-emerald-600 border border-emerald-500/20 backdrop-blur-md">
+                            <CheckCircle2 size={14} />
+                            Reserved
+                          </span>
+                        )}
+                      </div>
+                    )}
+
+                    <p className="max-w-2xl text-lg text-muted-foreground/90 font-medium leading-relaxed italic">
+                      {isNextSurprise 
+                        ? '“当日までのお楽しみ。ふたりの特別な時間が待っています。”' 
+                        : (nextEvent?.desc || 'この予定の詳細を確認しましょう。')}
+                    </p>
                   </div>
-                  <div className="mt-1 wrap-break-word font-bold text-foreground">
-                    {step.station}
-                  </div>
-                  <div className="mt-1 text-xs font-medium text-muted-foreground">
-                    {[step.lineName, step.duration, step.platform || step.exit]
-                      .filter(Boolean)
-                      .join(' / ')}
+
+                  <div className="w-full md:w-80 bg-secondary/10 backdrop-blur-sm border-t md:border-t-0 md:border-l border-border/40 p-8 flex flex-col justify-between">
+                    <div className="space-y-6">
+                      <div>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block mb-2">Location</span>
+                        <div className="flex items-center gap-3">
+                          <MapPin size={18} className="text-primary" />
+                          <span className="font-black text-lg">{currentBase}</span>
+                        </div>
+                      </div>
+                      
+                      <div className="pt-6 border-t border-border/40">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block mb-4">Transit Timeline</span>
+                        <div className="space-y-6">
+                          {nextEvent?.transitSteps?.slice(0, 3).map((step, idx) => (
+                            <div key={idx} className="flex gap-4 items-start">
+                              <div className="flex flex-col items-center">
+                                <div className="h-2 w-2 rounded-full bg-primary" />
+                                {idx !== 2 && <div className="w-px h-8 bg-linear-to-b from-primary to-transparent" />}
+                              </div>
+                              <div className="min-w-0">
+                                <div className="text-[10px] font-black text-primary">{step.time}</div>
+                                <div className="text-xs font-bold truncate">{step.station}</div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    <a
+                      href={nextEvent?.locationUrl || mapsSearchUrl(currentBase, trip.location)}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mt-8 flex items-center justify-center gap-2 w-full py-4 rounded-2xl bg-foreground text-background text-xs font-black uppercase tracking-widest shadow-xl transition-all hover:scale-[1.02] active:scale-95"
+                    >
+                      <Navigation size={16} />
+                      Open in Maps
+                    </a>
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
-        </MagazineCard>
+              </MagazineCard>
+            </motion.div>
 
-        <MagazineCard className="min-w-0 border-amber-500/20">
-          <div className="mb-6 flex items-center gap-3">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-amber-500 text-black">
-              <ShieldAlert size={22} />
-            </div>
-            <div className="min-w-0">
-              <h3 className="text-lg font-black text-foreground">Emergency Card</h3>
-              <p className="text-[10px] font-black uppercase tracking-[0.16em] text-muted-foreground sm:tracking-widest">
-                Offline Ready
-              </p>
-            </div>
-          </div>
-          <div className="space-y-3">
-            {emergencySnapshot.hotels.slice(0, 2).map((item) => (
-              <a
-                key={item.label}
-                href={item.href || '#'}
-                target="_blank"
-                rel="noreferrer"
-                className="flex min-h-14 items-center gap-3 rounded-2xl border border-border p-4 transition-colors hover:border-primary/40"
-              >
-                <Hotel size={17} className="shrink-0 text-primary" />
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate text-sm font-bold">{item.label}</span>
-                  <span className="block truncate text-xs text-muted-foreground">
-                    {item.description}
-                  </span>
-                </span>
-                {item.href && <ExternalLink size={14} className="shrink-0 text-muted-foreground" />}
-              </a>
-            ))}
-            {emergencySnapshot.reservations.slice(0, 2).map((item) => (
-              <a
-                key={item.label}
-                href={item.href || '#'}
-                target="_blank"
-                rel="noreferrer"
-                className="flex min-h-14 items-center gap-3 rounded-2xl border border-border p-4 transition-colors hover:border-primary/40"
-              >
-                <Ticket size={17} className="shrink-0 text-primary" />
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate text-sm font-bold">{item.label}</span>
-                  <span className="block truncate text-xs text-muted-foreground">
-                    {item.description}
-                  </span>
-                </span>
-                {item.href && <ExternalLink size={14} className="shrink-0 text-muted-foreground" />}
-              </a>
-            ))}
-            <button
-              onClick={copyEmergencyCard}
-              className="flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-foreground px-4 py-3 text-[10px] font-black uppercase tracking-[0.16em] text-background transition-transform active:scale-[0.98] sm:tracking-widest"
-            >
-              <Copy size={14} />
-              Copy Emergency Memo
-            </button>
-          </div>
-        </MagazineCard>
-      </section>
-
-      <section>
-        <AdvisorConciergePanel slug={trip.slug} />
-      </section>
-
-      <section className="grid gap-6 lg:grid-cols-2">
-        <MagazineCard className="border-primary/20">
-          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-primary">
-            <Sparkles size={13} />
-            Morning Briefing
-          </div>
-          <h3 className="text-2xl font-black text-foreground">今日の持ち物と固定予定</h3>
-          <div className="mt-6 grid gap-3 md:grid-cols-2">
-            <div className="rounded-2xl bg-secondary/25 p-4">
-              <div className="text-[10px] font-black uppercase tracking-[0.16em] text-muted-foreground">
-                Weather
-              </div>
-              <div className="mt-2 text-sm font-bold text-foreground">
-                {weatherLabel || '天気情報を確認中'}
-              </div>
-            </div>
-            <div className="rounded-2xl bg-secondary/25 p-4">
-              <div className="text-[10px] font-black uppercase tracking-[0.16em] text-muted-foreground">
-                Fixed Today
-              </div>
-              <div className="mt-2 text-sm font-bold text-foreground">
-                {briefingEvents.filter((event) => event.isConfirmed).length} 件 /{' '}
-                {briefingEvents.length} 件
-              </div>
-            </div>
-          </div>
-          <div className="mt-5 grid gap-3 md:grid-cols-3">
-            {packingRecommendations.slice(0, 3).map((item) => (
-              <div
-                key={item.name}
-                className="rounded-2xl border border-border bg-background/60 p-4"
-              >
-                <div className="text-xs font-black text-foreground">{item.name}</div>
-                <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{item.reason}</p>
-              </div>
-            ))}
-          </div>
-        </MagazineCard>
-
-        <MagazineCard>
-          <div className="mb-6 flex items-center gap-3">
-            <HeartPulse className="shrink-0 text-rose-500" />
-            <h3 className="text-lg font-black">旅の温度ログ</h3>
-          </div>
-          <div className="grid grid-cols-5 gap-2">
-            {Object.entries(TEMPERATURE_MOODS).map(([value, config]) => (
-              <button
-                key={value}
-                onClick={() => setTemperatureMood(value as TemperatureMood)}
-                className={cn(
-                  'min-h-11 rounded-2xl border px-2 text-[10px] font-black uppercase tracking-[0.12em] transition-colors',
-                  temperatureMood === value
-                    ? 'border-primary bg-primary text-primary-foreground'
-                    : 'border-border bg-secondary/20'
-                )}
-              >
-                <span className="block text-sm">{config.emoji}</span>
-                <span>{config.label}</span>
-              </button>
-            ))}
-          </div>
-          <textarea
-            value={temperatureNote}
-            onChange={(event) => setTemperatureNote(event.target.value)}
-            placeholder="いま残したい感情を一言"
-            rows={3}
-            className="mt-4 w-full rounded-3xl border border-border bg-background px-4 py-4 text-sm outline-none focus:border-primary"
-          />
-          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <button
-              onClick={() => setTemperatureRevisit((current) => !current)}
-              className={cn(
-                'min-h-11 rounded-full border px-4 py-2 text-xs font-black transition-colors',
-                temperatureRevisit
-                  ? 'border-emerald-500 bg-emerald-500 text-white'
-                  : 'border-border bg-secondary/20 text-muted-foreground'
-              )}
-            >
-              また来たい
-            </button>
-            <button
-              onClick={saveTemperatureEntry}
-              className="min-h-11 rounded-full bg-foreground px-5 py-2 text-xs font-black uppercase tracking-[0.16em] text-background"
-            >
-              Save Log
-            </button>
-          </div>
-          <div className="mt-5 rounded-3xl border border-border bg-secondary/20 p-4 text-sm text-muted-foreground">
-            直近ログ {temperatureSummary.highlightedLogs.length} 件。最頻値は{' '}
-            <span className="font-black text-foreground">
-              {TEMPERATURE_MOODS[temperatureSummary.topMood].label}
-            </span>
-            。
-          </div>
-        </MagazineCard>
-      </section>
-
-      {weatherData?.forecast && (
-        <section>
-          <MagazineCard className="min-w-0 overflow-hidden">
-            <div className="mb-5 flex items-center justify-between">
-              <div className="inline-flex items-center gap-2 rounded-full border border-sky-500/20 bg-sky-500/10 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-sky-600">
-                <CloudRain size={13} />
-                Extended Forecast
-              </div>
-              <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                Next {weatherData.forecast.length} Days
-              </div>
-            </div>
-            <div className="relative">
-              <div className="flex gap-3 overflow-x-auto pb-4 no-scrollbar sm:grid sm:grid-cols-2 sm:overflow-visible sm:pb-0 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
-                {weatherData.forecast.map((day) => (
-                  <div
-                    key={day.date}
-                    className="flex min-w-32 flex-col items-center rounded-2xl border border-border bg-secondary/20 p-4 transition-colors hover:bg-secondary/30 sm:min-w-0"
-                  >
-                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                      {new Date(day.date).toLocaleDateString('ja-JP', {
-                        month: 'numeric',
-                        day: 'numeric',
-                        weekday: 'short',
-                      })}
-                    </span>
-                    <span className="my-2 text-3xl" role="img" aria-label={day.text}>
-                      {day.condition}
-                    </span>
-                    <div className="flex items-baseline gap-1.5 font-bold">
-                      <span className="text-sm text-foreground">{day.tempMax}°</span>
-                      <span className="text-xs text-muted-foreground">/ {day.tempMin}°</span>
-                    </div>
-                    <span className="mt-1 text-[10px] font-bold text-foreground line-clamp-1">
-                      {day.text}
-                    </span>
-                    <div className="mt-3 w-full space-y-2 border-t border-border/50 pt-3">
-                      <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-tight text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                          <Umbrella size={10} className="text-sky-500" /> Rain
-                        </span>
-                        <span className="text-foreground">{day.rainChance}%</span>
-                      </div>
-                      <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-tight text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                          <Sun size={10} className="text-amber-500" /> UV
-                        </span>
-                        <span className="text-foreground">{day.uvIndex}</span>
-                      </div>
-                      <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-tight text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                          <Wind size={10} className="text-stone-400" /> Wind
-                        </span>
-                        <span className="text-foreground">{day.windSpeed}m/s</span>
-                      </div>
-                      <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-tight text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                          <Sunrise size={10} className="text-amber-500" /> Rise
-                        </span>
-                        <span className="text-foreground">{day.sunrise}</span>
-                      </div>
-                      <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-tight text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                          <Sunset size={10} className="text-rose-500" /> Set
-                        </span>
-                        <span className="text-foreground">{day.sunset}</span>
-                      </div>
-                    </div>
+            {/* Weather & Briefing Grid */}
+            <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <MagazineCard padding="none" className="bg-sky-500/[0.03] border-sky-500/10 p-6 md:p-8">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="inline-flex items-center gap-2 rounded-full bg-sky-500/10 px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-sky-600 border border-sky-500/20">
+                    <CloudRain size={13} />
+                    Briefing
                   </div>
+                  <Sun size={20} className="text-amber-500" />
+                </div>
+                <h3 className="text-2xl font-black mb-4">今日の持ち物</h3>
+                <div className="space-y-3">
+                  {packingRecommendations.length > 0 ? (
+                    packingRecommendations.slice(0, 3).map((item) => (
+                      <div key={item.name} className="flex items-center gap-3 p-3 rounded-2xl bg-white/50 border border-sky-500/5 dark:bg-card/40">
+                        <div className="h-2 w-2 rounded-full bg-sky-400" />
+                        <span className="text-sm font-bold text-foreground">{item.name}</span>
+                        <span className="text-[10px] text-muted-foreground ml-auto">{item.reason}</span>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-sm text-muted-foreground">特に追加の持ち物はありません。</p>
+                  )}
+                </div>
+              </MagazineCard>
+
+              <MagazineCard padding="none" className="p-6 md:p-8 bg-linear-to-br from-background to-secondary/10">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="inline-flex items-center gap-2 rounded-full bg-secondary/60 px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-muted-foreground border border-border/40">
+                    <Clock size={13} />
+                    Current Status
+                  </div>
+                </div>
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-bold text-muted-foreground">今日の予定</span>
+                    <span className="text-xl font-black">{briefingEvents.length} 件</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-bold text-muted-foreground">予約確定済み</span>
+                    <span className="text-xl font-black text-emerald-600">{briefingEvents.filter(e => e.isConfirmed).length} 件</span>
+                  </div>
+                  <div className="pt-4 border-t border-border/40">
+                    <div className="flex items-center gap-2 text-[10px] font-black text-primary uppercase tracking-widest">
+                      <TrendingUp size={12} />
+                      Next Step Insight
+                    </div>
+                    <p className="mt-2 text-sm font-medium text-muted-foreground leading-relaxed">
+                      {delayInsight.narrative}
+                    </p>
+                  </div>
+                </div>
+              </MagazineCard>
+            </motion.div>
+
+            {/* AI Advisor Panel */}
+            <motion.div variants={itemVariants}>
+              <AdvisorConciergePanel slug={trip.slug} />
+            </motion.div>
+          </motion.div>
+        )}
+
+        {/* --- Safety Tab: Emergency & Warnings --- */}
+        {activeTab === 'safety' && (
+          <motion.div
+            key="safety"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            className="space-y-6"
+          >
+            <motion.div variants={itemVariants}>
+              <MagazineCard padding="none" className="border-rose-500/20 bg-rose-500/[0.02] overflow-hidden">
+                <div className="bg-rose-500 p-8 text-white">
+                  <div className="flex items-center justify-between mb-6">
+                    <ShieldAlert size={32} />
+                    <button onClick={copyEmergencyCard} className="p-2 rounded-xl bg-white/20 hover:bg-white/30 transition-colors">
+                      <Copy size={20} />
+                    </button>
+                  </div>
+                  <h3 className="text-3xl font-black tracking-tight">Emergency Card</h3>
+                  <p className="mt-2 text-sm font-bold text-rose-100 opacity-80 uppercase tracking-widest">緊急時の重要情報</p>
+                </div>
+                
+                <div className="p-8 space-y-8">
+                  {emergencySnapshot.hotels.length > 0 && (
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-rose-600">
+                        <Hotel size={14} />
+                        Hotels
+                      </div>
+                      <div className="grid gap-3">
+                        {emergencySnapshot.hotels.map((item) => (
+                          <a key={item.label} href={item.href || '#'} target="_blank" rel="noreferrer" className="group flex items-center gap-4 p-4 rounded-2xl bg-white border border-rose-100 hover:border-rose-300 transition-all shadow-sm">
+                            <div className="min-w-0 flex-1">
+                              <div className="font-bold text-foreground">{item.label}</div>
+                              <div className="text-xs text-muted-foreground truncate">{item.description}</div>
+                            </div>
+                            <ExternalLink size={14} className="text-muted-foreground group-hover:text-rose-500 transition-colors" />
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {emergencySnapshot.reservations.length > 0 && (
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-rose-600">
+                        <Ticket size={14} />
+                        Reservations
+                      </div>
+                      <div className="grid gap-3">
+                        {emergencySnapshot.reservations.map((item) => (
+                          <a key={item.label} href={item.href || '#'} target="_blank" rel="noreferrer" className="group flex items-center gap-4 p-4 rounded-2xl bg-white border border-rose-100 hover:border-rose-300 transition-all shadow-sm">
+                            <div className="min-w-0 flex-1">
+                              <div className="font-bold text-foreground">{item.label}</div>
+                              <div className="text-xs text-muted-foreground truncate">{item.description}</div>
+                            </div>
+                            <ExternalLink size={14} className="text-muted-foreground group-hover:text-rose-500 transition-colors" />
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <div className="bg-rose-50 p-4 text-center border-t border-rose-100">
+                  <p className="text-[10px] font-bold text-rose-500">オフラインでもこの情報は保持されます</p>
+                </div>
+              </MagazineCard>
+            </motion.div>
+
+            <motion.div variants={itemVariants}>
+              <h3 className="text-lg font-black px-2 mb-4">注意事項・Tips</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {warningTips.map((tip) => (
+                  <MagazineCard key={tip.id} className="border-amber-500/20 bg-amber-500/5 p-6">
+                    <div className="flex gap-4">
+                      <div className="h-10 w-10 shrink-0 rounded-2xl bg-amber-500/20 flex items-center justify-center text-amber-600">
+                        <AlertTriangle size={20} />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="font-black text-foreground mb-1">{tip.title}</div>
+                        <p className="text-xs text-muted-foreground leading-relaxed">{tip.body}</p>
+                      </div>
+                    </div>
+                  </MagazineCard>
                 ))}
               </div>
-              <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-linear-to-l from-card to-transparent sm:hidden" />
-            </div>
-          </MagazineCard>
-        </section>
-      )}
+            </motion.div>
+          </motion.div>
+        )}
 
-      <section className="grid gap-6 lg:grid-cols-3">
-        <MagazineCard className="min-w-0">
-          <div className="mb-6 flex items-center gap-3">
-            <TimerReset className="shrink-0 text-primary" />
-            <h3 className="text-lg font-black">遅延伝播アシスト</h3>
-          </div>
-          <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap">
-            {[0, 10, 15, 30, 45, 60].map((minutes) => (
-              <button
-                key={minutes}
-                onClick={() => setDelayMinutes(minutes)}
-                className={cn(
-                  'min-h-11 rounded-full border px-3 py-2 text-xs font-black transition-colors sm:px-4',
-                  delayMinutes === minutes
-                    ? 'border-primary bg-primary text-primary-foreground'
-                    : 'border-border bg-secondary/40'
-                )}
-              >
-                {minutes}分
-              </button>
-            ))}
-          </div>
-          <div className="mt-6 rounded-3xl border border-border bg-secondary/25 p-4 text-sm leading-relaxed text-muted-foreground">
-            {delayInsight.narrative}
-          </div>
-          {delayInsight.conflict && (
-            <div className="mt-4 rounded-3xl border border-rose-500/20 bg-rose-500/5 p-4">
-              <div className="text-[10px] font-black uppercase tracking-[0.16em] text-rose-500">
-                Late Risk
-              </div>
-              <div className="mt-2 text-sm font-black text-foreground">
-                {delayInsight.conflict.time} {delayInsight.conflict.title}
-              </div>
-              <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-                約 {delayInsight.conflict.latenessMinutes} 分遅れの見込みです。
-              </p>
-            </div>
-          )}
-          {delayInsight.recoveryPlans.length > 0 && (
-            <div className="mt-4 space-y-3">
-              {delayInsight.recoveryPlans.slice(0, 2).map((plan) => (
-                <div key={plan.label} className="rounded-2xl border border-border p-4">
-                  <div className="text-sm font-black text-foreground">{plan.label}</div>
-                  <div className="mt-1 text-xs text-muted-foreground">
-                    {plan.recoveredMinutes}分ぶん回復できます。
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-          {nextEvent && (
-            <button
-              onClick={() =>
-                setSkippedIds((ids) => (ids.includes(nextEvent.id) ? ids : [...ids, nextEvent.id]))
-              }
-              className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-full px-1 text-xs font-black uppercase tracking-[0.12em] text-rose-500 sm:tracking-widest"
-            >
-              <RotateCcw size={14} />
-              この予定をスキップ
-            </button>
-          )}
-        </MagazineCard>
-
-        <MagazineCard className="min-w-0">
-          <div className="mb-6 flex items-center gap-3">
-            <CloudRain className="shrink-0 text-sky-500" />
-            <h3 className="text-lg font-black">AIの代替案提案</h3>
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            {(['rain', 'crowd', 'tired', 'budget'] as Trigger[]).map((trigger) => (
-              <button
-                key={trigger}
-                onClick={() => fetchAlternatives(trigger)}
-                className={cn(
-                  'min-h-11 rounded-full border px-3 py-2 text-xs font-black transition-colors',
-                  aiTrigger === trigger
-                    ? 'border-primary bg-primary text-primary-foreground'
-                    : 'border-border bg-secondary/20'
-                )}
-              >
-                {aiFallbackPrompt[trigger]}
-              </button>
-            ))}
-          </div>
-          {isAiLoading ? (
-            <div className="mt-5 flex min-h-40 items-center justify-center rounded-3xl border border-border bg-secondary/20 text-muted-foreground">
-              <Loader2 size={18} className="animate-spin" />
-            </div>
-          ) : (
-            <div className="mt-5 space-y-3">
-              {aiSuggestions.length > 0 ? (
-                aiSuggestions.map((item) => (
-                  <div key={item.title} className="rounded-3xl border border-border p-4">
-                    <div className="text-sm font-black text-foreground">{item.title}</div>
-                    <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-                      {item.reason}
-                    </p>
-                    <div className="mt-3 text-xs font-bold text-primary">{item.action}</div>
-                  </div>
-                ))
-              ) : (
-                <div className="rounded-3xl border border-border bg-secondary/20 p-4 text-sm leading-relaxed text-muted-foreground">
-                  トリガーを押すと、現在の旅程から近い代替案を提案します。
-                </div>
-              )}
-            </div>
-          )}
-        </MagazineCard>
-
-        <MagazineCard className="min-w-0">
-          <div className="mb-6 flex items-center gap-3">
-            <ArrowRightLeft className="shrink-0 text-emerald-500" />
-            <h3 className="text-lg font-black">共同精算の速報</h3>
-          </div>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <div className="rounded-2xl bg-secondary/30 p-4">
-              <div className="text-[10px] font-black uppercase tracking-[0.16em] text-muted-foreground">
-                Total
-              </div>
-              <div className="mt-2 text-xl font-black text-foreground">
-                {currency(settlement.total)}
-              </div>
-            </div>
-            <div className="rounded-2xl bg-emerald-500/10 p-4 text-emerald-600">
-              <div className="text-[10px] font-black uppercase tracking-[0.16em]">Balance</div>
-              <div className="mt-2 text-sm font-black">{settlement.instruction}</div>
-            </div>
-          </div>
-          <div className="mt-4 space-y-3">
-            {settlement.expenseEvents.slice(0, 3).map((event) => (
-              <div key={event.id} className="rounded-2xl border border-border p-4">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="min-w-0">
-                    <div className="truncate text-sm font-black text-foreground">{event.title}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {event.time} / {currency(event.actualExpense || 0)}
+        {/* --- Tools Tab: AI, Delay, Utilities --- */}
+        {activeTab === 'tools' && (
+          <motion.div
+            key="tools"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            className="space-y-6"
+          >
+            {/* Delay & AI Row */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <motion.div variants={itemVariants}>
+                <MagazineCard padding="none" className={cn(
+                  "h-full border-l-4 transition-colors p-8",
+                  delayMinutes === 0 ? "border-emerald-500 bg-emerald-500/[0.02]" : "border-rose-500 bg-rose-500/[0.02]"
+                )}>
+                  <div className="flex items-center gap-3 mb-8">
+                    <div className={cn("p-3 rounded-2xl text-white", delayMinutes === 0 ? "bg-emerald-500" : "bg-rose-500")}>
+                      <TimerReset size={20} />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-black">遅延アシスト</h3>
+                      <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Adjust Timeline</span>
                     </div>
                   </div>
-                  <Banknote size={16} className="shrink-0 text-emerald-600" />
-                </div>
-                <div className="mt-3 grid grid-cols-3 gap-2">
-                  {payerLabels.map((option) => (
-                    <button
-                      key={option.value}
-                      onClick={() => updatePayer(event.id, option.value)}
-                      className={cn(
-                        'min-h-10 rounded-full border px-2 text-[10px] font-black transition-colors',
-                        (payers[event.id] || 'shared') === option.value
-                          ? 'border-primary bg-primary text-primary-foreground'
-                          : 'border-border bg-secondary/20 text-muted-foreground'
-                      )}
-                    >
-                      {option.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </MagazineCard>
-      </section>
 
-      <section className="grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
-        <MagazineCard className="min-w-0">
-          <div className="mb-6 flex items-center gap-3">
-            <Search className="shrink-0 text-primary" />
-            <h3 className="text-lg font-black">周辺便利スポット</h3>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            {utilityTypes.map((item) => (
-              <a
-                key={item.label}
-                href={mapsSearchUrl(item.query, currentBase)}
-                target="_blank"
-                rel="noreferrer"
-                className="flex min-h-24 flex-col items-center justify-center gap-3 rounded-2xl border border-border bg-secondary/20 p-4 text-center transition-colors hover:border-primary/40 sm:p-5"
-              >
-                <item.icon size={20} className="text-primary" />
-                <span className="text-xs font-black">{item.label}</span>
-              </a>
-            ))}
-          </div>
-        </MagazineCard>
+                  <div className="flex flex-wrap gap-2 mb-8">
+                    {[0, 15, 30, 45, 60].map((mins) => (
+                      <button
+                        key={mins}
+                        onClick={() => setDelayMinutes(mins)}
+                        className={cn(
+                          "flex-1 min-w-[3rem] py-3 rounded-2xl border text-xs font-black transition-all active:scale-95",
+                          delayMinutes === mins ? "bg-foreground text-background border-foreground shadow-lg" : "bg-white border-border text-muted-foreground hover:border-primary"
+                        )}
+                      >
+                        {mins}分
+                      </button>
+                    ))}
+                  </div>
 
-        <MagazineCard className="min-w-0">
-          <div className="mb-6 flex items-center gap-3">
-            <MessageSquarePlus className="shrink-0 text-primary" />
-            <h3 className="text-lg font-black">共有メモ / チェックイン</h3>
-          </div>
-          <div className="flex gap-2">
-            <input
-              value={noteBody}
-              onChange={(event) => setNoteBody(event.target.value)}
-              onKeyDown={(event) => event.key === 'Enter' && addNote()}
-              placeholder="今のメモを残す"
-              className="min-h-12 min-w-0 flex-1 rounded-2xl border border-border bg-background px-4 py-3 text-base outline-none focus:border-primary sm:text-sm"
-            />
-            <button
-              onClick={addNote}
-              className="flex min-h-12 min-w-12 items-center justify-center rounded-2xl bg-primary px-4 text-primary-foreground sm:px-5"
-              aria-label="メモを追加"
-            >
-              <MessageSquarePlus size={18} />
-            </button>
-          </div>
-          <div className="mt-6 grid gap-3 md:grid-cols-2">
-            {activeEvents.slice(Math.max(0, nextIndex), Math.max(0, nextIndex) + 4).map((event) => (
-              <button
-                key={event.id}
-                onClick={() => toggleCheckin(event.id)}
-                className="flex min-h-16 items-center gap-3 rounded-2xl border border-border p-4 text-left transition-colors hover:border-primary/40"
-              >
-                <CheckCircle2
-                  className={cn(
-                    'shrink-0',
-                    checkedEventIds.includes(event.id)
-                      ? 'text-emerald-500'
-                      : 'text-muted-foreground/40'
+                  <div className="p-4 rounded-2xl bg-white border border-border shadow-sm text-sm text-muted-foreground leading-relaxed">
+                    {delayInsight.narrative}
+                  </div>
+                </MagazineCard>
+              </motion.div>
+
+              <motion.div variants={itemVariants}>
+                <MagazineCard padding="none" className="h-full p-8 border-primary/20 bg-primary/[0.02]">
+                  <div className="flex items-center gap-3 mb-8">
+                    <div className="p-3 rounded-2xl bg-primary text-primary-foreground">
+                      <Sparkles size={20} />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-black">AI 代替案</h3>
+                      <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Smart Rescheduling</span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 mb-6">
+                    {(['rain', 'crowd', 'tired', 'budget'] as Trigger[]).map((t) => (
+                      <button
+                        key={t}
+                        onClick={() => fetchAlternatives(t)}
+                        className={cn(
+                          "flex flex-col items-center justify-center gap-1 py-4 rounded-2xl border transition-all active:scale-95",
+                          aiTrigger === t ? "bg-primary text-primary-foreground border-primary shadow-lg" : "bg-white border-border text-muted-foreground hover:border-primary"
+                        )}
+                      >
+                        {t === 'rain' && <CloudRain size={16} />}
+                        {t === 'crowd' && <Users size={16} />}
+                        {t === 'tired' && <HeartPulse size={16} />}
+                        {t === 'budget' && <Banknote size={16} />}
+                        <span className="text-[10px] font-black uppercase tracking-widest">{t}</span>
+                      </button>
+                    ))}
+                  </div>
+
+                  {isAiLoading ? (
+                    <div className="flex flex-col items-center justify-center p-8 rounded-2xl border border-dashed border-border bg-white/50">
+                      <Loader2 size={24} className="animate-spin text-primary" />
+                    </div>
+                  ) : aiSuggestions.length > 0 ? (
+                    <div className="space-y-3">
+                      {aiSuggestions.slice(0, 1).map((s, idx) => (
+                        <div key={idx} className="p-5 rounded-2xl bg-white border border-primary/10 shadow-sm">
+                          <div className="text-sm font-black text-foreground mb-2">{s.title}</div>
+                          <p className="text-xs text-muted-foreground leading-relaxed">{s.reason}</p>
+                          <div className="mt-4 pt-4 border-t border-border/50 text-xs font-bold text-primary flex items-center gap-2">
+                            <ChevronRight size={14} /> {s.action}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-muted-foreground text-center py-4">トリガーを選択して代替案を表示</p>
                   )}
-                />
-                <span className="min-w-0">
-                  <span className="block truncate text-sm font-bold">
-                    {event.time} {event.title}
-                  </span>
-                  <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                    Day {event.dayNumber}
-                  </span>
-                </span>
-              </button>
-            ))}
-          </div>
-          {notes.length > 0 && (
-            <div className="mt-6 space-y-2 border-t border-border pt-6">
-              {notes.slice(0, 4).map((note) => (
-                <div
-                  key={note.id}
-                  className="wrap-break-word rounded-2xl bg-secondary/30 p-4 text-sm font-medium text-muted-foreground"
-                >
-                  {note.body}
-                </div>
-              ))}
+                </MagazineCard>
+              </motion.div>
             </div>
-          )}
-        </MagazineCard>
-      </section>
 
-      <section className="grid gap-6 lg:grid-cols-3">
-        <MagazineCard className="min-w-0 lg:col-span-2">
-          <div className="mb-6 flex items-center gap-3">
-            <AlertTriangle className="shrink-0 text-amber-500" />
-            <h3 className="text-lg font-black">注意事項</h3>
-          </div>
-          <div className="grid gap-3 md:grid-cols-2">
-            {warningTips.slice(0, 6).map((tip) => (
-              <div
-                key={tip.id}
-                className="min-w-0 rounded-2xl border border-amber-500/20 bg-amber-500/5 p-4"
-              >
-                <div className="flex items-start gap-2">
-                  <AlertTriangle size={16} className="mt-0.5 shrink-0 text-amber-500" />
-                  <div className="min-w-0">
-                    <div className="wrap-break-word text-sm font-black">{tip.title}</div>
-                    <p className="mt-1 line-clamp-3 text-xs leading-relaxed text-muted-foreground">
-                      {tip.body}
-                    </p>
+            {/* Utility Spots */}
+            <motion.div variants={itemVariants}>
+              <MagazineCard padding="none" className="p-8">
+                <div className="flex items-center gap-3 mb-8">
+                  <div className="p-3 rounded-2xl bg-secondary/60">
+                    <Search size={20} />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-black">周辺便利スポット</h3>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Near {currentBase}</span>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </MagazineCard>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  {utilityTypes.map((item) => (
+                    <a key={item.label} href={mapsSearchUrl(item.query, currentBase)} target="_blank" rel="noreferrer" className="group flex flex-col items-center gap-3 p-6 rounded-3xl border border-border bg-white hover:border-primary transition-all shadow-sm active:scale-95">
+                      <item.icon size={24} className="text-primary group-hover:scale-110 transition-transform" />
+                      <span className="text-xs font-black">{item.label}</span>
+                    </a>
+                  ))}
+                </div>
+              </MagazineCard>
+            </motion.div>
+          </motion.div>
+        )}
 
-        <MagazineCard className="min-w-0">
-          <div className="mb-6 flex items-center gap-3">
-            <FileText className="shrink-0 text-primary" />
-            <h3 className="text-lg font-black">旅レポート</h3>
-          </div>
-          <div className="wrap-break-word rounded-2xl border border-border bg-secondary/20 p-4 text-xs leading-relaxed text-muted-foreground whitespace-pre-wrap">
-            {reportText}
-          </div>
-          <button
-            onClick={downloadReport}
-            className="mt-4 flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-foreground px-4 py-3 text-[10px] font-black uppercase tracking-[0.16em] text-background sm:tracking-widest"
+        {/* --- Logistics Tab: Expense, Memo, Reports --- */}
+        {activeTab === 'logistics' && (
+          <motion.div
+            key="logistics"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            className="space-y-6"
           >
-            <Download size={14} />
-            TXTをダウンロード
-          </button>
-          <button
-            onClick={downloadPdf}
-            disabled={isPdfLoading}
-            className="mt-3 flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl border border-border px-4 py-3 text-[10px] font-black uppercase tracking-[0.16em] text-foreground sm:tracking-widest"
-          >
-            <FileText size={14} />
-            {isPdfLoading ? 'PDFを生成中' : 'PDFをダウンロード'}
-          </button>
-        </MagazineCard>
-      </section>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Expense Card */}
+              <motion.div variants={itemVariants}>
+                <MagazineCard padding="none" className="p-8 border-emerald-500/20 bg-emerald-500/[0.02]">
+                  <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center gap-3">
+                      <div className="p-3 rounded-2xl bg-emerald-500 text-white shadow-lg shadow-emerald-500/20">
+                        <Banknote size={20} />
+                      </div>
+                      <h3 className="text-xl font-black">共同精算</h3>
+                    </div>
+                    <Receipt size={20} className="text-emerald-500/40" />
+                  </div>
 
-      <section className="rounded-3xl border border-border bg-secondary/20 p-4 sm:rounded-[2rem] sm:p-5">
-        <div className="flex flex-col gap-2 text-xs font-bold leading-relaxed text-muted-foreground sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
-          <Smartphone size={16} className="shrink-0 text-primary" />
-          <span>このサイトはホーム画面追加とオフラインキャッシュに対応しました。</span>
-          <Sparkles size={14} className="hidden shrink-0 text-primary sm:block" />
-          <span>
-            緊急カードはこの画面を一度開いておけば、通信が弱い場所でも再表示しやすくなります。
-          </span>
-          <Train size={14} className="hidden shrink-0 text-primary sm:block" />
+                  <div className="grid grid-cols-2 gap-4 mb-8">
+                    <div className="p-5 rounded-3xl bg-white border border-emerald-100 shadow-sm">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block mb-1">Total Spent</span>
+                      <span className="text-xl font-black text-foreground">{currency(settlement.total)}</span>
+                    </div>
+                    <div className="p-5 rounded-3xl bg-emerald-500 text-white shadow-lg shadow-emerald-500/10">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-emerald-100 block mb-1">Settlement</span>
+                      <span className="text-xs font-bold leading-tight line-clamp-2">{settlement.instruction}</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    {settlement.expenseEvents.slice(0, 3).map((e) => (
+                      <div key={e.id} className="p-4 rounded-2xl bg-white border border-border">
+                        <div className="flex justify-between items-center mb-4">
+                          <span className="text-sm font-black truncate max-w-[150px]">{e.title}</span>
+                          <span className="text-xs font-bold text-emerald-600">{currency(e.actualExpense || 0)}</span>
+                        </div>
+                        <div className="flex gap-2">
+                          {payerLabels.map((p) => (
+                            <button
+                              key={p.value}
+                              onClick={() => updatePayer(e.id, p.value)}
+                              className={cn(
+                                "flex-1 py-2 rounded-xl text-[10px] font-black transition-all",
+                                (payers[e.id] || 'shared') === p.value ? "bg-emerald-500 text-white shadow-md" : "bg-secondary/40 text-muted-foreground hover:bg-secondary/60"
+                              )}
+                            >
+                              {p.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </MagazineCard>
+              </motion.div>
+
+              {/* Memory Log & Memo */}
+              <motion.div variants={itemVariants} className="space-y-6">
+                <MagazineCard padding="none" className="p-8">
+                  <div className="flex items-center gap-3 mb-8">
+                    <HeartPulse size={24} className="text-rose-500" />
+                    <h3 className="text-xl font-black">旅の温度ログ</h3>
+                  </div>
+                  <div className="flex justify-between gap-2 mb-6">
+                    {Object.entries(TEMPERATURE_MOODS).map(([val, cfg]) => (
+                      <button
+                        key={val}
+                        onClick={() => setTemperatureMood(val as TemperatureMood)}
+                        className={cn(
+                          "flex-1 flex flex-col items-center justify-center p-3 rounded-2xl border transition-all active:scale-90",
+                          temperatureMood === val ? "bg-rose-500 border-rose-500 text-white shadow-lg" : "bg-white border-border grayscale hover:grayscale-0"
+                        )}
+                      >
+                        <span className="text-2xl mb-1">{cfg.emoji}</span>
+                        <span className="text-[8px] font-black uppercase tracking-widest">{cfg.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                  <textarea
+                    value={temperatureNote}
+                    onChange={(e) => setTemperatureNote(e.target.value)}
+                    placeholder="いまの気持ちを一言..."
+                    className="w-full h-24 p-4 rounded-2xl border border-border bg-secondary/10 text-sm outline-none focus:border-rose-500/50 transition-all resize-none"
+                  />
+                  <button onClick={saveTemperatureEntry} className="w-full mt-4 py-4 rounded-2xl bg-foreground text-background text-xs font-black uppercase tracking-widest shadow-xl transition-all hover:scale-[1.02] active:scale-95">
+                    Save Log
+                  </button>
+                </MagazineCard>
+
+                <MagazineCard padding="none" className="p-8">
+                  <div className="flex items-center gap-3 mb-6">
+                    <StickyNote size={24} className="text-amber-500" />
+                    <h3 className="text-xl font-black">共有メモ</h3>
+                  </div>
+                  <div className="flex gap-2">
+                    <input
+                      value={noteBody}
+                      onChange={(e) => setNoteBody(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && addNote()}
+                      placeholder="ふたりのメモを記録"
+                      className="flex-1 px-4 py-3 rounded-2xl border border-border bg-secondary/10 text-sm outline-none focus:border-amber-500/50"
+                    />
+                    <button onClick={addNote} className="p-4 rounded-2xl bg-amber-500 text-white shadow-lg shadow-amber-500/20 active:scale-95">
+                      <MessageSquarePlus size={20} />
+                    </button>
+                  </div>
+                </MagazineCard>
+              </motion.div>
+            </div>
+
+            {/* Reports Section */}
+            <motion.div variants={itemVariants}>
+              <MagazineCard padding="none" className="p-8 bg-linear-to-br from-background to-secondary/10">
+                <div className="flex flex-col md:flex-row gap-8 items-start">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-3 mb-6">
+                      <FileText size={24} className="text-primary" />
+                      <h3 className="text-xl font-black">旅レポート・書き出し</h3>
+                    </div>
+                    <div className="p-6 rounded-3xl bg-white/80 border border-border backdrop-blur-sm shadow-inner text-xs leading-relaxed text-muted-foreground whitespace-pre-wrap max-h-48 overflow-y-auto no-scrollbar">
+                      {reportText}
+                    </div>
+                  </div>
+                  <div className="w-full md:w-64 space-y-3">
+                    <button onClick={downloadReport} className="w-full flex items-center justify-center gap-3 py-4 rounded-2xl bg-secondary/40 border border-border text-xs font-black uppercase tracking-widest hover:bg-secondary/60 transition-colors">
+                      <Download size={16} /> TXT Export
+                    </button>
+                    <button onClick={downloadPdf} disabled={isPdfLoading} className="w-full flex items-center justify-center gap-3 py-4 rounded-2xl bg-foreground text-background text-xs font-black uppercase tracking-widest shadow-xl hover:scale-[1.02] active:scale-95 transition-all">
+                      {isPdfLoading ? <Loader2 className="animate-spin" size={16} /> : <FileText size={16} />}
+                      PDF Export
+                    </button>
+                  </div>
+                </div>
+              </MagazineCard>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* --- Footer Status Tip --- */}
+      <motion.section 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1 }}
+        className="rounded-[2.5rem] border border-border/40 bg-secondary/5 p-6 backdrop-blur-md"
+      >
+        <div className="flex items-center gap-4 text-[10px] font-bold text-muted-foreground leading-relaxed">
+          <Smartphone size={16} className="text-primary animate-bounce" />
+          <span>ホーム画面に追加すると、オフラインでも緊急カードが快適に動作します。</span>
         </div>
-      </section>
+      </motion.section>
     </div>
   );
 }

@@ -123,6 +123,7 @@ model Event {
   time          String
   type          String
   title         String?
+  formalName    String?
   desc          String?
   tag           String?
   tagLabel      String?

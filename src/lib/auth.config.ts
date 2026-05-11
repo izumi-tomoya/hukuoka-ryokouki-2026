@@ -6,6 +6,13 @@ export default {
     Google({
       clientId: process.env.AUTH_GOOGLE_ID,
       clientSecret: process.env.AUTH_GOOGLE_SECRET,
+      authorization: {
+        params: {
+          prompt: "select_account",
+          access_type: "offline",
+          response_type: "code",
+        },
+      },
     }),
   ],
   callbacks: {
@@ -26,7 +33,8 @@ export default {
   },
   session: {
     strategy: "jwt",
-    maxAge: 2 * 60 * 60, // 2 hours
+    maxAge: 30 * 24 * 60 * 60, // 30 days (最長で安全な標準期間)
+    updateAge: 24 * 60 * 60,   // 24 hours (セッションを更新する頻度)
   },
   pages: {
     signIn: "/auth/signin",

@@ -62,7 +62,7 @@ export default async function RootLayout({
       </head>
       <body className="font-sans antialiased bg-background dark:bg-zinc-950 text-foreground dark:text-zinc-100 flex flex-col min-h-screen transition-colors duration-300">
         <SessionProvider session={session}>
-          <Header session={session} />
+          <Header />
           <Suspense fallback={<div className="flex-1 animate-pulse bg-stone-100 dark:bg-zinc-900" />}>
             <main className="grow">
               {children}

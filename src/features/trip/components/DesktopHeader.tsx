@@ -6,15 +6,12 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { User, Menu, X } from 'lucide-react';
-import { Session } from 'next-auth';
+import { useSession } from 'next-auth/react';
 import { getNavItems, TripNavData } from '../constants/navigationConfig';
 import { getTripBySlug } from '@/features/trip/api/tripActions';
 
-interface HeaderProps {
-  session: Session | null;
-}
-
-export default function Header({ session }: HeaderProps) {
+export default function Header() {
+  const { data: session } = useSession();
   const [isOpen, setIsOpen] = useState(false);
   const [tripData, setTripData] = useState<TripNavData | null>(null);
   const pathname = usePathname();

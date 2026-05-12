@@ -17,31 +17,59 @@ export default async function TripAssistPage({ params }: { params: Promise<{ slu
   const weather = await getWeatherData(trip.location).catch(() => null);
 
   const events = trip.days.flatMap((day) =>
-    day.events.map((event) => ({
-      id: event.id,
-      dayNumber: day.dayNumber,
-      date: ensureDate(day.date).toISOString(),
-      time: event.time,
-      type: event.type,
-      title: event.title || event.foodName || "Untitled",
-      formalName: event.formalName || undefined,
-      desc: event.desc || event.foodDesc || undefined,
-      tag: event.tag || undefined,
-      locationUrl: event.locationUrl || undefined,
-      isConfirmed: event.isConfirmed,
-      plannedBudget: event.plannedBudget || 0,
-      actualExpense: event.actualExpense || 0,
-      transitSteps: event.transitSteps.map((step) => ({
-        time: step.time,
-        station: step.station,
-        mode: step.mode,
-        lineName: step.lineName || undefined,
-        duration: step.duration || undefined,
-        fare: step.fare || undefined,
-        platform: step.platform || undefined,
-        exit: step.exit || undefined,
-      })),
-    }))
+    day.events.map((event) => {
+      const e = event as {
+        id: string;
+        time: string;
+        type: string;
+        title?: string | null;
+        formalName?: string | null;
+        desc?: string | null;
+        foodName?: string | null;
+        foodDesc?: string | null;
+        tag?: string | null;
+        locationUrl?: string | null;
+        isConfirmed: boolean;
+        plannedBudget?: number | null;
+        actualExpense?: number | null;
+        transitSteps: Array<{
+          time: string;
+          station: string;
+          mode: string;
+          lineName?: string | null;
+          duration?: string | null;
+          fare?: string | null;
+          platform?: string | null;
+          exit?: string | null;
+        }>;
+      };
+
+      return {
+        id: e.id,
+        dayNumber: day.dayNumber,
+        date: ensureDate(day.date).toISOString(),
+        time: e.time,
+        type: e.type,
+        title: e.title || e.foodName || "Untitled",
+        formalName: e.formalName || undefined,
+        desc: e.desc || e.foodDesc || undefined,
+        tag: e.tag || undefined,
+        locationUrl: e.locationUrl || undefined,
+        isConfirmed: e.isConfirmed,
+        plannedBudget: e.plannedBudget || 0,
+        actualExpense: e.actualExpense || 0,
+        transitSteps: e.transitSteps.map((step) => ({
+          time: step.time,
+          station: step.station,
+          mode: step.mode,
+          lineName: step.lineName || undefined,
+          duration: step.duration || undefined,
+          fare: step.fare || undefined,
+          platform: step.platform || undefined,
+          exit: step.exit || undefined,
+        })),
+      };
+    })
   );
 
   return (

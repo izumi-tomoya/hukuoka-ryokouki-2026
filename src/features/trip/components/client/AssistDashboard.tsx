@@ -108,6 +108,8 @@ type Trigger = 'rain' | 'crowd' | 'tired' | 'budget';
 const utilityTypes = [
   { label: 'コンビニ', query: 'convenience store', icon: Coffee },
   { label: 'トイレ', query: 'public toilet', icon: ShieldAlert },
+  { label: 'ドラッグストア', query: 'drugstore', icon: HeartPulse },
+  { label: 'ATM', query: 'ATM', icon: Banknote },
   { label: 'ロッカー', query: 'coin locker', icon: Ticket },
   { label: 'タクシー', query: 'taxi stand', icon: Navigation },
 ];
@@ -747,16 +749,36 @@ export default function AssistDashboard({
                   </div>
                   <div>
                     <h3 className="text-xl font-black">周辺便利スポット</h3>
-                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Near {currentBase}</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Near {trip.location}</span>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                   {utilityTypes.map((item) => (
-                    <a key={item.label} href={mapsSearchUrl(item.query, currentBase)} target="_blank" rel="noreferrer" className="group flex flex-col items-center gap-3 p-6 rounded-3xl border border-border bg-white hover:border-primary transition-all shadow-sm active:scale-95">
+                    <a key={item.label} href={mapsSearchUrl(item.query, trip.location)} target="_blank" rel="noreferrer" className="group flex flex-col items-center gap-3 p-6 rounded-3xl border border-border bg-white hover:border-primary transition-all shadow-sm active:scale-95">
                       <item.icon size={24} className="text-primary group-hover:scale-110 transition-transform" />
                       <span className="text-xs font-black">{item.label}</span>
                     </a>
                   ))}
+                </div>
+
+                <div className="mt-8 pt-8 border-t border-border/40">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Navigation size={14} className="text-primary" />
+                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Current Context Search</span>
+                  </div>
+                  <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2 -mx-2 px-2">
+                    {['レストラン', 'カフェ', '駅', '展望台', 'お土産'].map(q => (
+                      <a 
+                        key={q} 
+                        href={mapsSearchUrl(q, currentBase)} 
+                        target="_blank" 
+                        rel="noreferrer"
+                        className="shrink-0 px-5 py-3 rounded-2xl bg-secondary/30 border border-border text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:bg-primary/5 hover:text-primary transition-all whitespace-nowrap"
+                      >
+                        {q} near {currentBase}
+                      </a>
+                    ))}
+                  </div>
                 </div>
               </MagazineCard>
             </motion.div>

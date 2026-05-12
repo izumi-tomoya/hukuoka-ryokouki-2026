@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import ClickableCard from '@/features/trip/components/client/ClickableCard';
 import ConfirmCheckbox from '@/features/trip/components/client/ConfirmCheckbox';
+import { EventActionButtons } from '@/features/trip/components/client/EventActionButtons';
 import YataiLiveTracker from '@/features/trip/components/client/YataiLiveTracker';
 import { SafeLink } from '@/features/trip/components/client/SafeLink';
 import Image from 'next/image';
@@ -81,7 +82,10 @@ function BasicCard({ event, isAdmin }: { event: TripEvent; isAdmin?: boolean }) 
             </div>
           )}
           {isAdmin && event.id && (
-            <ConfirmCheckbox eventId={event.id} initialConfirmed={!!event.isConfirmed} />
+            <div className="flex gap-2">
+              <EventActionButtons event={event} />
+              <ConfirmCheckbox eventId={event.id} initialConfirmed={!!event.isConfirmed} />
+            </div>
           )}
         </div>
       </div>

@@ -13,6 +13,7 @@ import ActionSummary from "@/features/trip/components/ActionSummary";
 import { getAllLocations } from "@/features/trip/api/tripActions";
 
 interface DayViewProps {
+  dayId?: string;
   events: TripEvent[];
   dayNumber: number;
   dayLabel?: string;
@@ -25,6 +26,7 @@ interface DayViewProps {
 }
 
 export default async function DayView({
+  dayId,
   events,
   dayNumber,
   dayLabel,
@@ -81,7 +83,12 @@ export default async function DayView({
           )}
         </div>
 
-        <EventFilterWrapper events={events} dayNumber={dayNumber as 1 | 2} isAdmin={isAdmin} />
+        <EventFilterWrapper 
+          dayId={dayId}
+          events={events} 
+          dayNumber={dayNumber as 1 | 2} 
+          isAdmin={isAdmin} 
+        />
 
         <CommonTipsSection tips={tips || []} isAdmin={isAdmin} />
       </Container>

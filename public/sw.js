@@ -23,6 +23,14 @@ self.addEventListener("fetch", (event) => {
   if (request.method !== "GET") return;
   if (!request.url.startsWith(self.location.origin)) return;
 
+  // 開発環境や Next.js の内部チャンクはキャッシュしない
+  const isNextInternal = request.url.includes("/_next/");
+  const isLocalhost = self.location.hostname === "localhost" || self.location.hostname === "127.0.0.1";
+
+  if (isNextInternal || isLocalhost) {
+    return; // ブラウザの通常処理に任せる
+  }
+
   event.respondWith(
     caches.match(request).then((cached) => {
       const network = fetch(request)

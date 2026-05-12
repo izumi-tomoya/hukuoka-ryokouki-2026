@@ -18,12 +18,13 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
 
   const events = day.events?.map(mapEventToTripEvent) ?? [];
   const session = await auth();
-  const isAdmin = !!session?.user?.isAdmin;
+  const isAdmin = !!session?.user?.isAdmin || process.env.NODE_ENV === 'development';
 
   const dateLabel = formatDateWithWeekday(day.date);
 
   return (
     <DayView
+      dayId={day.id}
       events={events}
       dayNumber={dayNumber}
       dayLabel={dateLabel}

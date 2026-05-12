@@ -4,12 +4,15 @@ import { useFilterStore } from "@/lib/store/useFilterStore";
 import { TripEvent } from "@/features/trip/types/trip";
 import CategoryFilter from "@/features/trip/components/CategoryFilter";
 import Timeline from "@/features/trip/components/Timeline";
+import AddPlanButton from "./AddPlanButton";
 
 export default function EventFilterWrapper({ 
+  dayId,
   events,
   dayNumber,
   isAdmin
 }: { 
+  dayId?: string;
   events: TripEvent[];
   dayNumber: 1 | 2;
   isAdmin?: boolean;
@@ -22,8 +25,17 @@ export default function EventFilterWrapper({
 
   return (
     <>
-      <CategoryFilter />
-      <Timeline events={filteredEvents} dayNumber={dayNumber} isAdmin={isAdmin} />
+      <div className="space-y-8">
+        <CategoryFilter />
+        
+        {isAdmin && dayId && (
+          <div className="animate-in fade-in slide-in-from-top-4 duration-700">
+            <AddPlanButton dayId={dayId} />
+          </div>
+        )}
+
+        <Timeline events={filteredEvents} dayNumber={dayNumber} isAdmin={isAdmin} />
+      </div>
     </>
   );
 }

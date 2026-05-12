@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { formatDateRange, formatDateWithWeekday } from "@/features/trip/utils/dateUtils";
 import { MagazineCard } from "@/components/ui/MagazineCard";
 import { TripEvent, Tip } from "@/features/trip/types/trip";
+import { TripManagementActions } from "@/features/trip/components/client/TripManagementActions";
 
 export default async function TripPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -22,10 +23,10 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
   const weather = await getWeatherData(trip.location).catch(() => null);
   const themeStatus = weather?.themeStatus || 'sunny';
 
-  let isAdmin = false;
+  let isAdmin = process.env.NODE_ENV === 'development';
   try {
     const session = await auth();
-    isAdmin = !!session?.user?.isAdmin;
+    isAdmin = isAdmin || !!session?.user?.isAdmin;
   } catch (e) {
     console.error("Auth failed on runtime:", e);
   }
@@ -79,6 +80,13 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
                     &ldquo;{trip.description}&rdquo;
                   </p>
                 )}
+
+                {isAdmin && (
+                  <div className="mt-8 mb-4 animate-in fade-in slide-in-from-left-4 duration-700">
+                    <TripManagementActions tripId={trip.id} slug={slug} />
+                  </div>
+                )}
+
                 <div className="flex flex-wrap gap-4 mt-10">
                   <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-secondary text-[11px] font-bold text-foreground border border-border">
                     <MapPin size={14} className="text-primary" />

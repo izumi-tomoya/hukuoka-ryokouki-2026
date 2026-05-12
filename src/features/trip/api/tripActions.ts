@@ -1,7 +1,7 @@
 'use server';
 
 import { prisma } from '@/lib/prisma';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { auth } from '@/lib/auth';
 import { del } from '@vercel/blob';
 import { Prisma } from '@prisma/client';
@@ -27,9 +27,56 @@ export type TripWithRelations = Prisma.TripGetPayload<{
 }>;
 
 async function checkAdmin() {
+  if (process.env.NODE_ENV === 'development') return; // 開発モードでは常に許可
   const session = await auth();
   if (!session?.user?.isAdmin) {
     throw new Error("管理者権限が必要です");
+  }
+}
+
+export async function updateTripAction(tripId: string, formData: FormData) {
+  await checkAdmin();
+  const title = formData.get('title') as string;
+  const description = formData.get('description') as string;
+  const location = formData.get('location') as string;
+  const accentColor = formData.get('accentColor') as string;
+  const startDate = new Date(formData.get('startDate') as string);
+  const endDate = new Date(formData.get('endDate') as string);
+
+  try {
+    const trip = await prisma.trip.update({
+      where: { id: tripId },
+      data: {
+        title,
+        description,
+        location,
+        accentColor,
+        startDate,
+        endDate,
+        image: `linear-gradient(135deg, ${accentColor} 0%, #050B17 100%)`,
+      },
+    });
+
+    revalidatePath(`/trip/${trip.slug}`);
+    revalidatePath('/');
+    return { success: true, slug: trip.slug };
+  } catch (error) {
+    console.error('Failed to update trip:', error);
+    return { success: false, error: '旅の更新に失敗しました' };
+  }
+}
+
+export async function deleteTripAction(tripId: string) {
+  await checkAdmin();
+  try {
+    const trip = await prisma.trip.delete({
+      where: { id: tripId }
+    });
+    revalidatePath('/');
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to delete trip:', error);
+    return { success: false, error: '旅の削除に失敗しました' };
   }
 }
 
@@ -70,24 +117,32 @@ export async function getTripBySlug(slug: string): Promise<TripWithRelations | n
 export async function createTrip(formData: FormData) {
   await checkAdmin();
   const title = formData.get('title') as string;
+  const description = formData.get('description') as string;
   const location = formData.get('location') as string;
   const accentColor = formData.get('accentColor') as string;
   const startDate = new Date(formData.get('startDate') as string);
   const endDate = new Date(formData.get('endDate') as string);
 
-  const slug = `${title.toLowerCase().replace(/\s+/g, '-')}-${Date.now().toString().slice(-4)}`;
+  // タイトルからクリーンなスラッグを作成
+  const baseSlug = title
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, '') // 記号を除去
+    .replace(/\s+/g, '-')     // スペースをハイフンに
+    .trim();
+  const slug = `${baseSlug}-${Date.now().toString().slice(-4)}`;
 
   try {
     const trip = await prisma.trip.create({
       data: {
         title,
+        description,
         location,
         accentColor,
         startDate,
         endDate,
         slug,
         image: `linear-gradient(135deg, ${accentColor} 0%, #050B17 100%)`,
-        status: 'Planning',
+        status: 'Upcoming',
       },
     });
 
@@ -110,12 +165,89 @@ export async function getTrips() {
   }
 }
 
+export async function addDayAction(tripId: string) {
+  await checkAdmin();
+  try {
+    const trip = await prisma.trip.findUnique({
+      where: { id: tripId },
+      include: { days: true }
+    });
+
+    if (!trip) throw new Error("Trip not found");
+
+    const nextDayNumber = trip.days.length + 1;
+    const nextDate = new Date(trip.startDate);
+    nextDate.setDate(nextDate.getDate() + trip.days.length);
+
+    await prisma.day.create({
+      data: {
+        tripId,
+        dayNumber: nextDayNumber,
+        date: nextDate,
+        title: `Day ${nextDayNumber}`,
+      }
+    });
+
+    revalidatePath(`/trip/${trip.slug}`);
+    revalidatePath(`/trip/${trip.slug}/day/[id]`, 'layout');
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to add day:', error);
+    return { success: false, error: '日付の追加に失敗しました' };
+  }
+}
+
 export async function getAllLocations() {
   try {
     return await prisma.location.findMany();
   } catch (error) {
     console.error('Failed to fetch locations:', error);
     return [];
+  }
+}
+
+export async function createEventAction(dayId: string, data: unknown) {
+  await checkAdmin();
+  const result = eventSchema.safeParse(data);
+  if (!result.success) {
+    return { success: false, error: 'Invalid data' };
+  }
+
+  try {
+    const { yataiStops, ...eventData } = result.data;
+    
+    // 現在の最大オーダーを取得
+    const maxOrder = await prisma.event.aggregate({
+      where: { dayId },
+      _max: { order: true }
+    });
+    const nextOrder = (maxOrder._max.order ?? -1) + 1;
+
+    const event = await prisma.event.create({
+      data: {
+        ...eventData,
+        dayId,
+        order: nextOrder,
+        time: result.data.time || "00:00",
+        type: result.data.type || "basic",
+        yataiStops: yataiStops ? {
+          create: yataiStops.map((stop, index) => ({
+            time: stop.time,
+            stop: stop.stop,
+            desc: stop.desc ?? "",
+            order: index
+          }))
+        } : undefined
+      },
+      include: { day: { include: { trip: true } } }
+    });
+
+    revalidatePath(`/trip/${event.day.trip.slug}`);
+    revalidateTag(`trip-${event.day.trip.slug}`);
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to create event:', error);
+    return { success: false, error: 'Failed to create' };
   }
 }
 
@@ -128,7 +260,7 @@ export async function updateEventAction(eventId: string, data: unknown) {
 
   try {
     const { yataiStops, ...eventData } = result.data;
-    await prisma.event.update({
+    const event = await prisma.event.update({
       where: { id: eventId },
       data: {
         ...eventData,
@@ -143,12 +275,31 @@ export async function updateEventAction(eventId: string, data: unknown) {
           }))
         } : undefined
       },
+      include: { day: { include: { trip: true } } }
     });
-    revalidatePath('/trip/[slug]/day/[id]', 'page');
+
+    revalidatePath(`/trip/${event.day.trip.slug}`);
+    revalidateTag(`trip-${event.day.trip.slug}`);
     return { success: true };
   } catch (error) {
     console.error('Failed to update event:', error);
     return { success: false, error: 'Failed to update' };
+  }
+}
+
+export async function deleteEventAction(eventId: string) {
+  await checkAdmin();
+  try {
+    const event = await prisma.event.delete({
+      where: { id: eventId },
+      include: { day: { include: { trip: true } } }
+    });
+    revalidatePath(`/trip/${event.day.trip.slug}`);
+    revalidateTag(`trip-${event.day.trip.slug}`);
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to delete event:', error);
+    return { success: false, error: '削除に失敗しました' };
   }
 }
 

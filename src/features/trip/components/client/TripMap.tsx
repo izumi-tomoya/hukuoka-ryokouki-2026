@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
 import { MagazineCard } from '@/components/ui/MagazineCard';
-import { MapPin, Navigation2, X } from 'lucide-react';
+import { MapPin, Navigation2, X, Star } from 'lucide-react';
 import TripMapSkeleton from '../TripMapSkeleton';
 import { TripEvent } from '@/features/trip/types/trip';
 import { cleanLocationName } from '@/features/trip/utils/locationCatalog';
@@ -19,6 +19,7 @@ interface MapMarker {
   category?: string | null;
   locationUrl?: string;
   description?: string;
+  isSecret?: boolean;
   events: Array<{
     title: string;
     time: string;

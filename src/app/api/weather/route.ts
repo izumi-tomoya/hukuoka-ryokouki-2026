@@ -12,7 +12,17 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Weather unavailable' }, { status: 500 });
     }
     
-    const forecast = weather.forecast.map((day) => ({
+    const forecast = weather.forecast.map((day: {
+      date: string;
+      tempMax: number;
+      tempMin: number;
+      text: string;
+      rainChance: number;
+      uvIndex: number;
+      windSpeed: number;
+      sunrise: string;
+      sunset: string;
+    }) => ({
       date: day.date,
       temp: { 
         max: day.tempMax, 

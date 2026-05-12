@@ -3,12 +3,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MagazineCard } from '@/components/ui/MagazineCard';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { cn } from '@/lib/utils';
 import {
   AlertTriangle,
-  ArrowRightLeft,
   Banknote,
   CheckCircle2,
   Clock,
@@ -23,20 +22,14 @@ import {
   Loader2,
   MessageSquarePlus,
   Navigation,
-  RotateCcw,
   Search,
   ShieldAlert,
   Smartphone,
   Sparkles,
   Sun,
-  Sunrise,
-  Sunset,
   Ticket,
   TimerReset,
-  Train,
-  Umbrella,
   Users,
-  Wind,
   Zap,
   MapPin,
   ChevronRight,
@@ -140,7 +133,7 @@ const containerVariants = {
 
 const itemVariants = {
   hidden: { opacity: 0, y: 15 },
-  visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100, damping: 20 } },
+  visible: { opacity: 1, y: 0, transition: { type: 'spring' as const, stiffness: 100, damping: 20 } },
 };
 
 export default function AssistDashboard({
@@ -148,13 +141,12 @@ export default function AssistDashboard({
   events,
   tips,
   isAdmin = false,
-  weatherLabel,
   weatherData,
 }: AssistDashboardProps) {
   const [mounted, setMounted] = useState(false);
   const [now, setNow] = useState(() => new Date());
   const [delayMinutes, setDelayMinutes] = useState(0);
-  const [skippedIds, setSkippedIds] = useState<string[]>([]);
+  const [skippedIds] = useState<string[]>([]);
   const [noteBody, setNoteBody] = useState('');
   const [activeTab, setActiveTab] = useState('spotlight');
   
@@ -162,14 +154,6 @@ export default function AssistDashboard({
     if (typeof window === 'undefined') return [];
     try {
       return JSON.parse(window.localStorage.getItem(`memoir:shared-notes:${trip.id}`) || '[]');
-    } catch {
-      return [];
-    }
-  });
-  const [checkedEventIds, setCheckedEventIds] = useState<string[]>(() => {
-    if (typeof window === 'undefined') return [];
-    try {
-      return JSON.parse(window.localStorage.getItem(`memoir:event-checkins:${trip.id}`) || '[]');
     } catch {
       return [];
     }
@@ -191,11 +175,10 @@ export default function AssistDashboard({
   const [isPdfLoading, setIsPdfLoading] = useState(false);
 
   const notesKey = `memoir:shared-notes:${trip.id}`;
-  const checkinsKey = `memoir:event-checkins:${trip.id}`;
 
   useEffect(() => {
-    setMounted(true);
     const timer = window.setInterval(() => setNow(new Date()), 30_000);
+    requestAnimationFrame(() => setMounted(true));
     return () => window.clearInterval(timer);
   }, []);
 
@@ -257,14 +240,6 @@ export default function AssistDashboard({
     setNotes(nextNotes);
     setNoteBody('');
     localStorage.setItem(notesKey, JSON.stringify(nextNotes));
-  };
-
-  const toggleCheckin = (eventId: string) => {
-    const next = checkedEventIds.includes(eventId)
-      ? checkedEventIds.filter((id) => id !== eventId)
-      : [...checkedEventIds, eventId];
-    setCheckedEventIds(next);
-    localStorage.setItem(checkinsKey, JSON.stringify(next));
   };
 
   const copyEmergencyCard = async () => {
@@ -510,7 +485,7 @@ export default function AssistDashboard({
 
             {/* Weather & Briefing Grid */}
             <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <MagazineCard padding="none" className="bg-sky-500/[0.03] border-sky-500/10 p-6 md:p-8">
+              <MagazineCard padding="none" className="bg-sky-500/3 border-sky-500/10 p-6 md:p-8">
                 <div className="flex items-center justify-between mb-6">
                   <div className="inline-flex items-center gap-2 rounded-full bg-sky-500/10 px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-sky-600 border border-sky-500/20">
                     <CloudRain size={13} />
@@ -581,7 +556,7 @@ export default function AssistDashboard({
             className="space-y-6"
           >
             <motion.div variants={itemVariants}>
-              <MagazineCard padding="none" className="border-rose-500/20 bg-rose-500/[0.02] overflow-hidden">
+              <MagazineCard padding="none" className="border-rose-500/20 bg-rose-500/2 overflow-hidden">
                 <div className="bg-rose-500 p-8 text-white">
                   <div className="flex items-center justify-between mb-6">
                     <ShieldAlert size={32} />
@@ -676,7 +651,7 @@ export default function AssistDashboard({
               <motion.div variants={itemVariants}>
                 <MagazineCard padding="none" className={cn(
                   "h-full border-l-4 transition-colors p-8",
-                  delayMinutes === 0 ? "border-emerald-500 bg-emerald-500/[0.02]" : "border-rose-500 bg-rose-500/[0.02]"
+                  delayMinutes === 0 ? "border-emerald-500 bg-emerald-500/2" : "border-rose-500 bg-rose-500/2"
                 )}>
                   <div className="flex items-center gap-3 mb-8">
                     <div className={cn("p-3 rounded-2xl text-white", delayMinutes === 0 ? "bg-emerald-500" : "bg-rose-500")}>
@@ -694,7 +669,7 @@ export default function AssistDashboard({
                         key={mins}
                         onClick={() => setDelayMinutes(mins)}
                         className={cn(
-                          "flex-1 min-w-[3rem] py-3 rounded-2xl border text-xs font-black transition-all active:scale-95",
+                          "flex-1 min-w-12 py-3 rounded-2xl border text-xs font-black transition-all active:scale-95",
                           delayMinutes === mins ? "bg-foreground text-background border-foreground shadow-lg" : "bg-white border-border text-muted-foreground hover:border-primary"
                         )}
                       >
@@ -710,7 +685,7 @@ export default function AssistDashboard({
               </motion.div>
 
               <motion.div variants={itemVariants}>
-                <MagazineCard padding="none" className="h-full p-8 border-primary/20 bg-primary/[0.02]">
+                <MagazineCard padding="none" className="h-full p-8 border-primary/20 bg-primary/2">
                   <div className="flex items-center gap-3 mb-8">
                     <div className="p-3 rounded-2xl bg-primary text-primary-foreground">
                       <Sparkles size={20} />
@@ -801,7 +776,7 @@ export default function AssistDashboard({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Expense Card */}
               <motion.div variants={itemVariants}>
-                <MagazineCard padding="none" className="p-8 border-emerald-500/20 bg-emerald-500/[0.02]">
+                <MagazineCard padding="none" className="p-8 border-emerald-500/20 bg-emerald-500/2">
                   <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center gap-3">
                       <div className="p-3 rounded-2xl bg-emerald-500 text-white shadow-lg shadow-emerald-500/20">
@@ -827,7 +802,7 @@ export default function AssistDashboard({
                     {settlement.expenseEvents.slice(0, 3).map((e) => (
                       <div key={e.id} className="p-4 rounded-2xl bg-white border border-border">
                         <div className="flex justify-between items-center mb-4">
-                          <span className="text-sm font-black truncate max-w-[150px]">{e.title}</span>
+                          <span className="text-sm font-black truncate max-w-37.5">{e.title}</span>
                           <span className="text-xs font-bold text-emerald-600">{currency(e.actualExpense || 0)}</span>
                         </div>
                         <div className="flex gap-2">

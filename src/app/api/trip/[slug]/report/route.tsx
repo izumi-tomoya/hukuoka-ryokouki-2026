@@ -50,7 +50,7 @@ async function buildPdfResponse(
 ) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const buffer = await renderToBuffer(React.createElement(TripReportDocument, { trip, temperatureLogs }) as any);
-  return new Response(buffer, {
+  return new Response(new Uint8Array(buffer), {
     headers: {
       "Content-Type": "application/pdf",
       "Content-Disposition": `attachment; filename="${slug}-report.pdf"`,

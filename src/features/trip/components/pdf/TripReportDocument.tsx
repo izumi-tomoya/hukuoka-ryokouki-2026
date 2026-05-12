@@ -825,7 +825,8 @@ export default function TripReportDocument({
                   <View style={styles.photoGrid}>
                     {chunk.map((photo, photoIndex) => (
                       <View style={styles.photoCard} key={`${photo.url}-${photoIndex}`} wrap={false}>
-                        <Image src={photo.url} alt={photo.title || "travel photo"} style={styles.photoImage} />
+                        {/* eslint-disable-next-line jsx-a11y/alt-text */}
+                        <Image src={photo.url} style={styles.photoImage} />
                         <View style={styles.photoCaption}>
                           <Text style={styles.photoCaptionTitle}>{photo.title}</Text>
                           <Text style={styles.photoCaptionMeta}>{photo.date} / {photo.time} / {photo.location}</Text>

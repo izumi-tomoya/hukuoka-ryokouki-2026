@@ -38,37 +38,37 @@ export default async function UserPage() {
   });
 
   return (
-    <div className="min-h-screen bg-memoir-bg dark:bg-background pt-24 pb-12 transition-colors">
+    <div className="bg-memoir-bg dark:bg-background min-h-screen pt-24 pb-12 transition-colors">
       <Container>
         <SectionHeader title="User Profile" subtitle="あなたの旅の記録と設定" />
 
         <div className="mt-12 grid gap-10 lg:grid-cols-12">
           {/* 左サイドバー: プロフィール概要 & 統計 */}
-          <div className="lg:col-span-4 space-y-6">
-            <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-[2.5rem] p-8 shadow-sm flex flex-col items-center text-center relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-br from-rose-100 to-amber-50 dark:from-rose-900/20 dark:to-amber-900/10 opacity-50" />
+          <div className="space-y-6 lg:col-span-4">
+            <div className="relative flex flex-col items-center overflow-hidden rounded-[2.5rem] border border-zinc-200 bg-white p-8 text-center shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+              <div className="absolute top-0 left-0 h-24 w-full bg-gradient-to-br from-rose-100 to-amber-50 opacity-50 dark:from-rose-900/20 dark:to-amber-900/10" />
 
               <div className="relative z-10">
                 <UserAvatar src={session.user.image || dbUser.image} name={dbUser.name} />
               </div>
 
-              <h2 className="text-2xl font-playfair font-black text-zinc-900 dark:text-zinc-100 mt-6 mb-1">
+              <h2 className="font-playfair mt-6 mb-1 text-2xl font-black text-zinc-900 dark:text-zinc-100">
                 {dbUser.name}
               </h2>
-              <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-6">{dbUser.email}</p>
+              <p className="mb-6 text-sm text-zinc-500 dark:text-zinc-400">{dbUser.email}</p>
 
               {dbUser.motto && (
-                <div className="relative p-6 bg-stone-50 dark:bg-zinc-800/50 rounded-2xl mb-6 italic text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed">
+                <div className="relative mb-6 rounded-2xl bg-stone-50 p-6 text-sm leading-relaxed text-zinc-600 italic dark:bg-zinc-800/50 dark:text-zinc-400">
                   <Quote size={16} className="absolute top-3 left-3 text-rose-200 dark:text-rose-800" />「{dbUser.motto}
                   」
                 </div>
               )}
 
-              <div className="flex flex-wrap gap-2 justify-center">
+              <div className="flex flex-wrap justify-center gap-2">
                 {session.user.isAdmin ? (
                   <Badge
                     variant="default"
-                    className="bg-rose-500 text-white border-none font-black px-4 py-1.5 rounded-full shadow-sm text-[10px] uppercase tracking-wider"
+                    className="rounded-full border-none bg-rose-500 px-4 py-1.5 text-[10px] font-black tracking-wider text-white uppercase shadow-sm"
                   >
                     <ShieldCheck size={12} className="mr-1.5" />
                     Administrator
@@ -76,7 +76,7 @@ export default async function UserPage() {
                 ) : (
                   <Badge
                     variant="secondary"
-                    className="bg-stone-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-700 px-4 py-1.5 rounded-full text-[10px] uppercase tracking-wider"
+                    className="rounded-full border-zinc-200 bg-stone-100 px-4 py-1.5 text-[10px] tracking-wider text-zinc-600 uppercase dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400"
                   >
                     Explorer
                   </Badge>
@@ -85,39 +85,39 @@ export default async function UserPage() {
             </div>
 
             {/* 統計セクション */}
-            <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-[2rem] p-6 shadow-sm">
-              <h3 className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em] mb-6 px-2 flex items-center justify-between">
+            <div className="rounded-[2rem] border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+              <h3 className="mb-6 flex items-center justify-between px-2 text-[10px] font-black tracking-[0.2em] text-zinc-400 uppercase">
                 Travel Statistics
-                <span className="w-1 h-1 bg-rose-500 rounded-full" />
+                <span className="h-1 w-1 rounded-full bg-rose-500" />
               </h3>
               <div className="grid grid-cols-3 gap-2">
-                <div className="flex flex-col items-center p-4 rounded-2xl bg-stone-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800 transition-transform hover:scale-[1.02]">
-                  <Map size={18} className="text-rose-500 mb-2" />
-                  <span className="text-xl font-playfair font-black text-zinc-900 dark:text-zinc-100">
+                <div className="flex flex-col items-center rounded-2xl border border-zinc-100 bg-stone-50 p-4 transition-transform hover:scale-[1.02] dark:border-zinc-800 dark:bg-zinc-800/50">
+                  <Map size={18} className="mb-2 text-rose-500" />
+                  <span className="font-playfair text-xl font-black text-zinc-900 dark:text-zinc-100">
                     {tripsCount}
                   </span>
-                  <span className="text-[9px] font-black text-zinc-400 uppercase mt-1">Trips</span>
+                  <span className="mt-1 text-[9px] font-black text-zinc-400 uppercase">Trips</span>
                 </div>
-                <div className="flex flex-col items-center p-4 rounded-2xl bg-stone-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800 transition-transform hover:scale-[1.02]">
-                  <Calendar size={18} className="text-rose-500 mb-2" />
-                  <span className="text-xl font-playfair font-black text-zinc-900 dark:text-zinc-100">
+                <div className="flex flex-col items-center rounded-2xl border border-zinc-100 bg-stone-50 p-4 transition-transform hover:scale-[1.02] dark:border-zinc-800 dark:bg-zinc-800/50">
+                  <Calendar size={18} className="mb-2 text-rose-500" />
+                  <span className="font-playfair text-xl font-black text-zinc-900 dark:text-zinc-100">
                     {eventsCount}
                   </span>
-                  <span className="text-[9px] font-black text-zinc-400 uppercase mt-1">Spots</span>
+                  <span className="mt-1 text-[9px] font-black text-zinc-400 uppercase">Spots</span>
                 </div>
-                <div className="flex flex-col items-center p-4 rounded-2xl bg-stone-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800 transition-transform hover:scale-[1.02]">
-                  <ImageIcon size={18} className="text-rose-500 mb-2" />
-                  <span className="text-xl font-playfair font-black text-zinc-900 dark:text-zinc-100">
+                <div className="flex flex-col items-center rounded-2xl border border-zinc-100 bg-stone-50 p-4 transition-transform hover:scale-[1.02] dark:border-zinc-800 dark:bg-zinc-800/50">
+                  <ImageIcon size={18} className="mb-2 text-rose-500" />
+                  <span className="font-playfair text-xl font-black text-zinc-900 dark:text-zinc-100">
                     {photosCount}
                   </span>
-                  <span className="text-[9px] font-black text-zinc-400 uppercase mt-1">Photos</span>
+                  <span className="mt-1 text-[9px] font-black text-zinc-400 uppercase">Photos</span>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-[1.5rem] p-3 shadow-sm">
+            <div className="rounded-[1.5rem] border border-zinc-200 bg-white p-3 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
               <LogoutButton>
-                <div className="w-full py-4 px-4 rounded-xl bg-stone-50 dark:bg-zinc-800/50 text-zinc-600 dark:text-zinc-400 hover:bg-rose-50 dark:hover:bg-rose-900/20 hover:text-rose-600 transition-all text-center font-black text-xs uppercase tracking-widest border border-zinc-100 dark:border-zinc-800">
+                <div className="w-full rounded-xl border border-zinc-100 bg-stone-50 px-4 py-4 text-center text-xs font-black tracking-widest text-zinc-600 uppercase transition-all hover:bg-rose-50 hover:text-rose-600 dark:border-zinc-800 dark:bg-zinc-800/50 dark:text-zinc-400 dark:hover:bg-rose-900/20">
                   Logout
                 </div>
               </LogoutButton>
@@ -125,11 +125,11 @@ export default async function UserPage() {
           </div>
 
           {/* 右メイン: 進行中の旅 & 設定フォーム */}
-          <div className="lg:col-span-8 space-y-8">
+          <div className="space-y-8 lg:col-span-8">
             {/* クイックアクセス */}
-            <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-[2.5rem] p-8 lg:p-10 shadow-sm">
-              <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-8 flex items-center">
-                <span className="w-1.5 h-6 bg-rose-500 rounded-full mr-4 shadow-[0_0_10px_rgba(244,63,94,0.3)]"></span>
+            <div className="rounded-[2.5rem] border border-zinc-200 bg-white p-8 shadow-sm lg:p-10 dark:border-zinc-800 dark:bg-zinc-900">
+              <h3 className="mb-8 flex items-center text-xl font-bold text-zinc-900 dark:text-zinc-100">
+                <span className="mr-4 h-6 w-1.5 rounded-full bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.3)]"></span>
                 Quick Access
               </h3>
 
@@ -139,34 +139,34 @@ export default async function UserPage() {
                     <Link
                       key={trip.id}
                       href={`/trip/${trip.slug}`}
-                      className="group flex items-center gap-6 p-6 bg-stone-50 dark:bg-zinc-800/30 border border-zinc-100 dark:border-zinc-800 rounded-3xl transition-all hover:bg-white dark:hover:bg-zinc-800 hover:shadow-xl hover:-translate-y-1"
+                      className="group flex items-center gap-6 rounded-3xl border border-zinc-100 bg-stone-50 p-6 transition-all hover:-translate-y-1 hover:bg-white hover:shadow-xl dark:border-zinc-800 dark:bg-zinc-800/30 dark:hover:bg-zinc-800"
                     >
-                      <div className="w-16 h-16 rounded-2xl bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center shrink-0">
+                      <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-rose-100 dark:bg-rose-900/30">
                         <Map className="text-rose-500" size={24} />
                       </div>
-                      <div className="grow min-w-0">
-                        <h4 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 truncate">{trip.title}</h4>
-                        <p className="text-sm text-zinc-500 dark:text-zinc-400 flex items-center gap-2 mt-1">
+                      <div className="min-w-0 grow">
+                        <h4 className="truncate text-lg font-bold text-zinc-900 dark:text-zinc-100">{trip.title}</h4>
+                        <p className="mt-1 flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400">
                           <Calendar size={14} />
                           {new Date(trip.startDate).toLocaleDateString()} —{" "}
                           {new Date(trip.endDate).toLocaleDateString()}
                         </p>
                       </div>
-                      <div className="w-10 h-10 rounded-full bg-white dark:bg-zinc-700 flex items-center justify-center shadow-sm border border-zinc-100 dark:border-zinc-600 group-hover:bg-rose-500 group-hover:text-white transition-all">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full border border-zinc-100 bg-white shadow-sm transition-all group-hover:bg-rose-500 group-hover:text-white dark:border-zinc-600 dark:bg-zinc-700">
                         <ChevronRight size={20} />
                       </div>
                     </Link>
                   ))
                 ) : (
-                  <p className="text-center py-10 text-zinc-400 italic">作成された旅がまだありません</p>
+                  <p className="py-10 text-center text-zinc-400 italic">作成された旅がまだありません</p>
                 )}
               </div>
             </div>
 
             {/* 設定フォーム */}
-            <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-[2.5rem] p-8 lg:p-10 shadow-sm">
-              <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-8 flex items-center">
-                <span className="w-1.5 h-6 bg-rose-500 rounded-full mr-4 shadow-[0_0_10px_rgba(244,63,94,0.3)]"></span>
+            <div className="rounded-[2.5rem] border border-zinc-200 bg-white p-8 shadow-sm lg:p-10 dark:border-zinc-800 dark:bg-zinc-900">
+              <h3 className="mb-8 flex items-center text-xl font-bold text-zinc-900 dark:text-zinc-100">
+                <span className="mr-4 h-6 w-1.5 rounded-full bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.3)]"></span>
                 Account Settings
               </h3>
 
@@ -174,18 +174,18 @@ export default async function UserPage() {
                 <UserSettingsForm initialName={dbUser.name} initialMotto={dbUser.motto} />
               </div>
 
-              <div className="mt-12 pt-10 border-t border-zinc-100 dark:border-zinc-800">
-                <h4 className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em] mb-6">
+              <div className="mt-12 border-t border-zinc-100 pt-10 dark:border-zinc-800">
+                <h4 className="mb-6 text-[10px] font-black tracking-[0.2em] text-zinc-400 uppercase">
                   Account Details
                 </h4>
                 <div className="max-w-md">
-                  <div className="flex items-start gap-4 p-5 rounded-3xl bg-stone-50 dark:bg-zinc-800/30 border border-zinc-100 dark:border-zinc-800">
-                    <div className="p-3 bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-100 dark:border-zinc-700">
+                  <div className="flex items-start gap-4 rounded-3xl border border-zinc-100 bg-stone-50 p-5 dark:border-zinc-800 dark:bg-zinc-800/30">
+                    <div className="rounded-xl border border-zinc-100 bg-white p-3 shadow-sm dark:border-zinc-700 dark:bg-zinc-800">
                       <Mail size={18} className="text-zinc-400" />
                     </div>
                     <div>
-                      <p className="text-[10px] font-black text-zinc-400 uppercase mb-1">メールアドレス</p>
-                      <p className="text-sm text-zinc-900 dark:text-zinc-100 font-bold">{dbUser.email}</p>
+                      <p className="mb-1 text-[10px] font-black text-zinc-400 uppercase">メールアドレス</p>
+                      <p className="text-sm font-bold text-zinc-900 dark:text-zinc-100">{dbUser.email}</p>
                     </div>
                   </div>
                 </div>

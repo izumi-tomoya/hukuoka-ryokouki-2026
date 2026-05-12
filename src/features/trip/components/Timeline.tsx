@@ -46,18 +46,18 @@ export default function Timeline({ events, dayNumber = 1, isAdmin }: TimelinePro
   const theme = getTheme(dayNumber);
 
   return (
-    <div className="relative bg-transparent px-0 md:px-3 pb-20 pt-8 transition-colors duration-500">
+    <div className="relative bg-transparent px-0 pt-8 pb-20 transition-colors duration-500 md:px-3">
       {/* Vertical connecting line */}
-      <div className={cn("absolute left-[7px] md:left-[23px] top-0 h-full w-[2px] opacity-50", theme.line)} />
+      <div className={cn("absolute top-0 left-[7px] h-full w-[2px] opacity-50 md:left-[23px]", theme.line)} />
 
       <div className="relative space-y-10">
         {events.map((event, index) => (
-          <div key={index} className="relative flex gap-2 md:gap-4 group">
+          <div key={index} className="group relative flex gap-2 md:gap-4">
             {/* Left column: dot */}
-            <div className="relative flex w-4 md:w-6 shrink-0 flex-col items-center pt-4">
+            <div className="relative flex w-4 shrink-0 flex-col items-center pt-4 md:w-6">
               <div
                 className={cn(
-                  "z-10 h-3 w-3 rounded-full border-2 border-background shadow-lg ring-4 transition-all group-hover:scale-125",
+                  "border-background z-10 h-3 w-3 rounded-full border-2 shadow-lg ring-4 transition-all group-hover:scale-125",
                   theme.ring,
                   theme.bg,
                 )}
@@ -69,7 +69,7 @@ export default function Timeline({ events, dayNumber = 1, isAdmin }: TimelinePro
               <div className="mb-4">
                 <span
                   className={cn(
-                    "inline-block rounded-full px-4 py-1 text-[10px] font-black uppercase tracking-widest shadow-sm",
+                    "inline-block rounded-full px-4 py-1 text-[10px] font-black tracking-widest uppercase shadow-sm",
                     theme.timeBg,
                   )}
                 >
@@ -98,7 +98,7 @@ export default function Timeline({ events, dayNumber = 1, isAdmin }: TimelinePro
       {/* End marker */}
       <div
         className={cn(
-          "absolute bottom-8 left-[3px] md:left-[17px] h-4 w-4 rounded-full border-2 border-background shadow-lg opacity-50",
+          "border-background absolute bottom-8 left-[3px] h-4 w-4 rounded-full border-2 opacity-50 shadow-lg md:left-[17px]",
           theme.bg,
         )}
       />

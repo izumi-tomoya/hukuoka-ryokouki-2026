@@ -15,13 +15,14 @@ export default function CategoryFilter() {
   const { activeCategory, setActiveCategory } = useFilterStore();
 
   return (
-    <div className="flex flex-wrap gap-2 mb-8">
+    <div className="mb-8 flex flex-wrap gap-2">
       <button
+        type="button"
         className={cn(
-          "px-6 py-2 rounded-full text-xs font-bold tracking-widest uppercase transition-all border",
+          "rounded-full border px-6 py-2 text-xs font-bold tracking-widest uppercase transition-all",
           activeCategory === null
-            ? "bg-rose-50 border-rose-200 text-rose-600 shadow-sm"
-            : "bg-white border-border/50 text-stone-400 hover:border-rose-100",
+            ? "border-rose-200 bg-rose-50 text-rose-600 shadow-sm"
+            : "border-border/50 bg-white text-stone-400 hover:border-rose-100",
         )}
         onClick={() => setActiveCategory(null)}
       >
@@ -29,12 +30,13 @@ export default function CategoryFilter() {
       </button>
       {CATEGORIES.map((cat) => (
         <button
+          type="button"
           key={cat.id}
           className={cn(
-            "px-6 py-2 rounded-full text-xs font-bold tracking-widest uppercase transition-all border whitespace-nowrap",
+            "rounded-full border px-6 py-2 text-xs font-bold tracking-widest whitespace-nowrap uppercase transition-all",
             activeCategory === cat.id
-              ? "bg-rose-50 border-rose-200 text-rose-600 shadow-sm"
-              : "bg-white border-border/50 text-stone-400 hover:border-rose-100",
+              ? "border-rose-200 bg-rose-50 text-rose-600 shadow-sm"
+              : "border-border/50 bg-white text-stone-400 hover:border-rose-100",
           )}
           onClick={() => setActiveCategory(cat.id === activeCategory ? null : cat.id)}
         >

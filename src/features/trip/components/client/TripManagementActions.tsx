@@ -29,10 +29,10 @@ export function TripManagementActions({ tripId, slug }: Props) {
   };
 
   return (
-    <div className="flex flex-wrap gap-4 items-center">
+    <div className="flex flex-wrap items-center gap-4">
       <Link
         href={`/trip/${slug}/edit`}
-        className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-secondary text-[11px] font-black uppercase tracking-widest text-muted-foreground hover:bg-primary/10 hover:text-primary transition-all border border-border"
+        className="bg-secondary text-muted-foreground hover:bg-primary/10 hover:text-primary border-border flex items-center gap-2 rounded-full border px-6 py-2.5 text-[11px] font-black tracking-widest uppercase transition-all"
       >
         <Settings size={14} />
         Edit Trip
@@ -41,7 +41,7 @@ export function TripManagementActions({ tripId, slug }: Props) {
       <button
         onClick={handleAddDay}
         disabled={isAddingDay}
-        className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-primary text-[11px] font-black uppercase tracking-widest text-primary-foreground hover:opacity-90 transition-all shadow-lg shadow-primary/20 disabled:opacity-50"
+        className="bg-primary text-primary-foreground shadow-primary/20 flex items-center gap-2 rounded-full px-6 py-2.5 text-[11px] font-black tracking-widest uppercase shadow-lg transition-all hover:opacity-90 disabled:opacity-50"
       >
         {isAddingDay ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
         Add Day

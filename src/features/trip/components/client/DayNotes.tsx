@@ -33,14 +33,14 @@ export default function DayNotes({ dayId, initialNotes = "", isAdmin }: DayNotes
 
   return (
     <MagazineCard padding="lg" className="border-border bg-background/50 backdrop-blur-sm">
-      <div className="flex items-center justify-between mb-8">
+      <div className="mb-8 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
+          <div className="bg-primary/10 text-primary flex h-10 w-10 items-center justify-center rounded-2xl">
             <MessageSquareQuote size={20} />
           </div>
           <div>
-            <h3 className="font-playfair text-xl font-black text-foreground">Daily Reflections</h3>
-            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+            <h3 className="font-playfair text-foreground text-xl font-black">Daily Reflections</h3>
+            <p className="text-muted-foreground text-[10px] font-black tracking-widest uppercase">
               Memories of the Day
             </p>
           </div>
@@ -51,9 +51,9 @@ export default function DayNotes({ dayId, initialNotes = "", isAdmin }: DayNotes
             onClick={() => (isEditing ? handleSave() : setIsEditing(true))}
             disabled={isSaving}
             className={cn(
-              "inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-[11px] font-black uppercase tracking-widest transition-all active:scale-95",
+              "inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-[11px] font-black tracking-widest uppercase transition-all active:scale-95",
               isEditing
-                ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+                ? "bg-primary text-primary-foreground shadow-primary/20 shadow-lg"
                 : "bg-secondary text-foreground hover:bg-secondary/80",
             )}
           >
@@ -73,20 +73,20 @@ export default function DayNotes({ dayId, initialNotes = "", isAdmin }: DayNotes
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           placeholder="今日の出来事や感じたことを自由に書き留めてください..."
-          className="w-full min-h-[200px] p-6 rounded-article bg-secondary/30 border border-border focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all outline-hidden font-medium text-foreground leading-relaxed italic"
+          className="rounded-article bg-secondary/30 border-border focus:border-primary/50 focus:ring-primary/20 text-foreground min-h-[200px] w-full border p-6 leading-relaxed font-medium italic outline-hidden transition-all focus:ring-1"
         />
       ) : notes ? (
         <div className="relative">
-          <div className="absolute top-0 left-0 text-primary/10 -translate-x-4 -translate-y-4">
+          <div className="text-primary/10 absolute top-0 left-0 -translate-x-4 -translate-y-4">
             <MessageSquareQuote size={64} />
           </div>
-          <p className="relative z-10 font-playfair text-xl md:text-3xl italic text-foreground leading-relaxed text-center px-4 py-8">
+          <p className="font-playfair text-foreground relative z-10 px-4 py-8 text-center text-xl leading-relaxed italic md:text-3xl">
             &ldquo;{notes}&rdquo;
           </p>
         </div>
       ) : (
-        <div className="text-center py-12 rounded-article border-2 border-dashed border-border/50">
-          <p className="text-sm font-medium text-muted-foreground italic">まだリフレクションがありません。</p>
+        <div className="rounded-article border-border/50 border-2 border-dashed py-12 text-center">
+          <p className="text-muted-foreground text-sm font-medium italic">まだリフレクションがありません。</p>
         </div>
       )}
     </MagazineCard>

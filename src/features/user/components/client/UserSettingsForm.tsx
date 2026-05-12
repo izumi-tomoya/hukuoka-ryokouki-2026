@@ -62,7 +62,7 @@ export function UserSettingsForm({ initialName, initialMotto }: UserSettingsForm
         {/* 基本情報 */}
         <div className="space-y-6">
           <div className="space-y-2">
-            <label htmlFor="name" className="text-xs font-black text-zinc-400 uppercase tracking-widest ml-1">
+            <label htmlFor="name" className="ml-1 text-xs font-black tracking-widest text-zinc-400 uppercase">
               ユーザー名
             </label>
             <input
@@ -70,14 +70,14 @@ export function UserSettingsForm({ initialName, initialMotto }: UserSettingsForm
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-5 py-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl text-zinc-900 dark:text-zinc-100 text-sm font-medium transition-all v2-focus"
+              className="v2-focus w-full rounded-2xl border border-zinc-200 bg-white px-5 py-4 text-sm font-medium text-zinc-900 transition-all dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100"
               placeholder="あなたの名前"
               required
             />
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="motto" className="text-xs font-black text-zinc-400 uppercase tracking-widest ml-1">
+            <label htmlFor="motto" className="ml-1 text-xs font-black tracking-widest text-zinc-400 uppercase">
               旅のモットー / 一言
             </label>
             <textarea
@@ -85,7 +85,7 @@ export function UserSettingsForm({ initialName, initialMotto }: UserSettingsForm
               value={motto}
               onChange={(e) => setMotto(e.target.value)}
               rows={3}
-              className="w-full px-5 py-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl text-zinc-900 dark:text-zinc-100 text-sm font-medium transition-all resize-none v2-focus"
+              className="v2-focus w-full resize-none rounded-2xl border border-zinc-200 bg-white px-5 py-4 text-sm font-medium text-zinc-900 transition-all dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100"
               placeholder="例：一期一会を大切に。美味しいものを求めて。"
             />
           </div>
@@ -93,7 +93,7 @@ export function UserSettingsForm({ initialName, initialMotto }: UserSettingsForm
 
         {/* テーマ設定 */}
         <div className="space-y-4">
-          <label className="text-xs font-black text-zinc-400 uppercase tracking-widest ml-1">画面テーマ</label>
+          <label className="ml-1 text-xs font-black tracking-widest text-zinc-400 uppercase">画面テーマ</label>
           <div className="grid grid-cols-3 gap-3">
             {[
               { id: "light", icon: Sun, label: "Light" },
@@ -104,14 +104,14 @@ export function UserSettingsForm({ initialName, initialMotto }: UserSettingsForm
                 key={item.id}
                 type="button"
                 onClick={() => applyTheme(item.id as "light" | "dark" | "system")}
-                className={`flex flex-col items-center gap-2 p-4 rounded-2xl border transition-all ${
+                className={`flex flex-col items-center gap-2 rounded-2xl border p-4 transition-all ${
                   theme === item.id
-                    ? "bg-zinc-900 text-white border-zinc-900 dark:bg-white dark:text-zinc-900"
-                    : "bg-stone-50 text-zinc-500 border-zinc-100 dark:bg-zinc-800/50 dark:border-zinc-800 dark:text-zinc-400"
+                    ? "border-zinc-900 bg-zinc-900 text-white dark:bg-white dark:text-zinc-900"
+                    : "border-zinc-100 bg-stone-50 text-zinc-500 dark:border-zinc-800 dark:bg-zinc-800/50 dark:text-zinc-400"
                 }`}
               >
                 <item.icon size={20} />
-                <span className="text-[10px] font-black uppercase tracking-wider">{item.label}</span>
+                <span className="text-[10px] font-black tracking-wider uppercase">{item.label}</span>
               </button>
             ))}
           </div>
@@ -119,10 +119,10 @@ export function UserSettingsForm({ initialName, initialMotto }: UserSettingsForm
 
         {message && (
           <div
-            className={`flex items-center gap-3 text-sm p-4 rounded-2xl animate-in fade-in slide-in-from-top-2 duration-300 ${
+            className={`animate-in fade-in slide-in-from-top-2 flex items-center gap-3 rounded-2xl p-4 text-sm duration-300 ${
               message.type === "success"
-                ? "bg-emerald-50 text-emerald-700 border border-emerald-100"
-                : "bg-rose-50 text-rose-700 border border-rose-100"
+                ? "border border-emerald-100 bg-emerald-50 text-emerald-700"
+                : "border border-rose-100 bg-rose-50 text-rose-700"
             }`}
           >
             {message.type === "success" ? <Check size={18} /> : <AlertCircle size={18} />}
@@ -133,7 +133,7 @@ export function UserSettingsForm({ initialName, initialMotto }: UserSettingsForm
         <Button
           type="submit"
           disabled={isLoading || (name === initialName && motto === initialMotto)}
-          className="w-full py-6 rounded-2xl text-sm font-black transition-all bg-zinc-900 text-white hover:bg-zinc-800 shadow-md disabled:bg-zinc-100 disabled:text-zinc-400"
+          className="w-full rounded-2xl bg-zinc-900 py-6 text-sm font-black text-white shadow-md transition-all hover:bg-zinc-800 disabled:bg-zinc-100 disabled:text-zinc-400"
         >
           {isLoading ? (
             <span className="flex items-center gap-2">

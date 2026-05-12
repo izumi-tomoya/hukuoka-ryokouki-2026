@@ -45,7 +45,7 @@ export default async function TripInfoPage({ params }: { params: Promise<{ slug:
       subtitle="旅の準備と必要な情報"
       days={trip.days}
     >
-      <Container className="pb-24 space-y-20">
+      <Container className="space-y-20 pb-24">
         {/* --- Packing Section --- */}
         <section>
           <SectionHeader title="Checklist" subtitle="準備を完璧に整えよう" />

@@ -36,8 +36,8 @@ export default function TemperatureTimeline({ tripId }: Props) {
           <HeartPulse size={22} />
         </div>
         <div>
-          <h2 className="text-2xl font-black tracking-tight text-foreground">旅の温度ログ</h2>
-          <p className="mt-1 text-[10px] font-black uppercase tracking-[0.18em] text-muted-foreground">
+          <h2 className="text-foreground text-2xl font-black tracking-tight">旅の温度ログ</h2>
+          <p className="text-muted-foreground mt-1 text-[10px] font-black tracking-[0.18em] uppercase">
             Emotional Timeline
           </p>
         </div>
@@ -45,7 +45,7 @@ export default function TemperatureTimeline({ tripId }: Props) {
 
       <div className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
         <MagazineCard className="border-rose-500/20">
-          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-rose-500/20 bg-rose-500/10 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-rose-500">
+          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-rose-500/20 bg-rose-500/10 px-4 py-1.5 text-[10px] font-black tracking-[0.18em] text-rose-500 uppercase">
             <Sparkles size={13} />
             Mood Summary
           </div>
@@ -54,24 +54,24 @@ export default function TemperatureTimeline({ tripId }: Props) {
             {Object.entries(summary.counts).map(([mood, count]) => {
               const config = TEMPERATURE_MOODS[mood as keyof typeof TEMPERATURE_MOODS];
               return (
-                <div key={mood} className="flex items-center justify-between rounded-2xl bg-secondary/25 p-4">
+                <div key={mood} className="bg-secondary/25 flex items-center justify-between rounded-2xl p-4">
                   <div className="flex items-center gap-3">
                     <div className={`text-xl ${config.accent}`}>{config.emoji}</div>
                     <div>
-                      <div className="text-sm font-black text-foreground">{config.label}</div>
-                      <div className="text-xs text-muted-foreground">
+                      <div className="text-foreground text-sm font-black">{config.label}</div>
+                      <div className="text-muted-foreground text-xs">
                         {TEMPERATURE_MOOD_NARRATIVES[mood as keyof typeof TEMPERATURE_MOOD_NARRATIVES]}
                       </div>
                     </div>
                   </div>
-                  <div className="text-lg font-black text-foreground">{count}</div>
+                  <div className="text-foreground text-lg font-black">{count}</div>
                 </div>
               );
             })}
           </div>
 
-          <div className="mt-6 rounded-[1.5rem] border border-border bg-secondary/20 p-5 text-sm leading-relaxed text-muted-foreground">
-            また来たい登録: <span className="font-black text-foreground">{summary.revisitCount}</span> 件
+          <div className="border-border bg-secondary/20 text-muted-foreground mt-6 rounded-[1.5rem] border p-5 text-sm leading-relaxed">
+            また来たい登録: <span className="text-foreground font-black">{summary.revisitCount}</span> 件
           </div>
         </MagazineCard>
 
@@ -80,17 +80,17 @@ export default function TemperatureTimeline({ tripId }: Props) {
             {summary.highlightedLogs.map((log) => {
               const mood = TEMPERATURE_MOODS[log.mood];
               return (
-                <div key={log.id} className="rounded-[1.5rem] border border-border bg-secondary/20 p-4">
+                <div key={log.id} className="border-border bg-secondary/20 rounded-[1.5rem] border p-4">
                   <div className="flex items-start justify-between gap-4">
                     <div className="min-w-0">
-                      <div className="text-[10px] font-black uppercase tracking-[0.16em] text-muted-foreground">
+                      <div className="text-muted-foreground text-[10px] font-black tracking-[0.16em] uppercase">
                         Day {log.dayNumber ?? "-"} / {log.eventTime}
                       </div>
-                      <div className="mt-1 break-words text-sm font-black text-foreground">{log.eventTitle}</div>
+                      <div className="text-foreground mt-1 text-sm font-black break-words">{log.eventTitle}</div>
                     </div>
                     <div className={`text-xl ${mood.accent}`}>{mood.emoji}</div>
                   </div>
-                  {log.note && <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{log.note}</p>}
+                  {log.note && <p className="text-muted-foreground mt-3 text-sm leading-relaxed">{log.note}</p>}
                 </div>
               );
             })}

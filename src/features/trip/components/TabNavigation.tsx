@@ -27,8 +27,8 @@ export default function TabNavigation({ isSecretMode }: TabNavigationProps) {
   ];
 
   return (
-    <nav className="fixed bottom-6 left-4 right-4 z-50 md:hidden">
-      <div className="flex items-center justify-between gap-1 rounded-full bg-card/70 px-4 py-2.5 shadow-2xl ring-1 ring-border/50 backdrop-blur-2xl">
+    <nav className="fixed right-4 bottom-6 left-4 z-50 md:hidden">
+      <div className="bg-card/70 ring-border/50 flex items-center justify-between gap-1 rounded-full px-4 py-2.5 shadow-2xl ring-1 backdrop-blur-2xl">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
@@ -39,7 +39,7 @@ export default function TabNavigation({ isSecretMode }: TabNavigationProps) {
               className={cn(
                 "flex flex-col items-center gap-1 rounded-full px-4 py-2.5 transition-all",
                 isActive
-                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-110"
+                  ? "bg-primary text-primary-foreground shadow-primary/20 scale-110 shadow-lg"
                   : "text-muted-foreground hover:text-foreground active:scale-95",
               )}
             >

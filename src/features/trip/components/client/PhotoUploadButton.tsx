@@ -73,7 +73,7 @@ export default function PhotoUploadButton({ eventId }: PhotoUploadButtonProps) {
       <button
         onClick={() => fileInputRef.current?.click()}
         disabled={status !== "idle"}
-        className="w-full flex items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-stone-200 py-6 text-[12px] font-bold text-stone-400 transition-all hover:border-rose-300 hover:bg-rose-50 hover:text-rose-500 group disabled:opacity-50 disabled:cursor-not-allowed"
+        className="group flex w-full items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-stone-200 py-6 text-[12px] font-bold text-stone-400 transition-all hover:border-rose-300 hover:bg-rose-50 hover:text-rose-500 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {status !== "idle" ? (
           <>
@@ -82,7 +82,7 @@ export default function PhotoUploadButton({ eventId }: PhotoUploadButtonProps) {
           </>
         ) : (
           <>
-            <div className="h-10 w-10 rounded-full bg-secondary/30 flex items-center justify-center group-hover:bg-rose-100 transition-colors">
+            <div className="bg-secondary/30 flex h-10 w-10 items-center justify-center rounded-full transition-colors group-hover:bg-rose-100">
               <ImagePlus size={20} className="text-stone-400 group-hover:text-rose-500" />
             </div>
             <div className="text-left">

@@ -12,7 +12,7 @@ export default function DayLoading() {
     <TripLayout isLoading={true}>
       <div className="relative pt-8 pb-12">
         <Container>
-          <div className="flex items-center justify-between mb-8">
+          <div className="mb-8 flex items-center justify-between">
             <Skeleton className="h-4 w-32 rounded-full" />
             <div className="flex gap-2">
               <Skeleton className="h-10 w-10 rounded-full" />
@@ -23,7 +23,7 @@ export default function DayLoading() {
         </Container>
       </div>
 
-      <Container className="pb-24 space-y-16">
+      <Container className="space-y-16 pb-24">
         {/* Weather Forecast Skeleton */}
         <Skeleton className="h-48 w-full rounded-[2.5rem] opacity-30" />
 
@@ -38,7 +38,7 @@ export default function DayLoading() {
           <Skeleton className="h-48 w-full rounded-[2.5rem] opacity-40" />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+        <div className="grid grid-cols-1 items-stretch gap-6 md:grid-cols-2">
           <BudgetSummarySkeleton />
           <Skeleton className="h-20 w-full rounded-[2.5rem] opacity-40" />
         </div>
@@ -46,18 +46,18 @@ export default function DayLoading() {
         {/* Timeline Skeleton */}
         <div className="space-y-12">
           <div className="flex items-center justify-center gap-4">
-            <div className="h-px grow bg-border opacity-30" />
+            <div className="bg-border h-px grow opacity-30" />
             <Skeleton className="h-8 w-48 rounded-lg" />
-            <div className="h-px grow bg-border opacity-30" />
+            <div className="bg-border h-px grow opacity-30" />
           </div>
 
-          <div className="relative bg-transparent px-0 md:px-3 pb-20 pt-8 rounded-[3rem]">
-            <div className="absolute left-[7px] md:left-[23px] top-0 h-full w-[2px] bg-border opacity-50" />
+          <div className="relative rounded-[3rem] bg-transparent px-0 pt-8 pb-20 md:px-3">
+            <div className="bg-border absolute top-0 left-[7px] h-full w-[2px] opacity-50 md:left-[23px]" />
             <div className="relative space-y-12">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="relative flex gap-2 md:gap-4">
-                  <div className="relative flex w-4 md:w-6 shrink-0 flex-col items-center pt-4">
-                    <div className="z-10 h-3 w-3 rounded-full bg-border border-2 border-background shadow-lg" />
+                  <div className="relative flex w-4 shrink-0 flex-col items-center pt-4 md:w-6">
+                    <div className="bg-border border-background z-10 h-3 w-3 rounded-full border-2 shadow-lg" />
                   </div>
                   <div className="min-w-0 flex-1 pb-2">
                     <div className="mb-4">

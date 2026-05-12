@@ -125,7 +125,7 @@ export function ExternalSpotInfo({
   const display = info || fallback;
 
   if (loading && !display) {
-    return <div className={cn("w-full animate-pulse rounded-2xl bg-secondary/50", compact ? "h-32" : "h-24")} />;
+    return <div className={cn("bg-secondary/50 w-full animate-pulse rounded-2xl", compact ? "h-32" : "h-24")} />;
   }
 
   if (!display) return null;
@@ -143,19 +143,19 @@ export function ExternalSpotInfo({
           <div className="relative -mx-4 -mt-4 mb-2 h-40">
             <Image src={display.image} alt={display.name} fill className="object-cover" />
             <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
-            <div className="absolute bottom-4 left-4 right-4">
-              <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-rose-300">{source}</div>
-              <div className="text-sm font-bold leading-tight text-white">{display.description || display.name}</div>
+            <div className="absolute right-4 bottom-4 left-4">
+              <div className="mb-1 text-[10px] font-black tracking-widest text-rose-300 uppercase">{source}</div>
+              <div className="text-sm leading-tight font-bold text-white">{display.description || display.name}</div>
             </div>
           </div>
         )}
 
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-rose-400">{source}</div>
-            <h3 className={cn("font-bold text-foreground", compact ? "text-sm" : "text-base")}>{display.name}</h3>
+            <div className="mb-1 text-[10px] font-black tracking-widest text-rose-400 uppercase">{source}</div>
+            <h3 className={cn("text-foreground font-bold", compact ? "text-sm" : "text-base")}>{display.name}</h3>
             {!display.image && display.description && (
-              <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">{display.description}</p>
+              <p className="text-muted-foreground mt-2 text-[11px] leading-relaxed">{display.description}</p>
             )}
           </div>
           <Store size={compact ? 14 : 16} className="shrink-0 text-rose-500" />
@@ -165,25 +165,25 @@ export function ExternalSpotInfo({
           {display.open && (
             <div className="flex items-start gap-3">
               <Clock size={14} className="mt-0.5 shrink-0 text-rose-500" />
-              <div className="text-[11px] leading-relaxed text-muted-foreground">{display.open}</div>
+              <div className="text-muted-foreground text-[11px] leading-relaxed">{display.open}</div>
             </div>
           )}
           {display.budget && (
             <div className="flex items-center gap-3">
               <JapaneseYen size={14} className="shrink-0 text-rose-500" />
-              <div className="text-[11px] font-bold text-foreground">{display.budget}</div>
+              <div className="text-foreground text-[11px] font-bold">{display.budget}</div>
             </div>
           )}
           {(display.address || address) && (
             <div className="flex items-start gap-3">
               <MapPin size={14} className="mt-0.5 shrink-0 text-rose-500" />
-              <div className="text-[11px] text-muted-foreground">{display.address || address}</div>
+              <div className="text-muted-foreground text-[11px]">{display.address || address}</div>
             </div>
           )}
           {display.stationName && (
             <div className="flex items-center gap-3">
               <Train size={14} className="shrink-0 text-rose-500" />
-              <div className="text-[11px] text-muted-foreground">{display.stationName}駅近</div>
+              <div className="text-muted-foreground text-[11px]">{display.stationName}駅近</div>
             </div>
           )}
         </div>
@@ -241,15 +241,15 @@ export function ExternalSpotInfo({
         )}
 
         {display.nearby && display.nearby.length > 0 && !compact && (
-          <div className="rounded-2xl border border-border bg-background/70 p-3">
-            <div className="mb-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Nearby</div>
+          <div className="border-border bg-background/70 rounded-2xl border p-3">
+            <div className="text-muted-foreground mb-2 text-[10px] font-black tracking-widest uppercase">Nearby</div>
             <div className="space-y-2">
               {display.nearby.slice(0, 2).map((spot) => (
                 <div
                   key={`${spot.name}-${spot.address || ""}`}
-                  className="text-[11px] leading-relaxed text-muted-foreground"
+                  className="text-muted-foreground text-[11px] leading-relaxed"
                 >
-                  <span className="font-bold text-foreground">{spot.name}</span>
+                  <span className="text-foreground font-bold">{spot.name}</span>
                   {spot.category ? ` / ${spot.category}` : ""}
                 </div>
               ))}
@@ -264,7 +264,8 @@ export function ExternalSpotInfo({
               target="_blank"
               rel="noopener noreferrer"
               suppressHydrationWarning
-              className="flex items-center justify-center gap-2 rounded-xl border border-rose-100 bg-white py-3 text-[10px] font-black uppercase tracking-widest text-rose-500 transition-all hover:bg-rose-50"
+              onClick={(e) => e.stopPropagation()}
+              className="flex items-center justify-center gap-2 rounded-xl border border-rose-100 bg-white py-3 text-[10px] font-black tracking-widest text-rose-500 uppercase transition-all hover:bg-rose-50"
             >
               {display.source === "hotpepper" ? "詳細を見る" : "外部リンク"}
               <ExternalLink size={12} />
@@ -276,7 +277,8 @@ export function ExternalSpotInfo({
               target="_blank"
               rel="noopener noreferrer"
               suppressHydrationWarning
-              className="flex items-center justify-center gap-2 rounded-xl bg-rose-500 py-3 text-[10px] font-black uppercase tracking-widest text-white transition-all hover:bg-rose-600"
+              onClick={(e) => e.stopPropagation()}
+              className="flex items-center justify-center gap-2 rounded-xl bg-rose-500 py-3 text-[10px] font-black tracking-widest text-white uppercase transition-all hover:bg-rose-600"
             >
               地図で開く
               <Navigation size={12} />
@@ -288,7 +290,8 @@ export function ExternalSpotInfo({
               target="_blank"
               rel="noopener noreferrer"
               suppressHydrationWarning
-              className="flex items-center justify-center gap-2 rounded-xl bg-rose-500 py-3 text-[10px] font-black uppercase tracking-widest text-white transition-all hover:bg-rose-600"
+              onClick={(e) => e.stopPropagation()}
+              className="flex items-center justify-center gap-2 rounded-xl bg-rose-500 py-3 text-[10px] font-black tracking-widest text-white uppercase transition-all hover:bg-rose-600"
             >
               クーポン
               <Ticket size={12} />

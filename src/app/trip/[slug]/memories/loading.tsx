@@ -6,13 +6,13 @@ import TripLayout from "@/features/trip/components/TripLayout";
 export default function MemoriesLoading() {
   return (
     <TripLayout isLoading={true}>
-      <Container className="pb-24 space-y-12">
+      <Container className="space-y-12 pb-24">
         <section className="space-y-8">
           <div className="flex items-center gap-4">
             <Skeleton className="h-8 w-48 rounded-full" />
-            <div className="h-px grow bg-border opacity-30" />
+            <div className="bg-border h-px grow opacity-30" />
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             <MagazineCard className="h-48 opacity-20" />
             <MagazineCard className="h-48 opacity-20" />
             <MagazineCard className="h-48 opacity-20" />
@@ -22,11 +22,11 @@ export default function MemoriesLoading() {
         <section className="space-y-8">
           <div className="flex items-center gap-4">
             <Skeleton className="h-8 w-48 rounded-full" />
-            <div className="h-px grow bg-border opacity-30" />
+            <div className="bg-border h-px grow opacity-30" />
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
             {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-              <div key={i} className="aspect-square rounded-3xl bg-muted/20 animate-pulse" />
+              <div key={i} className="bg-muted/20 aspect-square animate-pulse rounded-3xl" />
             ))}
           </div>
         </section>

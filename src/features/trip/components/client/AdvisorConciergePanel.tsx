@@ -81,19 +81,19 @@ export default function AdvisorConciergePanel({ slug }: Props) {
 
   return (
     <MagazineCard className="border-primary/20">
-      <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-primary">
+      <div className="border-primary/20 bg-primary/10 text-primary mb-5 inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-[10px] font-black tracking-[0.18em] uppercase">
         <MessageCircleHeart size={13} />
         Travel Concierge
       </div>
 
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
-          <h3 className="font-playfair text-3xl font-black text-foreground">旅のコンシェルジュ</h3>
-          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+          <h3 className="font-playfair text-foreground text-3xl font-black">旅のコンシェルジュ</h3>
+          <p className="text-muted-foreground mt-2 text-sm leading-relaxed">
             旅程と予約情報を見ながら、次の一手を短く返します。
           </p>
         </div>
-        <div className="inline-flex items-center gap-2 rounded-full bg-secondary/40 px-4 py-2 text-[10px] font-black uppercase tracking-[0.16em] text-muted-foreground">
+        <div className="bg-secondary/40 text-muted-foreground inline-flex items-center gap-2 rounded-full px-4 py-2 text-[10px] font-black tracking-[0.16em] uppercase">
           <Sparkles size={12} className="text-primary" />
           {provider === "none" ? "Standby" : "Private Guide"}
         </div>
@@ -107,22 +107,22 @@ export default function AdvisorConciergePanel({ slug }: Props) {
               void ask(prompt);
             }}
             disabled={isPending}
-            className="rounded-full border border-border bg-secondary/20 px-4 py-2 text-xs font-black text-foreground transition-colors hover:border-primary/40 disabled:opacity-50"
+            className="border-border bg-secondary/20 text-foreground hover:border-primary/40 rounded-full border px-4 py-2 text-xs font-black transition-colors disabled:opacity-50"
           >
             {prompt}
           </button>
         ))}
       </div>
 
-      <div className="mt-6 max-h-96 space-y-4 overflow-y-auto no-scrollbar rounded-[1.75rem] border border-border bg-secondary/10 p-4 dark:bg-card/30">
+      <div className="no-scrollbar border-border bg-secondary/10 dark:bg-card/30 mt-6 max-h-96 space-y-4 overflow-y-auto rounded-[1.75rem] border p-4">
         {messages.map((message, index) => (
           <div
             key={`${message.role}-${index}`}
             className={cn(
               "rounded-[1.25rem] px-5 py-4 text-sm leading-relaxed transition-all",
               message.role === "assistant"
-                ? "mr-8 bg-card text-card-foreground shadow-sm border border-border/40 dark:bg-card/80 dark:border-border/50"
-                : "ml-8 bg-primary text-primary-foreground shadow-md font-medium",
+                ? "bg-card text-card-foreground border-border/40 dark:bg-card/80 dark:border-border/50 mr-8 border shadow-sm"
+                : "bg-primary text-primary-foreground ml-8 font-medium shadow-md",
             )}
           >
             {message.content.split("\n").map((line, i) => (
@@ -133,8 +133,8 @@ export default function AdvisorConciergePanel({ slug }: Props) {
           </div>
         ))}
         {isPending && (
-          <div className="mr-8 flex items-center gap-2 rounded-[1.25rem] bg-card/80 px-5 py-4 text-sm text-muted-foreground shadow-sm border border-border/40 backdrop-blur-sm">
-            <Loader2 size={16} className="animate-spin text-primary" />
+          <div className="bg-card/80 text-muted-foreground border-border/40 mr-8 flex items-center gap-2 rounded-[1.25rem] border px-5 py-4 text-sm shadow-sm backdrop-blur-sm">
+            <Loader2 size={16} className="text-primary animate-spin" />
             知里様と智也様に最適な案を考えています...
           </div>
         )}
@@ -146,12 +146,12 @@ export default function AdvisorConciergePanel({ slug }: Props) {
           onChange={(event) => setInput(event.target.value)}
           rows={2}
           placeholder="今の予定で、何を優先すべき？"
-          className="min-h-14 flex-1 resize-none rounded-3xl border border-border bg-card px-4 py-4 text-sm outline-none transition-all focus:border-primary focus:ring-1 focus:ring-primary/20 dark:bg-background/50"
+          className="border-border bg-card focus:border-primary focus:ring-primary/20 dark:bg-background/50 min-h-14 flex-1 resize-none rounded-3xl border px-4 py-4 text-sm transition-all outline-none focus:ring-1"
         />
         <button
           type="submit"
           disabled={isPending || !input.trim()}
-          className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[1.25rem] bg-primary text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:brightness-110 active:scale-95 disabled:opacity-40 disabled:shadow-none"
+          className="bg-primary text-primary-foreground shadow-primary/20 flex h-14 w-14 shrink-0 items-center justify-center rounded-[1.25rem] shadow-lg transition-all hover:brightness-110 active:scale-95 disabled:opacity-40 disabled:shadow-none"
           aria-label="送信"
         >
           <Send size={18} />

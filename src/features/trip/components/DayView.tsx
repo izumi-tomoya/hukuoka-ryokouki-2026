@@ -1,4 +1,4 @@
-import { Map } from "lucide-react";
+import { Map as MapIcon } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { getAllLocations } from "@/features/trip/api/tripActions";
 import ActionSummary from "@/features/trip/components/ActionSummary";
@@ -81,34 +81,34 @@ export default async function DayView({
         isAdmin={isAdmin}
       />
 
-      <Container className="pb-24 space-y-16">
+      <Container className="space-y-16 pb-24">
         {/* Weather Forecast for the day */}
         <DayForecast location={location} date={date} />
 
         {/* Map Section */}
         <div className="space-y-6">
           <div className="flex items-center gap-3">
-            <div className="h-2 w-2 rounded-full bg-primary" />
-            <h2 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Geospatial Path</h2>
+            <div className="bg-primary h-2 w-2 rounded-full" />
+            <h2 className="text-muted-foreground text-[10px] font-black tracking-widest uppercase">Geospatial Path</h2>
           </div>
           <DynamicTripMap events={events} isAdmin={isAdmin} locationMaster={locationMaster || []} />
         </div>
 
-        <ActionSummary events={events} isAdmin={isAdmin} locationNames={locationNames} />
+        <ActionSummary events={events} slug={slug} isAdmin={isAdmin} locationNames={locationNames} />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+        <div className="grid grid-cols-1 items-stretch gap-6 md:grid-cols-2">
           <BudgetSummary events={events} />
 
           {uniqueLocations.length >= 2 ? (
             <SafeLink
               href={routeUrl}
-              className="group flex items-center gap-4 px-8 py-5 rounded-[2.5rem] bg-card border border-border text-foreground transition-all hover:shadow-2xl hover:border-primary/50 active:scale-95"
+              className="group bg-card border-border text-foreground hover:border-primary/50 flex items-center gap-4 rounded-[2.5rem] border px-8 py-5 transition-all hover:shadow-2xl active:scale-95"
             >
-              <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all">
-                <Map size={24} />
+              <div className="bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground flex h-12 w-12 items-center justify-center rounded-2xl transition-all">
+                <MapIcon size={24} />
               </div>
               <div>
-                <span className="block text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground mb-1 group-hover:text-primary transition-colors">
+                <span className="text-muted-foreground group-hover:text-primary mb-1 block text-[10px] font-black tracking-[0.3em] uppercase transition-colors">
                   Navigation
                 </span>
                 <span className="block text-sm font-bold tracking-tight">今日の全ルートを表示</span>
@@ -127,11 +127,11 @@ export default async function DayView({
 
         <div className="space-y-12">
           <div className="flex items-center gap-4">
-            <div className="h-px grow bg-border" />
-            <h2 className="font-playfair text-2xl md:text-3xl font-black text-foreground text-center px-4">
+            <div className="bg-border h-px grow" />
+            <h2 className="font-playfair text-foreground px-4 text-center text-2xl font-black md:text-3xl">
               Daily Timeline
             </h2>
-            <div className="h-px grow bg-border" />
+            <div className="bg-border h-px grow" />
           </div>
           <EventFilterWrapper dayId={dayId} events={events} dayNumber={dayNumber as 1 | 2} isAdmin={isAdmin} />
         </div>

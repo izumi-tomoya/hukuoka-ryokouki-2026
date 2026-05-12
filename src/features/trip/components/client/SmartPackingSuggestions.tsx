@@ -54,15 +54,15 @@ export default function SmartPackingSuggestions({ tripId, itemNames, events, wea
   if (suggestions.length === 0) return null;
 
   return (
-    <MagazineCard padding="lg" className="border-primary/20 bg-linear-to-br from-primary/8 to-transparent">
+    <MagazineCard padding="lg" className="border-primary/20 from-primary/8 bg-linear-to-br to-transparent">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-primary">
+          <div className="border-primary/20 bg-primary/10 text-primary mb-4 inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-[10px] font-black tracking-[0.18em] uppercase">
             <Sparkles size={13} />
             Packing Assist
           </div>
-          <h3 className="font-playfair text-3xl font-black text-foreground">持ち物レコメンド</h3>
-          <p className="mt-2 text-sm font-medium leading-relaxed text-muted-foreground">
+          <h3 className="font-playfair text-foreground text-3xl font-black">持ち物レコメンド</h3>
+          <p className="text-muted-foreground mt-2 text-sm leading-relaxed font-medium">
             {headline}。今の天気と移動量から、追加しておくと効くものだけを出しています。
           </p>
         </div>
@@ -74,15 +74,15 @@ export default function SmartPackingSuggestions({ tripId, itemNames, events, wea
           const isAdding = isPending && addingName === suggestion.name;
 
           return (
-            <div key={suggestion.name} className="rounded-[1.75rem] border border-border bg-background/70 p-5">
+            <div key={suggestion.name} className="border-border bg-background/70 rounded-[1.75rem] border p-5">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-secondary text-primary">
+                  <div className="bg-secondary text-primary flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl">
                     <Icon size={18} />
                   </div>
                   <div>
-                    <div className="text-sm font-black text-foreground">{suggestion.name}</div>
-                    <div className="mt-1 text-[10px] font-black uppercase tracking-[0.16em] text-muted-foreground">
+                    <div className="text-foreground text-sm font-black">{suggestion.name}</div>
+                    <div className="text-muted-foreground mt-1 text-[10px] font-black tracking-[0.16em] uppercase">
                       {suggestion.urgency}
                     </div>
                   </div>
@@ -91,7 +91,7 @@ export default function SmartPackingSuggestions({ tripId, itemNames, events, wea
                   onClick={() => addSuggestion(suggestion.name, suggestion.category)}
                   disabled={isPending}
                   className={cn(
-                    "flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-foreground text-background transition-transform active:scale-[0.98]",
+                    "bg-foreground text-background flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl transition-transform active:scale-[0.98]",
                     isPending && "opacity-60",
                   )}
                   aria-label={`${suggestion.name}を追加`}
@@ -99,7 +99,7 @@ export default function SmartPackingSuggestions({ tripId, itemNames, events, wea
                   {isAdding ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}
                 </button>
               </div>
-              <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{suggestion.reason}</p>
+              <p className="text-muted-foreground mt-4 text-sm leading-relaxed">{suggestion.reason}</p>
             </div>
           );
         })}

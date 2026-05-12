@@ -11,8 +11,8 @@ import PhotoUploadButton from "@/features/trip/components/client/PhotoUploadButt
 import PhotoGallery from "@/features/trip/components/PhotoGallery";
 import type { TripEvent } from "@/features/trip/types/trip";
 import type { InsightEvent } from "@/features/trip/utils/tripInsights";
-import { maskSecretText } from "@/features/trip/utils/tripUtils";
 import type { BudgetStats } from "@/features/trip/utils/tripUtils";
+import { maskSecretText } from "@/features/trip/utils/tripUtils";
 import AddAwardModal from "./AddAwardModal";
 import MemoryReel, { type MemoryReelPhoto } from "./MemoryReel";
 import SettlementPanel from "./SettlementPanel";
@@ -46,8 +46,8 @@ export default function MemoriesContent({
   const [isReelOpen, setIsReelOpen] = useState(false);
 
   return (
-    <Container className="pb-24 space-y-16 md:space-y-24 lg:space-y-32">
-      <section className="animate-in fade-in slide-in-from-bottom-6 duration-1000 space-y-6">
+    <Container className="space-y-16 pb-24 md:space-y-24 lg:space-y-32">
+      <section className="animate-in fade-in slide-in-from-bottom-6 space-y-6 duration-1000">
         <BudgetDashboard stats={budgetStats} />
 
         {albumPhotos.length > 0 && (
@@ -57,11 +57,11 @@ export default function MemoriesContent({
           >
             <div className="grid gap-8 lg:grid-cols-[minmax(0,1.15fr)_340px] lg:items-center">
               <div>
-                <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.22em] text-amber-200">
+                <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-[10px] font-black tracking-[0.22em] text-amber-200 uppercase">
                   <Film size={12} />
                   Financial Overview Bonus
                 </div>
-                <h3 className="mt-5 font-playfair text-4xl font-black italic leading-none tracking-tight md:text-5xl">
+                <h3 className="font-playfair mt-5 text-4xl leading-none font-black tracking-tight italic md:text-5xl">
                   旅のハイライトをそのまま流せる
                   <br />
                   Memory Reel
@@ -71,7 +71,7 @@ export default function MemoriesContent({
                   ここから全画面で再生できる。
                 </p>
 
-                <div className="mt-6 flex flex-wrap items-center gap-3 text-[11px] font-bold uppercase tracking-[0.18em] text-white/55">
+                <div className="mt-6 flex flex-wrap items-center gap-3 text-[11px] font-bold tracking-[0.18em] text-white/55 uppercase">
                   <span className="inline-flex items-center gap-2 rounded-full border border-white/10 px-3 py-2">
                     <Images size={14} /> {albumPhotos.length} Frames
                   </span>
@@ -87,7 +87,7 @@ export default function MemoriesContent({
                   <span className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-400 text-black">
                     <Play size={14} fill="currentColor" />
                   </span>
-                  <span className="text-[10px] font-black uppercase tracking-[0.22em]">Play Memory Reel</span>
+                  <span className="text-[10px] font-black tracking-[0.22em] uppercase">Play Memory Reel</span>
                 </button>
               </div>
 
@@ -105,7 +105,7 @@ export default function MemoriesContent({
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
                     <div className="absolute inset-x-0 bottom-0 p-3">
-                      <p className="truncate text-[9px] font-black uppercase tracking-[0.18em] text-amber-200">
+                      <p className="truncate text-[9px] font-black tracking-[0.18em] text-amber-200 uppercase">
                         {photo.dayLabel || photo.dateLabel || "Moment"}
                       </p>
                       <p className="mt-1 line-clamp-2 text-sm font-semibold text-white">
@@ -140,14 +140,14 @@ export default function MemoriesContent({
       </section>
 
       <section>
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8 md:mb-12 px-0 sm:px-2">
+        <div className="mb-8 flex flex-col gap-4 px-0 sm:flex-row sm:items-center sm:justify-between sm:px-2 md:mb-12">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 shrink-0 rounded-2xl bg-amber-500 flex items-center justify-center text-black shadow-lg shadow-amber-500/20">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-amber-500 text-black shadow-lg shadow-amber-500/20">
               <Trophy size={22} />
             </div>
             <div className="min-w-0">
-              <h2 className="text-2xl font-black text-foreground leading-none tracking-tight">Gourmet Awards</h2>
-              <p className="text-[10px] font-black uppercase tracking-[0.14em] sm:tracking-[0.2em] text-muted-foreground mt-1 leading-relaxed">
+              <h2 className="text-foreground text-2xl leading-none font-black tracking-tight">Gourmet Awards</h2>
+              <p className="text-muted-foreground mt-1 text-[10px] leading-relaxed font-black tracking-[0.14em] uppercase sm:tracking-[0.2em]">
                 Best Culinary Experiences
               </p>
             </div>
@@ -155,7 +155,7 @@ export default function MemoriesContent({
           {isAdmin && (
             <button
               onClick={() => setIsAwardModalOpen(true)}
-              className="group flex min-h-12 w-full items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-card border border-border text-[10px] font-black uppercase tracking-[0.14em] hover:border-primary hover:text-primary transition-all shadow-sm sm:w-auto sm:tracking-widest"
+              className="group bg-card border-border hover:border-primary hover:text-primary flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl border px-5 py-3 text-[10px] font-black tracking-[0.14em] uppercase shadow-sm transition-all sm:w-auto sm:tracking-widest"
             >
               <Plus size={14} /> Add Award
             </button>
@@ -163,14 +163,14 @@ export default function MemoriesContent({
         </div>
 
         {awards.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
             {awards.map((award) => (
               <GourmetAwardCard key={award.id} award={award} isAdmin={isAdmin} />
             ))}
           </div>
         ) : (
-          <div className="py-20 text-center border-2 border-dashed border-border rounded-[3rem] bg-secondary/10">
-            <Heart size={40} className="mx-auto text-muted-foreground/30 mb-4" />
+          <div className="border-border bg-secondary/10 rounded-[3rem] border-2 border-dashed py-20 text-center">
+            <Heart size={40} className="text-muted-foreground/30 mx-auto mb-4" />
             <p className="text-muted-foreground font-medium italic">
               まだアワードが登録されていません。
               <br />
@@ -181,14 +181,14 @@ export default function MemoriesContent({
       </section>
 
       <section>
-        <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between mb-8 md:mb-12 px-0 sm:px-2">
+        <div className="mb-8 flex flex-col gap-6 px-0 sm:flex-row sm:items-center sm:justify-between sm:px-2 md:mb-12">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 shrink-0 rounded-2xl bg-rose-500 flex items-center justify-center text-white shadow-lg shadow-rose-500/20">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-rose-500 text-white shadow-lg shadow-rose-500/20">
               <Camera size={22} />
             </div>
             <div className="min-w-0">
-              <h2 className="text-2xl font-black text-foreground leading-none tracking-tight">Photo Collection</h2>
-              <p className="text-[10px] font-black uppercase tracking-[0.14em] sm:tracking-[0.2em] text-muted-foreground mt-1">
+              <h2 className="text-foreground text-2xl leading-none font-black tracking-tight">Photo Collection</h2>
+              <p className="text-muted-foreground mt-1 text-[10px] font-black tracking-[0.14em] uppercase sm:tracking-[0.2em]">
                 Captured Moments
               </p>
             </div>
@@ -197,9 +197,9 @@ export default function MemoriesContent({
           {albumPhotos.length > 0 && (
             <button
               onClick={() => setIsReelOpen(true)}
-              className="group flex min-h-12 w-full items-center justify-center gap-4 rounded-2xl bg-zinc-900 px-6 py-3 text-white shadow-xl transition-all hover:scale-[1.02] active:scale-95 sm:w-auto border border-white/10"
+              className="group flex min-h-12 w-full items-center justify-center gap-4 rounded-2xl border border-white/10 bg-zinc-900 px-6 py-3 text-white shadow-xl transition-all hover:scale-[1.02] active:scale-95 sm:w-auto"
             >
-              <div className="h-7 w-7 rounded-full bg-primary flex items-center justify-center text-white group-hover:rotate-12 transition-transform">
+              <div className="bg-primary flex h-7 w-7 items-center justify-center rounded-full text-white transition-transform group-hover:rotate-12">
                 <Play size={14} fill="currentColor" />
               </div>
               <span className="text-[10px] font-black tracking-widest uppercase">Start Memory Reel</span>
@@ -208,21 +208,21 @@ export default function MemoriesContent({
         </div>
 
         <div className="space-y-14 md:space-y-24">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {allEvents.map((event) => (
               <MagazineCard
                 key={event.id}
                 padding="sm"
-                className="flex flex-col justify-between border-primary/10 hover:border-primary/30 transition-all group"
+                className="border-primary/10 hover:border-primary/30 group flex flex-col justify-between transition-all"
               >
                 <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-primary/60">
+                  <div className="mb-4 flex items-center justify-between">
+                    <span className="text-primary/60 text-[9px] font-black tracking-widest uppercase">
                       {event.time}
                     </span>
                     <Sparkles size={12} className="text-primary/20 group-hover:text-primary/40 transition-colors" />
                   </div>
-                  <h3 className="font-bold text-foreground mb-6 line-clamp-1">
+                  <h3 className="text-foreground mb-6 line-clamp-1 font-bold">
                     {maskSecretText(event.title || event.foodName || "", isAdmin)}
                   </h3>
                 </div>
@@ -232,15 +232,15 @@ export default function MemoriesContent({
           </div>
 
           {eventsWithPhotos.length > 0 && (
-            <div className="space-y-20 pt-10 border-t border-border">
+            <div className="border-border space-y-20 border-t pt-10">
               {eventsWithPhotos.map((event) => (
                 <div key={event.id} className="animate-in fade-in slide-in-from-bottom-4 duration-1000">
-                  <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:gap-4 mb-6 md:mb-8">
-                    <h3 className="break-words font-playfair text-2xl font-black text-foreground italic">
+                  <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-baseline sm:gap-4 md:mb-8">
+                    <h3 className="font-playfair text-foreground text-2xl font-black break-words italic">
                       {maskSecretText(event.title || event.foodName || "", isAdmin)}
                     </h3>
-                    <div className="h-px grow bg-border/50" />
-                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                    <div className="bg-border/50 h-px grow" />
+                    <span className="text-muted-foreground text-[10px] font-black tracking-widest uppercase">
                       {event.time}
                     </span>
                   </div>

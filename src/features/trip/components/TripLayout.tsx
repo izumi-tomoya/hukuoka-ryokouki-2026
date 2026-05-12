@@ -43,21 +43,21 @@ export default function TripLayout({
   }, [tips, updateTips]);
 
   return (
-    <div className="min-h-screen bg-background text-foreground pb-20 transition-colors duration-500 overflow-x-hidden">
-      <header className="px-4 sm:px-6 pt-8 md:pt-16 pb-5 md:pb-8 mx-auto max-w-5xl">
-        <div className="mb-7 md:mb-10 text-center md:text-left">
+    <div className="bg-background text-foreground min-h-screen overflow-x-hidden pb-20 transition-colors duration-500">
+      <header className="mx-auto max-w-5xl px-4 pt-8 pb-5 sm:px-6 md:pt-16 md:pb-8">
+        <div className="mb-7 text-center md:mb-10 md:text-left">
           {isLoading ? (
             <>
-              <Skeleton className="h-10 md:h-14 w-3/4 md:w-1/2 mb-4 mx-auto md:mx-0 opacity-20" />
-              <Skeleton className="h-4 w-1/2 md:w-1/3 mx-auto md:mx-0 opacity-20" />
+              <Skeleton className="mx-auto mb-4 h-10 w-3/4 opacity-20 md:mx-0 md:h-14 md:w-1/2" />
+              <Skeleton className="mx-auto h-4 w-1/2 opacity-20 md:mx-0 md:w-1/3" />
             </>
           ) : (
             <>
-              <h1 className="break-words font-playfair text-[2rem] sm:text-4xl md:text-5xl font-extrabold text-foreground mb-3 md:mb-4 tracking-tight leading-tight">
+              <h1 className="font-playfair text-foreground mb-3 text-[2rem] leading-tight font-extrabold tracking-tight break-words sm:text-4xl md:mb-4 md:text-5xl">
                 {title}
               </h1>
               {subtitle && (
-                <p className="break-words text-muted-foreground text-[10px] md:text-xs font-bold tracking-[0.14em] sm:tracking-[0.2em] uppercase leading-relaxed">
+                <p className="text-muted-foreground text-[10px] leading-relaxed font-bold tracking-[0.14em] break-words uppercase sm:tracking-[0.2em] md:text-xs">
                   {subtitle}
                 </p>
               )}
@@ -66,11 +66,11 @@ export default function TripLayout({
         </div>
 
         {isLoading ? (
-          <div className="flex items-center justify-start lg:justify-center gap-2 md:gap-3 mb-8 md:mb-16 overflow-hidden -mx-4 px-4 md:mx-0 md:px-0">
-            <Skeleton className="h-11 w-28 rounded-full shrink-0 opacity-10" />
-            <Skeleton className="h-11 w-28 rounded-full shrink-0 opacity-10" />
-            <Skeleton className="h-11 w-28 rounded-full shrink-0 opacity-10" />
-            <Skeleton className="h-11 w-24 rounded-full shrink-0 opacity-5" />
+          <div className="-mx-4 mb-8 flex items-center justify-start gap-2 overflow-hidden px-4 md:mx-0 md:mb-16 md:gap-3 md:px-0 lg:justify-center">
+            <Skeleton className="h-11 w-28 shrink-0 rounded-full opacity-10" />
+            <Skeleton className="h-11 w-28 shrink-0 rounded-full opacity-10" />
+            <Skeleton className="h-11 w-28 shrink-0 rounded-full opacity-10" />
+            <Skeleton className="h-11 w-24 shrink-0 rounded-full opacity-5" />
           </div>
         ) : (
           <CategoryTabs slug={slug} activePath={activePath} isSecretMode={isSecretMode} days={days} />

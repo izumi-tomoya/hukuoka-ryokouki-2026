@@ -41,16 +41,16 @@ export default function EssentialTips() {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
       {items.map((item, i) => (
         <MagazineCard key={i} padding="md" className="border-border/50 shadow-sm">
-          <div className="flex gap-4 items-start">
-            <div className={`p-3 rounded-2xl ${item.bg} ${item.color} shrink-0`}>
+          <div className="flex items-start gap-4">
+            <div className={`rounded-2xl p-3 ${item.bg} ${item.color} shrink-0`}>
               <item.icon size={20} />
             </div>
             <div>
-              <h4 className="font-bold text-stone-900 mb-2">{item.title}</h4>
-              <p className="text-sm text-stone-500 leading-relaxed">{item.desc}</p>
+              <h4 className="mb-2 font-bold text-stone-900">{item.title}</h4>
+              <p className="text-sm leading-relaxed text-stone-500">{item.desc}</p>
             </div>
           </div>
         </MagazineCard>

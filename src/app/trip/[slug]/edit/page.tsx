@@ -10,18 +10,18 @@ export default async function EditTripPage({ params }: { params: Promise<{ slug:
   if (!trip) return notFound();
 
   return (
-    <div className="min-h-screen bg-background pt-16 md:pt-24 pb-20">
+    <div className="bg-background min-h-screen pt-16 pb-20 md:pt-24">
       <Container className="max-w-2xl">
-        <header className="mb-12 md:mb-16 text-center">
-          <h1 className="font-playfair text-4xl md:text-6xl font-black text-foreground mb-4 tracking-tight leading-tight">
+        <header className="mb-12 text-center md:mb-16">
+          <h1 className="font-playfair text-foreground mb-4 text-4xl leading-tight font-black tracking-tight md:text-6xl">
             Edit Journey
           </h1>
-          <p className="text-muted-foreground text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase leading-relaxed">
+          <p className="text-muted-foreground text-[10px] leading-relaxed font-bold tracking-[0.2em] uppercase md:text-xs">
             旅の詳細を更新しましょう
           </p>
         </header>
 
-        <MagazineCard padding="lg" className="border-border/50 shadow-2xl shadow-primary/5">
+        <MagazineCard padding="lg" className="border-border/50 shadow-primary/5 shadow-2xl">
           <NewTripForm
             initialData={{
               id: trip.id,

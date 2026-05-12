@@ -396,7 +396,8 @@ export function buildEmergencySnapshot(
     ...events
       .filter((event) => event.isConfirmed)
       .map((event) => {
-        const isSurprise = event.tag === "surprise" || isSecretContent(event.title) || isSecretContent(event.formalName);
+        const isSurprise =
+          event.tag === "surprise" || isSecretContent(event.title) || isSecretContent(event.formalName);
         return {
           label: maskLabel(event.title, isSurprise),
           href:

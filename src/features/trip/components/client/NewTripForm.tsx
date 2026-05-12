@@ -82,7 +82,7 @@ export default function NewTripForm({ initialData }: Props) {
       <div>
         <label className={labelCls}>Journey Title</label>
         <div className="relative">
-          <Sparkles size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/40" />
+          <Sparkles size={16} className="text-primary/40 absolute top-1/2 left-4 -translate-y-1/2" />
           <input
             name="title"
             required
@@ -97,12 +97,12 @@ export default function NewTripForm({ initialData }: Props) {
       <div>
         <label className={labelCls}>Short Description</label>
         <div className="relative">
-          <FileText size={16} className="absolute left-4 top-4 text-muted-foreground/40" />
+          <FileText size={16} className="text-muted-foreground/40 absolute top-4 left-4" />
           <textarea
             name="description"
             defaultValue={initialData?.description || ""}
             placeholder="この旅のテーマや目的を一言で..."
-            className={cn(inputCls, "pl-11 h-24 resize-none pt-4")}
+            className={cn(inputCls, "h-24 resize-none pt-4 pl-11")}
           />
         </div>
       </div>
@@ -111,7 +111,7 @@ export default function NewTripForm({ initialData }: Props) {
       <div>
         <label className={labelCls}>Destination</label>
         <div className="relative">
-          <MapPin size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/40" />
+          <MapPin size={16} className="text-muted-foreground/40 absolute top-1/2 left-4 -translate-y-1/2" />
           <input
             name="location"
             required
@@ -123,20 +123,20 @@ export default function NewTripForm({ initialData }: Props) {
       </div>
 
       {/* Date Range */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
         <div>
           <label className={labelCls}>Departure</label>
           <div className="relative">
             <Calendar
               size={16}
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/40 pointer-events-none"
+              className="text-muted-foreground/40 pointer-events-none absolute top-1/2 left-4 -translate-y-1/2"
             />
             <input
               name="startDate"
               type="date"
               required
               defaultValue={initialData?.startDate.split("T")[0]}
-              className={cn(inputCls, "pl-11 block appearance-none")}
+              className={cn(inputCls, "block appearance-none pl-11")}
             />
           </div>
         </div>
@@ -145,14 +145,14 @@ export default function NewTripForm({ initialData }: Props) {
           <div className="relative">
             <Calendar
               size={16}
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/40 pointer-events-none"
+              className="text-muted-foreground/40 pointer-events-none absolute top-1/2 left-4 -translate-y-1/2"
             />
             <input
               name="endDate"
               type="date"
               required
               defaultValue={initialData?.endDate.split("T")[0]}
-              className={cn(inputCls, "pl-11 block appearance-none")}
+              className={cn(inputCls, "block appearance-none pl-11")}
             />
           </div>
         </div>
@@ -161,7 +161,7 @@ export default function NewTripForm({ initialData }: Props) {
       {/* Accent Color Selection */}
       <div className="pt-2">
         <label className={labelCls}>Theme Accent</label>
-        <div className="grid grid-cols-4 sm:grid-cols-7 gap-3 mb-4">
+        <div className="mb-4 grid grid-cols-4 gap-3 sm:grid-cols-7">
           {COLOR_PRESETS.map((color) => (
             <button
               key={color.value}
@@ -170,8 +170,8 @@ export default function NewTripForm({ initialData }: Props) {
               className={cn(
                 "group relative h-10 w-full rounded-xl transition-all active:scale-95",
                 selectedColor === color.value
-                  ? "ring-2 ring-primary ring-offset-2 ring-offset-background"
-                  : "hover:ring-2 hover:ring-border hover:ring-offset-1",
+                  ? "ring-primary ring-offset-background ring-2 ring-offset-2"
+                  : "hover:ring-border hover:ring-2 hover:ring-offset-1",
               )}
               style={{ backgroundColor: color.value }}
               title={color.name}
@@ -183,37 +183,37 @@ export default function NewTripForm({ initialData }: Props) {
               )}
             </button>
           ))}
-          <div className="relative h-10 w-full rounded-xl border border-border/50 bg-secondary/30 flex items-center justify-center overflow-hidden">
+          <div className="border-border/50 bg-secondary/30 relative flex h-10 w-full items-center justify-center overflow-hidden rounded-xl border">
             <Palette size={14} className="text-muted-foreground/40" />
             <input
               name="accentColor"
               type="color"
               value={selectedColor}
               onChange={(e) => setSelectedColor(e.target.value)}
-              className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+              className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
             />
           </div>
         </div>
       </div>
 
       {/* Actions */}
-      <div className="pt-4 flex flex-col sm:flex-row gap-4">
+      <div className="flex flex-col gap-4 pt-4 sm:flex-row">
         {initialData && (
           <button
             type="button"
             onClick={handleDelete}
             disabled={isPending || isDeleting}
-            className="flex items-center justify-center gap-2 px-6 py-5 rounded-3xl border border-rose-200 text-rose-500 font-bold hover:bg-rose-50 transition-all disabled:opacity-40"
+            className="flex items-center justify-center gap-2 rounded-3xl border border-rose-200 px-6 py-5 font-bold text-rose-500 transition-all hover:bg-rose-50 disabled:opacity-40"
           >
             {isDeleting ? <Loader2 size={18} className="animate-spin" /> : <Trash2 size={18} />}
-            <span className="text-xs uppercase tracking-widest">Delete</span>
+            <span className="text-xs tracking-widest uppercase">Delete</span>
           </button>
         )}
         <button
           type="submit"
           disabled={isPending || isDeleting}
           className={cn(
-            "flex-1 flex items-center justify-center gap-3 rounded-3xl bg-foreground text-background py-5 text-[13px] font-black uppercase tracking-[0.2em] transition-all hover:opacity-90 active:scale-[0.98] disabled:opacity-40 shadow-2xl shadow-foreground/10",
+            "bg-foreground text-background shadow-foreground/10 flex flex-1 items-center justify-center gap-3 rounded-3xl py-5 text-[13px] font-black tracking-[0.2em] uppercase shadow-2xl transition-all hover:opacity-90 active:scale-[0.98] disabled:opacity-40",
             (isPending || isDeleting) && "cursor-not-allowed",
           )}
         >

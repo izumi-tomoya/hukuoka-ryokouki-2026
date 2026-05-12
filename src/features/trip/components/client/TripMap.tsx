@@ -8,8 +8,8 @@ import { MapPin, Navigation2, Star, X } from "lucide-react";
 import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
 import { MagazineCard } from "@/components/ui/MagazineCard";
 import type { TripEvent } from "@/features/trip/types/trip";
-import { isSecretEvent, SECRET_SPOTS } from "@/features/trip/utils/tripUtils";
 import { cleanLocationName } from "@/features/trip/utils/locationCatalog";
+import { isSecretEvent, SECRET_SPOTS } from "@/features/trip/utils/tripUtils";
 import TripMapSkeleton from "../TripMapSkeleton";
 import { ExternalSpotInfo } from "./ExternalSpotInfo";
 
@@ -158,9 +158,9 @@ export default function TripMap({
 
   if (markers.length === 0) {
     return (
-      <MagazineCard className="h-80 flex flex-col items-center justify-center text-stone-400 bg-secondary/30 border-border/50 rounded-[3rem] shadow-sm">
+      <MagazineCard className="bg-secondary/30 border-border/50 flex h-80 flex-col items-center justify-center rounded-[3rem] text-stone-400 shadow-sm">
         <MapPin size={32} className="mb-2 opacity-20" />
-        <p className="text-[10px] font-black uppercase tracking-widest">No matching locations for map</p>
+        <p className="text-[10px] font-black tracking-widest uppercase">No matching locations for map</p>
       </MagazineCard>
     );
   }
@@ -169,7 +169,7 @@ export default function TripMap({
 
   return (
     <div className="group relative">
-      <div className="relative h-80 w-full rounded-[3.5rem] overflow-hidden border border-rose-100 shadow-2xl shadow-rose-100/20 bg-secondary/30 ring-1 ring-rose-100/50">
+      <div className="bg-secondary/30 relative h-80 w-full overflow-hidden rounded-[3.5rem] border border-rose-100 shadow-2xl ring-1 shadow-rose-100/20 ring-rose-100/50">
         <MapContainer
           center={center}
           zoom={13}
@@ -192,32 +192,32 @@ export default function TripMap({
         </MapContainer>
 
         {/* Floating Label */}
-        <div className="absolute top-6 left-6 z-[400] flex flex-col gap-1 pointer-events-none">
-          <div className="bg-stone-900/90 backdrop-blur-md px-4 py-1.5 rounded-full border border-stone-800 shadow-xl flex items-center gap-2 max-w-fit">
-            <div className="h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse" />
-            <span className="text-[9px] font-black uppercase tracking-[0.3em] text-white">Cartography</span>
+        <div className="pointer-events-none absolute top-6 left-6 z-[400] flex flex-col gap-1">
+          <div className="flex max-w-fit items-center gap-2 rounded-full border border-stone-800 bg-stone-900/90 px-4 py-1.5 shadow-xl backdrop-blur-md">
+            <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-rose-500" />
+            <span className="text-[9px] font-black tracking-[0.3em] text-white uppercase">Cartography</span>
           </div>
         </div>
       </div>
 
       <div className="mt-5 px-2">
         {selectedMarker ? (
-          <MagazineCard className="border-rose-200/80 bg-card shadow-xl shadow-rose-100/20">
+          <MagazineCard className="bg-card border-rose-200/80 shadow-xl shadow-rose-100/20">
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
-                <div className="text-[10px] font-black uppercase tracking-[0.2em] text-rose-400">Selected Pin</div>
-                <h3 className="mt-2 break-words font-playfair text-2xl font-bold text-foreground">
+                <div className="text-[10px] font-black tracking-[0.2em] text-rose-400 uppercase">Selected Pin</div>
+                <h3 className="font-playfair text-foreground mt-2 text-2xl font-bold break-words">
                   {selectedMarker.name}
                 </h3>
                 {selectedMarker.category && (
-                  <div className="mt-3 inline-flex rounded-full bg-rose-500/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-rose-500">
+                  <div className="mt-3 inline-flex rounded-full bg-rose-500/10 px-3 py-1 text-[10px] font-black tracking-widest text-rose-500 uppercase">
                     {selectedMarker.category}
                   </div>
                 )}
               </div>
               <button
                 onClick={() => setSelectedMarker(null)}
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border bg-background text-muted-foreground transition-colors hover:text-foreground"
+                className="border-border bg-background text-muted-foreground hover:text-foreground flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition-colors"
                 aria-label="選択中のピン情報を閉じる"
               >
                 <X size={16} />
@@ -226,14 +226,14 @@ export default function TripMap({
 
             {selectedMarker.events.length > 0 && (
               <div className="mt-6">
-                <div className="mb-3 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
+                <div className="text-muted-foreground mb-3 text-[10px] font-black tracking-[0.2em] uppercase">
                   Moments Here
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {selectedMarker.events.map((event, eventIndex) => (
                     <div
                       key={`${event.time}-${eventIndex}`}
-                      className="rounded-full border border-border bg-secondary/30 px-3 py-1.5 text-[11px] font-bold text-foreground"
+                      className="border-border bg-secondary/30 text-foreground rounded-full border px-3 py-1.5 text-[11px] font-bold"
                     >
                       {event.time} {maskSecretText(event.title, isAdmin)}
                     </div>
@@ -243,15 +243,15 @@ export default function TripMap({
             )}
 
             {(selectedMarker.description || selectedMarker.address || selectedMarker.events[0]?.description) && (
-              <div className="mt-6 rounded-[1.5rem] border border-border bg-secondary/15 px-4 py-4 text-sm leading-relaxed text-muted-foreground">
+              <div className="border-border bg-secondary/15 text-muted-foreground mt-6 rounded-[1.5rem] border px-4 py-4 text-sm leading-relaxed">
                 <p className="text-foreground">{selectedMarker.description || selectedMarker.events[0]?.description}</p>
                 {selectedMarker.address && (
-                  <p className="mt-3 text-xs text-muted-foreground">{selectedMarker.address}</p>
+                  <p className="text-muted-foreground mt-3 text-xs">{selectedMarker.address}</p>
                 )}
               </div>
             )}
 
-            <div className="mt-6 max-h-[28rem] overflow-y-auto pr-1 overscroll-contain">
+            <div className="mt-6 max-h-[28rem] overflow-y-auto overscroll-contain pr-1">
               {!selectedMarker.isSecret && (
                 <ExternalSpotInfo
                   name={selectedMarker.events[0]?.title || selectedMarker.name}
@@ -264,40 +264,40 @@ export default function TripMap({
                 />
               )}
               {selectedMarker.isSecret && (
-                <div className="flex flex-col items-center justify-center p-8 rounded-[2rem] bg-rose-50 border border-dashed border-rose-200">
-                  <Star size={24} className="text-rose-400 mb-3" />
+                <div className="flex flex-col items-center justify-center rounded-[2rem] border border-dashed border-rose-200 bg-rose-50 p-8">
+                  <Star size={24} className="mb-3 text-rose-400" />
                   <p className="text-xs font-bold text-rose-900">Surprise Spot</p>
-                  <p className="text-[10px] text-rose-400 mt-1 uppercase tracking-widest">当日までのお楽しみ</p>
+                  <p className="mt-1 text-[10px] tracking-widest text-rose-400 uppercase">当日までのお楽しみ</p>
                 </div>
               )}
             </div>
           </MagazineCard>
         ) : (
-          <div className="rounded-[2rem] border border-dashed border-rose-200 bg-rose-50/40 px-5 py-4 text-sm text-muted-foreground">
+          <div className="text-muted-foreground rounded-[2rem] border border-dashed border-rose-200 bg-rose-50/40 px-5 py-4 text-sm">
             ピンをタップすると、この場所の予定とスポット情報を下に表示します。
           </div>
         )}
       </div>
 
       {/* Caption */}
-      <div className="mt-5 px-4 flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <div className="mt-5 flex flex-col justify-between gap-4 px-4 md:flex-row md:items-end">
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-4">
             <div className="h-px w-12 bg-rose-200" />
-            <p className="text-[10px] font-black text-stone-400 uppercase tracking-[0.2em] italic">
+            <p className="text-[10px] font-black tracking-[0.2em] text-stone-400 uppercase italic">
               Fig. 04 — Itinerary Mapping
             </p>
           </div>
           <div className="flex items-baseline gap-2 pl-16">
-            <span className="font-playfair text-3xl font-bold text-stone-900 leading-none">{markers.length}</span>
-            <span className="text-[10px] font-black uppercase tracking-widest text-rose-400 border-l border-rose-100 pl-2 py-0.5">
+            <span className="font-playfair text-3xl leading-none font-bold text-stone-900">{markers.length}</span>
+            <span className="border-l border-rose-100 py-0.5 pl-2 text-[10px] font-black tracking-widest text-rose-400 uppercase">
               Verified Stops
             </span>
           </div>
         </div>
 
         <div className="flex flex-col items-end gap-2 pr-4">
-          <div className="flex items-center gap-2 text-[9px] font-black text-rose-300 uppercase tracking-[0.2em]">
+          <div className="flex items-center gap-2 text-[9px] font-black tracking-[0.2em] text-rose-300 uppercase">
             <Navigation2 size={10} className="fill-rose-300" />
             Coordinates Synchronized
           </div>

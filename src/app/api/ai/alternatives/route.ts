@@ -33,9 +33,6 @@ export async function POST(request: Request) {
   try {
     const session = await auth();
     const isAdmin = !!session?.user?.isAdmin;
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
 
     const {
       slug,
@@ -110,7 +107,9 @@ export async function POST(request: Request) {
       .map((event) => {
         const isSecret =
           !isAdmin &&
-          ((event as { tag?: string }).tag === "surprise" || isSecretContent(event.title) || isSecretContent(event.desc));
+          ((event as { tag?: string }).tag === "surprise" ||
+            isSecretContent(event.title) ||
+            isSecretContent(event.desc));
         const displayName = isSecret ? "🎁 Surprise Spot" : event.title;
         return `${event.time} ${displayName}${event.isConfirmed ? " [fixed]" : ""}`;
       })

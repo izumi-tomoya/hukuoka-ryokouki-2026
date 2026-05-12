@@ -45,23 +45,23 @@ export default function TransitDashboard({ isSecretMode }: TransitDashboardProps
           <a key={i} href={route.url} target="_blank" rel="noopener noreferrer" className="group block">
             <MagazineCard
               padding="md"
-              className="h-full border-border/50 shadow-sm transition-all duration-500 hover:shadow-xl hover:shadow-stone-200/50 hover:-translate-y-1"
+              className="border-border/50 h-full shadow-sm transition-all duration-500 hover:-translate-y-1 hover:shadow-xl hover:shadow-stone-200/50"
             >
-              <div className="flex flex-col h-full">
+              <div className="flex h-full flex-col">
                 <div
-                  className={`w-12 h-12 rounded-2xl ${route.color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500`}
+                  className={`h-12 w-12 rounded-2xl ${route.color} mb-6 flex items-center justify-center transition-transform duration-500 group-hover:scale-110`}
                 >
                   <route.icon size={24} />
                 </div>
-                <h4 className="font-bold text-stone-900 mb-2 flex items-center justify-between">
+                <h4 className="mb-2 flex items-center justify-between font-bold text-stone-900">
                   {route.title}
                   <ExternalLink
                     size={14}
-                    className="opacity-0 group-hover:opacity-100 transition-opacity text-stone-300"
+                    className="text-stone-300 opacity-0 transition-opacity group-hover:opacity-100"
                   />
                 </h4>
-                <p className="text-[11px] text-stone-500 leading-relaxed italic mb-4">{route.desc}</p>
-                <div className="mt-auto pt-4 flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.2em] text-stone-400 group-hover:text-stone-900 transition-colors">
+                <p className="mb-4 text-[11px] leading-relaxed text-stone-500 italic">{route.desc}</p>
+                <div className="mt-auto flex items-center gap-2 pt-4 text-[9px] font-black tracking-[0.2em] text-stone-400 uppercase transition-colors group-hover:text-stone-900">
                   Check Schedule <ArrowRight size={10} />
                 </div>
               </div>

@@ -36,21 +36,21 @@ export default function ConfirmCheckbox({ eventId, initialConfirmed }: ConfirmCh
       onClick={handleToggle}
       disabled={isPending}
       className={cn(
-        "group flex h-7 w-7 items-center justify-center rounded-full border-2 transition-all duration-300 v2-focus",
+        "group v2-focus flex h-7 w-7 items-center justify-center rounded-full border-2 transition-all duration-300",
         isConfirmed
           ? "border-emerald-500 bg-emerald-500 shadow-md shadow-emerald-200"
           : "border-stone-200 bg-white hover:border-emerald-300 hover:bg-emerald-50/30",
-        isPending && "opacity-50 cursor-not-allowed",
+        isPending && "cursor-not-allowed opacity-50",
       )}
       aria-label={isConfirmed ? "Mark as unconfirmed" : "Mark as confirmed"}
     >
       <Check
         size={14}
         className={cn(
-          "transition-all duration-300 transform",
+          "transform transition-all duration-300",
           isConfirmed
-            ? "text-white scale-100 rotate-0"
-            : "text-transparent scale-50 -rotate-45 group-hover:text-emerald-200",
+            ? "scale-100 rotate-0 text-white"
+            : "scale-50 -rotate-45 text-transparent group-hover:text-emerald-200",
         )}
         strokeWidth={3}
       />

@@ -32,7 +32,7 @@ export default function DayCompletionToggle({ dayId, initialCompleted = false }:
       onClick={handleToggle}
       disabled={isLoading}
       className={cn(
-        "group flex items-center gap-4 px-8 py-5 rounded-[2.5rem] bg-card border transition-all hover:shadow-2xl active:scale-95",
+        "group bg-card flex items-center gap-4 rounded-[2.5rem] border px-8 py-5 transition-all hover:shadow-2xl active:scale-95",
         isCompleted
           ? "border-emerald-500/30 text-emerald-600 shadow-emerald-500/5"
           : "border-border text-foreground hover:border-primary/50",
@@ -40,7 +40,7 @@ export default function DayCompletionToggle({ dayId, initialCompleted = false }:
     >
       <div
         className={cn(
-          "h-12 w-12 rounded-2xl flex items-center justify-center transition-all",
+          "flex h-12 w-12 items-center justify-center rounded-2xl transition-all",
           isCompleted
             ? "bg-emerald-500 text-white"
             : "bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground",
@@ -55,7 +55,7 @@ export default function DayCompletionToggle({ dayId, initialCompleted = false }:
         )}
       </div>
       <div className="text-left">
-        <span className="block text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground mb-1">
+        <span className="text-muted-foreground mb-1 block text-[10px] font-black tracking-[0.3em] uppercase">
           Trip Progress
         </span>
         <span className="block text-sm font-bold tracking-tight">

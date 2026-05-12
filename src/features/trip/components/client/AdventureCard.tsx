@@ -51,10 +51,10 @@ export default function AdventureCard() {
       padding="lg"
       className="relative overflow-hidden border-rose-100 bg-linear-to-br from-white to-rose-50/30"
     >
-      <div className="flex flex-col md:flex-row items-center gap-10">
+      <div className="flex flex-col items-center gap-10 md:flex-row">
         <div
           className={cn(
-            "shrink-0 w-24 h-24 rounded-[2.5rem] flex items-center justify-center transition-all duration-500",
+            "flex h-24 w-24 shrink-0 items-center justify-center rounded-[2.5rem] transition-all duration-500",
             adventure.theme,
             isAnimating ? "scale-75 opacity-0" : "scale-100 opacity-100",
           )}
@@ -64,23 +64,23 @@ export default function AdventureCard() {
 
         <div
           className={cn(
-            "grow text-center md:text-left transition-all duration-500",
+            "grow text-center transition-all duration-500 md:text-left",
             isAnimating ? "translate-x-4 opacity-0" : "translate-x-0 opacity-100",
           )}
         >
-          <div className="flex items-center justify-center md:justify-start gap-3 text-rose-400 text-[10px] font-black uppercase tracking-[0.4em] mb-4">
+          <div className="mb-4 flex items-center justify-center gap-3 text-[10px] font-black tracking-[0.4em] text-rose-400 uppercase md:justify-start">
             <Sparkles size={12} />
             Plan the Margin
           </div>
-          <h3 className="font-playfair text-2xl md:text-3xl font-bold text-stone-900 mb-4">{adventure.title}</h3>
-          <p className="text-sm text-stone-500 leading-relaxed italic max-w-lg">&ldquo;{adventure.desc}&rdquo;</p>
+          <h3 className="font-playfair mb-4 text-2xl font-bold text-stone-900 md:text-3xl">{adventure.title}</h3>
+          <p className="max-w-lg text-sm leading-relaxed text-stone-500 italic">&ldquo;{adventure.desc}&rdquo;</p>
         </div>
 
-        <button onClick={handleNext} className="group flex flex-col items-center gap-3 shrink-0 rounded-full v2-focus">
-          <div className="w-16 h-16 rounded-full bg-white shadow-lg border border-rose-100 flex items-center justify-center text-rose-400 group-hover:bg-rose-500 group-hover:text-white transition-all group-active:scale-90">
+        <button onClick={handleNext} className="group v2-focus flex shrink-0 flex-col items-center gap-3 rounded-full">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full border border-rose-100 bg-white text-rose-400 shadow-lg transition-all group-hover:bg-rose-500 group-hover:text-white group-active:scale-90">
             <RefreshCcw size={24} className={cn("transition-transform duration-700", isAnimating && "rotate-180")} />
           </div>
-          <span className="text-[9px] font-black uppercase tracking-widest text-stone-400 group-hover:text-rose-500 transition-colors">
+          <span className="text-[9px] font-black tracking-widest text-stone-400 uppercase transition-colors group-hover:text-rose-500">
             Other Suggestion
           </span>
         </button>

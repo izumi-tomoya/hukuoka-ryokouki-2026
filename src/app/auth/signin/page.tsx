@@ -52,35 +52,35 @@ export default async function SignInPage({ searchParams }: { searchParams: Searc
   const redirectTo = getSafeRedirectTo(firstParam(params.callbackUrl));
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-6 relative overflow-hidden">
+    <div className="bg-background relative flex min-h-screen items-center justify-center overflow-hidden p-6">
       {/* Decorative Background Elements */}
-      <div className="absolute top-0 right-0 w-125 h-125 bg-rose-50/50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-100 h-100 bg-stone-100 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 pointer-events-none" />
+      <div className="pointer-events-none absolute top-0 right-0 h-125 w-125 translate-x-1/2 -translate-y-1/2 rounded-full bg-rose-50/50 blur-3xl" />
+      <div className="pointer-events-none absolute bottom-0 left-0 h-100 w-100 -translate-x-1/2 translate-y-1/2 rounded-full bg-stone-100 blur-3xl" />
 
       {/* Large background text like a magazine */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden select-none">
-        <span className="font-playfair text-[40vw] font-black text-stone-200/20 leading-none select-none">M</span>
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden select-none">
+        <span className="font-playfair text-[40vw] leading-none font-black text-stone-200/20 select-none">M</span>
       </div>
 
       <div className="relative z-10 w-full max-w-md">
-        <div className="bg-white/80 backdrop-blur-xl p-10 md:p-16 rounded-[4rem] shadow-2xl shadow-rose-100/20 border border-white/50 text-center ring-1 ring-rose-100/30">
+        <div className="rounded-[4rem] border border-white/50 bg-white/80 p-10 text-center shadow-2xl ring-1 shadow-rose-100/20 ring-rose-100/30 backdrop-blur-xl md:p-16">
           {/* Brand Logo/Icon */}
-          <div className="mx-auto h-20 w-20 mb-10 relative">
-            <div className="absolute inset-0 bg-rose-500 rounded-article rotate-6 opacity-10 animate-pulse" />
-            <div className="inset-0 bg-white rounded-logo shadow-sm border border-rose-50 flex items-center justify-center text-rose-500 absolute z-10">
+          <div className="relative mx-auto mb-10 h-20 w-20">
+            <div className="rounded-article absolute inset-0 rotate-6 animate-pulse bg-rose-500 opacity-10" />
+            <div className="rounded-logo absolute inset-0 z-10 flex items-center justify-center border border-rose-50 bg-white text-rose-500 shadow-sm">
               <Sparkles size={32} />
             </div>
           </div>
 
           {/* Title Section */}
-          <div className="space-y-4 mb-12">
-            <h1 className="font-playfair text-4xl md:text-5xl font-bold text-stone-900 tracking-tight">Memoir</h1>
+          <div className="mb-12 space-y-4">
+            <h1 className="font-playfair text-4xl font-bold tracking-tight text-stone-900 md:text-5xl">Memoir</h1>
             <div className="flex items-center justify-center gap-2">
               <div className="h-px w-8 bg-rose-100" />
-              <p className="text-[10px] font-black uppercase tracking-[0.4em] text-rose-400">Exclusive Access</p>
+              <p className="text-[10px] font-black tracking-[0.4em] text-rose-400 uppercase">Exclusive Access</p>
               <div className="h-px w-8 bg-rose-100" />
             </div>
-            <p className="text-sm font-medium text-stone-500 leading-relaxed max-w-60 mx-auto pt-2">
+            <p className="mx-auto max-w-60 pt-2 text-sm leading-relaxed font-medium text-stone-500">
               旅の続きを、ふたりで。
               <br />
               新しい記憶を刻む準備はできましたか？
@@ -88,7 +88,7 @@ export default async function SignInPage({ searchParams }: { searchParams: Searc
           </div>
 
           {errorMessage && (
-            <div className="mb-8 rounded-3xl border border-rose-200 bg-rose-50 px-5 py-4 text-left text-xs font-bold leading-relaxed text-rose-700">
+            <div className="mb-8 rounded-3xl border border-rose-200 bg-rose-50 px-5 py-4 text-left text-xs leading-relaxed font-bold text-rose-700">
               {errorMessage}
             </div>
           )}
@@ -106,25 +106,25 @@ export default async function SignInPage({ searchParams }: { searchParams: Searc
               className="group relative w-full overflow-hidden rounded-4xl bg-stone-900 p-px transition-all hover:shadow-2xl hover:shadow-stone-200 active:scale-[0.98]"
             >
               {/* Button inner gradient effect */}
-              <div className="absolute inset-0 bg-linear-to-tr from-stone-800 to-stone-700 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute inset-0 bg-linear-to-tr from-stone-800 to-stone-700 opacity-0 transition-opacity group-hover:opacity-100" />
 
-              <div className="relative bg-stone-900 group-hover:bg-transparent rounded-inner py-5 px-8 flex items-center justify-center gap-4 transition-colors">
-                <div className="h-6 w-6 rounded-full bg-white flex items-center justify-center shrink-0 shadow-sm">
+              <div className="rounded-inner relative flex items-center justify-center gap-4 bg-stone-900 px-8 py-5 transition-colors group-hover:bg-transparent">
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white shadow-sm">
                   <Image src="https://www.google.com/favicon.ico" alt="G" width={14} height={14} />
                 </div>
-                <span className="text-[12px] font-black text-white uppercase tracking-[0.2em]">
+                <span className="text-[12px] font-black tracking-[0.2em] text-white uppercase">
                   Sign In with Google
                 </span>
               </div>
             </button>
 
-            <p className="text-[9px] font-bold text-stone-300 uppercase tracking-widest">
+            <p className="text-[9px] font-bold tracking-widest text-stone-300 uppercase">
               Secured by Google Authentication
             </p>
           </form>
 
           {/* Footer Decoration */}
-          <div className="mt-16 pt-8 border-t border-stone-50 flex justify-center gap-6 text-stone-300">
+          <div className="mt-16 flex justify-center gap-6 border-t border-stone-50 pt-8 text-stone-300">
             <Map size={14} />
             <div className="h-4 w-px bg-stone-100" />
             <LogIn size={14} />
@@ -132,7 +132,7 @@ export default async function SignInPage({ searchParams }: { searchParams: Searc
         </div>
 
         {/* Helper bottom link */}
-        <p className="mt-8 text-center text-[10px] font-bold text-stone-400 uppercase tracking-[0.2em]">
+        <p className="mt-8 text-center text-[10px] font-bold tracking-[0.2em] text-stone-400 uppercase">
           &copy; 2026 Fukuoka Memoir Project
         </p>
       </div>

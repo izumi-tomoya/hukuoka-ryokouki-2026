@@ -36,7 +36,7 @@ export default async function TipsPage({ params }: { params: Promise<{ slug: str
     >
       <Container className="pb-24">
         <div className="mb-12">
-          <p className="text-muted-foreground leading-relaxed max-w-2xl">
+          <p className="text-muted-foreground max-w-2xl leading-relaxed">
             旅のクオリティを一段階引き上げるための攻略情報です。
             グルメの穴場、移動のコツ、そして絶対に外せない注意点をまとめて管理できます。
           </p>

@@ -46,41 +46,41 @@ export default function SettlementPanel({ tripId, events }: Props) {
           <HandCoins size={22} />
         </div>
         <div>
-          <h2 className="text-2xl font-black tracking-tight text-foreground">Settlement Mode</h2>
-          <p className="mt-1 text-[10px] font-black uppercase tracking-[0.18em] text-muted-foreground">Who Paid What</p>
+          <h2 className="text-foreground text-2xl font-black tracking-tight">Settlement Mode</h2>
+          <p className="text-muted-foreground mt-1 text-[10px] font-black tracking-[0.18em] uppercase">Who Paid What</p>
         </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[0.78fr_1.22fr]">
         <MagazineCard className="border-emerald-500/20">
           <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
-            <div className="rounded-2xl bg-secondary/30 p-4">
-              <div className="text-[10px] font-black uppercase tracking-[0.16em] text-muted-foreground">Total</div>
-              <div className="mt-2 text-2xl font-black text-foreground">{currency(settlement.total)}</div>
+            <div className="bg-secondary/30 rounded-2xl p-4">
+              <div className="text-muted-foreground text-[10px] font-black tracking-[0.16em] uppercase">Total</div>
+              <div className="text-foreground mt-2 text-2xl font-black">{currency(settlement.total)}</div>
             </div>
-            <div className="rounded-2xl bg-secondary/30 p-4">
-              <div className="text-[10px] font-black uppercase tracking-[0.16em] text-muted-foreground">You Paid</div>
-              <div className="mt-2 text-2xl font-black text-foreground">{currency(settlement.youPaid)}</div>
+            <div className="bg-secondary/30 rounded-2xl p-4">
+              <div className="text-muted-foreground text-[10px] font-black tracking-[0.16em] uppercase">You Paid</div>
+              <div className="text-foreground mt-2 text-2xl font-black">{currency(settlement.youPaid)}</div>
             </div>
-            <div className="rounded-2xl bg-secondary/30 p-4">
-              <div className="text-[10px] font-black uppercase tracking-[0.16em] text-muted-foreground">
+            <div className="bg-secondary/30 rounded-2xl p-4">
+              <div className="text-muted-foreground text-[10px] font-black tracking-[0.16em] uppercase">
                 Partner Paid
               </div>
-              <div className="mt-2 text-2xl font-black text-foreground">{currency(settlement.partnerPaid)}</div>
+              <div className="text-foreground mt-2 text-2xl font-black">{currency(settlement.partnerPaid)}</div>
             </div>
           </div>
 
           <div className="mt-6 rounded-[1.5rem] border border-emerald-500/20 bg-emerald-500/8 p-5">
-            <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-emerald-600">
+            <div className="flex items-center gap-2 text-[10px] font-black tracking-[0.18em] text-emerald-600 uppercase">
               <Coins size={14} />
               Balance
             </div>
-            <p className="mt-3 text-sm font-medium leading-relaxed text-foreground">{settlement.instruction}</p>
+            <p className="text-foreground mt-3 text-sm leading-relaxed font-medium">{settlement.instruction}</p>
           </div>
         </MagazineCard>
 
         <MagazineCard>
-          <div className="mb-5 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-muted-foreground">
+          <div className="text-muted-foreground mb-5 flex items-center gap-2 text-[10px] font-black tracking-[0.18em] uppercase">
             <ReceiptText size={14} />
             Expense Assignment
           </div>
@@ -90,15 +90,15 @@ export default function SettlementPanel({ tripId, events }: Props) {
               const payer = payers[event.id] || "shared";
 
               return (
-                <div key={event.id} className="rounded-[1.5rem] border border-border bg-secondary/20 p-4">
+                <div key={event.id} className="border-border bg-secondary/20 rounded-[1.5rem] border p-4">
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div className="min-w-0">
-                      <div className="text-[10px] font-black uppercase tracking-[0.16em] text-muted-foreground">
+                      <div className="text-muted-foreground text-[10px] font-black tracking-[0.16em] uppercase">
                         {event.time} / Day {event.dayNumber}
                       </div>
-                      <div className="mt-1 break-words text-sm font-black text-foreground">{event.title}</div>
+                      <div className="text-foreground mt-1 text-sm font-black break-words">{event.title}</div>
                     </div>
-                    <div className="inline-flex items-center gap-2 rounded-full bg-background px-4 py-2 text-sm font-black text-foreground">
+                    <div className="bg-background text-foreground inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-black">
                       <Banknote size={14} className="text-emerald-600" />
                       {currency(event.actualExpense || 0)}
                     </div>

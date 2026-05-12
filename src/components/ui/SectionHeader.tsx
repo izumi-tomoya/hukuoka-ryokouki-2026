@@ -9,12 +9,12 @@ export const SectionHeader = ({
   subtitle?: string;
   className?: string;
 }) => (
-  <div className={cn("mb-8 md:mb-12 text-center md:text-left min-w-0", className)}>
-    <h2 className="break-words font-playfair text-3xl sm:text-4xl md:text-5xl font-extrabold text-foreground tracking-tight leading-tight transition-colors">
+  <div className={cn("mb-8 min-w-0 text-center md:mb-12 md:text-left", className)}>
+    <h2 className="font-playfair text-foreground text-3xl leading-tight font-extrabold tracking-tight break-words transition-colors sm:text-4xl md:text-5xl">
       {title}
     </h2>
     {subtitle && (
-      <p className="mt-3 break-words text-muted-foreground text-[10px] md:text-xs font-bold tracking-[0.14em] sm:tracking-[0.2em] uppercase leading-relaxed">
+      <p className="text-muted-foreground mt-3 text-[10px] leading-relaxed font-bold tracking-[0.14em] break-words uppercase sm:tracking-[0.2em] md:text-xs">
         {subtitle}
       </p>
     )}

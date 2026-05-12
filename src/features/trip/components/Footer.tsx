@@ -2,12 +2,12 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="py-20 border-t border-border/50 dark:border-border bg-secondary/30 dark:bg-background transition-colors">
-      <div className="max-w-5xl mx-auto px-6 flex flex-col items-center gap-6">
-        <Link href="/" className="font-playfair text-2xl font-bold text-stone-900 dark:text-foreground tracking-tight">
+    <footer className="border-border/50 dark:border-border bg-secondary/30 dark:bg-background border-t py-20 transition-colors">
+      <div className="mx-auto flex max-w-5xl flex-col items-center gap-6 px-6">
+        <Link href="/" className="font-playfair dark:text-foreground text-2xl font-bold tracking-tight text-stone-900">
           Memoir
         </Link>
-        <p className="text-[10px] font-black tracking-[0.4em] text-stone-300 dark:text-zinc-600 uppercase">
+        <p className="text-[10px] font-black tracking-[0.4em] text-stone-300 uppercase dark:text-zinc-600">
           © 2026 Memoir — Private Travel Journal
         </p>
       </div>

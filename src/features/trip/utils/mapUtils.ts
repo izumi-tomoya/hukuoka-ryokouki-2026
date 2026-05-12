@@ -14,9 +14,7 @@ export function extractLocationsFromEvents(
 
     // 1. 交通手段の場合は駅名を抽出
     if (e.type === "transport" && e.transitSteps && e.transitSteps.length > 0) {
-      return e.transitSteps
-        .map((s) => s.station)
-        .filter((s): s is string => !!s && !isSecretContent(s)); // 秘密の駅名は除外
+      return e.transitSteps.map((s) => s.station).filter((s): s is string => !!s && !isSecretContent(s)); // 秘密の駅名は除外
     }
 
     // 2. 屋台の場合は立ち寄り地点を抽出
@@ -51,9 +49,7 @@ export function extractLocationsFromEvents(
 
   // 4. Tips（提案）から既知のスポット名を抽出
   const tipLocations = tips.flatMap((tip) => {
-    const foundSpots = knownSpots.filter(
-      (spot) => tip.title.includes(spot) || tip.venue?.includes(spot),
-    );
+    const foundSpots = knownSpots.filter((spot) => tip.title.includes(spot) || tip.venue?.includes(spot));
     return foundSpots;
   });
 

@@ -25,3 +25,12 @@ export const ESSENTIALS_BY_REGION: Record<string, { title: string; items: string
     ],
   },
 };
+
+export const TRIP_CATEGORIES = [
+  { id: "food", label: "Gourmet", icon: "Utensils" },
+  { id: "sightseeing", label: "Spots", icon: "Camera" },
+  { id: "transport", label: "Transit", icon: "Plane" },
+  { id: "hotel", label: "Stay", icon: "Hotel" },
+] as const;
+
+export const PACKING_CATEGORIES = ["Essential", "Clothing", "Gadget", "Other"] as const;

@@ -5,7 +5,7 @@ import TripLayout from "@/features/trip/components/TripLayout";
 export default function AssistLoading() {
   return (
     <TripLayout isLoading={true}>
-      <Container className="pb-24 space-y-6">
+      <Container className="space-y-6 pb-24">
         <section className="grid gap-6 lg:grid-cols-[1.25fr_0.75fr]">
           <MagazineCard className="h-80 opacity-20" />
           <MagazineCard className="h-80 opacity-10" />

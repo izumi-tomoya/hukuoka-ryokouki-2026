@@ -26,35 +26,35 @@ export default function BudgetSummary({ events }: { events: TripEvent[] }) {
     <MagazineCard
       padding="sm"
       className={cn(
-        "flex items-center gap-3 md:gap-4 transition-all",
+        "flex items-center gap-3 transition-all md:gap-4",
         isOverBudget
-          ? "bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800"
-          : "bg-rose-50/50 dark:bg-background border-rose-100 dark:border-border",
+          ? "border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-900/20"
+          : "dark:bg-background dark:border-border border-rose-100 bg-rose-50/50",
       )}
     >
       <div
         className={cn(
-          "h-10 w-10 md:h-12 md:w-12 rounded-xl md:rounded-2xl flex items-center justify-center shadow-sm transition-colors",
-          isOverBudget ? "bg-white dark:bg-card text-amber-500" : "bg-white dark:bg-card text-rose-500",
+          "flex h-10 w-10 items-center justify-center rounded-xl shadow-sm transition-colors md:h-12 md:w-12 md:rounded-2xl",
+          isOverBudget ? "dark:bg-card bg-white text-amber-500" : "dark:bg-card bg-white text-rose-500",
         )}
       >
         {isOverBudget ? <AlertCircle size={18} /> : <JapaneseYen size={18} />}
       </div>
-      <div className="flex-1 min-w-0">
-        <p className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] text-rose-400 dark:text-rose-500 mb-0.5 truncate">
+      <div className="min-w-0 flex-1">
+        <p className="mb-0.5 truncate text-[9px] font-black tracking-[0.2em] text-rose-400 uppercase md:text-[10px] dark:text-rose-500">
           {hasActuals ? "Actual Expense" : "Planned Budget"}
         </p>
         <div className="flex items-baseline gap-1.5 md:gap-2">
           <p
             className={cn(
-              "text-lg md:text-xl font-bold tracking-tight truncate",
-              isOverBudget ? "text-amber-600 dark:text-amber-400" : "text-stone-900 dark:text-foreground",
+              "truncate text-lg font-bold tracking-tight md:text-xl",
+              isOverBudget ? "text-amber-600 dark:text-amber-400" : "dark:text-foreground text-stone-900",
             )}
           >
             ¥{(hasActuals ? actualTotal : plannedTotal).toLocaleString()}
           </p>
           {hasActuals && (
-            <span className="text-[9px] md:text-[10px] font-bold text-stone-400 dark:text-muted-foreground truncate">
+            <span className="dark:text-muted-foreground truncate text-[9px] font-bold text-stone-400 md:text-[10px]">
               / ¥{plannedTotal.toLocaleString()}
             </span>
           )}

@@ -15,8 +15,8 @@ import {
   summarizeTemperature,
   TEMPERATURE_MOOD_NARRATIVES,
 } from "@/features/trip/utils/tripInsights";
-import { maskSecretText } from "@/features/trip/utils/tripUtils";
 import type { BudgetStats } from "@/features/trip/utils/tripUtils";
+import { maskSecretText } from "@/features/trip/utils/tripUtils";
 
 interface Props {
   tripId: string;
@@ -152,18 +152,18 @@ export default function TravelReportPanel({ tripId, tripSlug, awards, budgetStat
     <MagazineCard className="border-primary/20">
       <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
         <div>
-          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.25em] text-primary">
+          <div className="border-primary/20 bg-primary/10 text-primary mb-5 inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-[10px] font-black tracking-[0.25em] uppercase">
             <Sparkles size={13} />
             Auto Summary
           </div>
-          <h2 className="font-playfair text-3xl font-black text-foreground">旅の自動レポート</h2>
-          <p className="mt-3 max-w-xl text-sm font-medium leading-relaxed text-muted-foreground">
+          <h2 className="font-playfair text-foreground text-3xl font-black">旅の自動レポート</h2>
+          <p className="text-muted-foreground mt-3 max-w-xl text-sm leading-relaxed font-medium">
             写真、支出、チェック済み予定、グルメアワードから旅後に見返せる要約を作成します。
           </p>
         </div>
         <button
           onClick={download}
-          className="inline-flex items-center justify-center gap-2 rounded-2xl bg-foreground px-5 py-3 text-[10px] font-black uppercase tracking-widest text-background transition-transform active:scale-[0.98]"
+          className="bg-foreground text-background inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 text-[10px] font-black tracking-widest uppercase transition-transform active:scale-[0.98]"
         >
           <Download size={14} />
           Download
@@ -171,18 +171,18 @@ export default function TravelReportPanel({ tripId, tripSlug, awards, budgetStat
         <button
           onClick={downloadPdf}
           disabled={isPdfLoading}
-          className="inline-flex items-center justify-center gap-2 rounded-2xl border border-border px-5 py-3 text-[10px] font-black uppercase tracking-widest text-foreground transition-transform active:scale-[0.98] disabled:opacity-50"
+          className="border-border text-foreground inline-flex items-center justify-center gap-2 rounded-2xl border px-5 py-3 text-[10px] font-black tracking-widest uppercase transition-transform active:scale-[0.98] disabled:opacity-50"
         >
           <FileText size={14} />
           {isPdfLoading ? "Building PDF" : "PDF Album"}
         </button>
       </div>
-      <div className="mt-8 rounded-[1.5rem] border border-border bg-secondary/30 p-5">
-        <div className="mb-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+      <div className="border-border bg-secondary/30 mt-8 rounded-[1.5rem] border p-5">
+        <div className="text-muted-foreground mb-4 flex items-center gap-2 text-[10px] font-black tracking-widest uppercase">
           <FileText size={14} />
           Preview
         </div>
-        <pre className="whitespace-pre-wrap font-sans text-sm font-medium leading-relaxed text-foreground">
+        <pre className="text-foreground font-sans text-sm leading-relaxed font-medium whitespace-pre-wrap">
           {report}
         </pre>
       </div>

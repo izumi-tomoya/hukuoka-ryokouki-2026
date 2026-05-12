@@ -39,7 +39,6 @@ export async function POST(req: Request) {
   try {
     const session = await auth();
     const isAdmin = !!session?.user?.isAdmin;
-    if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const {
       slug,

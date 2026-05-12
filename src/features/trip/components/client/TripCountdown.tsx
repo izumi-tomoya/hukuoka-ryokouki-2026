@@ -45,17 +45,17 @@ export const TripCountdown = ({ startDate }: Props) => {
 
   // ハイドレーションエラーを防ぐため、マウントされるまでは何も表示しないかスケルトンを出す
   if (!mounted) {
-    return <div className="h-10 w-40 animate-pulse bg-muted/25 rounded-lg" />;
+    return <div className="bg-muted/25 h-10 w-40 animate-pulse rounded-lg" />;
   }
 
   return (
     <div className="flex gap-3 md:gap-6">
       {Object.entries(timeLeft).map(([unit, value]) => (
         <div key={unit} className="flex flex-col items-center">
-          <span className="font-playfair text-xl md:text-3xl font-bold text-stone-900 tracking-tighter">
+          <span className="font-playfair text-xl font-bold tracking-tighter text-stone-900 md:text-3xl">
             {value.toString().padStart(2, "0")}
           </span>
-          <span className="text-[9px] font-black uppercase text-stone-400 tracking-[0.2em] mt-2">{unit}</span>
+          <span className="mt-2 text-[9px] font-black tracking-[0.2em] text-stone-400 uppercase">{unit}</span>
         </div>
       ))}
     </div>

@@ -49,7 +49,7 @@ export default function CategoryTabs({ slug, activePath, isSecretMode, days }: C
   return (
     <div
       ref={containerRef}
-      className="relative flex items-center justify-start lg:justify-center gap-2 md:gap-3 mb-8 md:mb-16 overflow-x-auto no-scrollbar scroll-smooth -mx-4 px-6 md:mx-0 md:px-0"
+      className="no-scrollbar relative -mx-4 mb-8 flex items-center justify-start gap-2 overflow-x-auto scroll-smooth px-6 md:mx-0 md:mb-16 md:gap-3 md:px-0 lg:justify-center"
     >
       {navItems.map((item) => {
         const isBase = item.href === `/trip/${slug}`;
@@ -62,13 +62,13 @@ export default function CategoryTabs({ slug, activePath, isSecretMode, days }: C
             href={item.href}
             ref={isActive ? activeTabRef : undefined}
             className={cn(
-              "flex min-h-11 shrink-0 items-center gap-2 rounded-full border px-5 py-3 text-[10px] font-black uppercase tracking-[0.14em] transition-all sm:px-6 md:px-8 md:py-4 md:text-xs md:tracking-[0.2em]",
+              "flex min-h-11 shrink-0 items-center gap-2 rounded-full border px-5 py-3 text-[10px] font-black tracking-[0.14em] uppercase transition-all sm:px-6 md:px-8 md:py-4 md:text-xs md:tracking-[0.2em]",
               isActive
-                ? "bg-primary border-primary text-primary-foreground shadow-lg shadow-primary/20"
+                ? "bg-primary border-primary text-primary-foreground shadow-primary/20 shadow-lg"
                 : "bg-card border-border text-muted-foreground hover:border-primary/50 hover:text-primary",
             )}
           >
-            <Icon size={12} className="md:w-3.5 md:h-3.5" strokeWidth={isActive ? 3 : 2} />
+            <Icon size={12} className="md:h-3.5 md:w-3.5" strokeWidth={isActive ? 3 : 2} />
             {item.label}
           </Link>
         );

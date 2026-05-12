@@ -12,7 +12,7 @@ export function LogoutButton({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <button onClick={handleLogout} className="w-full text-left rounded-lg v2-focus">
+    <button onClick={handleLogout} className="v2-focus w-full rounded-lg text-left">
       {children}
     </button>
   );

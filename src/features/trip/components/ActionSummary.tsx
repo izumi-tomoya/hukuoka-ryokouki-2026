@@ -1,12 +1,15 @@
 import { BadgeCheck, CalendarCheck2, Clock, Footprints, MapPin, Route, Utensils } from "lucide-react";
+import Link from "next/link";
 import { MagazineCard } from "@/components/ui/MagazineCard";
 import type { TripEvent } from "@/features/trip/types/trip";
-import { isSecretEvent, maskSecretText } from "@/features/trip/utils/tripUtils";
 import { cleanLocationName } from "@/features/trip/utils/locationCatalog";
+import { isSecretEvent, maskSecretText } from "@/features/trip/utils/tripUtils";
 import { cn } from "@/lib/utils";
+import { generateEventSlug } from "../api/getExtendedTripData";
 
 interface Props {
   events: TripEvent[];
+  slug: string;
   isAdmin?: boolean;
   locationNames?: string[];
 }
@@ -52,24 +55,24 @@ function isReserved(event: TripEvent) {
   );
 }
 
-export default function ActionSummary({ events, isAdmin = false, locationNames = [] }: Props) {
+export default function ActionSummary({ events, slug, isAdmin = false, locationNames = [] }: Props) {
   const mappedCount = events.filter((ev) => hasMapPoint(ev, locationNames)).length;
   const reservedCount = events.filter(isReserved).length;
 
   return (
-    <MagazineCard className="min-w-0 border-primary/10 bg-card">
+    <MagazineCard className="border-primary/10 bg-card min-w-0">
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="min-w-0">
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-primary">
+          <div className="border-primary/20 bg-primary/10 text-primary mb-3 inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[10px] font-black tracking-[0.14em] uppercase">
             <CalendarCheck2 size={13} />
             Action List
           </div>
-          <h2 className="break-words font-playfair text-2xl font-black text-foreground md:text-3xl">
+          <h2 className="font-playfair text-foreground text-2xl font-black wrap-break-word md:text-3xl">
             今日の行動を時間順に整理
           </h2>
         </div>
         <div className="grid grid-cols-2 gap-2 text-xs font-black sm:flex">
-          <div className="rounded-2xl bg-secondary/50 px-4 py-3 text-center text-muted-foreground">
+          <div className="bg-secondary/50 text-muted-foreground rounded-2xl px-4 py-3 text-center">
             地図 {mappedCount}/{events.length}
           </div>
           <div className="rounded-2xl bg-emerald-500/10 px-4 py-3 text-center text-emerald-600">
@@ -84,18 +87,20 @@ export default function ActionSummary({ events, isAdmin = false, locationNames =
           const mapped = !isSurprise && hasMapPoint(event, locationNames);
           const reserved = isReserved(event);
           const routeCount = event.transitSteps?.length || 0;
+          const spotId = generateEventSlug(event);
 
           return (
-            <div
+            <Link
               key={event.id || `${event.time}-${index}`}
-              className="grid gap-3 rounded-[1.5rem] border border-border bg-background/60 p-4 sm:grid-cols-[5rem_1fr] sm:p-5"
+              href={`/trip/${slug}/spot/${spotId}`}
+              className="border-border bg-background/60 group grid gap-3 rounded-3xl p-4 transition-all hover:border-primary/30 hover:shadow-lg active:scale-[0.99] sm:grid-cols-[5rem_1fr] sm:p-5"
             >
               <div className="flex items-center gap-3 sm:block">
-                <div className="inline-flex min-h-10 items-center gap-2 rounded-full bg-primary/10 px-3 text-xs font-black text-primary sm:mb-2">
+                <div className="bg-primary/10 text-primary inline-flex min-h-10 items-center gap-2 rounded-full px-3 text-xs font-black sm:mb-2">
                   <Clock size={13} />
                   {event.time}
                 </div>
-                <div className="text-[10px] font-black uppercase tracking-[0.14em] text-muted-foreground">
+                <div className="text-muted-foreground text-[10px] font-black tracking-[0.14em] uppercase">
                   {actionText(event)}
                 </div>
               </div>
@@ -103,11 +108,11 @@ export default function ActionSummary({ events, isAdmin = false, locationNames =
               <div className="min-w-0">
                 <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                   <div className="min-w-0">
-                    <h3 className="break-words text-base font-black text-foreground">
+                    <h3 className="text-foreground group-hover:text-primary text-base font-black transition-colors wrap-break-word">
                       {isSurprise ? "🎁 Surprise Spot" : eventLabel(event, isAdmin)}
                     </h3>
                     {(event.desc || event.foodDesc) && (
-                      <p className="mt-1 line-clamp-2 text-sm font-medium leading-relaxed text-muted-foreground">
+                      <p className="text-muted-foreground mt-1 line-clamp-2 text-sm leading-relaxed font-medium">
                         {isSurprise
                           ? "当日までのお楽しみ。ふたりの特別な時間が待っています。"
                           : maskSecretText(event.foodDesc || event.desc || "", isAdmin)}
@@ -118,7 +123,7 @@ export default function ActionSummary({ events, isAdmin = false, locationNames =
                   <div className="flex flex-wrap gap-2 md:justify-end">
                     <span
                       className={cn(
-                        "inline-flex min-h-8 items-center gap-1.5 rounded-full px-3 text-[10px] font-black uppercase tracking-[0.12em]",
+                        "inline-flex min-h-8 items-center gap-1.5 rounded-full px-3 text-[10px] font-black tracking-[0.12em] uppercase",
                         reserved ? "bg-emerald-500/10 text-emerald-600" : "bg-secondary text-muted-foreground",
                       )}
                     >
@@ -127,7 +132,7 @@ export default function ActionSummary({ events, isAdmin = false, locationNames =
                     </span>
                     <span
                       className={cn(
-                        "inline-flex min-h-8 items-center gap-1.5 rounded-full px-3 text-[10px] font-black uppercase tracking-[0.12em]",
+                        "inline-flex min-h-8 items-center gap-1.5 rounded-full px-3 text-[10px] font-black tracking-[0.12em] uppercase",
                         mapped ? "bg-sky-500/10 text-sky-600" : "bg-amber-500/10 text-amber-600",
                       )}
                     >
@@ -138,9 +143,9 @@ export default function ActionSummary({ events, isAdmin = false, locationNames =
                 </div>
 
                 {(routeCount > 0 || event.type === "food") && (
-                  <div className="mt-4 flex flex-wrap gap-2 text-[10px] font-black uppercase tracking-[0.12em] text-muted-foreground">
+                  <div className="text-muted-foreground mt-4 flex flex-wrap gap-2 text-[10px] font-black tracking-[0.12em] uppercase">
                     {routeCount > 0 && (
-                      <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary/60 px-3 py-1.5">
+                      <span className="bg-secondary/60 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5">
                         <Route size={12} />
                         移動 {routeCount} steps
                       </span>
@@ -152,7 +157,7 @@ export default function ActionSummary({ events, isAdmin = false, locationNames =
                       </span>
                     )}
                     {event.type === "sightseeing" && (
-                      <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary/60 px-3 py-1.5">
+                      <span className="bg-secondary/60 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5">
                         <Footprints size={12} />
                         散策
                       </span>
@@ -160,7 +165,7 @@ export default function ActionSummary({ events, isAdmin = false, locationNames =
                   </div>
                 )}
               </div>
-            </div>
+            </Link>
           );
         })}
       </div>

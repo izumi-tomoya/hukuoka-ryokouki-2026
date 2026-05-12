@@ -149,21 +149,21 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
     <MagazineCard
       padding="md"
       className={cn(
-        "group relative flex flex-col h-full transition-all border-l-4",
+        "group relative flex h-full flex-col border-l-4 transition-all",
         tip.isConfirmed
-          ? "opacity-60 border-l-emerald-500"
+          ? "border-l-emerald-500 opacity-60"
           : tip.isWarning
             ? "border-l-amber-500 shadow-amber-500/5"
             : "border-l-primary shadow-primary/5",
       )}
     >
-      <div className="flex justify-between items-start mb-6">
+      <div className="mb-6 flex items-start justify-between">
         <button
           onClick={() => tip.id && handleToggleConfirm(tip.id, !!tip.isConfirmed)}
           className={cn(
-            "flex items-center gap-2 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest transition-all border",
+            "flex items-center gap-2 rounded-full border px-3 py-1.5 text-[9px] font-black tracking-widest uppercase transition-all",
             tip.isConfirmed
-              ? "bg-emerald-500 text-white border-emerald-500 shadow-md shadow-emerald-500/20"
+              ? "border-emerald-500 bg-emerald-500 text-white shadow-md shadow-emerald-500/20"
               : "bg-secondary/80 text-muted-foreground border-border hover:border-primary/50",
           )}
         >
@@ -171,16 +171,16 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
           {tip.isConfirmed ? "Confirmed" : "Pending"}
         </button>
 
-        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
           <button
             onClick={() => setEditingTip(tip)}
-            className="p-2 hover:bg-secondary rounded-lg text-muted-foreground hover:text-primary transition-colors"
+            className="hover:bg-secondary text-muted-foreground hover:text-primary rounded-lg p-2 transition-colors"
           >
             <Edit2 size={14} />
           </button>
           <button
             onClick={() => tip.id && handleDelete(tip.id)}
-            className="p-2 hover:bg-rose-500/10 rounded-lg text-muted-foreground hover:text-rose-500 transition-colors"
+            className="text-muted-foreground rounded-lg p-2 transition-colors hover:bg-rose-500/10 hover:text-rose-500"
           >
             <Trash2 size={14} />
           </button>
@@ -190,39 +190,39 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
       <div className="grow">
         <h3
           className={cn(
-            "text-lg font-bold mb-2 leading-tight transition-all",
+            "mb-2 text-lg leading-tight font-bold transition-all",
             tip.isConfirmed ? "text-muted-foreground line-through decoration-2" : "text-foreground",
           )}
         >
           {tip.title}
         </h3>
-        <p className="text-[13px] text-muted-foreground leading-relaxed line-clamp-3 group-hover:line-clamp-none transition-all">
+        <p className="text-muted-foreground line-clamp-3 text-[13px] leading-relaxed transition-all group-hover:line-clamp-none">
           {tip.body}
         </p>
 
         {tip.imageUrl && (
           <button
             onClick={() => setSelectedTicketUrl(tip.imageUrl || null)}
-            className="mt-6 flex items-center justify-center gap-3 w-full py-4 rounded-2xl bg-indigo-500 text-white font-black text-[10px] uppercase tracking-[0.2em] shadow-lg shadow-indigo-500/20 hover:scale-[1.02] active:scale-95 transition-all"
+            className="mt-6 flex w-full items-center justify-center gap-3 rounded-2xl bg-indigo-500 py-4 text-[10px] font-black tracking-[0.2em] text-white uppercase shadow-lg shadow-indigo-500/20 transition-all hover:scale-[1.02] active:scale-95"
           >
             <Ticket size={16} /> View Boarding Pass
           </button>
         )}
       </div>
 
-      <div className="mt-6 pt-5 border-t border-border flex items-center justify-between">
+      <div className="border-border mt-6 flex items-center justify-between border-t pt-5">
         <div className="flex gap-0.5">
           {[...Array(5)].map((_, i) => (
             <Star
               key={i}
               size={10}
-              className={cn(i < (tip.deepLevel || 1) ? "text-amber-400 fill-amber-400" : "text-border")}
+              className={cn(i < (tip.deepLevel || 1) ? "fill-amber-400 text-amber-400" : "text-border")}
             />
           ))}
         </div>
         <div
           className={cn(
-            "text-[9px] font-black uppercase tracking-[0.2em]",
+            "text-[9px] font-black tracking-[0.2em] uppercase",
             tip.isWarning ? "text-amber-500" : "text-primary/60",
           )}
         >
@@ -235,24 +235,24 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
   return (
     <div className="space-y-8 md:space-y-10">
       {/* ─── Controls ─── */}
-      <div className="flex min-w-0 flex-col gap-5 sm:gap-6 bg-card p-4 sm:p-6 rounded-[1.75rem] sm:rounded-[2.5rem] border border-border shadow-sm">
-        <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between">
+      <div className="bg-card border-border flex min-w-0 flex-col gap-5 rounded-[1.75rem] border p-4 shadow-sm sm:gap-6 sm:rounded-[2.5rem] sm:p-6">
+        <div className="flex flex-col items-stretch justify-between gap-4 md:flex-row md:items-center">
           <div className="relative min-w-0 flex-1 md:max-w-md">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+            <Search className="text-muted-foreground absolute top-1/2 left-4 -translate-y-1/2" size={18} />
             <input
               type="text"
               placeholder="お店名、タイトル、予約情報..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full min-h-12 pl-12 pr-4 py-3.5 bg-secondary/50 border-none rounded-2xl text-base sm:text-sm transition-all v2-focus"
+              className="bg-secondary/50 v2-focus min-h-12 w-full rounded-2xl border-none py-3.5 pr-4 pl-12 text-base transition-all sm:text-sm"
             />
           </div>
 
-          <div className="grid grid-cols-2 bg-secondary/50 p-1 rounded-2xl shrink-0">
+          <div className="bg-secondary/50 grid shrink-0 grid-cols-2 rounded-2xl p-1">
             <button
               onClick={() => setViewMode("venue")}
               className={cn(
-                "flex min-h-10 items-center justify-center gap-2 px-3 sm:px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-[0.12em] sm:tracking-widest transition-all",
+                "flex min-h-10 items-center justify-center gap-2 rounded-xl px-3 py-2 text-[10px] font-black tracking-[0.12em] uppercase transition-all sm:px-4 sm:tracking-widest",
                 viewMode === "venue"
                   ? "bg-card text-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground",
@@ -263,7 +263,7 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
             <button
               onClick={() => setViewMode("grid")}
               className={cn(
-                "flex min-h-10 items-center justify-center gap-2 px-3 sm:px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-[0.12em] sm:tracking-widest transition-all",
+                "flex min-h-10 items-center justify-center gap-2 rounded-xl px-3 py-2 text-[10px] font-black tracking-[0.12em] uppercase transition-all sm:px-4 sm:tracking-widest",
                 viewMode === "grid"
                   ? "bg-card text-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground",
@@ -274,17 +274,17 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between pt-2 border-t border-border/50">
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar w-full md:w-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+        <div className="border-border/50 flex flex-col items-stretch justify-between gap-4 border-t pt-2 md:flex-row md:items-center">
+          <div className="no-scrollbar -mx-4 flex w-full items-center gap-2 overflow-x-auto px-4 sm:mx-0 sm:px-0 md:w-auto">
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
                 className={cn(
-                  "min-h-10 shrink-0 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.12em] sm:tracking-widest border transition-all whitespace-nowrap",
+                  "min-h-10 shrink-0 rounded-full border px-4 py-2 text-[10px] font-black tracking-[0.12em] whitespace-nowrap uppercase transition-all sm:tracking-widest",
                   selectedCategory === cat
-                    ? "bg-primary border-primary text-primary-foreground shadow-lg shadow-primary/20"
-                    : "bg-secondary/30 border-transparent text-muted-foreground hover:bg-secondary",
+                    ? "bg-primary border-primary text-primary-foreground shadow-primary/20 shadow-lg"
+                    : "bg-secondary/30 text-muted-foreground hover:bg-secondary border-transparent",
                 )}
               >
                 {cat}
@@ -305,7 +305,7 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
                 deepLevel: 1,
               })
             }
-            className="rounded-2xl gap-2 min-h-12 px-6 w-full md:w-auto"
+            className="min-h-12 w-full gap-2 rounded-2xl px-6 md:w-auto"
           >
             <Plus size={18} />
             <span>Add New Item</span>
@@ -318,20 +318,20 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
         <div className="space-y-10 md:space-y-16">
           {Object.entries(groupedByVenue).map(([venue, venueTips]) => (
             <div key={venue} className="space-y-6">
-              <div className="flex min-w-0 items-center gap-3 sm:gap-4 px-0 sm:px-2">
-                <div className="h-10 w-10 shrink-0 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+              <div className="flex min-w-0 items-center gap-3 px-0 sm:gap-4 sm:px-2">
+                <div className="bg-primary/10 text-primary flex h-10 w-10 shrink-0 items-center justify-center rounded-xl">
                   <MapPin size={20} />
                 </div>
                 <div className="min-w-0">
-                  <h2 className="break-words text-xl font-bold text-foreground leading-tight">{venue}</h2>
-                  <p className="text-[10px] font-black uppercase tracking-[0.14em] sm:tracking-[0.2em] text-muted-foreground mt-1 leading-relaxed">
+                  <h2 className="text-foreground text-xl leading-tight font-bold break-words">{venue}</h2>
+                  <p className="text-muted-foreground mt-1 text-[10px] leading-relaxed font-black tracking-[0.14em] uppercase sm:tracking-[0.2em]">
                     {venueTips.length} Items for this location
                   </p>
                 </div>
-                <div className="hidden sm:block h-px grow bg-border ml-4" />
+                <div className="bg-border ml-4 hidden h-px grow sm:block" />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {venueTips.map((tip) => (
                   <TipCard key={tip.id} tip={tip} />
                 ))}
@@ -340,7 +340,7 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {filteredTips.map((tip) => (
             <TipCard key={tip.id} tip={tip} />
           ))}
@@ -350,17 +350,17 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
       {/* ─── Ticket Lightbox ─── */}
       {selectedTicketUrl && (
         <div
-          className="fixed inset-0 z-[200] bg-black/95 backdrop-blur-md flex flex-col items-center justify-center p-4 animate-in fade-in duration-300"
+          className="animate-in fade-in fixed inset-0 z-[200] flex flex-col items-center justify-center bg-black/95 p-4 backdrop-blur-md duration-300"
           onClick={() => setSelectedTicketUrl(null)}
         >
-          <div className="relative w-full max-w-xl h-full flex flex-col items-center justify-center gap-6 sm:gap-8">
-            <button className="absolute top-0 right-0 min-h-12 min-w-12 p-3 sm:p-4 text-white hover:scale-110 transition-transform">
+          <div className="relative flex h-full w-full max-w-xl flex-col items-center justify-center gap-6 sm:gap-8">
+            <button className="absolute top-0 right-0 min-h-12 min-w-12 p-3 text-white transition-transform hover:scale-110 sm:p-4">
               <X size={32} />
             </button>
-            <div className="relative w-full max-h-[78vh] aspect-[9/16] rounded-3xl overflow-hidden shadow-2xl border-4 border-white/10">
+            <div className="relative aspect-[9/16] max-h-[78vh] w-full overflow-hidden rounded-3xl border-4 border-white/10 shadow-2xl">
               <Image src={selectedTicketUrl} alt="Ticket" fill className="object-contain" />
             </div>
-            <p className="text-white/60 text-xs font-black uppercase tracking-widest bg-white/10 px-6 py-2 rounded-full">
+            <p className="rounded-full bg-white/10 px-6 py-2 text-xs font-black tracking-widest text-white/60 uppercase">
               Screen Tap to Close
             </p>
           </div>
@@ -370,18 +370,18 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
       {/* ─── Edit Modal ─── */}
       {editingTip && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={() => setEditingTip(null)} />
+          <div className="bg-background/80 absolute inset-0 backdrop-blur-sm" onClick={() => setEditingTip(null)} />
           <MagazineCard
             padding="lg"
-            className="relative w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-2xl animate-in zoom-in-95 duration-200 border-primary/20"
+            className="animate-in zoom-in-95 border-primary/20 relative max-h-[90vh] w-full max-w-xl overflow-y-auto shadow-2xl duration-200"
           >
-            <div className="flex justify-between items-center gap-4 mb-6 sm:mb-8">
-              <h2 className="break-words text-2xl font-bold text-foreground">
+            <div className="mb-6 flex items-center justify-between gap-4 sm:mb-8">
+              <h2 className="text-foreground text-2xl font-bold break-words">
                 {editingTip.id ? "Edit Item" : "New Item"}
               </h2>
               <button
                 onClick={() => setEditingTip(null)}
-                className="min-h-10 min-w-10 p-2 hover:bg-secondary rounded-full"
+                className="hover:bg-secondary min-h-10 min-w-10 rounded-full p-2"
               >
                 <X size={20} />
               </button>
@@ -389,57 +389,57 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
 
             <form onSubmit={handleSave} className="space-y-6">
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
+                <label className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
                   Location / Shop Name
                 </label>
                 <div className="relative">
-                  <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
+                  <MapPin className="text-muted-foreground absolute top-1/2 left-4 -translate-y-1/2" size={16} />
                   <input
                     value={editingTip.venue || ""}
                     onChange={(e) => setEditingTip({ ...editingTip, venue: e.target.value })}
-                    className="w-full min-h-12 pl-12 pr-5 py-4 bg-secondary/50 border border-border rounded-2xl text-base sm:text-sm transition-all v2-focus"
+                    className="bg-secondary/50 border-border v2-focus min-h-12 w-full rounded-2xl border py-4 pr-5 pl-12 text-base transition-all sm:text-sm"
                     placeholder="例：福岡空港 / ヒルトン福岡"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
+                <label className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
                   Title
                 </label>
                 <input
                   autoFocus
                   value={editingTip.title || ""}
                   onChange={(e) => setEditingTip({ ...editingTip, title: e.target.value })}
-                  className="w-full min-h-12 px-5 py-4 bg-secondary/50 border border-border rounded-2xl text-base sm:text-sm transition-all v2-focus"
+                  className="bg-secondary/50 border-border v2-focus min-h-12 w-full rounded-2xl border px-5 py-4 text-base transition-all sm:text-sm"
                   placeholder="例：搭乗券（tomoya） / 予約番号"
                   required
                 />
               </div>
 
-              <div className="space-y-4 p-4 sm:p-5 rounded-[1.5rem] sm:rounded-[2rem] bg-indigo-500/5 border border-indigo-500/20">
-                <label className="text-[10px] font-black uppercase tracking-widest text-indigo-400 ml-1 flex items-center gap-2">
+              <div className="space-y-4 rounded-[1.5rem] border border-indigo-500/20 bg-indigo-500/5 p-4 sm:rounded-[2rem] sm:p-5">
+                <label className="ml-1 flex items-center gap-2 text-[10px] font-black tracking-widest text-indigo-400 uppercase">
                   <Ticket size={12} /> Boarding Pass / Screenshot
                 </label>
 
                 {editingTip.imageUrl ? (
-                  <div className="relative aspect-video w-full rounded-2xl overflow-hidden border-2 border-indigo-500 shadow-lg group">
+                  <div className="group relative aspect-video w-full overflow-hidden rounded-2xl border-2 border-indigo-500 shadow-lg">
                     <Image src={editingTip.imageUrl} alt="Ticket preview" fill className="object-cover" />
                     <button
                       type="button"
                       onClick={() => setEditingTip({ ...editingTip, imageUrl: "" })}
-                      className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 transition-opacity group-hover:opacity-100"
                     >
                       <Trash2 size={24} className="text-white" />
                     </button>
                   </div>
                 ) : (
-                  <label className="flex flex-col items-center justify-center w-full aspect-video rounded-2xl border-2 border-dashed border-indigo-500/30 bg-indigo-500/5 hover:bg-indigo-500/10 cursor-pointer transition-all">
+                  <label className="flex aspect-video w-full cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-indigo-500/30 bg-indigo-500/5 transition-all hover:bg-indigo-500/10">
                     {isUploading ? (
                       <Loader2 className="animate-spin text-indigo-500" size={32} />
                     ) : (
                       <>
-                        <Upload size={32} className="text-indigo-400 mb-2" />
+                        <Upload size={32} className="mb-2 text-indigo-400" />
                         <span className="text-xs font-bold text-indigo-400">スクリーンショットをアップロード</span>
                       </>
                     )}
@@ -448,15 +448,15 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
                 )}
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
+                  <label className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
                     Category
                   </label>
                   <select
                     value={editingTip.category || "General"}
                     onChange={(e) => setEditingTip({ ...editingTip, category: e.target.value })}
-                    className="w-full min-h-12 px-5 py-4 bg-secondary/50 border border-border rounded-2xl focus:ring-4 focus:ring-primary/10 outline-none appearance-none text-base sm:text-sm"
+                    className="bg-secondary/50 border-border focus:ring-primary/10 min-h-12 w-full appearance-none rounded-2xl border px-5 py-4 text-base outline-none focus:ring-4 sm:text-sm"
                   >
                     {categories
                       .filter((c) => c !== "All")
@@ -468,7 +468,7 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
+                  <label className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
                     Priority
                   </label>
                   <input
@@ -477,26 +477,26 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
                     max="5"
                     value={editingTip.deepLevel || 1}
                     onChange={(e) => setEditingTip({ ...editingTip, deepLevel: parseInt(e.target.value) })}
-                    className="w-full min-h-12 px-5 py-4 bg-secondary/50 border border-border rounded-2xl text-base sm:text-sm v2-focus"
+                    className="bg-secondary/50 border-border v2-focus min-h-12 w-full rounded-2xl border px-5 py-4 text-base sm:text-sm"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
+                <label className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
                   Details
                 </label>
                 <textarea
                   rows={3}
                   value={editingTip.body || ""}
                   onChange={(e) => setEditingTip({ ...editingTip, body: e.target.value })}
-                  className="w-full px-5 py-4 bg-secondary/50 border border-border rounded-2xl transition-all resize-none text-base sm:text-sm v2-focus"
+                  className="bg-secondary/50 border-border v2-focus w-full resize-none rounded-2xl border px-5 py-4 text-base transition-all sm:text-sm"
                   placeholder="予約番号や座席番号など..."
                   required
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-4">
+              <div className="grid grid-cols-1 gap-3 pt-4 sm:grid-cols-2">
                 <Button
                   type="button"
                   variant="secondary"
@@ -505,7 +505,7 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
                 >
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isSaving || isUploading} className="h-14 rounded-2xl gap-2">
+                <Button type="submit" disabled={isSaving || isUploading} className="h-14 gap-2 rounded-2xl">
                   {isSaving ? <Loader2 className="animate-spin" size={18} /> : <Check size={18} />}
                   Save Item
                 </Button>

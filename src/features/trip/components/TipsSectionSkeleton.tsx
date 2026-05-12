@@ -3,10 +3,10 @@ import { Skeleton } from "@/components/ui/Skeleton";
 
 export default function TipsSectionSkeleton() {
   return (
-    <section className="mt-12 md:mt-16 opacity-60">
-      <div className="flex items-center gap-3 md:gap-4 mb-6 md:mb-8">
-        <Skeleton className="h-7 md:h-8 w-40 md:w-48" />
-        <div className="h-px flex-1 bg-border" />
+    <section className="mt-12 opacity-60 md:mt-16">
+      <div className="mb-6 flex items-center gap-3 md:mb-8 md:gap-4">
+        <Skeleton className="h-7 w-40 md:h-8 md:w-48" />
+        <div className="bg-border h-px flex-1" />
       </div>
 
       <div className="grid gap-4 md:gap-6">
@@ -17,9 +17,9 @@ export default function TipsSectionSkeleton() {
             </div>
 
             <div className="flex items-start gap-3 md:gap-4">
-              <Skeleton className="mt-1 h-5 w-5 rounded-full shrink-0" />
+              <Skeleton className="mt-1 h-5 w-5 shrink-0 rounded-full" />
               <div className="flex-1 pr-10">
-                <div className="flex flex-col md:flex-row md:items-center gap-2 mb-2">
+                <div className="mb-2 flex flex-col gap-2 md:flex-row md:items-center">
                   <Skeleton className="h-4 w-1/2" />
                   <Skeleton className="h-3 w-20" />
                 </div>

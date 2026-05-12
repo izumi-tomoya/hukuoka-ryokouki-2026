@@ -43,10 +43,10 @@ export function YataiCourseSelector({ eventId, onSuccess }: { eventId: string; o
   return (
     <div className="space-y-4">
       {YATAI_COURSES.map((course) => (
-        <div key={course.id} className="bg-white p-4 rounded-2xl border border-border/50">
-          <p className="text-xs font-bold text-stone-900 mb-1">{course.title} Course</p>
-          <p className="text-[10px] text-stone-500 italic mb-4">{course.desc}</p>
-          <div className="space-y-2 mb-4">
+        <div key={course.id} className="border-border/50 rounded-2xl border bg-white p-4">
+          <p className="mb-1 text-xs font-bold text-stone-900">{course.title} Course</p>
+          <p className="mb-4 text-[10px] text-stone-500 italic">{course.desc}</p>
+          <div className="mb-4 space-y-2">
             {course.stops.map((stop, i) => (
               <div key={i} className="flex items-center gap-3 text-[11px]">
                 <span className="font-bold text-rose-500">{i + 1}</span>
@@ -57,7 +57,7 @@ export function YataiCourseSelector({ eventId, onSuccess }: { eventId: string; o
           </div>
           <button
             onClick={() => handleApply(course)}
-            className="w-full py-2 bg-rose-500 hover:bg-rose-600 text-white rounded-xl font-bold text-xs uppercase tracking-widest shadow-lg shadow-rose-200"
+            className="w-full rounded-xl bg-rose-500 py-2 text-xs font-bold tracking-widest text-white uppercase shadow-lg shadow-rose-200 hover:bg-rose-600"
           >
             このコースに適用する
           </button>

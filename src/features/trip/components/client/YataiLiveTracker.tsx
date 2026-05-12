@@ -14,35 +14,35 @@ export default function YataiLiveTracker({ stops }: YataiLiveTrackerProps) {
 
   return (
     <div className="relative mt-8 space-y-4">
-      <div className="flex items-center gap-3 mb-6">
+      <div className="mb-6 flex items-center gap-3">
         <div className="relative">
-          <div className="h-3 w-3 rounded-full bg-rose-500 animate-ping absolute inset-0" />
-          <div className="h-3 w-3 rounded-full bg-rose-500 relative" />
+          <div className="absolute inset-0 h-3 w-3 animate-ping rounded-full bg-rose-500" />
+          <div className="relative h-3 w-3 rounded-full bg-rose-500" />
         </div>
-        <span className="text-[10px] font-black uppercase tracking-[0.3em] text-rose-500">Live Status</span>
+        <span className="text-[10px] font-black tracking-[0.3em] text-rose-500 uppercase">Live Status</span>
       </div>
 
       <div className="space-y-6">
         {stops.map((stop, i) => (
-          <div key={i} className="relative flex gap-4 group">
+          <div key={i} className="group relative flex gap-4">
             {/* Connecting line */}
             {i !== stops.length - 1 && (
-              <div className="absolute left-[13px] top-6 bottom-[-24px] w-px bg-muted/50 group-hover:bg-rose-100 transition-colors" />
+              <div className="bg-muted/50 absolute top-6 bottom-[-24px] left-[13px] w-px transition-colors group-hover:bg-rose-100" />
             )}
 
             <div
               className={cn(
-                "z-10 h-7 w-7 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 transition-all shadow-sm border-2",
+                "z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 text-[10px] font-bold shadow-sm transition-all",
                 stop.isVisited
-                  ? "bg-stone-800 text-white border-stone-800"
-                  : "bg-white text-stone-400 border-border/50 group-hover:border-rose-200 group-hover:text-rose-500",
+                  ? "border-stone-800 bg-stone-800 text-white"
+                  : "border-border/50 bg-white text-stone-400 group-hover:border-rose-200 group-hover:text-rose-500",
               )}
             >
               {i + 1}
             </div>
 
             <div className="flex-1 pb-4">
-              <div className="flex items-center justify-between mb-1">
+              <div className="mb-1 flex items-center justify-between">
                 <h4
                   className={cn(
                     "text-sm font-bold transition-colors",
@@ -51,12 +51,12 @@ export default function YataiLiveTracker({ stops }: YataiLiveTrackerProps) {
                 >
                   {stop.stop}
                 </h4>
-                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-secondary/30 text-[9px] font-bold text-stone-400">
+                <div className="bg-secondary/30 flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[9px] font-bold text-stone-400">
                   <Clock size={10} />
                   {stop.time}
                 </div>
               </div>
-              <p className="text-[11px] text-stone-400 leading-relaxed font-medium">{stop.desc}</p>
+              <p className="text-[11px] leading-relaxed font-medium text-stone-400">{stop.desc}</p>
             </div>
           </div>
         ))}

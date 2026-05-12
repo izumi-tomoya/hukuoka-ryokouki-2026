@@ -94,25 +94,25 @@ export default function MemoryReel({ photos, isOpen, onClose }: Props) {
             src={currentPhoto.url}
             alt="background memory"
             fill
-            className="object-cover blur-[110px] saturate-[1.15] scale-125"
+            className="scale-125 object-cover blur-[110px] saturate-[1.15]"
           />
         </m.div>
       </AnimatePresence>
 
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#f59e0b33,transparent_32%),linear-gradient(180deg,rgba(15,10,8,0.25),rgba(15,10,8,0.94))]" />
-      <div className="absolute inset-0 opacity-[0.06] [background-image:linear-gradient(rgba(255,255,255,0.7)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.35)_1px,transparent_1px)] [background-size:32px_32px]" />
+      <div className="absolute inset-0 [background-image:linear-gradient(rgba(255,255,255,0.7)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.35)_1px,transparent_1px)] [background-size:32px_32px] opacity-[0.06]" />
 
       <m.div
         initial={{ y: -24, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="absolute left-0 right-0 top-0 z-30 flex items-center justify-between px-5 py-5 md:px-10 md:py-8"
+        className="absolute top-0 right-0 left-0 z-30 flex items-center justify-between px-5 py-5 md:px-10 md:py-8"
       >
         <div className="flex items-center gap-4">
           <div className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/10 backdrop-blur-md">
             <Sparkles size={16} className="text-amber-300" />
           </div>
           <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.38em] text-white/45">Memory Reel</p>
+            <p className="text-[10px] font-black tracking-[0.38em] text-white/45 uppercase">Memory Reel</p>
             <p className="mt-1 text-sm font-semibold text-white/80">旅のハイライトを全画面で再生</p>
           </div>
         </div>
@@ -125,7 +125,7 @@ export default function MemoryReel({ photos, isOpen, onClose }: Props) {
         </button>
       </m.div>
 
-      <div className="relative z-10 flex h-full w-full flex-col items-center justify-center px-4 pb-40 pt-24 md:px-12 md:pb-44 md:pt-28 group">
+      <div className="group relative z-10 flex h-full w-full flex-col items-center justify-center px-4 pt-24 pb-40 md:px-12 md:pt-28 md:pb-44">
         <AnimatePresence initial={false} custom={direction} mode="popLayout">
           <m.div
             key={currentIndex}
@@ -153,12 +153,12 @@ export default function MemoryReel({ photos, isOpen, onClose }: Props) {
 
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent" />
 
-              <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10">
-                <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/25 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.25em] text-amber-200 backdrop-blur-md">
+              <div className="absolute right-0 bottom-0 left-0 p-6 md:p-10">
+                <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/25 px-3 py-1.5 text-[10px] font-black tracking-[0.25em] text-amber-200 uppercase backdrop-blur-md">
                   <Sparkles size={12} />
                   Highlight Frame
                 </div>
-                <h3 className="max-w-3xl font-playfair text-4xl font-black italic leading-[0.95] tracking-tight text-white md:text-6xl">
+                <h3 className="font-playfair max-w-3xl text-4xl leading-[0.95] font-black tracking-tight text-white italic md:text-6xl">
                   {currentPhoto.title || "Untitled Moment"}
                 </h3>
               </div>
@@ -168,12 +168,12 @@ export default function MemoryReel({ photos, isOpen, onClose }: Props) {
               <div>
                 <div className="mb-6 flex items-start justify-between gap-4">
                   <div>
-                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/40">Frame Data</p>
-                    <p className="mt-2 text-3xl font-playfair font-black italic text-white">
+                    <p className="text-[10px] font-black tracking-[0.3em] text-white/40 uppercase">Frame Data</p>
+                    <p className="font-playfair mt-2 text-3xl font-black text-white italic">
                       {String(currentIndex + 1).padStart(2, "0")}
                     </p>
                   </div>
-                  <p className="text-right text-[10px] font-black uppercase tracking-[0.2em] text-white/40">
+                  <p className="text-right text-[10px] font-black tracking-[0.2em] text-white/40 uppercase">
                     of {String(photos.length).padStart(2, "0")}
                   </p>
                 </div>
@@ -196,7 +196,7 @@ export default function MemoryReel({ photos, isOpen, onClose }: Props) {
               </div>
 
               <div className="mt-8">
-                <div className="mb-3 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.2em] text-white/35">
+                <div className="mb-3 flex items-center justify-between text-[10px] font-black tracking-[0.2em] text-white/35 uppercase">
                   <span>Sequence Progress</span>
                   <span>
                     {currentIndex + 1} / {photos.length}
@@ -231,7 +231,7 @@ export default function MemoryReel({ photos, isOpen, onClose }: Props) {
         </div>
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 z-30 px-5 pb-6 md:px-10 md:pb-10">
+      <div className="absolute right-0 bottom-0 left-0 z-30 px-5 pb-6 md:px-10 md:pb-10">
         <div className="mx-auto max-w-7xl rounded-[1.75rem] border border-white/10 bg-black/35 p-4 backdrop-blur-xl md:p-5">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div className="flex items-center gap-3">
@@ -246,7 +246,7 @@ export default function MemoryReel({ photos, isOpen, onClose }: Props) {
                 )}
               </button>
               <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.25em] text-white/40">Playback</p>
+                <p className="text-[10px] font-black tracking-[0.25em] text-white/40 uppercase">Playback</p>
                 <p className="mt-1 text-sm font-medium text-white/80">{isPlaying ? "自動再生中" : "一時停止中"}</p>
               </div>
             </div>
@@ -263,7 +263,7 @@ export default function MemoryReel({ photos, isOpen, onClose }: Props) {
                       setCurrentIndex(photoIndex);
                     }}
                     className={`relative h-14 overflow-hidden rounded-2xl border transition-all ${
-                      active ? "border-amber-300 scale-[1.02]" : "border-white/10 opacity-70 hover:opacity-100"
+                      active ? "scale-[1.02] border-amber-300" : "border-white/10 opacity-70 hover:opacity-100"
                     }`}
                   >
                     <Image src={photo.url} alt={photo.title || "thumbnail"} fill className="object-cover" />
@@ -277,7 +277,7 @@ export default function MemoryReel({ photos, isOpen, onClose }: Props) {
 
       <style jsx global>{`
         .font-playfair {
-          font-family: 'Playfair Display', serif;
+          font-family: "Playfair Display", serif;
         }
       `}</style>
     </div>
@@ -297,7 +297,7 @@ function MetaRow({
 }) {
   return (
     <div className="rounded-[1.5rem] border border-white/8 bg-white/[0.04] px-4 py-3">
-      <div className="mb-2 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.25em] text-white/38">
+      <div className="mb-2 flex items-center gap-2 text-[10px] font-black tracking-[0.25em] text-white/38 uppercase">
         {icon}
         <span>{label}</span>
       </div>

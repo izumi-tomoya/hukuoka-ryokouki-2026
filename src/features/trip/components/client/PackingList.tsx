@@ -78,23 +78,23 @@ export default function PackingList({ initialItems, tripId }: Props) {
   };
 
   return (
-    <div className="space-y-6 md:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className="animate-in fade-in slide-in-from-bottom-4 space-y-6 duration-700 md:space-y-8">
       {/* ─── Progress Overview ─── */}
-      <MagazineCard padding="lg" className="min-w-0 bg-linear-to-br from-primary/5 to-transparent border-primary/10">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <MagazineCard padding="lg" className="from-primary/5 border-primary/10 min-w-0 bg-linear-to-br to-transparent">
+        <div className="flex flex-col justify-between gap-6 md:flex-row md:items-center">
           <div className="min-w-0">
-            <h2 className="break-words text-2xl font-black text-foreground mb-2">Packing Progress</h2>
-            <p className="text-sm text-muted-foreground">忘れ物はありませんか？準備を整えましょう。</p>
+            <h2 className="text-foreground mb-2 text-2xl font-black break-words">Packing Progress</h2>
+            <p className="text-muted-foreground text-sm">忘れ物はありませんか？準備を整えましょう。</p>
           </div>
           <div className="flex w-full flex-col items-center gap-2 md:w-auto md:items-end">
-            <div className="text-4xl font-playfair font-black text-primary">{progress}%</div>
-            <div className="w-full max-w-48 h-2 bg-secondary rounded-full overflow-hidden border border-border">
+            <div className="font-playfair text-primary text-4xl font-black">{progress}%</div>
+            <div className="bg-secondary border-border h-2 w-full max-w-48 overflow-hidden rounded-full border">
               <div
-                className="h-full bg-primary transition-all duration-1000 ease-out shadow-[0_0_12px_rgba(var(--primary),0.5)]"
+                className="bg-primary h-full shadow-[0_0_12px_rgba(var(--primary),0.5)] transition-all duration-1000 ease-out"
                 style={{ width: `${progress}%` }}
               />
             </div>
-            <span className="text-center text-[10px] font-black uppercase tracking-[0.14em] sm:tracking-widest text-muted-foreground mt-1">
+            <span className="text-muted-foreground mt-1 text-center text-[10px] font-black tracking-[0.14em] uppercase sm:tracking-widest">
               {packedCount} / {totalCount} items packed
             </span>
           </div>
@@ -102,7 +102,7 @@ export default function PackingList({ initialItems, tripId }: Props) {
       </MagazineCard>
 
       {/* ─── Tabs ─── */}
-      <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap">
+      <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 pb-2 sm:mx-0 sm:flex-wrap sm:px-0">
         {CATEGORIES.map((cat) => {
           const Icon = cat.icon;
           const count = items.filter((i) => i.category === cat.id).length;
@@ -113,18 +113,18 @@ export default function PackingList({ initialItems, tripId }: Props) {
               key={cat.id}
               onClick={() => setActiveTab(cat.id)}
               className={cn(
-                "flex min-h-12 shrink-0 items-center gap-3 px-5 sm:px-6 py-3.5 sm:py-4 rounded-3xl border transition-all whitespace-nowrap relative",
+                "relative flex min-h-12 shrink-0 items-center gap-3 rounded-3xl border px-5 py-3.5 whitespace-nowrap transition-all sm:px-6 sm:py-4",
                 activeTab === cat.id
-                  ? "bg-primary border-primary text-primary-foreground shadow-lg shadow-primary/20"
+                  ? "bg-primary border-primary text-primary-foreground shadow-primary/20 shadow-lg"
                   : "bg-card border-border text-muted-foreground hover:border-primary/50",
               )}
             >
               <Icon size={18} />
-              <span className="text-xs font-black uppercase tracking-widest">{cat.label}</span>
+              <span className="text-xs font-black tracking-widest uppercase">{cat.label}</span>
               {count > 0 && (
                 <span
                   className={cn(
-                    "ml-1 px-2 py-0.5 rounded-full text-[10px] font-black",
+                    "ml-1 rounded-full px-2 py-0.5 text-[10px] font-black",
                     activeTab === cat.id ? "bg-white/20" : "bg-secondary text-muted-foreground",
                   )}
                 >
@@ -134,7 +134,7 @@ export default function PackingList({ initialItems, tripId }: Props) {
               {isPackedAll && (
                 <CheckCircle2
                   size={12}
-                  className="absolute -top-1 -right-1 text-emerald-500 fill-white dark:fill-zinc-950"
+                  className="absolute -top-1 -right-1 fill-white text-emerald-500 dark:fill-zinc-950"
                 />
               )}
             </button>
@@ -148,19 +148,19 @@ export default function PackingList({ initialItems, tripId }: Props) {
           <div
             key={item.id}
             className={cn(
-              "group flex min-w-0 items-center gap-3 sm:gap-4 p-4 sm:p-5 rounded-[1.5rem] md:rounded-article border transition-all duration-300",
+              "group md:rounded-article flex min-w-0 items-center gap-3 rounded-[1.5rem] border p-4 transition-all duration-300 sm:gap-4 sm:p-5",
               item.isPacked
                 ? "bg-secondary/30 border-transparent opacity-60"
-                : "bg-card border-border hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5",
+                : "bg-card border-border hover:border-primary/30 hover:shadow-primary/5 hover:shadow-xl",
             )}
           >
             <button
               onClick={() => handleToggle(item.id, item.isPacked)}
               className={cn(
-                "h-9 w-9 shrink-0 rounded-xl flex items-center justify-center transition-all",
+                "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-all",
                 item.isPacked
                   ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20"
-                  : "bg-secondary text-muted-foreground border border-border hover:border-primary/50",
+                  : "bg-secondary text-muted-foreground border-border hover:border-primary/50 border",
               )}
             >
               {item.isPacked ? <CheckCircle2 size={16} /> : <Circle size={16} />}
@@ -168,7 +168,7 @@ export default function PackingList({ initialItems, tripId }: Props) {
 
             <span
               className={cn(
-                "min-w-0 flex-1 break-words text-sm font-bold transition-all",
+                "min-w-0 flex-1 text-sm font-bold break-words transition-all",
                 item.isPacked ? "text-muted-foreground line-through decoration-2" : "text-foreground",
               )}
             >
@@ -177,7 +177,7 @@ export default function PackingList({ initialItems, tripId }: Props) {
 
             <button
               onClick={() => handleDelete(item.id)}
-              className="min-h-10 min-w-10 p-2 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-rose-500"
+              className="text-muted-foreground min-h-10 min-w-10 p-2 opacity-100 transition-opacity group-hover:opacity-100 hover:text-rose-500 sm:opacity-0"
             >
               <Trash2 size={16} />
             </button>
@@ -186,18 +186,18 @@ export default function PackingList({ initialItems, tripId }: Props) {
 
         {/* ─── Add New ─── */}
         <form onSubmit={handleAdd} className="mt-4">
-          <div className="relative group">
+          <div className="group relative">
             <input
               type="text"
               placeholder={`${activeTab === "Gadget" ? "充電器、カメラなど..." : "持ち物を追加..."}`}
               value={newItemName}
               onChange={(e) => setNewItemName(e.target.value)}
-              className="w-full min-h-14 pl-5 sm:pl-6 pr-16 py-4 sm:py-5 bg-secondary/50 border border-transparent rounded-[1.5rem] sm:rounded-[2rem] text-base sm:text-sm focus:bg-card focus:border-primary/30 transition-all v2-focus"
+              className="bg-secondary/50 focus:bg-card focus:border-primary/30 v2-focus min-h-14 w-full rounded-[1.5rem] border border-transparent py-4 pr-16 pl-5 text-base transition-all sm:rounded-[2rem] sm:py-5 sm:pl-6 sm:text-sm"
             />
             <button
               type="submit"
               disabled={!newItemName.trim() || isPending}
-              className="absolute right-2.5 sm:right-3 top-1/2 -translate-y-1/2 h-11 w-11 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 disabled:opacity-30 disabled:scale-100 transition-all"
+              className="bg-primary text-primary-foreground shadow-primary/20 absolute top-1/2 right-2.5 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-2xl shadow-lg transition-all hover:scale-105 active:scale-95 disabled:scale-100 disabled:opacity-30 sm:right-3"
             >
               {isPending ? <Loader2 size={18} className="animate-spin" /> : <Plus size={20} />}
             </button>
@@ -205,8 +205,8 @@ export default function PackingList({ initialItems, tripId }: Props) {
         </form>
 
         {filteredItems.length === 0 && !newItemName && (
-          <div className="py-12 sm:py-16 px-4 text-center border-2 border-dashed border-border rounded-[1.75rem] sm:rounded-[2.5rem] bg-secondary/10">
-            <Package size={40} className="mx-auto text-muted-foreground/30 mb-4" />
+          <div className="border-border bg-secondary/10 rounded-[1.75rem] border-2 border-dashed px-4 py-12 text-center sm:rounded-[2.5rem] sm:py-16">
+            <Package size={40} className="text-muted-foreground/30 mx-auto mb-4" />
             <p className="text-muted-foreground font-medium">このカテゴリーの持ち物はまだありません</p>
           </div>
         )}

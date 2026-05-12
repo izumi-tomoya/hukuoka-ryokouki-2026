@@ -188,8 +188,6 @@ export async function resolveLocalTravelAiModels(installedModels?: LocalAiModelM
       source: AUTO_DISCOVERY_FALLBACK_SOURCE,
     } as const;
   }
-
-  return config;
 }
 
 export function getOllamaBaseUrl() {

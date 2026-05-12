@@ -21,8 +21,8 @@ export function NavLinkProvider({ isSecretMode }: { isSecretMode: boolean }) {
             key={item.href}
             href={item.href}
             className={cn(
-              "px-4 py-2 text-sm font-bold transition-colors rounded-full",
-              isActive ? "bg-primary text-white" : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100",
+              "rounded-full px-4 py-2 text-sm font-bold transition-colors",
+              isActive ? "bg-primary text-white" : "text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900",
             )}
           >
             {item.label}

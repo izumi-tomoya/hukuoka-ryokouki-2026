@@ -38,9 +38,7 @@ export default async function MemoriesPage({ params }: { params: Promise<{ slug:
         date: new Date(day.date).toISOString(),
         time: event.time,
         type: event.type,
-        title: isSurprise
-          ? "🎁 Surprise Spot"
-          : maskSecretText(event.title || event.foodName || "Untitled", isAdmin),
+        title: isSurprise ? "🎁 Surprise Spot" : maskSecretText(event.title || event.foodName || "Untitled", isAdmin),
         desc: isSurprise
           ? "当日まで秘密。ふたりの特別な時間が待っています。"
           : maskSecretText(event.desc || event.foodDesc || "", isAdmin) || undefined,

@@ -65,34 +65,34 @@ export default function AddPlanButton({ dayId }: Props) {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="flex items-center justify-center gap-3 w-full py-6 rounded-[2rem] bg-secondary/50 border-2 border-dashed border-border text-muted-foreground hover:bg-primary/5 hover:border-primary/50 hover:text-primary transition-all group"
+        className="bg-secondary/50 border-border text-muted-foreground hover:bg-primary/5 hover:border-primary/50 hover:text-primary group flex w-full items-center justify-center gap-3 rounded-[2rem] border-2 border-dashed py-6 transition-all"
       >
-        <div className="h-10 w-10 rounded-full bg-background flex items-center justify-center border border-border group-hover:bg-primary group-hover:text-white transition-all">
+        <div className="bg-background border-border group-hover:bg-primary flex h-10 w-10 items-center justify-center rounded-full border transition-all group-hover:text-white">
           <Plus size={20} />
         </div>
-        <span className="font-black uppercase tracking-[0.2em] text-[10px]">Add New Plan</span>
+        <span className="text-[10px] font-black tracking-[0.2em] uppercase">Add New Plan</span>
       </button>
 
       {/* Modal */}
       {isOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div
-            className="absolute inset-0 bg-background/80 backdrop-blur-xl animate-in fade-in duration-300"
+            className="bg-background/80 animate-in fade-in absolute inset-0 backdrop-blur-xl duration-300"
             onClick={() => setIsOpen(false)}
           />
 
           <MagazineCard
             padding="lg"
-            className="relative w-full max-w-lg z-10 shadow-3xl animate-in zoom-in-95 duration-300"
+            className="shadow-3xl animate-in zoom-in-95 relative z-10 w-full max-w-lg duration-300"
           >
-            <div className="flex items-center justify-between mb-8">
+            <div className="mb-8 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-2xl bg-primary flex items-center justify-center text-white">
+                <div className="bg-primary flex h-10 w-10 items-center justify-center rounded-2xl text-white">
                   <Sparkles size={20} />
                 </div>
                 <div>
                   <h3 className="text-xl font-black tracking-tight">New Adventure</h3>
-                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                  <p className="text-muted-foreground text-[10px] font-bold tracking-widest uppercase">
                     予定を追加する
                   </p>
                 </div>
@@ -106,9 +106,9 @@ export default function AddPlanButton({ dayId }: Props) {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1 flex items-center gap-2">
+                  <label className="text-muted-foreground ml-1 flex items-center gap-2 text-[10px] font-black tracking-widest uppercase">
                     <Clock size={12} /> Time
                   </label>
                   <input
@@ -116,16 +116,16 @@ export default function AddPlanButton({ dayId }: Props) {
                     type="time"
                     required
                     defaultValue="10:00"
-                    className="w-full rounded-2xl bg-secondary/30 border border-border px-4 py-4 text-sm font-bold focus:bg-background focus:ring-4 focus:ring-primary/5 outline-none transition-all"
+                    className="bg-secondary/30 border-border focus:bg-background focus:ring-primary/5 w-full rounded-2xl border px-4 py-4 text-sm font-bold transition-all outline-none focus:ring-4"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1 flex items-center gap-2">
+                  <label className="text-muted-foreground ml-1 flex items-center gap-2 text-[10px] font-black tracking-widest uppercase">
                     <Tag size={12} /> Category
                   </label>
                   <select
                     name="type"
-                    className="w-full rounded-2xl bg-secondary/30 border border-border px-4 py-4 text-sm font-bold focus:bg-background focus:ring-4 focus:ring-primary/5 outline-none transition-all appearance-none"
+                    className="bg-secondary/30 border-border focus:bg-background focus:ring-primary/5 w-full appearance-none rounded-2xl border px-4 py-4 text-sm font-bold transition-all outline-none focus:ring-4"
                   >
                     {EVENT_TYPES.map((type) => (
                       <option key={type.value} value={type.value}>
@@ -136,88 +136,88 @@ export default function AddPlanButton({ dayId }: Props) {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
+                  <label className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
                     Title
                   </label>
                   <input
                     name="title"
                     required
                     placeholder="例: 太宰府天満宮でお参り"
-                    className="w-full rounded-2xl bg-secondary/30 border border-border px-4 py-4 text-sm font-bold focus:bg-background focus:ring-4 focus:ring-primary/5 outline-none transition-all"
+                    className="bg-secondary/30 border-border focus:bg-background focus:ring-primary/5 w-full rounded-2xl border px-4 py-4 text-sm font-bold transition-all outline-none focus:ring-4"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
+                  <label className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
                     Tag Label
                   </label>
                   <input
                     name="tagLabel"
                     placeholder="例: 絶品ランチ"
-                    className="w-full rounded-2xl bg-secondary/30 border border-border px-4 py-4 text-sm font-bold focus:bg-background focus:ring-4 focus:ring-primary/5 outline-none transition-all"
+                    className="bg-secondary/30 border-border focus:bg-background focus:ring-primary/5 w-full rounded-2xl border px-4 py-4 text-sm font-bold transition-all outline-none focus:ring-4"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
+                <label className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
                   Description
                 </label>
                 <textarea
                   name="desc"
                   placeholder="見どころや注意点など..."
                   rows={2}
-                  className="w-full rounded-2xl bg-secondary/30 border border-border px-4 py-4 text-sm font-bold focus:bg-background focus:ring-4 focus:ring-primary/5 outline-none transition-all resize-none"
+                  className="bg-secondary/30 border-border focus:bg-background focus:ring-primary/5 w-full resize-none rounded-2xl border px-4 py-4 text-sm font-bold transition-all outline-none focus:ring-4"
                 />
               </div>
 
-              <div className="p-5 rounded-3xl bg-amber-500/5 border border-amber-500/10 space-y-4">
-                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-amber-600">
+              <div className="space-y-4 rounded-3xl border border-amber-500/10 bg-amber-500/5 p-5">
+                <div className="flex items-center gap-2 text-[10px] font-black tracking-widest text-amber-600 uppercase">
                   <Sparkles size={12} /> Pro Advice & Food Info
                 </div>
                 <input
                   name="highlight"
                   placeholder="✨ Highlight / 泉へのアドバイス"
-                  className="w-full rounded-xl bg-background/50 border border-amber-500/20 px-4 py-3 text-xs font-bold focus:bg-background outline-none transition-all"
+                  className="bg-background/50 focus:bg-background w-full rounded-xl border border-amber-500/20 px-4 py-3 text-xs font-bold transition-all outline-none"
                 />
                 <div className="grid grid-cols-2 gap-3">
                   <input
                     name="foodName"
                     placeholder="料理名"
-                    className="w-full rounded-xl bg-background/50 border border-amber-500/20 px-4 py-3 text-xs font-bold focus:bg-background outline-none transition-all"
+                    className="bg-background/50 focus:bg-background w-full rounded-xl border border-amber-500/20 px-4 py-3 text-xs font-bold transition-all outline-none"
                   />
                   <input
                     name="foodDesc"
                     placeholder="料理の説明"
-                    className="w-full rounded-xl bg-background/50 border border-amber-500/20 px-4 py-3 text-xs font-bold focus:bg-background outline-none transition-all"
+                    className="bg-background/50 focus:bg-background w-full rounded-xl border border-amber-500/20 px-4 py-3 text-xs font-bold transition-all outline-none"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1 flex items-center gap-2">
+                <label className="text-muted-foreground ml-1 flex items-center gap-2 text-[10px] font-black tracking-widest uppercase">
                   <MapPin size={12} /> Google Maps URL
                 </label>
                 <input
                   name="locationUrl"
                   type="url"
                   placeholder="https://goo.gl/maps/..."
-                  className="w-full rounded-2xl bg-secondary/30 border border-border px-4 py-4 text-sm font-bold focus:bg-background focus:ring-4 focus:ring-primary/5 outline-none transition-all"
+                  className="bg-secondary/30 border-border focus:bg-background focus:ring-primary/5 w-full rounded-2xl border px-4 py-4 text-sm font-bold transition-all outline-none focus:ring-4"
                 />
               </div>
 
-              <div className="flex items-center gap-3 p-4 rounded-2xl bg-secondary/30 border border-border">
+              <div className="bg-secondary/30 border-border flex items-center gap-3 rounded-2xl border p-4">
                 <input
                   type="checkbox"
                   name="isConfirmed"
                   value="true"
                   id="isConfirmed"
-                  className="h-5 w-5 rounded-md border-border text-primary focus:ring-primary"
+                  className="border-border text-primary focus:ring-primary h-5 w-5 rounded-md"
                 />
                 <label
                   htmlFor="isConfirmed"
-                  className="text-xs font-bold text-muted-foreground uppercase tracking-widest cursor-pointer"
+                  className="text-muted-foreground cursor-pointer text-xs font-bold tracking-widest uppercase"
                 >
                   予約・確定済み
                 </label>
@@ -226,7 +226,7 @@ export default function AddPlanButton({ dayId }: Props) {
               <button
                 type="submit"
                 disabled={isPending}
-                className="w-full py-5 rounded-2xl bg-foreground text-background text-xs font-black uppercase tracking-[0.2em] shadow-xl hover:opacity-90 active:scale-95 disabled:opacity-50 transition-all flex items-center justify-center gap-3"
+                className="bg-foreground text-background flex w-full items-center justify-center gap-3 rounded-2xl py-5 text-xs font-black tracking-[0.2em] uppercase shadow-xl transition-all hover:opacity-90 active:scale-95 disabled:opacity-50"
               >
                 {isPending ? (
                   <Loader2 size={18} className="animate-spin" />

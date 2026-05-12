@@ -1,13 +1,10 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
 import { getWeatherData } from "@/lib/weather";
 
 export async function GET(request: Request) {
-  const session = await auth();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
   const { searchParams } = new URL(request.url);
   const location = searchParams.get("location") || "Fukuoka";
+  const endDate = searchParams.get("endDate");
 
   try {
     const weather = await getWeatherData(location);
@@ -16,7 +13,7 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Weather unavailable" }, { status: 500 });
     }
 
-    const forecast = weather.forecast.map(
+    let forecast = weather.forecast.map(
       (day: {
         date: string;
         tempMax: number;
@@ -42,6 +39,13 @@ export async function GET(request: Request) {
         sunset: day.sunset,
       }),
     );
+
+    // 帰着日が指定されている場合、その日までの予報に絞り込む
+    if (endDate) {
+      const end = new Date(endDate);
+      end.setHours(23, 59, 59, 999);
+      forecast = forecast.filter((day: { date: string }) => new Date(day.date) <= end);
+    }
 
     return NextResponse.json(forecast);
   } catch (error) {

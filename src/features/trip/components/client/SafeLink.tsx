@@ -22,7 +22,13 @@ export function SafeLink({ href, children, className }: SafeLinkProps) {
   }
 
   return (
-    <a href={getMapLink(href)} target="_blank" rel="noopener noreferrer" className={className}>
+    <a
+      href={getMapLink(href)}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={className}
+      onClick={(e) => e.stopPropagation()}
+    >
       {children}
     </a>
   );

@@ -56,21 +56,21 @@ export default async function DayView({
       subtitle={`${dayLabel || ""} — ${dayHighlight || ""}`}
     >
       <div className="space-y-12">
-        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-6">
-          <div className="grow max-w-sm">
+        <div className="flex flex-col items-stretch justify-between gap-6 md:flex-row md:items-center">
+          <div className="max-w-sm grow">
             <BudgetSummary events={events} />
           </div>
 
           {uniqueLocations.length >= 2 && (
             <SafeLink
               href={routeUrl}
-              className="group flex items-center gap-4 px-8 py-5 rounded-article bg-card border border-border text-foreground transition-all hover:shadow-2xl hover:border-primary/50 active:scale-95"
+              className="group rounded-article bg-card border-border text-foreground hover:border-primary/50 flex items-center gap-4 border px-8 py-5 transition-all hover:shadow-2xl active:scale-95"
             >
-              <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all">
+              <div className="bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground flex h-12 w-12 items-center justify-center rounded-2xl transition-all">
                 <Map size={24} />
               </div>
               <div>
-                <span className="block text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground mb-1 group-hover:text-primary transition-colors">
+                <span className="text-muted-foreground group-hover:text-primary mb-1 block text-[10px] font-black tracking-[0.3em] uppercase transition-colors">
                   Navigation
                 </span>
                 <span className="block text-sm font-bold tracking-tight">今日の全ルートを表示</span>

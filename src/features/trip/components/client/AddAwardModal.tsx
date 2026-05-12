@@ -78,49 +78,49 @@ export default function AddAwardModal({ tripId, isOpen, onClose }: Props) {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <div
-        className="absolute inset-0 bg-background/80 backdrop-blur-md animate-in fade-in duration-300"
+        className="bg-background/80 animate-in fade-in absolute inset-0 backdrop-blur-md duration-300"
         onClick={onClose}
       />
 
       <MagazineCard
         padding="lg"
-        className="relative w-full max-w-2xl shadow-2xl animate-in zoom-in-95 duration-300 border-primary/20 overflow-y-auto max-h-[90vh]"
+        className="animate-in zoom-in-95 border-primary/20 relative max-h-[90vh] w-full max-w-2xl overflow-y-auto shadow-2xl duration-300"
       >
-        <div className="flex justify-between items-center mb-8">
+        <div className="mb-8 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-2xl bg-amber-500 flex items-center justify-center text-black">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-500 text-black">
               <Trophy size={20} />
             </div>
-            <h2 className="text-2xl font-black text-foreground">New Gourmet Award</h2>
+            <h2 className="text-foreground text-2xl font-black">New Gourmet Award</h2>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-secondary rounded-full transition-colors">
+          <button onClick={onClose} className="hover:bg-secondary rounded-full p-2 transition-colors">
             <X size={24} />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
+              <label className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
                 Award Title / Shop Name
               </label>
               <input
                 autoFocus
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full px-5 py-4 bg-secondary/50 border border-border rounded-2xl transition-all text-foreground placeholder:text-muted-foreground/50 v2-focus"
+                className="bg-secondary/50 border-border text-foreground placeholder:text-muted-foreground/50 v2-focus w-full rounded-2xl border px-5 py-4 transition-all"
                 placeholder="例：博多一双 / 元祖長浜屋"
                 required
               />
             </div>
-            <div className="space-y-2 relative">
-              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
+            <div className="relative space-y-2">
+              <label className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
                 Category
               </label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full px-5 py-4 bg-secondary/50 border border-border rounded-2xl appearance-none text-foreground dark:bg-card v2-focus"
+                className="bg-secondary/50 border-border text-foreground dark:bg-card v2-focus w-full appearance-none rounded-2xl border px-5 py-4"
               >
                 {CATEGORIES.map((c) => (
                   <option key={c} value={c} className="bg-card text-foreground">
@@ -128,50 +128,50 @@ export default function AddAwardModal({ tripId, isOpen, onClose }: Props) {
                   </option>
                 ))}
               </select>
-              <div className="absolute right-5 bottom-4 pointer-events-none text-muted-foreground">
+              <div className="text-muted-foreground pointer-events-none absolute right-5 bottom-4">
                 <Star size={16} />
               </div>
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
+            <label className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
               Comments
             </label>
             <textarea
               rows={3}
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              className="w-full px-5 py-4 bg-secondary/50 border border-border rounded-2xl transition-all resize-none text-foreground placeholder:text-muted-foreground/50 v2-focus"
+              className="bg-secondary/50 border-border text-foreground placeholder:text-muted-foreground/50 v2-focus w-full resize-none rounded-2xl border px-5 py-4 transition-all"
               placeholder="なぜこのお店が最高だったのか、二人の感想をメモしましょう..."
             />
           </div>
 
           {/* Photo Upload Area */}
           <div className="space-y-4">
-            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1 flex items-center gap-2">
+            <label className="text-muted-foreground ml-1 flex items-center gap-2 text-[10px] font-black tracking-widest uppercase">
               <Camera size={12} /> Award Photo
             </label>
 
             {imageUrl ? (
-              <div className="relative aspect-video w-full rounded-2xl overflow-hidden border-2 border-primary shadow-xl group">
+              <div className="border-primary group relative aspect-video w-full overflow-hidden rounded-2xl border-2 shadow-xl">
                 <Image src={imageUrl} alt="Preview" fill className="object-cover" />
                 <button
                   type="button"
                   onClick={() => setImageUrl("")}
-                  className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 transition-opacity group-hover:opacity-100"
                 >
                   <X size={32} className="text-white" />
                 </button>
               </div>
             ) : (
-              <label className="flex flex-col items-center justify-center w-full aspect-video rounded-3xl border-2 border-dashed border-border bg-secondary/20 hover:bg-secondary/40 cursor-pointer transition-all">
+              <label className="border-border bg-secondary/20 hover:bg-secondary/40 flex aspect-video w-full cursor-pointer flex-col items-center justify-center rounded-3xl border-2 border-dashed transition-all">
                 {isUploading ? (
-                  <Loader2 className="animate-spin text-primary" size={32} />
+                  <Loader2 className="text-primary animate-spin" size={32} />
                 ) : (
                   <>
                     <Upload size={32} className="text-muted-foreground mb-3" />
-                    <span className="text-xs font-bold text-muted-foreground">最高の1枚をアップロード</span>
+                    <span className="text-muted-foreground text-xs font-bold">最高の1枚をアップロード</span>
                   </>
                 )}
                 <input type="file" accept="image/*" className="hidden" onChange={handleFileUpload} />
@@ -183,7 +183,7 @@ export default function AddAwardModal({ tripId, isOpen, onClose }: Props) {
             <Button
               type="button"
               variant="secondary"
-              className="flex-1 h-16 rounded-2xl text-xs font-black uppercase tracking-widest"
+              className="h-16 flex-1 rounded-2xl text-xs font-black tracking-widest uppercase"
               onClick={onClose}
             >
               Cancel
@@ -191,7 +191,7 @@ export default function AddAwardModal({ tripId, isOpen, onClose }: Props) {
             <Button
               type="submit"
               disabled={isPending || isUploading || !title}
-              className="flex-1 h-16 rounded-2xl gap-3 text-xs font-black uppercase tracking-widest"
+              className="h-16 flex-1 gap-3 rounded-2xl text-xs font-black tracking-widest uppercase"
             >
               {isPending ? <Loader2 className="animate-spin" size={20} /> : <Check size={20} />}
               Confirm Award

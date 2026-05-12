@@ -59,48 +59,48 @@ export default function EventDetailModal() {
         <Dialog.Backdrop className="fixed inset-0 z-50 bg-stone-950/20 backdrop-blur-sm" />
         <Dialog.Popup
           key={selectedEvent?.id}
-          className="fixed left-1/2 top-1/2 z-50 w-[94%] max-w-xl max-h-[90vh] -translate-x-1/2 -translate-y-1/2 rounded-[2.5rem] bg-card text-card-foreground shadow-2xl overflow-hidden flex flex-col border border-border"
+          className="bg-card text-card-foreground border-border fixed top-1/2 left-1/2 z-50 flex max-h-[90vh] w-[94%] max-w-xl -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-[2.5rem] border shadow-2xl"
         >
           {/* Header */}
-          <div className="relative h-40 bg-secondary flex items-end p-8">
+          <div className="bg-secondary relative flex h-40 items-end p-8">
             <div className="absolute top-6 right-6 flex gap-2">
               {isAdmin && (
                 <button
                   onClick={() => setIsEditing(!isEditing)}
-                  className="p-2.5 rounded-full bg-background/50 backdrop-blur hover:bg-background transition-all border border-border/50"
+                  className="bg-background/50 hover:bg-background border-border/50 rounded-full border p-2.5 backdrop-blur transition-all"
                 >
                   <Edit2 size={16} />
                 </button>
               )}
-              <Dialog.Close className="p-2.5 rounded-full bg-background/50 backdrop-blur hover:bg-background transition-all border border-border/50">
+              <Dialog.Close className="bg-background/50 hover:bg-background border-border/50 rounded-full border p-2.5 backdrop-blur transition-all">
                 <X size={16} />
               </Dialog.Close>
             </div>
-            <h2 className="font-playfair text-2xl font-bold text-foreground">
+            <h2 className="font-playfair text-foreground text-2xl font-bold">
               {!isAdmin && isSurprise ? "✨ Surprise Spot" : maskSecretText(selectedEvent.title || "", isAdmin)}
             </h2>
           </div>
 
           {/* Content */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-6">
+          <div className="flex-1 space-y-6 overflow-y-auto p-6">
             {isEditing ? (
               <EditEventForm event={selectedEvent} onSuccess={() => setIsEditing(false)} />
             ) : (
               <>
                 <div className="flex gap-2">
-                  <div className="flex items-center gap-1.5 px-3 py-1 bg-secondary rounded-full text-[10px] font-black uppercase text-muted-foreground">
+                  <div className="bg-secondary text-muted-foreground flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-black uppercase">
                     <Clock size={10} />
                     {selectedEvent.time}
                   </div>
                   {selectedEvent.tagLabel && (
-                    <div className="px-3 py-1 bg-primary/10 rounded-full text-[10px] font-black uppercase text-primary border border-primary/20">
+                    <div className="bg-primary/10 text-primary border-primary/20 rounded-full border px-3 py-1 text-[10px] font-black uppercase">
                       {selectedEvent.tagLabel}
                     </div>
                   )}
                 </div>
 
                 <MagazineCard padding="sm" className="bg-secondary/30 border-border">
-                  <p className="text-sm text-muted-foreground leading-relaxed italic">
+                  <p className="text-muted-foreground text-sm leading-relaxed italic">
                     {!isAdmin && isSurprise
                       ? "当日まで秘密。ふたりの特別な時間が待っているよ。"
                       : maskSecretText(isFood ? selectedEvent.foodDesc || "" : selectedEvent.desc || "", isAdmin)}
@@ -149,16 +149,16 @@ export default function EventDetailModal() {
                         >
                           <div className="flex items-start gap-3">
                             {tip.isWarning ? (
-                              <AlertTriangle size={16} className="text-rose-500 shrink-0 mt-0.5" />
+                              <AlertTriangle size={16} className="mt-0.5 shrink-0 text-rose-500" />
                             ) : (
-                              <Lightbulb size={16} className="text-amber-500 shrink-0 mt-0.5" />
+                              <Lightbulb size={16} className="mt-0.5 shrink-0 text-amber-500" />
                             )}
                             <div className="min-w-0">
-                              <div className="text-[10px] font-black uppercase tracking-wider text-muted-foreground mb-1">
+                              <div className="text-muted-foreground mb-1 text-[10px] font-black tracking-wider uppercase">
                                 {tip.isWarning ? "Attention" : "Pro Advice"}
                               </div>
-                              <div className="text-xs font-bold text-foreground mb-1">{tip.title}</div>
-                              <p className="text-[11px] text-muted-foreground leading-relaxed italic">{tip.body}</p>
+                              <div className="text-foreground mb-1 text-xs font-bold">{tip.title}</div>
+                              <p className="text-muted-foreground text-[11px] leading-relaxed italic">{tip.body}</p>
                             </div>
                           </div>
                         </MagazineCard>
@@ -168,15 +168,15 @@ export default function EventDetailModal() {
 
                 {/* Journal & Budget */}
                 <MagazineCard padding="sm">
-                  <div className="flex justify-between items-center mb-4">
-                    <div className="flex items-center gap-2 text-muted-foreground">
+                  <div className="mb-4 flex items-center justify-between">
+                    <div className="text-muted-foreground flex items-center gap-2">
                       <FileText size={14} />
-                      <span className="text-[10px] font-black uppercase tracking-widest">Journal & Budget</span>
+                      <span className="text-[10px] font-black tracking-widest uppercase">Journal & Budget</span>
                     </div>
                     {isAdmin && (
                       <button
                         onClick={() => (isUserEditing ? handleSaveUserData() : setIsUserEditing(true))}
-                        className="text-[10px] font-bold text-primary hover:text-primary/80 transition-colors"
+                        className="text-primary hover:text-primary/80 text-[10px] font-bold transition-colors"
                       >
                         {isUserEditing ? "保存" : "編集"}
                       </button>
@@ -190,24 +190,24 @@ export default function EventDetailModal() {
                           type="number"
                           value={budgetAmount}
                           onChange={(e) => setBudgetAmount(e.target.value)}
-                          className="w-full p-3 text-sm bg-background border border-border rounded-xl v2-focus"
+                          className="bg-background border-border v2-focus w-full rounded-xl border p-3 text-sm"
                           placeholder="予算額"
                         />
                       </div>
                       <textarea
                         value={noteText}
                         onChange={(e) => setNoteText(e.target.value)}
-                        className="w-full p-3 text-sm bg-background border border-border rounded-xl resize-none v2-focus"
+                        className="bg-background border-border v2-focus w-full resize-none rounded-xl border p-3 text-sm"
                         rows={3}
                         placeholder="思い出のメモ..."
                       />
                     </div>
                   ) : (
                     <div className="space-y-2">
-                      <div className="flex items-center gap-2 text-sm font-bold text-foreground">
+                      <div className="text-foreground flex items-center gap-2 text-sm font-bold">
                         <JapaneseYen size={14} className="text-primary" /> {parseInt(budgetAmount, 10).toLocaleString()}
                       </div>
-                      <p className="text-sm text-muted-foreground italic">&ldquo;{noteText || "メモなし"}&rdquo;</p>
+                      <p className="text-muted-foreground text-sm italic">&ldquo;{noteText || "メモなし"}&rdquo;</p>
                     </div>
                   )}
                 </MagazineCard>
@@ -215,20 +215,20 @@ export default function EventDetailModal() {
                 {/* Highlight */}
                 {selectedEvent.highlight && (isAdmin || !isSurprise) && (
                   <MagazineCard padding="sm" className="bg-primary/5 border-primary/20">
-                    <div className="flex items-center gap-2 text-primary mb-2">
+                    <div className="text-primary mb-2 flex items-center gap-2">
                       <Star size={14} />
-                      <span className="text-[10px] font-black uppercase tracking-widest">Pro Advice</span>
+                      <span className="text-[10px] font-black tracking-widest uppercase">Pro Advice</span>
                     </div>
-                    <p className="text-sm font-bold text-foreground">{selectedEvent.highlight}</p>
+                    <p className="text-foreground text-sm font-bold">{selectedEvent.highlight}</p>
                   </MagazineCard>
                 )}
 
                 {/* Transit Timeline */}
                 {selectedEvent.transitSteps && selectedEvent.transitSteps.length > 0 && (
                   <MagazineCard padding="sm" className="bg-secondary/20 border-border">
-                    <div className="flex items-center gap-2 text-muted-foreground mb-4">
+                    <div className="text-muted-foreground mb-4 flex items-center gap-2">
                       <Route size={14} />
-                      <span className="text-[10px] font-black uppercase tracking-widest">Transit Route</span>
+                      <span className="text-[10px] font-black tracking-widest uppercase">Transit Route</span>
                     </div>
                     <TransitTimeline steps={selectedEvent.transitSteps} isAdmin={isAdmin} />
                   </MagazineCard>
@@ -237,13 +237,13 @@ export default function EventDetailModal() {
                 {/* Access */}
                 {(selectedEvent.access || selectedEvent.locationUrl) && (isAdmin || !isSurprise) && (
                   <MagazineCard padding="sm" className="space-y-4">
-                    <div className="flex items-center gap-2 text-muted-foreground mb-2">
+                    <div className="text-muted-foreground mb-2 flex items-center gap-2">
                       <MapPin size={14} />
-                      <span className="text-[10px] font-black uppercase tracking-widest">Access & Location</span>
+                      <span className="text-[10px] font-black tracking-widest uppercase">Access & Location</span>
                     </div>
                     {selectedEvent.access &&
                       selectedEvent.access.map((line, idx) => (
-                        <p key={idx} className="text-sm text-muted-foreground">
+                        <p key={idx} className="text-muted-foreground text-sm">
                           {maskSecretText(line, isAdmin)}
                         </p>
                       ))}
@@ -252,7 +252,7 @@ export default function EventDetailModal() {
                         href={selectedEvent.locationUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 text-sm font-bold text-primary hover:underline"
+                        className="text-primary inline-flex items-center gap-2 text-sm font-bold hover:underline"
                       >
                         Google Maps で見る
                         <JapaneseYen size={12} className="rotate-45" />
@@ -262,7 +262,7 @@ export default function EventDetailModal() {
                 )}
 
                 {/* Photos */}
-                <div className="pt-6 border-t border-border">
+                <div className="border-border border-t pt-6">
                   <PhotoGallery photos={selectedEvent.photos || []} eventId={selectedEvent.id} />
                 </div>
               </>

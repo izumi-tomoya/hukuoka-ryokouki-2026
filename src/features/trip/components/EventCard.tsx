@@ -24,8 +24,8 @@ import YataiLiveTracker from "@/features/trip/components/client/YataiLiveTracker
 import PhotoGallery from "@/features/trip/components/PhotoGallery";
 import WeatherStatsDisplay from "@/features/trip/components/WeatherStats";
 import type { TripEvent } from "@/features/trip/types/trip";
-import { isSecretEvent, maskSecretText } from "@/features/trip/utils/tripUtils";
 import { getLocationCoordinates } from "@/features/trip/utils/locationCatalog";
+import { isSecretEvent, maskSecretText } from "@/features/trip/utils/tripUtils";
 import { cn } from "@/lib/utils";
 
 const tagConfig: Record<string, { className: string; icon: React.ElementType }> = {
@@ -45,7 +45,7 @@ function TagBadge({ tag, label }: { tag: string; label: string }) {
     <Badge
       variant="outline"
       className={cn(
-        "mb-4 gap-2 px-3 md:px-4 py-1 md:py-1.5 text-[10px] font-black uppercase tracking-[0.2em] whitespace-nowrap border rounded-full transition-colors",
+        "mb-4 gap-2 rounded-full border px-3 py-1 text-[10px] font-black tracking-[0.2em] whitespace-nowrap uppercase transition-colors md:px-4 md:py-1.5",
         config.className,
       )}
     >
@@ -63,17 +63,12 @@ function BasicCard({ event, isAdmin }: { event: TripEvent; isAdmin?: boolean }) 
   const coords = getLocationCoordinates(event.foodName || event.title || "");
 
   return (
-    <MagazineCard
-      className={cn(
-        "h-full relative overflow-hidden transition-all duration-500",
-        event.isConfirmed && "opacity-60 grayscale-[0.5]",
-      )}
-    >
-      <div className="flex justify-between items-start mb-4 md:mb-6 relative z-10">
+    <MagazineCard className={cn("relative h-full overflow-hidden transition-all duration-500")}>
+      <div className="relative z-10 mb-4 flex items-start justify-between md:mb-6">
         {event.tag && event.tagLabel ? <TagBadge tag={event.tag} label={event.tagLabel} /> : <div />}
         <div className="flex gap-2">
           {event.actualExpense !== undefined && event.actualExpense > 0 && (
-            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary text-[10px] font-bold text-muted-foreground border border-border">
+            <div className="bg-secondary text-muted-foreground border-border flex items-center gap-1.5 rounded-full border px-3 py-1 text-[10px] font-bold">
               <JapaneseYen size={10} />
               {event.actualExpense.toLocaleString()}
             </div>
@@ -88,12 +83,12 @@ function BasicCard({ event, isAdmin }: { event: TripEvent; isAdmin?: boolean }) 
       </div>
 
       <div className="relative z-10">
-        <div className="md:grid md:grid-cols-[1fr_auto] md:gap-8 items-start">
+        <div className="items-start md:grid md:grid-cols-[1fr_auto] md:gap-8">
           <div className="min-w-0">
-            <h3 className="font-playfair text-xl md:text-3xl font-black text-foreground tracking-tight leading-snug mb-3">
+            <h3 className="font-playfair text-foreground mb-3 text-xl leading-snug font-black tracking-tight md:text-3xl">
               {isSurprise ? "✨ Surprise Spot" : maskSecretText(event.title || "", !!isAdmin)}
             </h3>
-            <p className="text-[13px] md:text-base leading-relaxed text-muted-foreground font-medium mb-6 line-clamp-3">
+            <p className="text-muted-foreground mb-6 line-clamp-3 text-[13px] leading-relaxed font-medium md:text-base">
               {isSurprise
                 ? "当日までのお楽しみ。ふたりの特別な時間が待っています。"
                 : maskSecretText(event.desc || "", !!isAdmin)}
@@ -104,7 +99,7 @@ function BasicCard({ event, isAdmin }: { event: TripEvent; isAdmin?: boolean }) 
             <div className="hidden md:block">
               <SafeLink
                 href={event.locationUrl}
-                className="flex items-center justify-center w-12 h-12 rounded-full border border-border bg-background text-primary hover:bg-primary hover:text-white transition-all shadow-sm"
+                className="border-border bg-background text-primary hover:bg-primary flex h-12 w-12 items-center justify-center rounded-full border shadow-sm transition-all hover:text-white"
               >
                 <MapPin size={20} />
               </SafeLink>
@@ -120,7 +115,7 @@ function BasicCard({ event, isAdmin }: { event: TripEvent; isAdmin?: boolean }) 
 
         {/* HotPepper Gourmet Integration */}
         {isFood && (isAdmin || !isSurprise) && (
-          <div className="mb-8 animate-in fade-in slide-in-from-top-2 duration-700">
+          <div className="animate-in fade-in slide-in-from-top-2 mb-8 duration-700">
             <ExternalSpotInfo
               name={maskSecretText(event.foodName || event.title || "", !!isAdmin)}
               lat={coords ? coords[0] : undefined}
@@ -137,11 +132,11 @@ function BasicCard({ event, isAdmin }: { event: TripEvent; isAdmin?: boolean }) 
           <PhotoGallery photos={event.photos || []} eventId={event.id} />
 
           {event.highlight && (
-            <div className="mt-4 md:mt-0 p-4 md:p-6 rounded-[2rem] bg-amber-50/50 border border-amber-100 flex flex-col justify-center">
-              <div className="flex items-center gap-2 mb-2 text-[10px] font-black text-amber-600 uppercase tracking-widest">
+            <div className="mt-4 flex flex-col justify-center rounded-[2rem] border border-amber-100 bg-amber-50/50 p-4 md:mt-0 md:p-6">
+              <div className="mb-2 flex items-center gap-2 text-[10px] font-black tracking-widest text-amber-600 uppercase">
                 <Star size={12} /> Highlight
               </div>
-              <p className="text-sm font-bold text-amber-900 leading-relaxed italic">
+              <p className="text-sm leading-relaxed font-bold text-amber-900 italic">
                 &ldquo;{maskSecretText(event.highlight, !!isAdmin)}&rdquo;
               </p>
             </div>
@@ -150,30 +145,30 @@ function BasicCard({ event, isAdmin }: { event: TripEvent; isAdmin?: boolean }) 
 
         {/* Memoir Section */}
         {hasMemoir && (
-          <div className="mt-8 border-t border-border pt-8 animate-in fade-in duration-700">
-            <div className="flex items-center gap-2 mb-6">
-              <div className="h-px grow bg-border" />
-              <div className="flex items-center gap-2 px-3 py-1 rounded-full border border-border bg-secondary/50">
+          <div className="border-border animate-in fade-in mt-8 border-t pt-8 duration-700">
+            <div className="mb-6 flex items-center gap-2">
+              <div className="bg-border h-px grow" />
+              <div className="border-border bg-secondary/50 flex items-center gap-2 rounded-full border px-3 py-1">
                 <MessageSquareQuote size={12} className="text-primary" />
-                <span className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground">
+                <span className="text-muted-foreground text-[9px] font-black tracking-[0.3em] uppercase">
                   Memory Card
                 </span>
               </div>
-              <div className="h-px grow bg-border" />
+              <div className="bg-border h-px grow" />
             </div>
 
             {event.notes && (
-              <p className="font-playfair text-lg md:text-2xl italic text-foreground leading-relaxed mb-6 text-center px-4">
+              <p className="font-playfair text-foreground mb-6 px-4 text-center text-lg leading-relaxed italic md:text-2xl">
                 &ldquo;{event.notes}&rdquo;
               </p>
             )}
 
             {event.actualPhotos && event.actualPhotos.length > 0 && (
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-4">
+              <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3">
                 {event.actualPhotos.map((photo, i) => (
                   <div
                     key={i}
-                    className="aspect-square relative rounded-3xl overflow-hidden border border-border shadow-inner group/photo"
+                    className="border-border group/photo relative aspect-square overflow-hidden rounded-3xl border shadow-inner"
                   >
                     <Image
                       src={photo.url}
@@ -189,12 +184,12 @@ function BasicCard({ event, isAdmin }: { event: TripEvent; isAdmin?: boolean }) 
           </div>
         )}
 
-        <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-6">
+        <div className="border-border mt-8 flex flex-wrap items-center justify-between gap-4 border-t pt-6">
           <div className="flex items-center gap-4">
             {event.locationUrl && (isAdmin || !isSurprise) && (
               <SafeLink
                 href={event.locationUrl}
-                className="inline-flex items-center gap-2 text-[10px] font-black text-primary hover:text-primary/80 tracking-widest uppercase transition-colors"
+                className="text-primary hover:text-primary/80 inline-flex items-center gap-2 text-[10px] font-black tracking-widest uppercase transition-colors"
               >
                 <MapPin size={14} /> Open Maps
               </SafeLink>
@@ -202,17 +197,13 @@ function BasicCard({ event, isAdmin }: { event: TripEvent; isAdmin?: boolean }) 
             {isFood && event.locationUrl && (isAdmin || !isSurprise) && (
               <SafeLink
                 href={event.locationUrl}
-                className="inline-flex items-center gap-2 text-[10px] font-black text-rose-500 hover:text-rose-600 tracking-widest uppercase transition-colors"
+                className="inline-flex items-center gap-2 text-[10px] font-black tracking-widest text-rose-500 uppercase transition-colors hover:text-rose-600"
               >
                 <ExternalLink size={14} /> Restaurant Web
               </SafeLink>
             )}
           </div>
-          {event.access && (
-            <AccessRow
-              chips={event.access.map((a) => maskSecretText(a, !!isAdmin))}
-            />
-          )}
+          {event.access && <AccessRow chips={event.access.map((a) => maskSecretText(a, !!isAdmin))} />}
         </div>
 
         {event.weatherStats && (

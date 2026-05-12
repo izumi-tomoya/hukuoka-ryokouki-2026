@@ -46,7 +46,7 @@ export default function DayEditModal({ dayId, initialTitle = "", initialHighligh
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="h-10 w-10 rounded-full border border-border bg-background flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/30 transition-all shadow-sm"
+        className="border-border bg-background text-muted-foreground hover:text-primary hover:border-primary/30 flex h-10 w-10 items-center justify-center rounded-full border shadow-sm transition-all"
       >
         <Edit3 size={18} />
       </button>
@@ -54,22 +54,22 @@ export default function DayEditModal({ dayId, initialTitle = "", initialHighligh
       {isOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div
-            className="absolute inset-0 bg-background/80 backdrop-blur-xl animate-in fade-in duration-300"
+            className="bg-background/80 animate-in fade-in absolute inset-0 backdrop-blur-xl duration-300"
             onClick={() => setIsOpen(false)}
           />
 
           <MagazineCard
             padding="lg"
-            className="relative w-full max-w-lg z-10 shadow-3xl animate-in zoom-in-95 duration-300"
+            className="shadow-3xl animate-in zoom-in-95 relative z-10 w-full max-w-lg duration-300"
           >
-            <div className="flex items-center justify-between mb-8">
+            <div className="mb-8 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-2xl bg-primary flex items-center justify-center text-white">
+                <div className="bg-primary flex h-10 w-10 items-center justify-center rounded-2xl text-white">
                   <Sparkles size={20} />
                 </div>
                 <div>
                   <h3 className="text-xl font-black tracking-tight">Edit Day Info</h3>
-                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                  <p className="text-muted-foreground text-[10px] font-bold tracking-widest uppercase">
                     一日のタイトルとハイライトを編集
                   </p>
                 </div>
@@ -84,19 +84,19 @@ export default function DayEditModal({ dayId, initialTitle = "", initialHighligh
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
+                <label className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
                   Title
                 </label>
                 <input
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="Day Title"
-                  className="w-full rounded-2xl bg-secondary/30 border border-border px-4 py-4 text-sm font-bold focus:bg-background focus:ring-4 focus:ring-primary/5 outline-none transition-all"
+                  className="bg-secondary/30 border-border focus:bg-background focus:ring-primary/5 w-full rounded-2xl border px-4 py-4 text-sm font-bold transition-all outline-none focus:ring-4"
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
+                <label className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
                   Highlight
                 </label>
                 <textarea
@@ -104,14 +104,14 @@ export default function DayEditModal({ dayId, initialTitle = "", initialHighligh
                   onChange={(e) => setHighlight(e.target.value)}
                   placeholder="一日のキャッチコピー・意気込み..."
                   rows={3}
-                  className="w-full rounded-2xl bg-secondary/30 border border-border px-4 py-4 text-sm font-bold focus:bg-background focus:ring-4 focus:ring-primary/5 outline-none transition-all resize-none italic"
+                  className="bg-secondary/30 border-border focus:bg-background focus:ring-primary/5 w-full resize-none rounded-2xl border px-4 py-4 text-sm font-bold italic transition-all outline-none focus:ring-4"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={isPending}
-                className="w-full py-5 rounded-2xl bg-foreground text-background text-xs font-black uppercase tracking-[0.2em] shadow-xl hover:opacity-90 active:scale-95 disabled:opacity-50 transition-all flex items-center justify-center gap-3"
+                className="bg-foreground text-background flex w-full items-center justify-center gap-3 rounded-2xl py-5 text-xs font-black tracking-[0.2em] uppercase shadow-xl transition-all hover:opacity-90 active:scale-95 disabled:opacity-50"
               >
                 {isPending ? (
                   <Loader2 size={18} className="animate-spin" />

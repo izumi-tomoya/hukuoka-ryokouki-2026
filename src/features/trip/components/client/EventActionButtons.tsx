@@ -44,7 +44,7 @@ export function EventActionButtons({ event }: Props) {
     <div className="flex gap-1.5">
       <button
         onClick={handleEdit}
-        className="p-2 rounded-full bg-secondary text-muted-foreground hover:bg-primary/10 hover:text-primary transition-all border border-border"
+        className="bg-secondary text-muted-foreground hover:bg-primary/10 hover:text-primary border-border rounded-full border p-2 transition-all"
         title="編集"
       >
         <Edit2 size={12} />
@@ -52,7 +52,7 @@ export function EventActionButtons({ event }: Props) {
       <button
         onClick={handleDelete}
         disabled={isDeleting}
-        className="p-2 rounded-full bg-secondary text-muted-foreground hover:bg-rose-50 hover:text-rose-500 transition-all border border-border disabled:opacity-50"
+        className="bg-secondary text-muted-foreground border-border rounded-full border p-2 transition-all hover:bg-rose-50 hover:text-rose-500 disabled:opacity-50"
         title="削除"
       >
         {isDeleting ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} />}

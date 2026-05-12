@@ -34,7 +34,7 @@ export default function PhotoGalleryLightbox({ photos, eventId }: PhotoGalleryLi
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [index, next, prev]);
+  }, [next, prev]);
 
   const handleDelete = async (e: React.MouseEvent, url: string) => {
     e.stopPropagation();
@@ -46,7 +46,7 @@ export default function PhotoGalleryLightbox({ photos, eventId }: PhotoGalleryLi
       if (result.success) {
         setIndex(null);
       } else {
-        alert("削除に失敗しました: " + result.error);
+        alert(`削除に失敗しました: ${result.error}`);
       }
     } catch (error) {
       console.error("Delete error:", error);
@@ -64,21 +64,28 @@ export default function PhotoGalleryLightbox({ photos, eventId }: PhotoGalleryLi
           <div
             key={photo.id}
             className={cn(
-              "group relative overflow-hidden rounded-[2rem] border border-border bg-muted shadow-sm transition-all hover:shadow-xl active:scale-[0.98]",
+              "group border-border bg-muted relative overflow-hidden rounded-[2rem] border shadow-sm transition-all hover:shadow-xl active:scale-[0.98]",
               photos.length % 3 !== 0 && i === 0 && photos.length > 2
-                ? "md:col-span-2 md:aspect-[21/9]"
+                ? "md:col-span-2 md:aspect-21/9"
                 : "aspect-square",
             )}
           >
-            <button onClick={() => setIndex(i)} className="w-full h-full relative">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIndex(i);
+              }}
+              className="relative h-full w-full"
+            >
               <Image
                 src={photo.url}
                 alt={`Travel moment ${i + 1}`}
                 fill
                 className="object-cover transition-transform duration-700 group-hover:scale-110"
               />
-              <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100">
-                <div className="h-10 w-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white">
+              <div className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-colors group-hover:bg-black/20 group-hover:opacity-100">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-md">
                   <Maximize2 size={20} />
                 </div>
               </div>
@@ -87,9 +94,10 @@ export default function PhotoGalleryLightbox({ photos, eventId }: PhotoGalleryLi
             {/* Grid Delete Button (Hover) */}
             {eventId && (
               <button
+                type="button"
                 onClick={(e) => handleDelete(e, photo.url)}
                 disabled={isDeleting}
-                className="absolute top-4 right-4 h-8 w-8 rounded-full bg-black/40 text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center hover:bg-rose-500 backdrop-blur-sm"
+                className="absolute top-4 right-4 flex h-8 w-8 items-center justify-center rounded-full bg-black/40 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 hover:bg-rose-500"
               >
                 <Trash2 size={14} />
               </button>
@@ -100,10 +108,11 @@ export default function PhotoGalleryLightbox({ photos, eventId }: PhotoGalleryLi
 
       {/* Lightbox Overlay */}
       {index !== null && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-stone-950/95 backdrop-blur-xl animate-in fade-in duration-300">
+        <div className="animate-in fade-in fixed inset-0 z-9999 flex items-center justify-center bg-stone-950/95 backdrop-blur-xl duration-300">
           <button
+            type="button"
             onClick={() => setIndex(null)}
-            className="absolute top-8 right-8 z-10 h-12 w-12 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-all"
+            className="absolute top-8 right-8 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white transition-all hover:bg-white/20"
           >
             <X size={24} />
           </button>
@@ -111,31 +120,34 @@ export default function PhotoGalleryLightbox({ photos, eventId }: PhotoGalleryLi
           {/* Lightbox Delete Button */}
           {eventId && (
             <button
+              type="button"
               onClick={(e) => handleDelete(e, photos[index].url)}
               disabled={isDeleting}
-              className="absolute top-8 left-8 z-10 flex items-center gap-2 px-4 py-2.5 rounded-full bg-white/5 text-rose-400 hover:bg-rose-500/20 transition-all border border-rose-500/20"
+              className="absolute top-8 left-8 z-10 flex items-center gap-2 rounded-full border border-rose-500/20 bg-white/5 px-4 py-2.5 text-rose-400 transition-all hover:bg-rose-500/20"
             >
               {isDeleting ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
-              <span className="text-xs font-bold uppercase tracking-widest">Delete Photo</span>
+              <span className="text-xs font-bold tracking-widest uppercase">Delete Photo</span>
             </button>
           )}
 
           <button
+            type="button"
             onClick={(e) => {
               e.stopPropagation();
               prev();
             }}
-            className="absolute left-4 md:left-8 z-10 h-14 w-14 rounded-full bg-white/5 flex items-center justify-center text-white hover:bg-white/10 transition-all"
+            className="absolute left-4 z-10 flex h-14 w-14 items-center justify-center rounded-full bg-white/5 text-white transition-all hover:bg-white/10 md:left-8"
           >
             <ChevronLeft size={32} />
           </button>
 
           <button
+            type="button"
             onClick={(e) => {
               e.stopPropagation();
               next();
             }}
-            className="absolute right-4 md:right-8 z-10 h-14 w-14 rounded-full bg-white/5 flex items-center justify-center text-white hover:bg-white/10 transition-all"
+            className="absolute right-4 z-10 flex h-14 w-14 items-center justify-center rounded-full bg-white/5 text-white transition-all hover:bg-white/10 md:right-8"
           >
             <ChevronRight size={32} />
           </button>
@@ -145,18 +157,18 @@ export default function PhotoGalleryLightbox({ photos, eventId }: PhotoGalleryLi
               src={photos[index].url}
               alt="Gallery Preview"
               fill
-              className="object-contain animate-in zoom-in-95 duration-500"
+              className="animate-in zoom-in-95 object-contain duration-500"
               priority
             />
           </div>
 
           {/* Indicator */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
-            {photos.map((_, i) => (
+          <div className="absolute bottom-8 left-1/2 flex -translate-x-1/2 gap-2">
+            {photos.map((photo, i) => (
               <div
-                key={i}
+                key={photo.id}
                 className={cn(
-                  "h-1.5 transition-all rounded-full",
+                  "h-1.5 rounded-full transition-all",
                   i === index ? "w-8 bg-rose-500" : "w-1.5 bg-white/20",
                 )}
               />

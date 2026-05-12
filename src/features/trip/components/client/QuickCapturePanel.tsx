@@ -63,16 +63,16 @@ export default function QuickCapturePanel({ tripId, events }: Props) {
       {/* ─── Floating Action Button ─── */}
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-8 right-8 z-50 h-16 w-16 rounded-full bg-zinc-900 text-white shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all group border border-white/10"
+        className="group fixed right-8 bottom-8 z-50 flex h-16 w-16 items-center justify-center rounded-full border border-white/10 bg-zinc-900 text-white shadow-2xl transition-all hover:scale-110 active:scale-95"
       >
-        <div className="absolute inset-0 rounded-full bg-primary opacity-0 group-hover:opacity-20 transition-opacity animate-ping" />
+        <div className="bg-primary absolute inset-0 animate-ping rounded-full opacity-0 transition-opacity group-hover:opacity-20" />
         <PlusIcon className={cn("transition-transform duration-500", isOpen ? "rotate-45" : "rotate-0")} />
       </button>
 
       {/* ─── Backdrop ─── */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm animate-in fade-in duration-300"
+          className="animate-in fade-in fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm duration-300"
           onClick={() => setIsOpen(false)}
         />
       )}
@@ -80,17 +80,17 @@ export default function QuickCapturePanel({ tripId, events }: Props) {
       {/* ─── Panel ─── */}
       <div
         className={cn(
-          "fixed inset-x-4 bottom-8 md:inset-x-auto md:right-8 md:w-[400px] z-[70] transition-all duration-500 ease-out",
-          isOpen ? "translate-y-0 opacity-100" : "translate-y-20 opacity-0 pointer-events-none",
+          "fixed inset-x-4 bottom-8 z-[70] transition-all duration-500 ease-out md:inset-x-auto md:right-8 md:w-[400px]",
+          isOpen ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-20 opacity-0",
         )}
       >
-        <MagazineCard padding="lg" className="shadow-3xl border-white/10 bg-zinc-900 text-white overflow-hidden">
-          <div className="flex items-center justify-between mb-6">
+        <MagazineCard padding="lg" className="shadow-3xl overflow-hidden border-white/10 bg-zinc-900 text-white">
+          <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Sparkles size={16} className="text-primary" />
-              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/60">Quick Memoir</span>
+              <span className="text-[10px] font-black tracking-[0.3em] text-white/60 uppercase">Quick Memoir</span>
             </div>
-            <button onClick={() => setIsOpen(false)} className="text-white/40 hover:text-white transition-colors">
+            <button onClick={() => setIsOpen(false)} className="text-white/40 transition-colors hover:text-white">
               <X size={20} />
             </button>
           </div>
@@ -98,11 +98,11 @@ export default function QuickCapturePanel({ tripId, events }: Props) {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Event Selector */}
             <div className="space-y-2">
-              <label className="text-[9px] font-black uppercase tracking-widest text-white/40">Which moment?</label>
+              <label className="text-[9px] font-black tracking-widest text-white/40 uppercase">Which moment?</label>
               <select
                 value={selectedEventId}
                 onChange={(e) => setSelectedEventId(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-hidden focus:ring-1 focus:ring-primary transition-all"
+                className="focus:ring-primary w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm transition-all focus:ring-1 focus:outline-hidden"
               >
                 {events.map((event) => (
                   <option key={event.id} value={event.id} className="bg-zinc-900">
@@ -114,21 +114,21 @@ export default function QuickCapturePanel({ tripId, events }: Props) {
 
             {/* Note Input */}
             <div className="space-y-2">
-              <label className="text-[9px] font-black uppercase tracking-widest text-white/40">What happened?</label>
+              <label className="text-[9px] font-black tracking-widest text-white/40 uppercase">What happened?</label>
               <div className="relative">
                 <textarea
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                   placeholder="今の気持ちを一言で..."
                   rows={3}
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-4 text-sm placeholder:text-white/20 focus:outline-hidden focus:ring-1 focus:ring-primary transition-all resize-none"
+                  className="focus:ring-primary w-full resize-none rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-sm transition-all placeholder:text-white/20 focus:ring-1 focus:outline-hidden"
                 />
-                <MessageSquare size={14} className="absolute bottom-4 right-4 text-white/20" />
+                <MessageSquare size={14} className="absolute right-4 bottom-4 text-white/20" />
               </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-[9px] font-black uppercase tracking-widest text-white/40">Temperature</label>
+              <label className="text-[9px] font-black tracking-widest text-white/40 uppercase">Temperature</label>
               <div className="grid grid-cols-5 gap-2">
                 {Object.entries(TEMPERATURE_MOODS).map(([value, config]) => (
                   <button
@@ -136,7 +136,7 @@ export default function QuickCapturePanel({ tripId, events }: Props) {
                     type="button"
                     onClick={() => setMood(value as TemperatureMood)}
                     className={cn(
-                      "min-h-11 rounded-2xl border px-2 text-[10px] font-black uppercase tracking-[0.14em] transition-colors",
+                      "min-h-11 rounded-2xl border px-2 text-[10px] font-black tracking-[0.14em] uppercase transition-colors",
                       mood === value
                         ? "border-primary bg-primary text-black"
                         : "border-white/10 bg-white/5 text-white/70",
@@ -151,28 +151,28 @@ export default function QuickCapturePanel({ tripId, events }: Props) {
 
             {/* Photo Preview (Placeholder) */}
             <div className="space-y-2">
-              <label className="text-[9px] font-black uppercase tracking-widest text-white/40">Add Photo</label>
+              <label className="text-[9px] font-black tracking-widest text-white/40 uppercase">Add Photo</label>
               <input
                 type="url"
                 value={imageUrl}
                 onChange={(event) => setImageUrl(event.target.value)}
                 placeholder="画像URLを貼ると、そのまま保存できます"
-                className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm placeholder:text-white/20 focus:outline-hidden focus:ring-1 focus:ring-primary"
+                className="focus:ring-primary w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm placeholder:text-white/20 focus:ring-1 focus:outline-hidden"
               />
               <div className="flex gap-3">
                 <button
                   type="button"
-                  className="flex-1 flex flex-col items-center justify-center gap-2 py-6 rounded-2xl border-2 border-dashed border-white/10 bg-white/5 hover:bg-white/10 hover:border-primary/50 transition-all text-white/60"
+                  className="hover:border-primary/50 flex flex-1 flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-white/10 bg-white/5 py-6 text-white/60 transition-all hover:bg-white/10"
                 >
                   <Camera size={24} />
-                  <span className="text-[10px] font-bold uppercase tracking-widest">Camera</span>
+                  <span className="text-[10px] font-bold tracking-widest uppercase">Camera</span>
                 </button>
                 <button
                   type="button"
-                  className="flex-1 flex flex-col items-center justify-center gap-2 py-6 rounded-2xl border-2 border-dashed border-white/10 bg-white/5 hover:bg-white/10 hover:border-primary/50 transition-all text-white/60"
+                  className="hover:border-primary/50 flex flex-1 flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-white/10 bg-white/5 py-6 text-white/60 transition-all hover:bg-white/10"
                 >
                   <ImageIcon size={24} />
-                  <span className="text-[10px] font-bold uppercase tracking-widest">Gallery</span>
+                  <span className="text-[10px] font-bold tracking-widest uppercase">Gallery</span>
                 </button>
               </div>
             </div>
@@ -180,7 +180,7 @@ export default function QuickCapturePanel({ tripId, events }: Props) {
             <button
               type="submit"
               disabled={isPending || (!note && !imageUrl)}
-              className="w-full h-14 rounded-2xl bg-primary text-black font-black uppercase tracking-[0.2em] text-xs flex items-center justify-center gap-3 shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-98 disabled:opacity-30 disabled:scale-100 transition-all"
+              className="bg-primary shadow-primary/20 flex h-14 w-full items-center justify-center gap-3 rounded-2xl text-xs font-black tracking-[0.2em] text-black uppercase shadow-lg transition-all hover:scale-[1.02] active:scale-98 disabled:scale-100 disabled:opacity-30"
             >
               {isPending ? (
                 <Loader2 size={18} className="animate-spin" />

@@ -53,11 +53,11 @@
 }
 
 @utility v2-focus {
-  @apply appearance-none outline-none focus-visible:outline-2 focus-visible:-outline-offset-1 focus-visible:outline-focus data-focus-visible:outline-2 data-focus-visible:-outline-offset-1 data-focus-visible:outline-focus;
+  @apply focus-visible:outline-focus data-focus-visible:outline-focus appearance-none outline-none focus-visible:outline-2 focus-visible:-outline-offset-1 data-focus-visible:outline-2 data-focus-visible:-outline-offset-1;
 }
 
 @utility glass {
-  @apply bg-white/70 dark:bg-white/5 backdrop-blur-md border border-white/20 dark:border-white/10;
+  @apply border border-white/20 bg-white/70 backdrop-blur-md dark:border-white/10 dark:bg-white/5;
 }
 
 @utility no-scrollbar {

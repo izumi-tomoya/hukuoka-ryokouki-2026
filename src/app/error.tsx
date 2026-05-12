@@ -13,27 +13,27 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
   }, [error]);
 
   return (
-    <div className="min-h-screen bg-memoir-bg dark:bg-background flex items-center justify-center p-6">
+    <div className="bg-memoir-bg dark:bg-background flex min-h-screen items-center justify-center p-6">
       <Container className="max-w-md">
-        <MagazineCard padding="lg" className="text-center border-rose-500/20 shadow-2xl shadow-rose-500/5">
-          <div className="mx-auto h-20 w-20 mb-8 flex items-center justify-center rounded-article bg-rose-50 dark:bg-rose-950/30 text-rose-500">
+        <MagazineCard padding="lg" className="border-rose-500/20 text-center shadow-2xl shadow-rose-500/5">
+          <div className="rounded-article mx-auto mb-8 flex h-20 w-20 items-center justify-center bg-rose-50 text-rose-500 dark:bg-rose-950/30">
             <AlertTriangle size={36} />
           </div>
 
-          <h2 className="font-playfair text-3xl font-black text-foreground mb-4">
+          <h2 className="font-playfair text-foreground mb-4 text-3xl font-black">
             旅の途中で、
             <br />
             何かが起きたようです
           </h2>
 
-          <p className="text-sm text-muted-foreground leading-relaxed mb-10 italic">
+          <p className="text-muted-foreground mb-10 text-sm leading-relaxed italic">
             &ldquo;予期せぬエラーが発生しました。申し訳ありませんが、もう一度やり直すか、トップページに戻ってください。&rdquo;
           </p>
 
           <div className="flex flex-col gap-3">
             <button
               onClick={() => reset()}
-              className="flex items-center justify-center gap-2 w-full py-4 px-6 rounded-2xl bg-foreground text-background font-black text-xs uppercase tracking-widest transition-all hover:opacity-90 active:scale-[0.98]"
+              className="bg-foreground text-background flex w-full items-center justify-center gap-2 rounded-2xl px-6 py-4 text-xs font-black tracking-widest uppercase transition-all hover:opacity-90 active:scale-[0.98]"
             >
               <RotateCcw size={14} />
               もう一度読み込む
@@ -41,7 +41,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
 
             <Link
               href="/"
-              className="flex items-center justify-center gap-2 w-full py-4 px-6 rounded-2xl bg-secondary text-foreground font-black text-xs uppercase tracking-widest transition-all hover:bg-border active:scale-[0.98]"
+              className="bg-secondary text-foreground hover:bg-border flex w-full items-center justify-center gap-2 rounded-2xl px-6 py-4 text-xs font-black tracking-widest uppercase transition-all active:scale-[0.98]"
             >
               <Home size={14} />
               トップに戻る
@@ -49,11 +49,11 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
           </div>
 
           {process.env.NODE_ENV === "development" && (
-            <div className="mt-10 p-4 rounded-xl bg-stone-100 dark:bg-zinc-800 text-left overflow-auto max-h-40">
-              <p className="text-[10px] font-mono text-muted-foreground break-all">
+            <div className="mt-10 max-h-40 overflow-auto rounded-xl bg-stone-100 p-4 text-left dark:bg-zinc-800">
+              <p className="text-muted-foreground font-mono text-[10px] break-all">
                 {error.message || "No error message available"}
               </p>
-              {error.digest && <p className="text-[10px] font-mono text-muted-foreground mt-1">ID: {error.digest}</p>}
+              {error.digest && <p className="text-muted-foreground mt-1 font-mono text-[10px]">ID: {error.digest}</p>}
             </div>
           )}
         </MagazineCard>

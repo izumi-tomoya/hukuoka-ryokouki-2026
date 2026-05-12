@@ -1,21 +1,11 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { PackingItem } from '@prisma/client';
-import { MagazineCard } from '@/components/ui/MagazineCard';
-import { 
-  CheckCircle2, 
-  Circle, 
-  Plus, 
-  Trash2, 
-  Package, 
-  Shirt, 
-  Smartphone, 
-  Briefcase,
-  Loader2
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { addPackingItemAction, togglePackingItemAction, deletePackingItemAction } from '../../api/tripActions';
+import type { PackingItem } from "@prisma/client";
+import { Briefcase, CheckCircle2, Circle, Loader2, Package, Plus, Shirt, Smartphone, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { MagazineCard } from "@/components/ui/MagazineCard";
+import { cn } from "@/lib/utils";
+import { addPackingItemAction, deletePackingItemAction, togglePackingItemAction } from "../../api/tripActions";
 
 interface Props {
   initialItems: PackingItem[];
@@ -23,27 +13,27 @@ interface Props {
 }
 
 const CATEGORIES = [
-  { id: 'Essential', label: '必需品', icon: Package },
-  { id: 'Clothing', label: '衣類', icon: Shirt },
-  { id: 'Gadget', label: 'ガジェット', icon: Smartphone },
-  { id: 'Other', label: 'その他', icon: Briefcase },
+  { id: "Essential", label: "必需品", icon: Package },
+  { id: "Clothing", label: "衣類", icon: Shirt },
+  { id: "Gadget", label: "ガジェット", icon: Smartphone },
+  { id: "Other", label: "その他", icon: Briefcase },
 ];
 
 export default function PackingList({ initialItems, tripId }: Props) {
   const [items, setItems] = useState(initialItems);
-  const [activeTab, setActiveTab] = useState('Essential');
-  const [newItemName, setNewItemName] = useState('');
+  const [activeTab, setActiveTab] = useState("Essential");
+  const [newItemName, setNewItemName] = useState("");
   const [isPending, setIsPending] = useState(false);
 
-  const filteredItems = items.filter(item => item.category === activeTab);
+  const filteredItems = items.filter((item) => item.category === activeTab);
   const totalCount = items.length;
-  const packedCount = items.filter(item => item.isPacked).length;
+  const packedCount = items.filter((item) => item.isPacked).length;
   const progress = totalCount > 0 ? Math.round((packedCount / totalCount) * 100) : 0;
 
   const handleToggle = async (id: string, currentStatus: boolean) => {
     // 楽観的アップデート
-    setItems(items.map(item => item.id === id ? { ...item, isPacked: !currentStatus } : item));
-    
+    setItems(items.map((item) => (item.id === id ? { ...item, isPacked: !currentStatus } : item)));
+
     setIsPending(true);
     try {
       await togglePackingItemAction(id, !currentStatus);
@@ -63,11 +53,11 @@ export default function PackingList({ initialItems, tripId }: Props) {
       name: newItemName,
       category: activeTab,
       isPacked: false,
-      order: 0
+      order: 0,
     };
 
     setItems([...items, newItem]);
-    setNewItemName('');
+    setNewItemName("");
 
     setIsPending(true);
     try {
@@ -78,7 +68,7 @@ export default function PackingList({ initialItems, tripId }: Props) {
   };
 
   const handleDelete = async (id: string) => {
-    setItems(items.filter(item => item.id !== id));
+    setItems(items.filter((item) => item.id !== id));
     setIsPending(true);
     try {
       await deletePackingItemAction(id);
@@ -99,9 +89,9 @@ export default function PackingList({ initialItems, tripId }: Props) {
           <div className="flex w-full flex-col items-center gap-2 md:w-auto md:items-end">
             <div className="text-4xl font-playfair font-black text-primary">{progress}%</div>
             <div className="w-full max-w-48 h-2 bg-secondary rounded-full overflow-hidden border border-border">
-              <div 
-                className="h-full bg-primary transition-all duration-1000 ease-out shadow-[0_0_12px_rgba(var(--primary),0.5)]" 
-                style={{ width: `${progress}%` }} 
+              <div
+                className="h-full bg-primary transition-all duration-1000 ease-out shadow-[0_0_12px_rgba(var(--primary),0.5)]"
+                style={{ width: `${progress}%` }}
               />
             </div>
             <span className="text-center text-[10px] font-black uppercase tracking-[0.14em] sm:tracking-widest text-muted-foreground mt-1">
@@ -113,10 +103,10 @@ export default function PackingList({ initialItems, tripId }: Props) {
 
       {/* ─── Tabs ─── */}
       <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap">
-        {CATEGORIES.map(cat => {
+        {CATEGORIES.map((cat) => {
           const Icon = cat.icon;
-          const count = items.filter(i => i.category === cat.id).length;
-          const isPackedAll = count > 0 && items.filter(i => i.category === cat.id && i.isPacked).length === count;
+          const count = items.filter((i) => i.category === cat.id).length;
+          const isPackedAll = count > 0 && items.filter((i) => i.category === cat.id && i.isPacked).length === count;
 
           return (
             <button
@@ -124,23 +114,28 @@ export default function PackingList({ initialItems, tripId }: Props) {
               onClick={() => setActiveTab(cat.id)}
               className={cn(
                 "flex min-h-12 shrink-0 items-center gap-3 px-5 sm:px-6 py-3.5 sm:py-4 rounded-3xl border transition-all whitespace-nowrap relative",
-                activeTab === cat.id 
-                  ? "bg-primary border-primary text-primary-foreground shadow-lg shadow-primary/20" 
-                  : "bg-card border-border text-muted-foreground hover:border-primary/50"
+                activeTab === cat.id
+                  ? "bg-primary border-primary text-primary-foreground shadow-lg shadow-primary/20"
+                  : "bg-card border-border text-muted-foreground hover:border-primary/50",
               )}
             >
               <Icon size={18} />
               <span className="text-xs font-black uppercase tracking-widest">{cat.label}</span>
               {count > 0 && (
-                <span className={cn(
-                  "ml-1 px-2 py-0.5 rounded-full text-[10px] font-black",
-                  activeTab === cat.id ? "bg-white/20" : "bg-secondary text-muted-foreground"
-                )}>
+                <span
+                  className={cn(
+                    "ml-1 px-2 py-0.5 rounded-full text-[10px] font-black",
+                    activeTab === cat.id ? "bg-white/20" : "bg-secondary text-muted-foreground",
+                  )}
+                >
                   {count}
                 </span>
               )}
               {isPackedAll && (
-                <CheckCircle2 size={12} className="absolute -top-1 -right-1 text-emerald-500 fill-white dark:fill-zinc-950" />
+                <CheckCircle2
+                  size={12}
+                  className="absolute -top-1 -right-1 text-emerald-500 fill-white dark:fill-zinc-950"
+                />
               )}
             </button>
           );
@@ -154,31 +149,33 @@ export default function PackingList({ initialItems, tripId }: Props) {
             key={item.id}
             className={cn(
               "group flex min-w-0 items-center gap-3 sm:gap-4 p-4 sm:p-5 rounded-[1.5rem] md:rounded-article border transition-all duration-300",
-              item.isPacked 
-                ? "bg-secondary/30 border-transparent opacity-60" 
-                : "bg-card border-border hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5"
+              item.isPacked
+                ? "bg-secondary/30 border-transparent opacity-60"
+                : "bg-card border-border hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5",
             )}
           >
-            <button 
+            <button
               onClick={() => handleToggle(item.id, item.isPacked)}
               className={cn(
                 "h-9 w-9 shrink-0 rounded-xl flex items-center justify-center transition-all",
-                item.isPacked 
-                  ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20" 
-                  : "bg-secondary text-muted-foreground border border-border hover:border-primary/50"
+                item.isPacked
+                  ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20"
+                  : "bg-secondary text-muted-foreground border border-border hover:border-primary/50",
               )}
             >
               {item.isPacked ? <CheckCircle2 size={16} /> : <Circle size={16} />}
             </button>
 
-            <span className={cn(
-              "min-w-0 flex-1 break-words text-sm font-bold transition-all",
-              item.isPacked ? "text-muted-foreground line-through decoration-2" : "text-foreground"
-            )}>
+            <span
+              className={cn(
+                "min-w-0 flex-1 break-words text-sm font-bold transition-all",
+                item.isPacked ? "text-muted-foreground line-through decoration-2" : "text-foreground",
+              )}
+            >
               {item.name}
             </span>
 
-            <button 
+            <button
               onClick={() => handleDelete(item.id)}
               className="min-h-10 min-w-10 p-2 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-rose-500"
             >
@@ -190,14 +187,14 @@ export default function PackingList({ initialItems, tripId }: Props) {
         {/* ─── Add New ─── */}
         <form onSubmit={handleAdd} className="mt-4">
           <div className="relative group">
-            <input 
+            <input
               type="text"
-              placeholder={`${activeTab === 'Gadget' ? '充電器、カメラなど...' : '持ち物を追加...'}`}
+              placeholder={`${activeTab === "Gadget" ? "充電器、カメラなど..." : "持ち物を追加..."}`}
               value={newItemName}
               onChange={(e) => setNewItemName(e.target.value)}
               className="w-full min-h-14 pl-5 sm:pl-6 pr-16 py-4 sm:py-5 bg-secondary/50 border border-transparent rounded-[1.5rem] sm:rounded-[2rem] text-base sm:text-sm focus:bg-card focus:border-primary/30 transition-all v2-focus"
             />
-            <button 
+            <button
               type="submit"
               disabled={!newItemName.trim() || isPending}
               className="absolute right-2.5 sm:right-3 top-1/2 -translate-y-1/2 h-11 w-11 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 disabled:opacity-30 disabled:scale-100 transition-all"

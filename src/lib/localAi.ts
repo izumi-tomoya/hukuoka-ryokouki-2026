@@ -108,7 +108,9 @@ function isGemmaModel(model: LocalAiModelMetadata) {
   const families = model.families.map((item) => item.toLowerCase());
   const modelName = model.model.toLowerCase();
 
-  return family.startsWith("gemma") || families.some((item) => item.startsWith("gemma")) || modelName.startsWith("gemma");
+  return (
+    family.startsWith("gemma") || families.some((item) => item.startsWith("gemma")) || modelName.startsWith("gemma")
+  );
 }
 
 function parseGemmaGeneration(model: LocalAiModelMetadata) {
@@ -131,10 +133,10 @@ function parseModelSize(model: LocalAiModelMetadata) {
 function sortGemmaModels(models: LocalAiModelMetadata[]) {
   return [...models].sort((left, right) => {
     const preferredLeftIndex = PREFERRED_LOCAL_TRAVEL_AI_CANDIDATES.indexOf(
-      left.model as (typeof PREFERRED_LOCAL_TRAVEL_AI_CANDIDATES)[number]
+      left.model as (typeof PREFERRED_LOCAL_TRAVEL_AI_CANDIDATES)[number],
     );
     const preferredRightIndex = PREFERRED_LOCAL_TRAVEL_AI_CANDIDATES.indexOf(
-      right.model as (typeof PREFERRED_LOCAL_TRAVEL_AI_CANDIDATES)[number]
+      right.model as (typeof PREFERRED_LOCAL_TRAVEL_AI_CANDIDATES)[number],
     );
     if (preferredLeftIndex !== -1 || preferredRightIndex !== -1) {
       if (preferredLeftIndex === -1) return 1;
@@ -166,7 +168,9 @@ export async function resolveLocalTravelAiModels(installedModels?: LocalAiModelM
   }
 
   try {
-    const gemmaModels = getInstalledGemmaModels(installedModels || (await listLocalModels())).map((model) => model.model);
+    const gemmaModels = getInstalledGemmaModels(installedModels || (await listLocalModels())).map(
+      (model) => model.model,
+    );
     if (gemmaModels.length > 0) {
       return {
         models: gemmaModels,
@@ -205,7 +209,7 @@ function buildMessages(prompt: string, history: ChatMessage[], systemInstruction
       .map((item) => ({
         role: item.role,
         content: item.content,
-      }))
+      })),
   );
 
   messages.push({ role: "user", content: prompt });

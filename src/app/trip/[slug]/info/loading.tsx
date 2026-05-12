@@ -1,8 +1,8 @@
-import { Skeleton } from "@/components/ui/Skeleton";
 import { Container } from "@/components/ui/Container";
-import TripWeatherSummarySkeleton from "@/features/trip/components/TripWeatherSummarySkeleton";
+import { Skeleton } from "@/components/ui/Skeleton";
 import PackingListSkeleton from "@/features/trip/components/PackingListSkeleton";
 import TripLayout from "@/features/trip/components/TripLayout";
+import TripWeatherSummarySkeleton from "@/features/trip/components/TripWeatherSummarySkeleton";
 
 export default function InfoLoading() {
   return (

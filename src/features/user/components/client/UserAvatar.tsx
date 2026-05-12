@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { User as UserIcon } from 'lucide-react';
-import Image from 'next/image';
+import { User as UserIcon } from "lucide-react";
+import Image from "next/image";
 
 interface UserAvatarProps {
   src?: string | null;

@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { generateTravelTextWithFallback } from "@/lib/aiProvider";
-import { compactAdvisorAnswer } from "@/lib/advisorResponse";
-import { prisma } from "@/lib/prisma";
-import { searchGourmet } from "@/lib/external/hotpepper";
 import { cleanLocationName, getLocationCoordinates } from "@/features/trip/utils/locationCatalog";
+import { compactAdvisorAnswer } from "@/lib/advisorResponse";
+import { generateTravelTextWithFallback } from "@/lib/aiProvider";
 import { auth } from "@/lib/auth";
+import { searchGourmet } from "@/lib/external/hotpepper";
+import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
@@ -29,15 +29,23 @@ function truncateContextText(value: string | null | undefined, maxCharacters: nu
   const normalized = value.replace(/\s+/g, " ").trim();
   if (Array.from(normalized).length <= maxCharacters) return normalized;
 
-  return `${Array.from(normalized).slice(0, maxCharacters - 1).join("").trim()}…`;
+  return `${Array.from(normalized)
+    .slice(0, maxCharacters - 1)
+    .join("")
+    .trim()}…`;
 }
 
 export async function POST(req: Request) {
   try {
     const session = await auth();
     const isAdmin = !!session?.user?.isAdmin;
+    if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const { slug, message, history = [] } = (await req.json()) as {
+    const {
+      slug,
+      message,
+      history = [],
+    } = (await req.json()) as {
       slug?: string;
       message?: string;
       history?: ChatMessage[];
@@ -86,6 +94,16 @@ export async function POST(req: Request) {
 
     const foodEvents = trip.days
       .flatMap((day) => day.events.filter((e) => e.type === "food"))
+      .filter((e) => {
+        if (isAdmin) return true;
+        const titleText = e.title || e.foodName || "";
+        return !(
+          e.tag === "surprise" ||
+          ["ヒルトン", "ヒルトン福岡シーホーク", "CLOUDS", "天空のサプライズ", "secret spot", "サプライズ"].some(
+            (spot) => titleText.toLowerCase().includes(spot.toLowerCase()),
+          )
+        );
+      })
       .slice(0, 4);
 
     const hotpepperResults = await Promise.allSettled(
@@ -104,9 +122,11 @@ export async function POST(req: Request) {
           result.private_room?.includes("あり") ? "個室○" : "",
           result.lunch?.includes("あり") ? "ランチ○" : "",
           result.midnight?.includes("あり") ? "深夜○" : "",
-        ].filter(Boolean).join(" ");
+        ]
+          .filter(Boolean)
+          .join(" ");
         return `${event.title || event.foodName}: 予算${result.budget} / 営業${result.open}${features ? ` / ${features}` : ""}`;
-      })
+      }),
     );
 
     const hotpepperContext = hotpepperResults
@@ -119,8 +139,14 @@ export async function POST(req: Request) {
         const events = day.events
           .slice(0, ADVISOR_MAX_EVENTS_PER_DAY)
           .map((event) => {
-            const isSecret = !isAdmin && event.tag === "surprise";
-            const displayName = isSecret ? "🎁 Surprise Spot" : (event.title || event.foodName || "Untitled");
+            const titleText = event.title || event.foodName || "";
+            const isSecret =
+              !isAdmin &&
+              (event.tag === "surprise" ||
+                ["ヒルトン", "ヒルトン福岡シーホーク", "CLOUDS", "天空のサプライズ", "secret spot", "サプライズ"].some(
+                  (spot) => titleText.toLowerCase().includes(spot.toLowerCase()),
+                ));
+            const displayName = isSecret ? "🎁 Surprise Spot" : titleText || "Untitled";
             return `${event.time} ${displayName}${event.isConfirmed ? " [fixed]" : ""}`;
           })
           .join(" / ");
@@ -149,7 +175,9 @@ export async function POST(req: Request) {
    - 雨天時：屋外（大濠公園、中洲屋台、太宰府参道など）を避け、屋内（美術館、ラウンジ、ホテル内）での滞在を具体的に提案。
    - 疲労・遅延時：予定を削る勇気を持ち、カフェでの休憩やホテルの滞在時間を延ばすことを優しく勧める。
 3. **具体的な助言**: 可能な限り「時刻（xx時頃）」や「具体的な場所」を回答に含め、すぐに行動に移せるようにしてください。
-4. **知識の活用**: 【予約・知識】にある内容（機密情報や警告）を把握し、先回りした助言を行ってください。
+4. **知識の活用**:
+   - 「空路、福岡へ」という記述は、**羽田空港**から福岡空港へのフライトを指します。
+   - 【予約・知識】にある内容（機密情報や警告）を把握し、先回りした助言を行ってください。
 
 【制約】
 - 日本語で回答する。
@@ -208,11 +236,7 @@ ${tipsContext}${hotpepperContext ? `\n\nグルメ情報（HotPepper）:\n${hotpe
       answer,
       provider: usedProvider,
       providerSource,
-      history: [
-        ...history,
-        { role: "user", content: message },
-        { role: "assistant", content: answer },
-      ],
+      history: [...history, { role: "user", content: message }, { role: "assistant", content: answer }],
     });
   } catch (error) {
     const err = error as Error;

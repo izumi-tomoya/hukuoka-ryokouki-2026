@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { toggleEventConfirmation } from '@/features/trip/api/tripActions';
-import { Check } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Check } from "lucide-react";
+import { useState } from "react";
+import { toggleEventConfirmation } from "@/features/trip/api/tripActions";
+import { cn } from "@/lib/utils";
 
 interface ConfirmCheckboxProps {
   eventId: string;
@@ -16,7 +16,7 @@ export default function ConfirmCheckbox({ eventId, initialConfirmed }: ConfirmCh
 
   const handleToggle = async (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent opening the detail modal
-    
+
     const nextState = !isConfirmed;
     setIsConfirmed(nextState); // Optimistic update
     setIsPending(true);
@@ -37,19 +37,21 @@ export default function ConfirmCheckbox({ eventId, initialConfirmed }: ConfirmCh
       disabled={isPending}
       className={cn(
         "group flex h-7 w-7 items-center justify-center rounded-full border-2 transition-all duration-300 v2-focus",
-        isConfirmed 
-          ? "border-emerald-500 bg-emerald-500 shadow-md shadow-emerald-200" 
+        isConfirmed
+          ? "border-emerald-500 bg-emerald-500 shadow-md shadow-emerald-200"
           : "border-stone-200 bg-white hover:border-emerald-300 hover:bg-emerald-50/30",
-        isPending && "opacity-50 cursor-not-allowed"
+        isPending && "opacity-50 cursor-not-allowed",
       )}
       aria-label={isConfirmed ? "Mark as unconfirmed" : "Mark as confirmed"}
     >
-      <Check 
-        size={14} 
+      <Check
+        size={14}
         className={cn(
           "transition-all duration-300 transform",
-          isConfirmed ? "text-white scale-100 rotate-0" : "text-transparent scale-50 -rotate-45 group-hover:text-emerald-200"
-        )} 
+          isConfirmed
+            ? "text-white scale-100 rotate-0"
+            : "text-transparent scale-50 -rotate-45 group-hover:text-emerald-200",
+        )}
         strokeWidth={3}
       />
     </button>

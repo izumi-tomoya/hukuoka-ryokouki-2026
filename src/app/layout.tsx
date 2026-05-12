@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import Header from "@/features/trip/components/DesktopHeader";
-import Footer from "@/features/trip/components/Footer";
 import { DynamicEventModal } from "@/features/trip/components/client/DynamicEventModal";
 import PwaRegistrar from "@/features/trip/components/client/PwaRegistrar";
+import Header from "@/features/trip/components/DesktopHeader";
+import Footer from "@/features/trip/components/Footer";
 import "./globals.css";
-import { auth } from "@/lib/auth";
 import { SessionProvider } from "next-auth/react";
+import { auth } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: {
@@ -64,9 +64,7 @@ export default async function RootLayout({
         <SessionProvider session={session}>
           <Header />
           <Suspense fallback={<div className="flex-1 animate-pulse bg-stone-100 dark:bg-zinc-900" />}>
-            <main className="grow">
-              {children}
-            </main>
+            <main className="grow">{children}</main>
           </Suspense>
           <Footer />
           <DynamicEventModal />

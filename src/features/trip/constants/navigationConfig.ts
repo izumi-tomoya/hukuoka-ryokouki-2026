@@ -1,4 +1,4 @@
-import { Home, Calendar, Compass, Info as InfoIcon, LucideIcon, Camera, LifeBuoy } from 'lucide-react';
+import { Calendar, Camera, Compass, Home, Info as InfoIcon, LifeBuoy, type LucideIcon } from "lucide-react";
 
 interface NavItem {
   href: string;
@@ -21,23 +21,23 @@ export interface TripNavData {
 }
 
 export const getNavItems = (trip: TripNavData | null, isAdmin: boolean): NavItem[] => {
-  const base = [{ href: '/', label: 'Portal', icon: Home }];
+  const base = [{ href: "/", label: "Portal", icon: Home }];
 
   if (!trip) return base;
 
   const tripNav = [
-    { href: `/trip/${trip.slug}`, label: 'Plan', icon: Home },
+    { href: `/trip/${trip.slug}`, label: "Plan", icon: Home },
     ...trip.days
       .filter((day) => day.events && day.events.length > 0)
       .map((day) => ({
         href: `/trip/${trip.slug}/day/${day.dayNumber}`,
         label: `Day ${day.dayNumber}`,
-        icon: Calendar
+        icon: Calendar,
       })),
-    { href: `/trip/${trip.slug}/assist`, label: 'Assist', icon: LifeBuoy },
-    { href: `/trip/${trip.slug}/memories`, label: 'Memories', icon: Camera },
-    { href: `/trip/${trip.slug}/info`, label: 'Info', icon: InfoIcon },
-    ...(isAdmin ? [{ href: `/trip/${trip.slug}/tips`, label: 'Tips', icon: Compass }] : []),
+    { href: `/trip/${trip.slug}/assist`, label: "Assist", icon: LifeBuoy },
+    { href: `/trip/${trip.slug}/memories`, label: "Memories", icon: Camera },
+    { href: `/trip/${trip.slug}/info`, label: "Info", icon: InfoIcon },
+    ...(isAdmin ? [{ href: `/trip/${trip.slug}/tips`, label: "Tips", icon: Compass }] : []),
   ];
 
   return [...base, ...tripNav];

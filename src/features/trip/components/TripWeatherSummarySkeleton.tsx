@@ -1,5 +1,5 @@
-import { Skeleton } from "@/components/ui/Skeleton";
 import { MagazineCard } from "@/components/ui/MagazineCard";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 export default function TripWeatherSummarySkeleton() {
   return (

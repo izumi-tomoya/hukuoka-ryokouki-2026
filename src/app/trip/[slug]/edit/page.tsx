@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
-import { getTripBySlug } from "@/features/trip/api/tripActions";
-import NewTripForm from "@/features/trip/components/client/NewTripForm";
 import { Container } from "@/components/ui/Container";
 import { MagazineCard } from "@/components/ui/MagazineCard";
+import { getTripBySlug } from "@/features/trip/api/tripActions";
+import NewTripForm from "@/features/trip/components/client/NewTripForm";
 
 export default async function EditTripPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -22,7 +22,7 @@ export default async function EditTripPage({ params }: { params: Promise<{ slug:
         </header>
 
         <MagazineCard padding="lg" className="border-border/50 shadow-2xl shadow-primary/5">
-          <NewTripForm 
+          <NewTripForm
             initialData={{
               id: trip.id,
               title: trip.title,
@@ -31,7 +31,7 @@ export default async function EditTripPage({ params }: { params: Promise<{ slug:
               startDate: new Date(trip.startDate).toISOString(),
               endDate: new Date(trip.endDate).toISOString(),
               accentColor: trip.accentColor,
-            }} 
+            }}
           />
         </MagazineCard>
       </Container>

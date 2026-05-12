@@ -43,14 +43,20 @@ function truncateByCharacters(value: string, maxCharacters: number) {
     clipped.lastIndexOf("！"),
     clipped.lastIndexOf("？"),
     clipped.lastIndexOf("!"),
-    clipped.lastIndexOf("?")
+    clipped.lastIndexOf("?"),
   );
 
   if (lastSentenceEnd >= Math.floor(maxCharacters * 0.55)) {
     return clipped.slice(0, lastSentenceEnd + 1).trim();
   }
 
-  if (clipped.endsWith("。") || clipped.endsWith("！") || clipped.endsWith("？") || clipped.endsWith("!") || clipped.endsWith("?")) {
+  if (
+    clipped.endsWith("。") ||
+    clipped.endsWith("！") ||
+    clipped.endsWith("？") ||
+    clipped.endsWith("!") ||
+    clipped.endsWith("?")
+  ) {
     return clipped;
   }
 

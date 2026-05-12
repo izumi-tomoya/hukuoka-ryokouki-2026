@@ -1,7 +1,7 @@
-import Link from 'next/link';
-import { Plus, Lock } from 'lucide-react';
-import { getTrips } from '@/features/trip/api/tripActions';
-import { MagazineCard } from '@/components/ui/MagazineCard';
+import { Lock, Plus } from "lucide-react";
+import Link from "next/link";
+import { MagazineCard } from "@/components/ui/MagazineCard";
+import { getTrips } from "@/features/trip/api/tripActions";
 
 export default async function PortalPage() {
   const trips = await getTrips();
@@ -10,9 +10,7 @@ export default async function PortalPage() {
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-500">
       {/* ─── Hero ─── */}
-      <header
-        className="relative overflow-hidden px-6 pt-24 md:pt-28 pb-16 md:pb-20 bg-linear-to-br from-white via-stone-50 to-white dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950 border-b border-border"
-      >
+      <header className="relative overflow-hidden px-6 pt-24 md:pt-28 pb-16 md:pb-20 bg-linear-to-br from-white via-stone-50 to-white dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950 border-b border-border">
         <div className="absolute -top-32 -left-32 h-150 w-150 rounded-full bg-rose-500/5 dark:bg-rose-500/10 blur-[160px]" />
         <div className="absolute -bottom-20 right-0 h-100 w-100 rounded-full bg-primary/5 dark:bg-primary/10 blur-[120px]" />
 
@@ -31,9 +29,7 @@ export default async function PortalPage() {
             </span>
           </div>
 
-          <h1
-            className="font-playfair italic text-[48px] sm:text-[64px] md:text-[88px] font-bold leading-none tracking-tight bg-linear-to-r from-zinc-900 via-zinc-700 to-zinc-900 dark:from-white dark:via-zinc-300 dark:to-white bg-clip-text text-transparent"
-          >
+          <h1 className="font-playfair italic text-[48px] sm:text-[64px] md:text-[88px] font-bold leading-none tracking-tight bg-linear-to-r from-zinc-900 via-zinc-700 to-zinc-900 dark:from-white dark:via-zinc-300 dark:to-white bg-clip-text text-transparent">
             Memories
           </h1>
 
@@ -41,7 +37,7 @@ export default async function PortalPage() {
             <p className="text-[14px] md:text-[17px] text-muted-foreground font-medium leading-relaxed tracking-wide px-4">
               {tripCount > 0
                 ? `${tripCount}つの旅路、数えきれないほどの物語。ふたりで歩んだ軌跡をここに。`
-                : 'これから始まる、ふたりだけの新しい物語を綴りましょう。'}
+                : "これから始まる、ふたりだけの新しい物語を綴りましょう。"}
             </p>
           </div>
         </div>
@@ -52,11 +48,14 @@ export default async function PortalPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
           {trips.map((trip) => (
             <Link key={trip.id} href={`/trip/${trip.slug}`} className="group relative block">
-              <MagazineCard className="relative h-full overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-primary/5 dark:hover:shadow-primary/20 hover:-translate-y-2 active:scale-[0.98] p-8 md:p-10" padding="none">
+              <MagazineCard
+                className="relative h-full overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-primary/5 dark:hover:shadow-primary/20 hover:-translate-y-2 active:scale-[0.98] p-8 md:p-10"
+                padding="none"
+              >
                 {/* Accent line */}
                 <div
                   className="absolute top-0 left-0 right-0 h-1.5"
-                  style={{ background: trip.accentColor || 'var(--primary)' }}
+                  style={{ background: trip.accentColor || "var(--primary)" }}
                 />
 
                 <div className="mb-10">

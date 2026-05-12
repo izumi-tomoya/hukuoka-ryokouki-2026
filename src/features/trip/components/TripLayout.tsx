@@ -1,11 +1,11 @@
 "use client";
 
-import { ReactNode, useEffect } from "react";
-import CategoryTabs from "./CategoryTabs";
+import { type ReactNode, useEffect } from "react";
 import { Skeleton } from "@/components/ui/Skeleton";
-import QuickCapturePanel from "./client/QuickCapturePanel";
-import { TripEvent, Tip } from "@/features/trip/types/trip";
+import type { Tip, TripEvent } from "@/features/trip/types/trip";
 import { useModalStore } from "@/lib/store/useModalStore";
+import CategoryTabs from "./CategoryTabs";
+import QuickCapturePanel from "./client/QuickCapturePanel";
 
 interface Props {
   slug?: string;
@@ -21,18 +21,18 @@ interface Props {
   isLoading?: boolean;
 }
 
-export default function TripLayout({ 
-  slug = "", 
+export default function TripLayout({
+  slug = "",
   tripId = "",
-  activePath = "", 
-  isSecretMode = false, 
-  title, 
-  subtitle, 
-  children, 
-  days, 
+  activePath = "",
+  isSecretMode = false,
+  title,
+  subtitle,
+  children,
+  days,
   events = [],
   tips = [],
-  isLoading 
+  isLoading,
 }: Props) {
   const updateTips = useModalStore((s) => s.updateTips);
 
@@ -77,9 +77,7 @@ export default function TripLayout({
         )}
       </header>
 
-      <main className="mx-auto max-w-5xl px-4 sm:px-6">
-        {children}
-      </main>
+      <main className="mx-auto max-w-5xl px-4 sm:px-6">{children}</main>
 
       {/* --- Global Quick Capture --- */}
       {!isLoading && tripId && events.length > 0 && isSecretMode && (

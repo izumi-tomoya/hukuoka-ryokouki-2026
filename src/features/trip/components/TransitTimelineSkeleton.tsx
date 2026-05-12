@@ -11,15 +11,13 @@ export default function TransitTimelineSkeleton() {
             {/* Left: Time and Line Skeleton */}
             <div className="flex flex-col items-center w-12 shrink-0">
               <Skeleton className="h-3 w-8 mb-1" />
-              
+
               <div className="relative flex-1 flex flex-col items-center">
                 {/* Dot */}
                 <div className="h-3 w-3 rounded-full border-2 border-background bg-border z-10" />
-                
+
                 {/* Line */}
-                {!isLast && (
-                  <div className="w-1 flex-1 -mt-1 -mb-1 bg-border/30" />
-                )}
+                {!isLast && <div className="w-1 flex-1 -mt-1 -mb-1 bg-border/30" />}
               </div>
             </div>
 

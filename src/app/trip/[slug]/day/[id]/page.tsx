@@ -1,14 +1,14 @@
 import { notFound } from "next/navigation";
-import DayView from "@/features/trip/components/DayView";
 import { getTripBySlug } from "@/features/trip/api/tripActions";
-import { mapEventToTripEvent } from "@/features/trip/utils/tripUtils";
+import DayView from "@/features/trip/components/DayView";
 import { formatDateWithWeekday } from "@/features/trip/utils/dateUtils";
+import { mapEventToTripEvent } from "@/features/trip/utils/tripUtils";
 import { auth } from "@/lib/auth";
 
 export default async function DayPage({ params }: { params: Promise<{ slug: string; id: string }> }) {
   const { slug, id } = await params;
   const dayNumber = parseInt(id, 10);
-  if (isNaN(dayNumber)) return notFound();
+  if (Number.isNaN(dayNumber)) return notFound();
 
   const trip = await getTripBySlug(slug);
   if (!trip) return notFound();
@@ -18,7 +18,7 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
 
   const events = day.events?.map(mapEventToTripEvent) ?? [];
   const session = await auth();
-  const isAdmin = !!session?.user?.isAdmin || process.env.NODE_ENV === 'development';
+  const isAdmin = !!session?.user?.isAdmin;
 
   const dateLabel = formatDateWithWeekday(day.date);
 
@@ -30,13 +30,19 @@ export default async function DayPage({ params }: { params: Promise<{ slug: stri
       dayLabel={dateLabel}
       dayTitle={day.title ?? undefined}
       dayHighlight={day.highlight ?? undefined}
-      tips={trip.tips?.map((t) => ({ 
-        title: t.title, 
-        body: t.body, 
-        isWarning: t.isWarning,
-        category: t.category ?? undefined,
-        deepLevel: t.deepLevel
-      })) ?? []}
+      dayNotes={day.notes ?? undefined}
+      isCompleted={day.isCompleted}
+      date={new Date(day.date).toISOString()}
+      location={trip.location}
+      tips={
+        trip.tips?.map((t) => ({
+          title: t.title,
+          body: t.body,
+          isWarning: t.isWarning,
+          category: t.category ?? undefined,
+          deepLevel: t.deepLevel,
+        })) ?? []
+      }
       slug={slug}
       days={trip.days ?? []}
       isAdmin={isAdmin}

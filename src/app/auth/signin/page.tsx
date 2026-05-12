@@ -1,11 +1,13 @@
-import { signIn } from "@/lib/auth";
-import { LogIn, Sparkles, Map } from "lucide-react";
+import { LogIn, Map, Sparkles } from "lucide-react";
 import Image from "next/image";
+import { signIn } from "@/lib/auth";
 
 const signInErrorMessages: Record<string, string> = {
   OAuthSignin: "Google 認証の開始に失敗しました。承認済みリダイレクト URI を確認してください。",
-  OAuthCallbackError: "Google からの戻り処理に失敗しました。OAuth 設定か callback URL が一致していない可能性があります。",
-  OAuthCreateAccount: "アカウント作成に失敗しました。データベース接続と Prisma の Account/User テーブルを確認してください。",
+  OAuthCallbackError:
+    "Google からの戻り処理に失敗しました。OAuth 設定か callback URL が一致していない可能性があります。",
+  OAuthCreateAccount:
+    "アカウント作成に失敗しました。データベース接続と Prisma の Account/User テーブルを確認してください。",
   OAuthAccountNotLinked: "同じメールアドレスの別ログイン方法が既に登録されています。",
   AccessDenied: "この Google アカウントではアクセスが許可されませんでした。",
   Configuration: "認証設定に不足があります。AUTH_SECRET、AUTH_GOOGLE_ID、AUTH_GOOGLE_SECRET を確認してください。",
@@ -54,7 +56,7 @@ export default async function SignInPage({ searchParams }: { searchParams: Searc
       {/* Decorative Background Elements */}
       <div className="absolute top-0 right-0 w-125 h-125 bg-rose-50/50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-100 h-100 bg-stone-100 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 pointer-events-none" />
-      
+
       {/* Large background text like a magazine */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden select-none">
         <span className="font-playfair text-[40vw] font-black text-stone-200/20 leading-none select-none">M</span>
@@ -62,7 +64,6 @@ export default async function SignInPage({ searchParams }: { searchParams: Searc
 
       <div className="relative z-10 w-full max-w-md">
         <div className="bg-white/80 backdrop-blur-xl p-10 md:p-16 rounded-[4rem] shadow-2xl shadow-rose-100/20 border border-white/50 text-center ring-1 ring-rose-100/30">
-          
           {/* Brand Logo/Icon */}
           <div className="mx-auto h-20 w-20 mb-10 relative">
             <div className="absolute inset-0 bg-rose-500 rounded-article rotate-6 opacity-10 animate-pulse" />
@@ -70,7 +71,7 @@ export default async function SignInPage({ searchParams }: { searchParams: Searc
               <Sparkles size={32} />
             </div>
           </div>
-          
+
           {/* Title Section */}
           <div className="space-y-4 mb-12">
             <h1 className="font-playfair text-4xl md:text-5xl font-bold text-stone-900 tracking-tight">Memoir</h1>
@@ -80,7 +81,8 @@ export default async function SignInPage({ searchParams }: { searchParams: Searc
               <div className="h-px w-8 bg-rose-100" />
             </div>
             <p className="text-sm font-medium text-stone-500 leading-relaxed max-w-60 mx-auto pt-2">
-              旅の続きを、ふたりで。<br />
+              旅の続きを、ふたりで。
+              <br />
               新しい記憶を刻む準備はできましたか？
             </p>
           </div>
@@ -90,7 +92,7 @@ export default async function SignInPage({ searchParams }: { searchParams: Searc
               {errorMessage}
             </div>
           )}
-          
+
           {/* Sign In Button */}
           <form
             action={async () => {
@@ -99,13 +101,13 @@ export default async function SignInPage({ searchParams }: { searchParams: Searc
             }}
             className="space-y-6"
           >
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               className="group relative w-full overflow-hidden rounded-4xl bg-stone-900 p-px transition-all hover:shadow-2xl hover:shadow-stone-200 active:scale-[0.98]"
             >
               {/* Button inner gradient effect */}
               <div className="absolute inset-0 bg-linear-to-tr from-stone-800 to-stone-700 opacity-0 group-hover:opacity-100 transition-opacity" />
-              
+
               <div className="relative bg-stone-900 group-hover:bg-transparent rounded-inner py-5 px-8 flex items-center justify-center gap-4 transition-colors">
                 <div className="h-6 w-6 rounded-full bg-white flex items-center justify-center shrink-0 shadow-sm">
                   <Image src="https://www.google.com/favicon.ico" alt="G" width={14} height={14} />
@@ -115,7 +117,7 @@ export default async function SignInPage({ searchParams }: { searchParams: Searc
                 </span>
               </div>
             </button>
-            
+
             <p className="text-[9px] font-bold text-stone-300 uppercase tracking-widest">
               Secured by Google Authentication
             </p>
@@ -123,12 +125,12 @@ export default async function SignInPage({ searchParams }: { searchParams: Searc
 
           {/* Footer Decoration */}
           <div className="mt-16 pt-8 border-t border-stone-50 flex justify-center gap-6 text-stone-300">
-             <Map size={14} />
-             <div className="h-4 w-px bg-stone-100" />
-             <LogIn size={14} />
+            <Map size={14} />
+            <div className="h-4 w-px bg-stone-100" />
+            <LogIn size={14} />
           </div>
         </div>
-        
+
         {/* Helper bottom link */}
         <p className="mt-8 text-center text-[10px] font-bold text-stone-400 uppercase tracking-[0.2em]">
           &copy; 2026 Fukuoka Memoir Project

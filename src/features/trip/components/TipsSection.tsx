@@ -1,6 +1,6 @@
-import { MagazineCard } from "@/components/ui/MagazineCard";
-import { Tip } from "@/features/trip/types/trip";
 import { AlertTriangle, Lightbulb, Star } from "lucide-react";
+import { MagazineCard } from "@/components/ui/MagazineCard";
+import type { Tip } from "@/features/trip/types/trip";
 import { cn } from "@/lib/utils";
 
 interface TipsSectionProps {
@@ -10,10 +10,10 @@ interface TipsSectionProps {
 const StarRating = ({ level = 1 }: { level?: number }) => (
   <div className="flex gap-0.5">
     {[...Array(5)].map((_, i) => (
-      <Star 
-        key={i} 
-        size={10} 
-        className={cn(i < level ? "text-amber-400 fill-amber-400" : "text-border dark:text-zinc-800")} 
+      <Star
+        key={i}
+        size={10}
+        className={cn(i < level ? "text-amber-400 fill-amber-400" : "text-border dark:text-zinc-800")}
       />
     ))}
   </div>

@@ -1,5 +1,5 @@
-import { generateGoogleText, getGoogleApiKey, getGoogleTravelAiModelsConfig, GoogleAiError } from "@/lib/googleAi";
-import { generateLocalText, listLocalModels, LocalAiError, resolveLocalTravelAiModels } from "@/lib/localAi";
+import { type GoogleAiError, generateGoogleText, getGoogleApiKey, getGoogleTravelAiModelsConfig } from "@/lib/googleAi";
+import { generateLocalText, type LocalAiError, listLocalModels, resolveLocalTravelAiModels } from "@/lib/localAi";
 
 type ChatMessage = {
   role: "user" | "assistant";

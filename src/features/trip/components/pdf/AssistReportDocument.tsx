@@ -1,5 +1,5 @@
-import React from "react";
 import { Document, Font, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
+import React from "react";
 import type { TemperatureLogEntry } from "@/features/trip/utils/clientTripStorage";
 import type { InsightEvent, InsightTip } from "@/features/trip/utils/tripInsights";
 
@@ -129,7 +129,8 @@ export default function AssistReportDocument({
       <Page size="A4" style={styles.page}>
         <Text style={styles.title}>{trip.title} Assist Report</Text>
         <Text style={styles.subtitle}>
-          {trip.location} / {new Date(trip.startDate).toLocaleDateString("ja-JP")} - {new Date(trip.endDate).toLocaleDateString("ja-JP")}
+          {trip.location} / {new Date(trip.startDate).toLocaleDateString("ja-JP")} -{" "}
+          {new Date(trip.endDate).toLocaleDateString("ja-JP")}
         </Text>
 
         <View style={styles.row}>
@@ -167,7 +168,9 @@ export default function AssistReportDocument({
         {sortedEvents.slice(0, 16).map((event) => (
           <View key={event.id} style={styles.card} wrap={false}>
             <Text style={styles.eventTitle}>{event.title}</Text>
-            <Text style={styles.meta}>Day {event.dayNumber} / {event.time} / {event.type}</Text>
+            <Text style={styles.meta}>
+              Day {event.dayNumber} / {event.time} / {event.type}
+            </Text>
             <Text style={styles.body}>{event.desc || "説明なし"}</Text>
           </View>
         ))}
@@ -179,30 +182,46 @@ export default function AssistReportDocument({
           temperatureLogs.slice(0, 18).map((log) => (
             <View key={log.id} style={styles.card} wrap={false}>
               <Text style={styles.eventTitle}>{log.eventTitle}</Text>
-              <Text style={styles.meta}>Day {log.dayNumber ?? "-"} / {log.eventTime} / {moodLabels[log.mood]}</Text>
+              <Text style={styles.meta}>
+                Day {log.dayNumber ?? "-"} / {log.eventTime} / {moodLabels[log.mood]}
+              </Text>
               <Text style={styles.body}>{log.note || "メモなし"}</Text>
             </View>
           ))
         ) : (
-          <View style={styles.card}><Text style={styles.body}>温度ログはまだありません。</Text></View>
+          <View style={styles.card}>
+            <Text style={styles.body}>温度ログはまだありません。</Text>
+          </View>
         )}
 
         <Text style={[styles.sectionTitle, { marginTop: 14 }]}>共有メモ</Text>
-        {notes.length > 0 ? notes.slice(0, 8).map((note) => (
-          <View key={note.id} style={styles.card} wrap={false}>
-            <Text style={styles.body}>{note.body}</Text>
+        {notes.length > 0 ? (
+          notes.slice(0, 8).map((note) => (
+            <View key={note.id} style={styles.card} wrap={false}>
+              <Text style={styles.body}>{note.body}</Text>
+            </View>
+          ))
+        ) : (
+          <View style={styles.card}>
+            <Text style={styles.body}>共有メモはまだありません。</Text>
           </View>
-        )) : <View style={styles.card}><Text style={styles.body}>共有メモはまだありません。</Text></View>}
+        )}
       </Page>
 
       <Page size="A4" style={styles.page}>
         <Text style={styles.sectionTitle}>注意事項と Tips</Text>
-        {tips.length > 0 ? tips.slice(0, 20).map((tip) => (
-          <View key={tip.id} style={styles.card} wrap={false}>
-            <Text style={styles.eventTitle}>{tip.title}</Text>
-            <Text style={styles.body}>{tip.body}</Text>
+        {tips.length > 0 ? (
+          tips.slice(0, 20).map((tip) => (
+            <View key={tip.id} style={styles.card} wrap={false}>
+              <Text style={styles.eventTitle}>{tip.title}</Text>
+              <Text style={styles.body}>{tip.body}</Text>
+            </View>
+          ))
+        ) : (
+          <View style={styles.card}>
+            <Text style={styles.body}>Tips はまだありません。</Text>
           </View>
-        )) : <View style={styles.card}><Text style={styles.body}>Tips はまだありません。</Text></View>}
+        )}
       </Page>
     </Document>
   );

@@ -104,15 +104,17 @@ model GourmetAward {
 }
 
 model Day {
-  id        String   @id @default(cuid())
-  tripId    String
-  dayNumber Int
-  date      DateTime
-  title     String?
-  highlight String?
-  routeUrl  String?
-  trip      Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
-  events    Event[]
+  id          String   @id @default(cuid())
+  tripId      String
+  dayNumber   Int
+  date        DateTime
+  title       String?
+  highlight   String?
+  notes       String?
+  isCompleted Boolean  @default(false)
+  routeUrl    String?
+  trip        Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  events      Event[]
 
   @@unique([tripId, dayNumber])
 }

@@ -1,6 +1,22 @@
 # Fukuoka Trip 2026 — AI Coding Guide
 <!-- このファイルは Gemini / Claude / Codex などの AI コーディングアシスタントが参照するガイドラインです -->
 
+## AI コーディングスキル
+
+このプロジェクトでは、`~/.gemini/skills/` に定義された以下のスキルを、タスクの性質に応じて**自律的に適用**してください。
+
+- **`agent-browser`**: 自律的なブラウザ調査・操作
+- **`app-router-architect`**: Feature-Driven Architecture の遵守
+- **`motion-designer`**: Framer Motion による高品質アニメーション
+- **`typescript-wizard`**: 厳格な型安全性の追求
+- **`e2e-tester`**: Playwright による品質保証
+- **`seo-performance-auditor`**: SEO と Web Performance の最適化
+- **`security-officer`**: セキュリティ基準（OWASP等）の遵守
+
+また、思考プロセスと行動基準については `~/.gemini/CODEX.md` を遵守してください。
+
+---
+
 ## プロジェクト概要
 
 彩 & 泉 の 1 泊 2 日・福岡旅行のモバイル最適化タイムラインアプリ。

@@ -8,7 +8,7 @@ export default function HeroSkeleton() {
           <Skeleton className="h-6 w-32 rounded-full mb-6" />
           <Skeleton className="h-12 md:h-16 w-3/4 md:w-2/3 mb-6" />
           <Skeleton className="h-6 w-full md:w-1/2 mb-10" />
-          
+
           <div className="flex flex-wrap items-center gap-6 mt-10">
             <div className="space-y-2">
               <Skeleton className="h-2 w-12" />

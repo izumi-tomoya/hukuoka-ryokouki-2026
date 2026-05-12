@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { MagazineCard } from '@/components/ui/MagazineCard';
-import { Button } from '@/components/ui/button';
-import { X, Trophy, Star, Camera, Check, Loader2, Upload } from 'lucide-react';
-import { addGourmetAwardAction } from '../../api/tripActions';
-import Image from 'next/image';
+import { Camera, Check, Loader2, Star, Trophy, Upload, X } from "lucide-react";
+import Image from "next/image";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { MagazineCard } from "@/components/ui/MagazineCard";
+import { addGourmetAwardAction } from "../../api/tripActions";
 
 interface Props {
   tripId: string;
@@ -14,20 +14,20 @@ interface Props {
 }
 
 const CATEGORIES = [
-  'Best Ramen',
-  'Best Yatai',
-  'Best Street Food',
-  'Best Dessert',
-  'Best Atmosphere',
-  'Most Memorable',
-  'Special Mention'
+  "Best Ramen",
+  "Best Yatai",
+  "Best Street Food",
+  "Best Dessert",
+  "Best Atmosphere",
+  "Most Memorable",
+  "Special Mention",
 ];
 
 export default function AddAwardModal({ tripId, isOpen, onClose }: Props) {
-  const [title, setTitle] = useState('');
+  const [title, setTitle] = useState("");
   const [category, setCategory] = useState(CATEGORIES[0]);
-  const [comment, setComment] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
+  const [comment, setComment] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   const [isPending, setIsPending] = useState(false);
 
@@ -39,14 +39,14 @@ export default function AddAwardModal({ tripId, isOpen, onClose }: Props) {
 
     setIsUploading(true);
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append("file", file);
 
     try {
-      const res = await fetch('/api/upload', { method: 'POST', body: formData });
+      const res = await fetch("/api/upload", { method: "POST", body: formData });
       const data = await res.json();
       if (data.url) setImageUrl(data.url);
     } catch {
-      alert('アップロードに失敗しました');
+      alert("アップロードに失敗しました");
     } finally {
       setIsUploading(false);
     }
@@ -60,13 +60,13 @@ export default function AddAwardModal({ tripId, isOpen, onClose }: Props) {
         title,
         category,
         comment,
-        imageUrl
+        imageUrl,
       });
       if (res.success) {
         onClose();
-        setTitle('');
-        setComment('');
-        setImageUrl('');
+        setTitle("");
+        setComment("");
+        setImageUrl("");
       } else {
         alert(res.error);
       }
@@ -77,9 +77,15 @@ export default function AddAwardModal({ tripId, isOpen, onClose }: Props) {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-background/80 backdrop-blur-md animate-in fade-in duration-300" onClick={onClose} />
-      
-      <MagazineCard padding="lg" className="relative w-full max-w-2xl shadow-2xl animate-in zoom-in-95 duration-300 border-primary/20 overflow-y-auto max-h-[90vh]">
+      <div
+        className="absolute inset-0 bg-background/80 backdrop-blur-md animate-in fade-in duration-300"
+        onClick={onClose}
+      />
+
+      <MagazineCard
+        padding="lg"
+        className="relative w-full max-w-2xl shadow-2xl animate-in zoom-in-95 duration-300 border-primary/20 overflow-y-auto max-h-[90vh]"
+      >
         <div className="flex justify-between items-center mb-8">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-2xl bg-amber-500 flex items-center justify-center text-black">
@@ -95,8 +101,10 @@ export default function AddAwardModal({ tripId, isOpen, onClose }: Props) {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Award Title / Shop Name</label>
-              <input 
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
+                Award Title / Shop Name
+              </label>
+              <input
                 autoFocus
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
@@ -106,13 +114,19 @@ export default function AddAwardModal({ tripId, isOpen, onClose }: Props) {
               />
             </div>
             <div className="space-y-2 relative">
-              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Category</label>
-              <select 
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
+                Category
+              </label>
+              <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 className="w-full px-5 py-4 bg-secondary/50 border border-border rounded-2xl appearance-none text-foreground dark:bg-card v2-focus"
               >
-                {CATEGORIES.map(c => <option key={c} value={c} className="bg-card text-foreground">{c}</option>)}
+                {CATEGORIES.map((c) => (
+                  <option key={c} value={c} className="bg-card text-foreground">
+                    {c}
+                  </option>
+                ))}
               </select>
               <div className="absolute right-5 bottom-4 pointer-events-none text-muted-foreground">
                 <Star size={16} />
@@ -121,8 +135,10 @@ export default function AddAwardModal({ tripId, isOpen, onClose }: Props) {
           </div>
 
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Comments</label>
-            <textarea 
+            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
+              Comments
+            </label>
+            <textarea
               rows={3}
               value={comment}
               onChange={(e) => setComment(e.target.value)}
@@ -136,13 +152,13 @@ export default function AddAwardModal({ tripId, isOpen, onClose }: Props) {
             <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1 flex items-center gap-2">
               <Camera size={12} /> Award Photo
             </label>
-            
+
             {imageUrl ? (
               <div className="relative aspect-video w-full rounded-2xl overflow-hidden border-2 border-primary shadow-xl group">
                 <Image src={imageUrl} alt="Preview" fill className="object-cover" />
-                <button 
+                <button
                   type="button"
-                  onClick={() => setImageUrl('')}
+                  onClick={() => setImageUrl("")}
                   className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                 >
                   <X size={32} className="text-white" />
@@ -164,16 +180,16 @@ export default function AddAwardModal({ tripId, isOpen, onClose }: Props) {
           </div>
 
           <div className="flex gap-4 pt-4">
-            <Button 
-              type="button" 
-              variant="secondary" 
+            <Button
+              type="button"
+              variant="secondary"
               className="flex-1 h-16 rounded-2xl text-xs font-black uppercase tracking-widest"
               onClick={onClose}
             >
               Cancel
             </Button>
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               disabled={isPending || isUploading || !title}
               className="flex-1 h-16 rounded-2xl gap-3 text-xs font-black uppercase tracking-widest"
             >

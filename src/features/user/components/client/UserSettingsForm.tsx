@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { updateUserProfile } from '../../api/userActions';
-import { Button } from '@/components/ui/button';
-import { Check, AlertCircle, Loader2, Moon, Sun, Monitor } from 'lucide-react';
+import { AlertCircle, Check, Loader2, Monitor, Moon, Sun } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { updateUserProfile } from "../../api/userActions";
 
 interface UserSettingsFormProps {
   initialName: string | null | undefined;
@@ -11,28 +11,28 @@ interface UserSettingsFormProps {
 }
 
 export function UserSettingsForm({ initialName, initialMotto }: UserSettingsFormProps) {
-  const [name, setName] = useState(initialName || '');
-  const [motto, setMotto] = useState(initialMotto || '');
-  const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('system');
+  const [name, setName] = useState(initialName || "");
+  const [motto, setMotto] = useState(initialMotto || "");
+  const [theme, setTheme] = useState<"light" | "dark" | "system">("system");
   const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   // テーマの初期化（localStorageなどから取得）
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | 'system' | null;
+    const savedTheme = localStorage.getItem("theme") as "light" | "dark" | "system" | null;
     if (savedTheme) {
       setTimeout(() => setTheme(savedTheme), 0);
     }
   }, []);
 
-  const applyTheme = (newTheme: 'light' | 'dark' | 'system') => {
+  const applyTheme = (newTheme: "light" | "dark" | "system") => {
     setTheme(newTheme);
-    localStorage.setItem('theme', newTheme);
-    
-    if (newTheme === 'dark' || (newTheme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      document.documentElement.classList.add('dark');
+    localStorage.setItem("theme", newTheme);
+
+    if (newTheme === "dark" || (newTheme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+      document.documentElement.classList.add("dark");
     } else {
-      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.remove("dark");
     }
   };
 
@@ -42,15 +42,15 @@ export function UserSettingsForm({ initialName, initialMotto }: UserSettingsForm
     setMessage(null);
 
     try {
-      const result = await updateUserProfile({ name, motto }) as { success: boolean; error?: string };
+      const result = (await updateUserProfile({ name, motto })) as { success: boolean; error?: string };
       if (result.success) {
-        setMessage({ type: 'success', text: 'プロフィールを更新しました' });
+        setMessage({ type: "success", text: "プロフィールを更新しました" });
       } else {
-        setMessage({ type: 'error', text: result.error || '更新に失敗しました' });
+        setMessage({ type: "error", text: result.error || "更新に失敗しました" });
       }
     } catch (error: unknown) {
-      console.error('Update Profile Error:', error);
-      setMessage({ type: 'error', text: 'エラーが発生しました' });
+      console.error("Update Profile Error:", error);
+      setMessage({ type: "error", text: "エラーが発生しました" });
     } finally {
       setIsLoading(false);
     }
@@ -93,23 +93,21 @@ export function UserSettingsForm({ initialName, initialMotto }: UserSettingsForm
 
         {/* テーマ設定 */}
         <div className="space-y-4">
-          <label className="text-xs font-black text-zinc-400 uppercase tracking-widest ml-1">
-            画面テーマ
-          </label>
+          <label className="text-xs font-black text-zinc-400 uppercase tracking-widest ml-1">画面テーマ</label>
           <div className="grid grid-cols-3 gap-3">
             {[
-              { id: 'light', icon: Sun, label: 'Light' },
-              { id: 'dark', icon: Moon, label: 'Dark' },
-              { id: 'system', icon: Monitor, label: 'System' },
+              { id: "light", icon: Sun, label: "Light" },
+              { id: "dark", icon: Moon, label: "Dark" },
+              { id: "system", icon: Monitor, label: "System" },
             ].map((item) => (
               <button
                 key={item.id}
                 type="button"
-                onClick={() => applyTheme(item.id as 'light' | 'dark' | 'system')}
+                onClick={() => applyTheme(item.id as "light" | "dark" | "system")}
                 className={`flex flex-col items-center gap-2 p-4 rounded-2xl border transition-all ${
                   theme === item.id
-                    ? 'bg-zinc-900 text-white border-zinc-900 dark:bg-white dark:text-zinc-900'
-                    : 'bg-stone-50 text-zinc-500 border-zinc-100 dark:bg-zinc-800/50 dark:border-zinc-800 dark:text-zinc-400'
+                    ? "bg-zinc-900 text-white border-zinc-900 dark:bg-white dark:text-zinc-900"
+                    : "bg-stone-50 text-zinc-500 border-zinc-100 dark:bg-zinc-800/50 dark:border-zinc-800 dark:text-zinc-400"
                 }`}
               >
                 <item.icon size={20} />
@@ -122,19 +120,19 @@ export function UserSettingsForm({ initialName, initialMotto }: UserSettingsForm
         {message && (
           <div
             className={`flex items-center gap-3 text-sm p-4 rounded-2xl animate-in fade-in slide-in-from-top-2 duration-300 ${
-              message.type === 'success' 
-                ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' 
-                : 'bg-rose-50 text-rose-700 border border-rose-100'
+              message.type === "success"
+                ? "bg-emerald-50 text-emerald-700 border border-emerald-100"
+                : "bg-rose-50 text-rose-700 border border-rose-100"
             }`}
           >
-            {message.type === 'success' ? <Check size={18} /> : <AlertCircle size={18} />}
+            {message.type === "success" ? <Check size={18} /> : <AlertCircle size={18} />}
             <span className="font-bold">{message.text}</span>
           </div>
         )}
 
-        <Button 
-          type="submit" 
-          disabled={isLoading || (name === initialName && motto === initialMotto)} 
+        <Button
+          type="submit"
+          disabled={isLoading || (name === initialName && motto === initialMotto)}
           className="w-full py-6 rounded-2xl text-sm font-black transition-all bg-zinc-900 text-white hover:bg-zinc-800 shadow-md disabled:bg-zinc-100 disabled:text-zinc-400"
         >
           {isLoading ? (
@@ -143,7 +141,7 @@ export function UserSettingsForm({ initialName, initialMotto }: UserSettingsForm
               更新中...
             </span>
           ) : (
-            'プロフィールを保存'
+            "プロフィールを保存"
           )}
         </Button>
       </form>

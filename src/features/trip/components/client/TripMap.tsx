@@ -1,16 +1,17 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import 'leaflet/dist/leaflet.css';
-import { MagazineCard } from '@/components/ui/MagazineCard';
-import { MapPin, Navigation2, X, Star } from 'lucide-react';
-import TripMapSkeleton from '../TripMapSkeleton';
-import { TripEvent } from '@/features/trip/types/trip';
-import { cleanLocationName } from '@/features/trip/utils/locationCatalog';
-import type { Location } from '@prisma/client';
-import type Leaflet from 'leaflet';
-import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
-import { ExternalSpotInfo } from './ExternalSpotInfo';
+import { useEffect, useState } from "react";
+import "leaflet/dist/leaflet.css";
+import type { Location } from "@prisma/client";
+import type Leaflet from "leaflet";
+import { MapPin, Navigation2, Star, X } from "lucide-react";
+import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
+import { MagazineCard } from "@/components/ui/MagazineCard";
+import type { TripEvent } from "@/features/trip/types/trip";
+import { isSecretEvent, SECRET_SPOTS } from "@/features/trip/utils/tripUtils";
+import { cleanLocationName } from "@/features/trip/utils/locationCatalog";
+import TripMapSkeleton from "../TripMapSkeleton";
+import { ExternalSpotInfo } from "./ExternalSpotInfo";
 
 interface MapMarker {
   name: string;
@@ -28,9 +29,9 @@ interface MapMarker {
   }>;
 }
 
-function MapController({ markers, L }: { markers: MapMarker[], L: typeof Leaflet }) {
+function MapController({ markers, L }: { markers: MapMarker[]; L: typeof Leaflet }) {
   const map = useMap();
-  
+
   useEffect(() => {
     if (markers.length > 0 && L && map) {
       const bounds = L.latLngBounds(markers.map((m) => m.coords));
@@ -41,24 +42,24 @@ function MapController({ markers, L }: { markers: MapMarker[], L: typeof Leaflet
   return null;
 }
 
-export default function TripMap({ 
-  events, 
+export default function TripMap({
+  events,
   isAdmin = false,
-  locationMaster = [] 
-}: { 
-  events: TripEvent[], 
-  isAdmin?: boolean,
-  locationMaster?: Location[]
+  locationMaster = [],
+}: {
+  events: TripEvent[];
+  isAdmin?: boolean;
+  locationMaster?: Location[];
 }) {
   const [L, setL] = useState<typeof Leaflet | null>(null);
   const [customIcon, setCustomIcon] = useState<Leaflet.DivIcon | null>(null);
   const [selectedMarker, setSelectedMarker] = useState<MapMarker | null>(null);
 
   useEffect(() => {
-    import('leaflet').then((leaflet) => {
+    import("leaflet").then((leaflet) => {
       setL(leaflet);
       const icon = leaflet.divIcon({
-        className: 'custom-div-icon',
+        className: "custom-div-icon",
         html: `<div class="w-4 h-4 bg-rose-500 rounded-full border-2 border-white shadow-lg ring-4 ring-rose-500/20"></div>`,
         iconSize: [16, 16],
         iconAnchor: [8, 8],
@@ -68,50 +69,57 @@ export default function TripMap({
   }, []);
 
   const markers = events
-    .map(event => {
+    .map((event) => {
       const title = event.title || event.foodName || "";
       const cleaned = cleanLocationName(title);
-      
+
       // シークレット判定
-      const isSecret = !isAdmin && (event.tag === 'surprise' || cleaned.includes('サプライズ'));
-      
+      const isSecret = isSecretEvent(event, isAdmin);
+
       // データベースから取得したマスタから座標を検索
       // formalName があれば優先、なければ cleaned で検索
       const searchName = event.formalName ? cleanLocationName(event.formalName) : cleaned;
-      
-      const spot = locationMaster.find(loc => {
+
+      const spot = locationMaster.find((loc) => {
         const cleanedMaster = cleanLocationName(loc.name);
         return searchName.includes(cleanedMaster) || cleanedMaster.includes(searchName);
       });
-      
-      const displayName = isSecret ? '🎁 Surprise Spot' : title;
-      const displayDesc = isSecret ? '当日までのお楽しみ' : (event.foodDesc || event.desc || event.highlight);
+
+      const displayName = isSecret ? "🎁 Surprise Spot" : title;
+      const displayDesc = isSecret ? "当日までのお楽しみ" : event.foodDesc || event.desc || event.highlight;
 
       return {
         name: displayName,
-        coords: isSecret ? null : (spot ? [spot.lat, spot.lng] as [number, number] : null),
+        coords: isSecret ? null : spot ? ([spot.lat, spot.lng] as [number, number]) : null,
         address: isSecret ? null : spot?.address,
-        category: isSecret ? 'Surprise' : spot?.category,
+        category: isSecret ? "Surprise" : spot?.category,
         locationUrl: isSecret ? undefined : event.locationUrl,
         description: displayDesc,
-        rawTitle: isSecret ? 'Surprise' : title,
+        rawTitle: isSecret ? "🎁 Surprise Spot" : title,
         time: event.time,
         isSecret,
       };
     })
-    .filter((m): m is {
-      name: string;
-      coords: [number, number];
-      address: string | null | undefined;
-      category: string | null | undefined;
-      locationUrl: string | undefined;
-      description: string | undefined;
-      rawTitle: string;
-      time: string;
-      isSecret: boolean;
-    } => m.coords !== null)
+    .filter(
+      (
+        m,
+      ): m is {
+        name: string;
+        coords: [number, number];
+        address: string | null | undefined;
+        category: string | null | undefined;
+        locationUrl: string | undefined;
+        description: string | undefined;
+        rawTitle: string;
+        time: string;
+        isSecret: boolean;
+      } => m.coords !== null,
+    )
     .reduce<MapMarker[]>((acc, marker) => {
-      const existing = acc.find((item) => item.name === marker.name && item.coords[0] === marker.coords[0] && item.coords[1] === marker.coords[1]);
+      const existing = acc.find(
+        (item) =>
+          item.name === marker.name && item.coords[0] === marker.coords[0] && item.coords[1] === marker.coords[1],
+      );
 
       if (existing) {
         existing.events.push({
@@ -134,12 +142,14 @@ export default function TripMap({
         category: marker.category,
         locationUrl: marker.locationUrl,
         description: marker.description,
-        events: [{
-          title: marker.name, // DisplayNameを使用
-          time: marker.time,
-          description: marker.description,
-          locationUrl: marker.locationUrl,
-        }],
+        events: [
+          {
+            title: marker.name, // DisplayNameを使用
+            time: marker.time,
+            description: marker.description,
+            locationUrl: marker.locationUrl,
+          },
+        ],
       });
       return acc;
     }, []);
@@ -155,23 +165,20 @@ export default function TripMap({
     );
   }
 
-  const center = markers.length > 0 ? markers[0].coords : [33.5902, 130.4017] as [number, number];
+  const center = markers.length > 0 ? markers[0].coords : ([33.5902, 130.4017] as [number, number]);
 
   return (
     <div className="group relative">
       <div className="relative h-80 w-full rounded-[3.5rem] overflow-hidden border border-rose-100 shadow-2xl shadow-rose-100/20 bg-secondary/30 ring-1 ring-rose-100/50">
-        <MapContainer 
-          center={center} 
-          zoom={13} 
-          style={{ height: '100%', width: '100%', minHeight: '320px' }}
+        <MapContainer
+          center={center}
+          zoom={13}
+          style={{ height: "100%", width: "100%", minHeight: "320px" }}
           scrollWheelZoom={true}
           zoomControl={true}
         >
           <MapController markers={markers} L={L} />
-          <TileLayer
-            attribution='&copy; Google'
-            url="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
-          />
+          <TileLayer attribution="&copy; Google" url="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}" />
           {markers.map((marker, idx) => (
             <Marker
               key={idx}
@@ -183,7 +190,7 @@ export default function TripMap({
             />
           ))}
         </MapContainer>
-        
+
         {/* Floating Label */}
         <div className="absolute top-6 left-6 z-[400] flex flex-col gap-1 pointer-events-none">
           <div className="bg-stone-900/90 backdrop-blur-md px-4 py-1.5 rounded-full border border-stone-800 shadow-xl flex items-center gap-2 max-w-fit">
@@ -199,7 +206,9 @@ export default function TripMap({
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
                 <div className="text-[10px] font-black uppercase tracking-[0.2em] text-rose-400">Selected Pin</div>
-                <h3 className="mt-2 break-words font-playfair text-2xl font-bold text-foreground">{selectedMarker.name}</h3>
+                <h3 className="mt-2 break-words font-playfair text-2xl font-bold text-foreground">
+                  {selectedMarker.name}
+                </h3>
                 {selectedMarker.category && (
                   <div className="mt-3 inline-flex rounded-full bg-rose-500/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-rose-500">
                     {selectedMarker.category}
@@ -217,11 +226,16 @@ export default function TripMap({
 
             {selectedMarker.events.length > 0 && (
               <div className="mt-6">
-                <div className="mb-3 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Moments Here</div>
+                <div className="mb-3 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
+                  Moments Here
+                </div>
                 <div className="flex flex-wrap gap-2">
                   {selectedMarker.events.map((event, eventIndex) => (
-                    <div key={`${event.time}-${eventIndex}`} className="rounded-full border border-border bg-secondary/30 px-3 py-1.5 text-[11px] font-bold text-foreground">
-                      {event.time} {event.title}
+                    <div
+                      key={`${event.time}-${eventIndex}`}
+                      className="rounded-full border border-border bg-secondary/30 px-3 py-1.5 text-[11px] font-bold text-foreground"
+                    >
+                      {event.time} {maskSecretText(event.title, isAdmin)}
                     </div>
                   ))}
                 </div>
@@ -230,9 +244,7 @@ export default function TripMap({
 
             {(selectedMarker.description || selectedMarker.address || selectedMarker.events[0]?.description) && (
               <div className="mt-6 rounded-[1.5rem] border border-border bg-secondary/15 px-4 py-4 text-sm leading-relaxed text-muted-foreground">
-                <p className="text-foreground">
-                  {selectedMarker.description || selectedMarker.events[0]?.description}
-                </p>
+                <p className="text-foreground">{selectedMarker.description || selectedMarker.events[0]?.description}</p>
                 {selectedMarker.address && (
                   <p className="mt-3 text-xs text-muted-foreground">{selectedMarker.address}</p>
                 )}
@@ -278,7 +290,9 @@ export default function TripMap({
           </div>
           <div className="flex items-baseline gap-2 pl-16">
             <span className="font-playfair text-3xl font-bold text-stone-900 leading-none">{markers.length}</span>
-            <span className="text-[10px] font-black uppercase tracking-widest text-rose-400 border-l border-rose-100 pl-2 py-0.5">Verified Stops</span>
+            <span className="text-[10px] font-black uppercase tracking-widest text-rose-400 border-l border-rose-100 pl-2 py-0.5">
+              Verified Stops
+            </span>
           </div>
         </div>
 

@@ -251,7 +251,7 @@ export async function generateGoogleText({
     }
 
     const error = new Error(
-      `Google AI ${model} returned no text (${data.candidates?.[0]?.finishReason || data.promptFeedback?.blockReason || "unknown"})`
+      `Google AI ${model} returned no text (${data.candidates?.[0]?.finishReason || data.promptFeedback?.blockReason || "unknown"})`,
     ) as GoogleAiError;
     error.data = data;
     throw error;

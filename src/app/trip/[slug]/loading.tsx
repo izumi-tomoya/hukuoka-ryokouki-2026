@@ -1,8 +1,8 @@
-import { Skeleton } from "@/components/ui/Skeleton";
 import { Container } from "@/components/ui/Container";
-import TripWeatherSummarySkeleton from "@/features/trip/components/TripWeatherSummarySkeleton";
-import TripLayout from "@/features/trip/components/TripLayout";
 import { MagazineCard } from "@/components/ui/MagazineCard";
+import { Skeleton } from "@/components/ui/Skeleton";
+import TripLayout from "@/features/trip/components/TripLayout";
+import TripWeatherSummarySkeleton from "@/features/trip/components/TripWeatherSummarySkeleton";
 
 export default function TripLoading() {
   return (
@@ -23,7 +23,7 @@ export default function TripLoading() {
               </div>
               <Skeleton className="h-40 w-56 rounded-article shrink-0 opacity-20" />
             </div>
-            
+
             <div className="mt-16 pt-12 border-t border-border">
               <div className="flex items-center gap-3 mb-8">
                 <Skeleton className="h-5 w-5 rounded-full" />

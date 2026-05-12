@@ -7,60 +7,61 @@
  * - 各 Action の「正常系」と「異常系（エラー時）」を網羅する
  */
 
-import { mockPrisma } from './helpers/prismaMock';
-import { 
-  Trip, 
-  Event, 
-  PackingItem, 
-  Tip 
-} from '@prisma/client';
-import { 
-  getTrips,
-  getTripBySlug,
-  toggleEventConfirmation,
+import type { Event, PackingItem, Tip, Trip } from "@prisma/client";
+import {
   addPackingItemAction,
-  togglePackingItemAction,
-  deletePackingItemAction,
   createTipAction,
+  deletePackingItemAction,
   deleteTipAction,
-  TripWithRelations
-} from '@/features/trip/api/tripActions';
-import { auth } from '@/lib/auth';
+  getTripBySlug,
+  getTrips,
+  type TripWithRelations,
+  toggleEventConfirmation,
+  togglePackingItemAction,
+} from "@/features/trip/api/tripActions";
+import { auth } from "@/lib/auth";
+import { mockPrisma } from "./helpers/prismaMock";
 
 // ---- 外部依存のモック ----
 
 // @/lib/prisma の prisma インスタンスをモックに差し替える
-jest.mock('@/lib/prisma', () => ({
+jest.mock("@/lib/prisma", () => ({
   prisma: mockPrisma,
 }));
 
 // next/cache はサーバー専用 API なのでスタブ化
-jest.mock('next/cache', () => ({
+jest.mock("next/cache", () => ({
   revalidatePath: jest.fn(),
 }));
 
 // next-auth の auth() をスタブ化
-jest.mock('@/lib/auth', () => ({
+jest.mock("@/lib/auth", () => ({
   auth: jest.fn(),
 }));
 
 // 管理者セッションのフィクスチャ
 const mockAdminSession = {
-  user: { id: 'user-1', name: 'Admin', isAdmin: true },
+  user: { id: "user-1", name: "Admin", isAdmin: true },
 };
 
 // 非管理者セッションのフィクスチャ
 const mockGuestSession = {
-  user: { id: 'user-2', name: 'Guest', isAdmin: false },
+  user: { id: "user-2", name: "Guest", isAdmin: false },
 };
 
 // ---------- getTrips ----------
 
-describe('getTrips()', () => {
-  it('Trip 一覧を日付降順で返す', async () => {
+describe("getTrips()", () => {
+  it("Trip 一覧を日付降順で返す", async () => {
     const mockTrips = [
-      { id: 'trip-1', title: '福岡旅行', slug: 'fukuoka-2026', startDate: new Date('2026-05-24'), status: 'Upcoming' },
-      { id: 'trip-2', title: '糸島ドライブ', slug: 'itoshima-drive', startDate: new Date('2026-04-10'), status: 'Completed' },
+      { id: "trip-1", title: "福岡旅行", slug: "fukuoka-2026", startDate: new Date("2026-05-24"), status: "Upcoming" },
+      {
+        id: "trip-2",
+        title: "糸島ドライブ",
+        slug: "itoshima-drive",
+        startDate: new Date("2026-04-10"),
+        status: "Completed",
+      },
     ] as unknown as Trip[];
 
     mockPrisma.trip.findMany.mockResolvedValue(mockTrips);
@@ -68,21 +69,21 @@ describe('getTrips()', () => {
     const result = await getTrips();
 
     expect(mockPrisma.trip.findMany).toHaveBeenCalledWith({
-      orderBy: { startDate: 'desc' },
+      orderBy: { startDate: "desc" },
     });
     expect(result).toHaveLength(2);
-    expect(result[0].title).toBe('福岡旅行');
+    expect(result[0].title).toBe("福岡旅行");
   });
 });
 
 // ---------- getTripBySlug ----------
 
-describe('getTripBySlug()', () => {
-  it('存在する slug で TripWithRelations を返す', async () => {
+describe("getTripBySlug()", () => {
+  it("存在する slug で TripWithRelations を返す", async () => {
     const mockTrip = {
-      id: 'trip-1',
-      slug: 'fukuoka-2026',
-      title: '福岡旅行',
+      id: "trip-1",
+      slug: "fukuoka-2026",
+      title: "福岡旅行",
       days: [],
       tips: [],
     } as unknown as TripWithRelations;
@@ -91,23 +92,23 @@ describe('getTripBySlug()', () => {
     // packingItem / gourmetAward は lazy fetch されるので、any キャスト経由で呼ばれる
     // prismaMock では動的プロパティのモックが難しいため、try-catch の fallback が動く
     // → packingItems / gourmetAwards が [] で返ることを確認
-    const result = await getTripBySlug('fukuoka-2026');
+    const result = await getTripBySlug("fukuoka-2026");
 
     expect(mockPrisma.trip.findUnique).toHaveBeenCalledWith(
-      expect.objectContaining({ where: { slug: 'fukuoka-2026' } })
+      expect.objectContaining({ where: { slug: "fukuoka-2026" } }),
     );
     expect(result).not.toBeNull();
-    expect(result?.slug).toBe('fukuoka-2026');
+    expect(result?.slug).toBe("fukuoka-2026");
     // packingItems / gourmetAwards は (prisma as any).* 経由の lazy fetch のため
     // モック環境では fallback の [] または undefined になる
     expect(result?.packingItems ?? []).toEqual([]);
     expect(result?.gourmetAwards ?? []).toEqual([]);
   });
 
-  it('存在しない slug で null を返す', async () => {
+  it("存在しない slug で null を返す", async () => {
     mockPrisma.trip.findUnique.mockResolvedValue(null);
 
-    const result = await getTripBySlug('not-found');
+    const result = await getTripBySlug("not-found");
 
     expect(result).toBeNull();
   });
@@ -115,54 +116,51 @@ describe('getTripBySlug()', () => {
 
 // ---------- toggleEventConfirmation ----------
 
-describe('toggleEventConfirmation()', () => {
-  it('isConfirmed を true に更新できる', async () => {
+describe("toggleEventConfirmation()", () => {
+  it("isConfirmed を true に更新できる", async () => {
     mockPrisma.event.update.mockResolvedValue({} as unknown as Event);
 
-    const result = await toggleEventConfirmation('event-1', true);
+    const result = await toggleEventConfirmation("event-1", true);
 
     expect(mockPrisma.event.update).toHaveBeenCalledWith({
-      where: { id: 'event-1' },
+      where: { id: "event-1" },
       data: { isConfirmed: true },
     });
     expect(result).toEqual({ success: true });
   });
 
-  it('DB エラー時に success: false を返し、エラーをログに記録する', async () => {
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    mockPrisma.event.update.mockRejectedValue(new Error('DB connection failed'));
+  it("DB エラー時に success: false を返し、エラーをログに記録する", async () => {
+    const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+    mockPrisma.event.update.mockRejectedValue(new Error("DB connection failed"));
 
-    const result = await toggleEventConfirmation('event-1', true);
+    const result = await toggleEventConfirmation("event-1", true);
 
     expect(result.success).toBe(false);
-    expect(result.error).toContain('DB connection failed');
-    expect(consoleSpy).toHaveBeenCalledWith(
-      'Failed to toggle event confirmation:',
-      expect.any(Error)
-    );
+    expect(result.error).toContain("DB connection failed");
+    expect(consoleSpy).toHaveBeenCalledWith("Failed to toggle event confirmation:", expect.any(Error));
     consoleSpy.mockRestore();
   });
 });
 
 // ---------- PackingItem ----------
 
-describe('addPackingItemAction()', () => {
-  it('PackingItem を正常に作成できる', async () => {
+describe("addPackingItemAction()", () => {
+  it("PackingItem を正常に作成できる", async () => {
     mockPrisma.packingItem.create.mockResolvedValue({} as unknown as PackingItem);
 
-    const result = await addPackingItemAction('trip-1', 'モバイルバッテリー', 'Gadget');
+    const result = await addPackingItemAction("trip-1", "モバイルバッテリー", "Gadget");
 
     expect(mockPrisma.packingItem.create).toHaveBeenCalledWith({
-      data: { tripId: 'trip-1', name: 'モバイルバッテリー', category: 'Gadget' },
+      data: { tripId: "trip-1", name: "モバイルバッテリー", category: "Gadget" },
     });
     expect(result).toEqual({ success: true });
   });
 
-  it('DB エラー時に success: false を返し、エラーをログに記録する', async () => {
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    mockPrisma.packingItem.create.mockRejectedValue(new Error('Unique constraint failed'));
+  it("DB エラー時に success: false を返し、エラーをログに記録する", async () => {
+    const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+    mockPrisma.packingItem.create.mockRejectedValue(new Error("Unique constraint failed"));
 
-    const result = await addPackingItemAction('trip-1', 'モバイルバッテリー', 'Gadget');
+    const result = await addPackingItemAction("trip-1", "モバイルバッテリー", "Gadget");
 
     expect(result.success).toBe(false);
     expect(consoleSpy).toHaveBeenCalled();
@@ -170,28 +168,28 @@ describe('addPackingItemAction()', () => {
   });
 });
 
-describe('togglePackingItemAction()', () => {
-  it('isPacked を true に更新できる', async () => {
+describe("togglePackingItemAction()", () => {
+  it("isPacked を true に更新できる", async () => {
     mockPrisma.packingItem.update.mockResolvedValue({} as unknown as PackingItem);
 
-    const result = await togglePackingItemAction('item-1', true);
+    const result = await togglePackingItemAction("item-1", true);
 
     expect(mockPrisma.packingItem.update).toHaveBeenCalledWith({
-      where: { id: 'item-1' },
+      where: { id: "item-1" },
       data: { isPacked: true },
     });
     expect(result).toEqual({ success: true });
   });
 });
 
-describe('deletePackingItemAction()', () => {
-  it('PackingItem を削除できる', async () => {
+describe("deletePackingItemAction()", () => {
+  it("PackingItem を削除できる", async () => {
     mockPrisma.packingItem.delete.mockResolvedValue({} as unknown as PackingItem);
 
-    const result = await deletePackingItemAction('item-1');
+    const result = await deletePackingItemAction("item-1");
 
     expect(mockPrisma.packingItem.delete).toHaveBeenCalledWith({
-      where: { id: 'item-1' },
+      where: { id: "item-1" },
     });
     expect(result).toEqual({ success: true });
   });
@@ -199,50 +197,50 @@ describe('deletePackingItemAction()', () => {
 
 // ---------- Tip（管理者権限チェックあり） ----------
 
-describe('createTipAction()', () => {
+describe("createTipAction()", () => {
   const tipData = {
-    title: '現金を用意する',
-    body: '水たき長野は現金のみ',
+    title: "現金を用意する",
+    body: "水たき長野は現金のみ",
     isWarning: true,
     isConfirmed: false,
-    category: 'Gourmet',
+    category: "Gourmet",
     deepLevel: 1,
   };
 
-  it('管理者なら Tip を作成できる', async () => {
+  it("管理者なら Tip を作成できる", async () => {
     (auth as jest.Mock).mockResolvedValue(mockAdminSession);
     mockPrisma.tip.create.mockResolvedValue({} as unknown as Tip);
 
-    const result = await createTipAction('trip-1', tipData);
+    const result = await createTipAction("trip-1", tipData);
 
     expect(mockPrisma.tip.create).toHaveBeenCalledWith({
-      data: { tripId: 'trip-1', ...tipData },
+      data: { tripId: "trip-1", ...tipData },
     });
     expect(result).toEqual({ success: true });
   });
 
-  it('非管理者は Error をスローする', async () => {
+  it("非管理者は Error をスローする", async () => {
     (auth as jest.Mock).mockResolvedValue(mockGuestSession);
 
-    await expect(createTipAction('trip-1', tipData)).rejects.toThrow('管理者権限が必要です');
+    await expect(createTipAction("trip-1", tipData)).rejects.toThrow("管理者権限が必要です");
     expect(mockPrisma.tip.create).not.toHaveBeenCalled();
   });
 });
 
-describe('deleteTipAction()', () => {
-  it('管理者なら Tip を削除できる', async () => {
+describe("deleteTipAction()", () => {
+  it("管理者なら Tip を削除できる", async () => {
     (auth as jest.Mock).mockResolvedValue(mockAdminSession);
     mockPrisma.tip.delete.mockResolvedValue({} as unknown as Tip);
 
-    const result = await deleteTipAction('tip-1');
+    const result = await deleteTipAction("tip-1");
 
-    expect(mockPrisma.tip.delete).toHaveBeenCalledWith({ where: { id: 'tip-1' } });
+    expect(mockPrisma.tip.delete).toHaveBeenCalledWith({ where: { id: "tip-1" } });
     expect(result).toEqual({ success: true });
   });
 
-  it('非管理者は Error をスローする', async () => {
+  it("非管理者は Error をスローする", async () => {
     (auth as jest.Mock).mockResolvedValue(mockGuestSession);
 
-    await expect(deleteTipAction('tip-1')).rejects.toThrow('管理者権限が必要です');
+    await expect(deleteTipAction("tip-1")).rejects.toThrow("管理者権限が必要です");
   });
 });

@@ -1,12 +1,12 @@
-import type { TripEvent, Tip } from '@/features/trip/types/trip';
-import EventFilterWrapper from '@/features/trip/components/client/EventFilterWrapper';
-import { CommonTipsSection } from '@/features/trip/components/CommonTipsSection';
-import BudgetSummary from '@/features/trip/components/BudgetSummary';
-import TripLayout from '@/features/trip/components/TripLayout';
-import { auth } from '@/lib/auth';
-import { getDirectionsUrl } from '@/lib/mapUtils';
-import { Map } from 'lucide-react';
-import { SafeLink } from '@/features/trip/components/client/SafeLink';
+import { Map } from "lucide-react";
+import BudgetSummary from "@/features/trip/components/BudgetSummary";
+import { CommonTipsSection } from "@/features/trip/components/CommonTipsSection";
+import EventFilterWrapper from "@/features/trip/components/client/EventFilterWrapper";
+import { SafeLink } from "@/features/trip/components/client/SafeLink";
+import TripLayout from "@/features/trip/components/TripLayout";
+import type { Tip, TripEvent } from "@/features/trip/types/trip";
+import { auth } from "@/lib/auth";
+import { getDirectionsUrl } from "@/lib/mapUtils";
 
 interface DayViewProps {
   events: TripEvent[];
@@ -32,13 +32,13 @@ export default async function DayView({
 
   const routeLocations = events
     .flatMap((e) => {
-      if (e.type === 'transport' && e.transitSteps && e.transitSteps.length > 0) {
+      if (e.type === "transport" && e.transitSteps && e.transitSteps.length > 0) {
         return e.transitSteps.map((s) => s.station).filter((s): s is string => !!s);
       }
       if (e.isYatai && e.yataiStops) {
         return e.yataiStops.map((s) => s.stop);
       }
-      const skipTitles = ['出発', '到着', 'ANA241便にて福岡へ出発', 'ANA272便にて羽田へ'];
+      const skipTitles = ["出発", "到着", "ANA241便にて福岡へ出発", "ANA272便にて羽田へ"];
       if (e.title && skipTitles.includes(e.title)) return [];
       return [e.foodName || e.title];
     })
@@ -53,7 +53,7 @@ export default async function DayView({
       activePath={`/trip/${slug}/day/${dayNumber}`}
       isSecretMode={isAdmin}
       title={dayTitle ?? `Day ${dayNumber}`}
-      subtitle={`${dayLabel || ''} — ${dayHighlight || ''}`}
+      subtitle={`${dayLabel || ""} — ${dayHighlight || ""}`}
     >
       <div className="space-y-12">
         <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-6">
@@ -73,9 +73,7 @@ export default async function DayView({
                 <span className="block text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground mb-1 group-hover:text-primary transition-colors">
                   Navigation
                 </span>
-                <span className="block text-sm font-bold tracking-tight">
-                  今日の全ルートを表示
-                </span>
+                <span className="block text-sm font-bold tracking-tight">今日の全ルートを表示</span>
               </div>
             </SafeLink>
           )}

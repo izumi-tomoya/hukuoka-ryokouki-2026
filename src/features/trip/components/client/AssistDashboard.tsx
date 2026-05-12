@@ -1,15 +1,11 @@
-'use client';
+"use client";
 
-import { useEffect, useMemo, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { MagazineCard } from '@/components/ui/MagazineCard';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Skeleton } from '@/components/ui/Skeleton';
-import { cn } from '@/lib/utils';
+import { AnimatePresence, motion } from "framer-motion";
 import {
   AlertTriangle,
   Banknote,
   CheckCircle2,
+  ChevronRight,
   Clock,
   CloudRain,
   Coffee,
@@ -20,33 +16,36 @@ import {
   HeartPulse,
   Hotel,
   Loader2,
+  MapPin,
   MessageSquarePlus,
   Navigation,
+  Receipt,
   Search,
   ShieldAlert,
   Smartphone,
   Sparkles,
+  StickyNote,
   Sun,
   Ticket,
   TimerReset,
+  TrendingUp,
   Users,
   Zap,
-  MapPin,
-  ChevronRight,
-  TrendingUp,
-  Receipt,
-  StickyNote,
-} from 'lucide-react';
+} from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { MagazineCard } from "@/components/ui/MagazineCard";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   appendTemperatureLog,
+  type ExpensePayer,
   loadExpensePayers,
   loadTemperatureLogs,
   saveExpensePayers,
   TEMPERATURE_MOODS,
-  type ExpensePayer,
   type TemperatureLogEntry,
   type TemperatureMood,
-} from '@/features/trip/utils/clientTripStorage';
+} from "@/features/trip/utils/clientTripStorage";
 import {
   buildEmergencyMemo,
   buildEmergencySnapshot,
@@ -56,11 +55,13 @@ import {
   currency,
   eventDateTime,
   formatMinutes,
-  summarizeTemperature,
   type InsightEvent,
   type InsightTip,
-} from '@/features/trip/utils/tripInsights';
-import AdvisorConciergePanel from './AdvisorConciergePanel';
+  summarizeTemperature,
+} from "@/features/trip/utils/tripInsights";
+import { maskSecretText } from "@/features/trip/utils/tripUtils";
+import { cn } from "@/lib/utils";
+import AdvisorConciergePanel from "./AdvisorConciergePanel";
 
 type AssistDashboardProps = {
   trip: {
@@ -103,21 +104,21 @@ type SharedNote = {
   createdAt: string;
 };
 
-type Trigger = 'rain' | 'crowd' | 'tired' | 'budget';
+type Trigger = "rain" | "crowd" | "tired" | "budget";
 
 const utilityTypes = [
-  { label: 'コンビニ', query: 'convenience store', icon: Coffee },
-  { label: 'トイレ', query: 'public toilet', icon: ShieldAlert },
-  { label: 'ドラッグストア', query: 'drugstore', icon: HeartPulse },
-  { label: 'ATM', query: 'ATM', icon: Banknote },
-  { label: 'ロッカー', query: 'coin locker', icon: Ticket },
-  { label: 'タクシー', query: 'taxi stand', icon: Navigation },
+  { label: "コンビニ", query: "convenience store", icon: Coffee },
+  { label: "トイレ", query: "public toilet", icon: ShieldAlert },
+  { label: "ドラッグストア", query: "drugstore", icon: HeartPulse },
+  { label: "ATM", query: "ATM", icon: Banknote },
+  { label: "ロッカー", query: "coin locker", icon: Ticket },
+  { label: "タクシー", query: "taxi stand", icon: Navigation },
 ];
 
 const payerLabels: Array<{ value: ExpensePayer; label: string }> = [
-  { value: 'you', label: '自分' },
-  { value: 'partner', label: '相手' },
-  { value: 'shared', label: '折半' },
+  { value: "you", label: "自分" },
+  { value: "partner", label: "相手" },
+  { value: "shared", label: "折半" },
 ];
 
 function mapsSearchUrl(query: string, base: string) {
@@ -135,44 +136,36 @@ const containerVariants = {
 
 const itemVariants = {
   hidden: { opacity: 0, y: 15 },
-  visible: { opacity: 1, y: 0, transition: { type: 'spring' as const, stiffness: 100, damping: 20 } },
+  visible: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 100, damping: 20 } },
 };
 
-export default function AssistDashboard({
-  trip,
-  events,
-  tips,
-  isAdmin = false,
-  weatherData,
-}: AssistDashboardProps) {
+export default function AssistDashboard({ trip, events, tips, isAdmin = false, weatherData }: AssistDashboardProps) {
   const [mounted, setMounted] = useState(false);
   const [now, setNow] = useState(() => new Date());
   const [delayMinutes, setDelayMinutes] = useState(0);
   const [skippedIds] = useState<string[]>([]);
-  const [noteBody, setNoteBody] = useState('');
-  const [activeTab, setActiveTab] = useState('spotlight');
-  
+  const [noteBody, setNoteBody] = useState("");
+  const [activeTab, setActiveTab] = useState("spotlight");
+
   const [notes, setNotes] = useState<SharedNote[]>(() => {
-    if (typeof window === 'undefined') return [];
+    if (typeof window === "undefined") return [];
     try {
-      return JSON.parse(window.localStorage.getItem(`memoir:shared-notes:${trip.id}`) || '[]');
+      return JSON.parse(window.localStorage.getItem(`memoir:shared-notes:${trip.id}`) || "[]");
     } catch {
       return [];
     }
   });
   const [payers, setPayers] = useState<Record<string, ExpensePayer>>(() =>
-    typeof window === 'undefined' ? {} : loadExpensePayers(trip.id)
+    typeof window === "undefined" ? {} : loadExpensePayers(trip.id),
   );
   const [temperatureLogs, setTemperatureLogs] = useState<TemperatureLogEntry[]>(() =>
-    typeof window === 'undefined' ? [] : loadTemperatureLogs(trip.id)
+    typeof window === "undefined" ? [] : loadTemperatureLogs(trip.id),
   );
-  const [temperatureMood, setTemperatureMood] = useState<TemperatureMood>('joy');
-  const [temperatureNote, setTemperatureNote] = useState('');
+  const [temperatureMood, setTemperatureMood] = useState<TemperatureMood>("joy");
+  const [temperatureNote, setTemperatureNote] = useState("");
   const [temperatureRevisit, setTemperatureRevisit] = useState(false);
-  const [aiTrigger, setAiTrigger] = useState<Trigger>('rain');
-  const [aiSuggestions, setAiSuggestions] = useState<
-    Array<{ title: string; reason: string; action: string }>
-  >([]);
+  const [aiTrigger, setAiTrigger] = useState<Trigger>("rain");
+  const [aiSuggestions, setAiSuggestions] = useState<Array<{ title: string; reason: string; action: string }>>([]);
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [isPdfLoading, setIsPdfLoading] = useState(false);
 
@@ -185,11 +178,8 @@ export default function AssistDashboard({
   }, []);
 
   const sortedEvents = useMemo(
-    () =>
-      [...events].sort(
-        (a, b) => (eventDateTime(a)?.getTime() || 0) - (eventDateTime(b)?.getTime() || 0)
-      ),
-    [events]
+    () => [...events].sort((a, b) => (eventDateTime(a)?.getTime() || 0) - (eventDateTime(b)?.getTime() || 0)),
+    [events],
   );
 
   const activeEvents = sortedEvents.filter((event) => !skippedIds.includes(event.id));
@@ -200,53 +190,50 @@ export default function AssistDashboard({
     }) || activeEvents[0];
   const nextIndex = nextEvent ? activeEvents.findIndex((event) => event.id === nextEvent.id) : -1;
   const nextTime = nextEvent ? eventDateTime(nextEvent) : null;
-  const minutesToNext = nextTime
-    ? Math.round((nextTime.getTime() - now.getTime()) / 60_000) - delayMinutes
-    : null;
+  const minutesToNext = nextTime ? Math.round((nextTime.getTime() - now.getTime()) / 60_000) - delayMinutes : null;
 
-  const isNextSurprise = !isAdmin && nextEvent?.tag === 'surprise';
-  const currentBase = nextEvent?.transitSteps?.[0]?.station || nextEvent?.formalName || nextEvent?.title || trip.location;
-  
-  const warningTips = tips.filter((tip) => tip.isWarning || tip.category === 'Warning');
+  const isNextSurprise = !isAdmin && nextEvent?.tag === "surprise";
+  const currentBaseRaw =
+    nextEvent?.transitSteps?.[0]?.station || nextEvent?.formalName || nextEvent?.title || trip.location;
+  const currentBase = maskSecretText(currentBaseRaw, isAdmin);
+
+  const warningTips = tips.filter((tip) => tip.isWarning || tip.category === "Warning");
   const actualTotal = sortedEvents.reduce((sum, event) => sum + (event.actualExpense || 0), 0);
   const delayInsight = computeDelayInsight(activeEvents, nextIndex, delayMinutes);
   const emergencySnapshot = buildEmergencySnapshot(trip, sortedEvents, tips, isAdmin);
   const emergencyMemo = buildEmergencyMemo(trip, emergencySnapshot);
   const settlement = computeSettlement(sortedEvents, payers);
   const temperatureSummary = summarizeTemperature(temperatureLogs);
-  const briefingEvents = nextEvent
-    ? sortedEvents.filter((event) => event.dayNumber === nextEvent.dayNumber)
-    : [];
+  const briefingEvents = nextEvent ? sortedEvents.filter((event) => event.dayNumber === nextEvent.dayNumber) : [];
   const packingRecommendations = buildPackingRecommendations(sortedEvents, weatherData ?? null, []);
 
   const reportText = [
     `${trip.title} 旅メモ`,
     `場所: ${trip.location}`,
-    nextEvent ? `次の予定: ${nextEvent.time} ${nextEvent.title}` : '',
+    nextEvent
+      ? `次の予定: ${nextEvent.time} ${isNextSurprise ? "🎁 Surprise Spot" : maskSecretText(nextEvent.title, isAdmin)}`
+      : "",
     `実績支出: ${currency(actualTotal)}`,
     `精算: ${settlement.instruction}`,
     `温度ログ: ${temperatureSummary.highlightedLogs.length}件`,
     ...notes.slice(0, 4).map((note) => `- ${note.body}`),
   ]
     .filter(Boolean)
-    .join('\n');
+    .join("\n");
 
   const addNote = () => {
     const body = noteBody.trim();
     if (!body) return;
 
-    const nextNotes = [
-      { id: crypto.randomUUID(), body, createdAt: new Date().toISOString() },
-      ...notes,
-    ].slice(0, 20);
+    const nextNotes = [{ id: crypto.randomUUID(), body, createdAt: new Date().toISOString() }, ...notes].slice(0, 20);
     setNotes(nextNotes);
-    setNoteBody('');
+    setNoteBody("");
     localStorage.setItem(notesKey, JSON.stringify(nextNotes));
   };
 
   const copyEmergencyCard = async () => {
     await navigator.clipboard?.writeText(emergencyMemo);
-    alert('緊急連絡先をコピーしました');
+    alert("緊急連絡先をコピーしました");
   };
 
   const saveTemperatureEntry = () => {
@@ -254,18 +241,18 @@ export default function AssistDashboard({
 
     const nextLogs = appendTemperatureLog(trip.id, {
       eventId: nextEvent.id,
-      eventTitle: nextEvent.title,
+      eventTitle: isNextSurprise ? "🎁 Surprise Spot" : maskSecretText(nextEvent.title, isAdmin),
       eventTime: nextEvent.time,
       dayNumber: nextEvent.dayNumber,
       mood: temperatureMood,
-      energy: temperatureMood === 'tired' ? 2 : temperatureMood === 'joy' ? 5 : 4,
-      revisit: temperatureRevisit || temperatureMood === 'again',
+      energy: temperatureMood === "tired" ? 2 : temperatureMood === "joy" ? 5 : 4,
+      revisit: temperatureRevisit || temperatureMood === "again",
       note: temperatureNote.trim() || undefined,
     });
 
     setTemperatureLogs(nextLogs);
-    setTemperatureNote('');
-    setTemperatureMood('joy');
+    setTemperatureNote("");
+    setTemperatureMood("joy");
     setTemperatureRevisit(false);
   };
 
@@ -280,9 +267,9 @@ export default function AssistDashboard({
     setIsAiLoading(true);
 
     try {
-      const response = await fetch('/api/ai/alternatives', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/ai/alternatives", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           slug: trip.slug,
           trigger,
@@ -293,7 +280,7 @@ export default function AssistDashboard({
       const data = await response.json();
       setAiSuggestions(Array.isArray(data.suggestions) ? data.suggestions : []);
     } catch (error) {
-      console.error('Failed to fetch AI alternatives', error);
+      console.error("Failed to fetch AI alternatives", error);
       setAiSuggestions([]);
     } finally {
       setIsAiLoading(false);
@@ -301,9 +288,9 @@ export default function AssistDashboard({
   };
 
   const downloadReport = () => {
-    const blob = new Blob([reportText], { type: 'text/plain;charset=utf-8' });
+    const blob = new Blob([reportText], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
     link.download = `${trip.slug}-assist-report.txt`;
     link.click();
@@ -314,8 +301,8 @@ export default function AssistDashboard({
     setIsPdfLoading(true);
     try {
       const [{ pdf }, { default: AssistReportDocument }] = await Promise.all([
-        import('@react-pdf/renderer'),
-        import('@/features/trip/components/pdf/AssistReportDocument'),
+        import("@react-pdf/renderer"),
+        import("@/features/trip/components/pdf/AssistReportDocument"),
       ]);
 
       const blob = await pdf(
@@ -328,18 +315,18 @@ export default function AssistDashboard({
           reportText={reportText}
           actualTotal={currency(actualTotal)}
           settlementText={settlement.instruction}
-        />
+        />,
       ).toBlob();
 
       const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
       link.download = `${trip.slug}-report.pdf`;
       link.click();
       URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('PDF download failed', error);
-      alert('PDF 生成に失敗しました。');
+      console.error("PDF download failed", error);
+      alert("PDF 生成に失敗しました。");
     } finally {
       setIsPdfLoading(false);
     }
@@ -388,7 +375,7 @@ export default function AssistDashboard({
 
       <AnimatePresence mode="wait">
         {/* --- Spotlight Tab: Main Info --- */}
-        {activeTab === 'spotlight' && (
+        {activeTab === "spotlight" && (
           <motion.div
             key="spotlight"
             variants={containerVariants}
@@ -399,7 +386,10 @@ export default function AssistDashboard({
           >
             {/* Spotlight Hero Section */}
             <motion.div variants={itemVariants}>
-              <MagazineCard padding="none" className="relative overflow-hidden border-none bg-linear-to-br from-primary/5 via-background to-secondary/20 shadow-2xl shadow-primary/5">
+              <MagazineCard
+                padding="none"
+                className="relative overflow-hidden border-none bg-linear-to-br from-primary/5 via-background to-secondary/20 shadow-2xl shadow-primary/5"
+              >
                 <div className="flex flex-col md:flex-row">
                   <div className="flex-1 p-8 md:p-12">
                     <div className="mb-8 flex items-center gap-4">
@@ -407,13 +397,17 @@ export default function AssistDashboard({
                         <Clock size={20} className="animate-pulse" />
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Next Move</span>
-                        <span className="text-xs font-bold text-muted-foreground">Starts in {minutesToNext === null ? '--' : formatMinutes(minutesToNext).replace('あと', '')}</span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">
+                          Next Move
+                        </span>
+                        <span className="text-xs font-bold text-muted-foreground">
+                          Starts in {minutesToNext === null ? "--" : formatMinutes(minutesToNext).replace("あと", "")}
+                        </span>
                       </div>
                     </div>
 
                     <h2 className="font-playfair text-4xl md:text-6xl font-black leading-tight text-foreground tracking-tight mb-6">
-                      {nextEvent ? (isNextSurprise ? '🎁 Surprise Spot' : nextEvent.title) : '予定はありません'}
+                      {nextEvent ? (isNextSurprise ? "🎁 Surprise Spot" : nextEvent.title) : "予定はありません"}
                     </h2>
 
                     {nextEvent && (
@@ -436,34 +430,40 @@ export default function AssistDashboard({
                     )}
 
                     <p className="max-w-2xl text-lg text-muted-foreground/90 font-medium leading-relaxed italic">
-                      {isNextSurprise 
-                        ? '“当日までのお楽しみ。ふたりの特別な時間が待っています。”' 
-                        : (nextEvent?.desc || 'この予定の詳細を確認しましょう。')}
+                      {isNextSurprise
+                        ? "“当日までのお楽しみ。ふたりの特別な時間が待っています。”"
+                        : nextEvent?.desc || "この予定の詳細を確認しましょう。"}
                     </p>
                   </div>
 
                   <div className="w-full md:w-80 bg-secondary/10 backdrop-blur-sm border-t md:border-t-0 md:border-l border-border/40 p-8 flex flex-col justify-between">
                     <div className="space-y-6">
                       <div>
-                        <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block mb-2">Location</span>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block mb-2">
+                          Location
+                        </span>
                         <div className="flex items-center gap-3">
                           <MapPin size={18} className="text-primary" />
                           <span className="font-black text-lg">{currentBase}</span>
                         </div>
                       </div>
-                      
+
                       <div className="pt-6 border-t border-border/40">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block mb-4">Transit Timeline</span>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block mb-4">
+                          Transit Timeline
+                        </span>
                         <div className="space-y-6">
                           {nextEvent?.transitSteps?.slice(0, 3).map((step, idx) => (
-                            <div key={idx} className="flex gap-4 items-start">
+                            <div key={`${step.time}-${step.station}`} className="flex gap-4 items-start">
                               <div className="flex flex-col items-center">
                                 <div className="h-2 w-2 rounded-full bg-primary" />
                                 {idx !== 2 && <div className="w-px h-8 bg-linear-to-b from-primary to-transparent" />}
                               </div>
                               <div className="min-w-0">
                                 <div className="text-[10px] font-black text-primary">{step.time}</div>
-                                <div className="text-xs font-bold truncate">{step.station}</div>
+                                <div className="text-xs font-bold truncate">
+                                  {maskSecretText(step.station, isAdmin)}
+                                </div>
                               </div>
                             </div>
                           ))}
@@ -472,7 +472,11 @@ export default function AssistDashboard({
                     </div>
 
                     <a
-                      href={nextEvent?.locationUrl || mapsSearchUrl(currentBase, trip.location)}
+                      href={
+                        isNextSurprise
+                          ? mapsSearchUrl(currentBase, trip.location)
+                          : nextEvent?.locationUrl || mapsSearchUrl(currentBase, trip.location)
+                      }
                       target="_blank"
                       rel="noreferrer"
                       className="mt-8 flex items-center justify-center gap-2 w-full py-4 rounded-2xl bg-foreground text-background text-xs font-black uppercase tracking-widest shadow-xl transition-all hover:scale-[1.02] active:scale-95"
@@ -499,7 +503,10 @@ export default function AssistDashboard({
                 <div className="space-y-3">
                   {packingRecommendations.length > 0 ? (
                     packingRecommendations.slice(0, 3).map((item) => (
-                      <div key={item.name} className="flex items-center gap-3 p-3 rounded-2xl bg-white/50 border border-sky-500/5 dark:bg-card/40">
+                      <div
+                        key={item.name}
+                        className="flex items-center gap-3 p-3 rounded-2xl bg-white/50 border border-sky-500/5 dark:bg-card/40"
+                      >
                         <div className="h-2 w-2 rounded-full bg-sky-400" />
                         <span className="text-sm font-bold text-foreground">{item.name}</span>
                         <span className="text-[10px] text-muted-foreground ml-auto">{item.reason}</span>
@@ -525,7 +532,9 @@ export default function AssistDashboard({
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-bold text-muted-foreground">予約確定済み</span>
-                    <span className="text-xl font-black text-emerald-600">{briefingEvents.filter(e => e.isConfirmed).length} 件</span>
+                    <span className="text-xl font-black text-emerald-600">
+                      {briefingEvents.filter((e) => e.isConfirmed).length} 件
+                    </span>
                   </div>
                   <div className="pt-4 border-t border-border/40">
                     <div className="flex items-center gap-2 text-[10px] font-black text-primary uppercase tracking-widest">
@@ -548,7 +557,7 @@ export default function AssistDashboard({
         )}
 
         {/* --- Safety Tab: Emergency & Warnings --- */}
-        {activeTab === 'safety' && (
+        {activeTab === "safety" && (
           <motion.div
             key="safety"
             variants={containerVariants}
@@ -562,14 +571,20 @@ export default function AssistDashboard({
                 <div className="bg-rose-500 p-8 text-white">
                   <div className="flex items-center justify-between mb-6">
                     <ShieldAlert size={32} />
-                    <button onClick={copyEmergencyCard} className="p-2 rounded-xl bg-white/20 hover:bg-white/30 transition-colors">
+                    <button
+                      type="button"
+                      onClick={copyEmergencyCard}
+                      className="p-2 rounded-xl bg-white/20 hover:bg-white/30 transition-colors"
+                    >
                       <Copy size={20} />
                     </button>
                   </div>
                   <h3 className="text-3xl font-black tracking-tight">Emergency Card</h3>
-                  <p className="mt-2 text-sm font-bold text-rose-100 opacity-80 uppercase tracking-widest">緊急時の重要情報</p>
+                  <p className="mt-2 text-sm font-bold text-rose-100 opacity-80 uppercase tracking-widest">
+                    緊急時の重要情報
+                  </p>
                 </div>
-                
+
                 <div className="p-8 space-y-8">
                   {emergencySnapshot.hotels.length > 0 && (
                     <div className="space-y-4">
@@ -579,12 +594,21 @@ export default function AssistDashboard({
                       </div>
                       <div className="grid gap-3">
                         {emergencySnapshot.hotels.map((item) => (
-                          <a key={item.label} href={item.href || '#'} target="_blank" rel="noreferrer" className="group flex items-center gap-4 p-4 rounded-2xl bg-white border border-rose-100 hover:border-rose-300 transition-all shadow-sm">
+                          <a
+                            key={item.label}
+                            href={item.href || "#"}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="group flex items-center gap-4 p-4 rounded-2xl bg-white border border-rose-100 hover:border-rose-300 transition-all shadow-sm"
+                          >
                             <div className="min-w-0 flex-1">
                               <div className="font-bold text-foreground">{item.label}</div>
                               <div className="text-xs text-muted-foreground truncate">{item.description}</div>
                             </div>
-                            <ExternalLink size={14} className="text-muted-foreground group-hover:text-rose-500 transition-colors" />
+                            <ExternalLink
+                              size={14}
+                              className="text-muted-foreground group-hover:text-rose-500 transition-colors"
+                            />
                           </a>
                         ))}
                       </div>
@@ -599,12 +623,21 @@ export default function AssistDashboard({
                       </div>
                       <div className="grid gap-3">
                         {emergencySnapshot.reservations.map((item) => (
-                          <a key={item.label} href={item.href || '#'} target="_blank" rel="noreferrer" className="group flex items-center gap-4 p-4 rounded-2xl bg-white border border-rose-100 hover:border-rose-300 transition-all shadow-sm">
+                          <a
+                            key={item.label}
+                            href={item.href || "#"}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="group flex items-center gap-4 p-4 rounded-2xl bg-white border border-rose-100 hover:border-rose-300 transition-all shadow-sm"
+                          >
                             <div className="min-w-0 flex-1">
                               <div className="font-bold text-foreground">{item.label}</div>
                               <div className="text-xs text-muted-foreground truncate">{item.description}</div>
                             </div>
-                            <ExternalLink size={14} className="text-muted-foreground group-hover:text-rose-500 transition-colors" />
+                            <ExternalLink
+                              size={14}
+                              className="text-muted-foreground group-hover:text-rose-500 transition-colors"
+                            />
                           </a>
                         ))}
                       </div>
@@ -639,7 +672,7 @@ export default function AssistDashboard({
         )}
 
         {/* --- Tools Tab: AI, Delay, Utilities --- */}
-        {activeTab === 'tools' && (
+        {activeTab === "tools" && (
           <motion.div
             key="tools"
             variants={containerVariants}
@@ -651,28 +684,41 @@ export default function AssistDashboard({
             {/* Delay & AI Row */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <motion.div variants={itemVariants}>
-                <MagazineCard padding="none" className={cn(
-                  "h-full border-l-4 transition-colors p-8",
-                  delayMinutes === 0 ? "border-emerald-500 bg-emerald-500/2" : "border-rose-500 bg-rose-500/2"
-                )}>
+                <MagazineCard
+                  padding="none"
+                  className={cn(
+                    "h-full border-l-4 transition-colors p-8",
+                    delayMinutes === 0 ? "border-emerald-500 bg-emerald-500/2" : "border-rose-500 bg-rose-500/2",
+                  )}
+                >
                   <div className="flex items-center gap-3 mb-8">
-                    <div className={cn("p-3 rounded-2xl text-white", delayMinutes === 0 ? "bg-emerald-500" : "bg-rose-500")}>
+                    <div
+                      className={cn(
+                        "p-3 rounded-2xl text-white",
+                        delayMinutes === 0 ? "bg-emerald-500" : "bg-rose-500",
+                      )}
+                    >
                       <TimerReset size={20} />
                     </div>
                     <div>
                       <h3 className="text-xl font-black">遅延アシスト</h3>
-                      <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Adjust Timeline</span>
+                      <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                        Adjust Timeline
+                      </span>
                     </div>
                   </div>
 
                   <div className="flex flex-wrap gap-2 mb-8">
                     {[0, 15, 30, 45, 60].map((mins) => (
                       <button
+                        type="button"
                         key={mins}
                         onClick={() => setDelayMinutes(mins)}
                         className={cn(
                           "flex-1 min-w-12 py-3 rounded-2xl border text-xs font-black transition-all active:scale-95",
-                          delayMinutes === mins ? "bg-foreground text-background border-foreground shadow-lg" : "bg-white border-border text-muted-foreground hover:border-primary"
+                          delayMinutes === mins
+                            ? "bg-foreground text-background border-foreground shadow-lg"
+                            : "bg-white border-border text-muted-foreground hover:border-primary",
                         )}
                       >
                         {mins}分
@@ -694,24 +740,29 @@ export default function AssistDashboard({
                     </div>
                     <div>
                       <h3 className="text-xl font-black">AI 代替案</h3>
-                      <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Smart Rescheduling</span>
+                      <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                        Smart Rescheduling
+                      </span>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-2 mb-6">
-                    {(['rain', 'crowd', 'tired', 'budget'] as Trigger[]).map((t) => (
+                    {(["rain", "crowd", "tired", "budget"] as Trigger[]).map((t) => (
                       <button
+                        type="button"
                         key={t}
                         onClick={() => fetchAlternatives(t)}
                         className={cn(
                           "flex flex-col items-center justify-center gap-1 py-4 rounded-2xl border transition-all active:scale-95",
-                          aiTrigger === t ? "bg-primary text-primary-foreground border-primary shadow-lg" : "bg-white border-border text-muted-foreground hover:border-primary"
+                          aiTrigger === t
+                            ? "bg-primary text-primary-foreground border-primary shadow-lg"
+                            : "bg-white border-border text-muted-foreground hover:border-primary",
                         )}
                       >
-                        {t === 'rain' && <CloudRain size={16} />}
-                        {t === 'crowd' && <Users size={16} />}
-                        {t === 'tired' && <HeartPulse size={16} />}
-                        {t === 'budget' && <Banknote size={16} />}
+                        {t === "rain" && <CloudRain size={16} />}
+                        {t === "crowd" && <Users size={16} />}
+                        {t === "tired" && <HeartPulse size={16} />}
+                        {t === "budget" && <Banknote size={16} />}
                         <span className="text-[10px] font-black uppercase tracking-widest">{t}</span>
                       </button>
                     ))}
@@ -723,8 +774,8 @@ export default function AssistDashboard({
                     </div>
                   ) : aiSuggestions.length > 0 ? (
                     <div className="space-y-3">
-                      {aiSuggestions.slice(0, 1).map((s, idx) => (
-                        <div key={idx} className="p-5 rounded-2xl bg-white border border-primary/10 shadow-sm">
+                      {aiSuggestions.slice(0, 1).map((s) => (
+                        <div key={s.title} className="p-5 rounded-2xl bg-white border border-primary/10 shadow-sm">
                           <div className="text-sm font-black text-foreground mb-2">{s.title}</div>
                           <p className="text-xs text-muted-foreground leading-relaxed">{s.reason}</p>
                           <div className="mt-4 pt-4 border-t border-border/50 text-xs font-bold text-primary flex items-center gap-2">
@@ -749,12 +800,20 @@ export default function AssistDashboard({
                   </div>
                   <div>
                     <h3 className="text-xl font-black">周辺便利スポット</h3>
-                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Near {trip.location}</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                      Near {trip.location}
+                    </span>
                   </div>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                   {utilityTypes.map((item) => (
-                    <a key={item.label} href={mapsSearchUrl(item.query, trip.location)} target="_blank" rel="noreferrer" className="group flex flex-col items-center gap-3 p-6 rounded-3xl border border-border bg-white hover:border-primary transition-all shadow-sm active:scale-95">
+                    <a
+                      key={item.label}
+                      href={mapsSearchUrl(item.query, trip.location)}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="group flex flex-col items-center gap-3 p-6 rounded-3xl border border-border bg-white hover:border-primary transition-all shadow-sm active:scale-95"
+                    >
                       <item.icon size={24} className="text-primary group-hover:scale-110 transition-transform" />
                       <span className="text-xs font-black">{item.label}</span>
                     </a>
@@ -764,14 +823,16 @@ export default function AssistDashboard({
                 <div className="mt-8 pt-8 border-t border-border/40">
                   <div className="flex items-center gap-2 mb-4">
                     <Navigation size={14} className="text-primary" />
-                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Current Context Search</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                      Current Context Search
+                    </span>
                   </div>
                   <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2 -mx-2 px-2">
-                    {['レストラン', 'カフェ', '駅', '展望台', 'お土産'].map(q => (
-                      <a 
-                        key={q} 
-                        href={mapsSearchUrl(q, currentBase)} 
-                        target="_blank" 
+                    {["レストラン", "カフェ", "駅", "展望台", "お土産"].map((q) => (
+                      <a
+                        key={q}
+                        href={mapsSearchUrl(q, currentBase)}
+                        target="_blank"
                         rel="noreferrer"
                         className="shrink-0 px-5 py-3 rounded-2xl bg-secondary/30 border border-border text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:bg-primary/5 hover:text-primary transition-all whitespace-nowrap"
                       >
@@ -786,7 +847,7 @@ export default function AssistDashboard({
         )}
 
         {/* --- Logistics Tab: Expense, Memo, Reports --- */}
-        {activeTab === 'logistics' && (
+        {activeTab === "logistics" && (
           <motion.div
             key="logistics"
             variants={containerVariants}
@@ -811,11 +872,15 @@ export default function AssistDashboard({
 
                   <div className="grid grid-cols-2 gap-4 mb-8">
                     <div className="p-5 rounded-3xl bg-white border border-emerald-100 shadow-sm">
-                      <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block mb-1">Total Spent</span>
+                      <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block mb-1">
+                        Total Spent
+                      </span>
                       <span className="text-xl font-black text-foreground">{currency(settlement.total)}</span>
                     </div>
                     <div className="p-5 rounded-3xl bg-emerald-500 text-white shadow-lg shadow-emerald-500/10">
-                      <span className="text-[10px] font-black uppercase tracking-widest text-emerald-100 block mb-1">Settlement</span>
+                      <span className="text-[10px] font-black uppercase tracking-widest text-emerald-100 block mb-1">
+                        Settlement
+                      </span>
                       <span className="text-xs font-bold leading-tight line-clamp-2">{settlement.instruction}</span>
                     </div>
                   </div>
@@ -824,17 +889,22 @@ export default function AssistDashboard({
                     {settlement.expenseEvents.slice(0, 3).map((e) => (
                       <div key={e.id} className="p-4 rounded-2xl bg-white border border-border">
                         <div className="flex justify-between items-center mb-4">
-                          <span className="text-sm font-black truncate max-w-37.5">{e.title}</span>
+                          <span className="text-sm font-black truncate max-w-37.5">
+                            {maskSecretText(e.title, isAdmin)}
+                          </span>
                           <span className="text-xs font-bold text-emerald-600">{currency(e.actualExpense || 0)}</span>
                         </div>
                         <div className="flex gap-2">
                           {payerLabels.map((p) => (
                             <button
+                              type="button"
                               key={p.value}
                               onClick={() => updatePayer(e.id, p.value)}
                               className={cn(
                                 "flex-1 py-2 rounded-xl text-[10px] font-black transition-all",
-                                (payers[e.id] || 'shared') === p.value ? "bg-emerald-500 text-white shadow-md" : "bg-secondary/40 text-muted-foreground hover:bg-secondary/60"
+                                (payers[e.id] || "shared") === p.value
+                                  ? "bg-emerald-500 text-white shadow-md"
+                                  : "bg-secondary/40 text-muted-foreground hover:bg-secondary/60",
                               )}
                             >
                               {p.label}
@@ -857,11 +927,14 @@ export default function AssistDashboard({
                   <div className="flex justify-between gap-2 mb-6">
                     {Object.entries(TEMPERATURE_MOODS).map(([val, cfg]) => (
                       <button
+                        type="button"
                         key={val}
                         onClick={() => setTemperatureMood(val as TemperatureMood)}
                         className={cn(
                           "flex-1 flex flex-col items-center justify-center p-3 rounded-2xl border transition-all active:scale-90",
-                          temperatureMood === val ? "bg-rose-500 border-rose-500 text-white shadow-lg" : "bg-white border-border grayscale hover:grayscale-0"
+                          temperatureMood === val
+                            ? "bg-rose-500 border-rose-500 text-white shadow-lg"
+                            : "bg-white border-border grayscale hover:grayscale-0",
                         )}
                       >
                         <span className="text-2xl mb-1">{cfg.emoji}</span>
@@ -875,7 +948,11 @@ export default function AssistDashboard({
                     placeholder="いまの気持ちを一言..."
                     className="w-full h-24 p-4 rounded-2xl border border-border bg-secondary/10 text-sm outline-none focus:border-rose-500/50 transition-all resize-none"
                   />
-                  <button onClick={saveTemperatureEntry} className="w-full mt-4 py-4 rounded-2xl bg-foreground text-background text-xs font-black uppercase tracking-widest shadow-xl transition-all hover:scale-[1.02] active:scale-95">
+                  <button
+                    type="button"
+                    onClick={saveTemperatureEntry}
+                    className="w-full mt-4 py-4 rounded-2xl bg-foreground text-background text-xs font-black uppercase tracking-widest shadow-xl transition-all hover:scale-[1.02] active:scale-95"
+                  >
                     Save Log
                   </button>
                 </MagazineCard>
@@ -889,11 +966,15 @@ export default function AssistDashboard({
                     <input
                       value={noteBody}
                       onChange={(e) => setNoteBody(e.target.value)}
-                      onKeyDown={(e) => e.key === 'Enter' && addNote()}
+                      onKeyDown={(e) => e.key === "Enter" && addNote()}
                       placeholder="ふたりのメモを記録"
                       className="flex-1 px-4 py-3 rounded-2xl border border-border bg-secondary/10 text-sm outline-none focus:border-amber-500/50"
                     />
-                    <button onClick={addNote} className="p-4 rounded-2xl bg-amber-500 text-white shadow-lg shadow-amber-500/20 active:scale-95">
+                    <button
+                      type="button"
+                      onClick={addNote}
+                      className="p-4 rounded-2xl bg-amber-500 text-white shadow-lg shadow-amber-500/20 active:scale-95"
+                    >
                       <MessageSquarePlus size={20} />
                     </button>
                   </div>
@@ -915,10 +996,19 @@ export default function AssistDashboard({
                     </div>
                   </div>
                   <div className="w-full md:w-64 space-y-3">
-                    <button onClick={downloadReport} className="w-full flex items-center justify-center gap-3 py-4 rounded-2xl bg-secondary/40 border border-border text-xs font-black uppercase tracking-widest hover:bg-secondary/60 transition-colors">
+                    <button
+                      type="button"
+                      onClick={downloadReport}
+                      className="w-full flex items-center justify-center gap-3 py-4 rounded-2xl bg-secondary/40 border border-border text-xs font-black uppercase tracking-widest hover:bg-secondary/60 transition-colors"
+                    >
                       <Download size={16} /> TXT Export
                     </button>
-                    <button onClick={downloadPdf} disabled={isPdfLoading} className="w-full flex items-center justify-center gap-3 py-4 rounded-2xl bg-foreground text-background text-xs font-black uppercase tracking-widest shadow-xl hover:scale-[1.02] active:scale-95 transition-all">
+                    <button
+                      type="button"
+                      onClick={downloadPdf}
+                      disabled={isPdfLoading}
+                      className="w-full flex items-center justify-center gap-3 py-4 rounded-2xl bg-foreground text-background text-xs font-black uppercase tracking-widest shadow-xl hover:scale-[1.02] active:scale-95 transition-all"
+                    >
                       {isPdfLoading ? <Loader2 className="animate-spin" size={16} /> : <FileText size={16} />}
                       PDF Export
                     </button>
@@ -931,7 +1021,7 @@ export default function AssistDashboard({
       </AnimatePresence>
 
       {/* --- Footer Status Tip --- */}
-      <motion.section 
+      <motion.section
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1 }}

@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Edit2, Trash2, Loader2 } from 'lucide-react';
-import { deleteEventAction } from '@/features/trip/api/tripActions';
-import { useModalStore } from '@/lib/store/useModalStore';
-import { TripEvent } from '@/features/trip/types/trip';
+import { Edit2, Loader2, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { deleteEventAction } from "@/features/trip/api/tripActions";
+import type { TripEvent } from "@/features/trip/types/trip";
+import { useModalStore } from "@/lib/store/useModalStore";
 
 interface Props {
   event: TripEvent;
@@ -16,8 +16,8 @@ export function EventActionButtons({ event }: Props) {
 
   const handleDelete = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!event.id || !confirm('この予定を削除してもよろしいですか？')) return;
-    
+    if (!event.id || !confirm("この予定を削除してもよろしいですか？")) return;
+
     setIsDeleting(true);
     try {
       const result = await deleteEventAction(event.id);
@@ -26,7 +26,7 @@ export function EventActionButtons({ event }: Props) {
       }
     } catch (error) {
       console.error(error);
-      alert('削除に失敗しました');
+      alert("削除に失敗しました");
     } finally {
       setIsDeleting(false);
     }
@@ -35,7 +35,7 @@ export function EventActionButtons({ event }: Props) {
   const handleEdit = (e: React.MouseEvent) => {
     e.stopPropagation();
     openModal(event);
-    // Note: DetailModal usually starts in view mode. 
+    // Note: DetailModal usually starts in view mode.
     // If we want it to start in Edit mode, we'd need to adjust ModalStore or use a different trigger.
     // For now, clicking Edit will open the detail modal where the user can click Edit.
   };

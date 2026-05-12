@@ -1,7 +1,7 @@
 "use client";
 
-import { useModalStore } from "@/lib/store/useModalStore";
 import type { TripEvent } from "@/features/trip/types/trip";
+import { useModalStore } from "@/lib/store/useModalStore";
 import { cn } from "@/lib/utils";
 
 interface ClickableCardProps {
@@ -10,11 +10,7 @@ interface ClickableCardProps {
   className?: string;
 }
 
-export default function ClickableCard({
-  event,
-  children,
-  className,
-}: ClickableCardProps) {
+export default function ClickableCard({ event, children, className }: ClickableCardProps) {
   const openModal = useModalStore((state) => state.openModal);
 
   return (

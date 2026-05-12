@@ -1,7 +1,7 @@
 "use client";
 
-import { YataiStop } from "@/features/trip/types/trip";
 import { Clock } from "lucide-react";
+import type { YataiStop } from "@/features/trip/types/trip";
 import { cn } from "@/lib/utils";
 
 interface YataiLiveTrackerProps {
@@ -30,21 +30,25 @@ export default function YataiLiveTracker({ stops }: YataiLiveTrackerProps) {
               <div className="absolute left-[13px] top-6 bottom-[-24px] w-px bg-muted/50 group-hover:bg-rose-100 transition-colors" />
             )}
 
-            <div className={cn(
-              "z-10 h-7 w-7 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 transition-all shadow-sm border-2",
-              stop.isVisited 
-                ? "bg-stone-800 text-white border-stone-800" 
-                : "bg-white text-stone-400 border-border/50 group-hover:border-rose-200 group-hover:text-rose-500"
-            )}>
+            <div
+              className={cn(
+                "z-10 h-7 w-7 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 transition-all shadow-sm border-2",
+                stop.isVisited
+                  ? "bg-stone-800 text-white border-stone-800"
+                  : "bg-white text-stone-400 border-border/50 group-hover:border-rose-200 group-hover:text-rose-500",
+              )}
+            >
               {i + 1}
             </div>
 
             <div className="flex-1 pb-4">
               <div className="flex items-center justify-between mb-1">
-                <h4 className={cn(
-                  "text-sm font-bold transition-colors",
-                  stop.isVisited ? "text-stone-900" : "text-stone-500 group-hover:text-rose-600"
-                )}>
+                <h4
+                  className={cn(
+                    "text-sm font-bold transition-colors",
+                    stop.isVisited ? "text-stone-900" : "text-stone-500 group-hover:text-rose-600",
+                  )}
+                >
                   {stop.stop}
                 </h4>
                 <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-secondary/30 text-[9px] font-bold text-stone-400">
@@ -52,9 +56,7 @@ export default function YataiLiveTracker({ stops }: YataiLiveTrackerProps) {
                   {stop.time}
                 </div>
               </div>
-              <p className="text-[11px] text-stone-400 leading-relaxed font-medium">
-                {stop.desc}
-              </p>
+              <p className="text-[11px] text-stone-400 leading-relaxed font-medium">{stop.desc}</p>
             </div>
           </div>
         ))}

@@ -1,12 +1,12 @@
 import { notFound } from "next/navigation";
-import { getTripBySlug } from "@/features/trip/api/tripActions";
-import TripLayout from "@/features/trip/components/TripLayout";
 import { Container } from "@/components/ui/Container";
-import { auth } from "@/lib/auth";
-import PackingList from "@/features/trip/components/client/PackingList";
-import TipsList from "@/features/trip/components/client/TipsList";
 import { SectionHeader } from "@/components/ui/SectionHeader";
+import { getTripBySlug } from "@/features/trip/api/tripActions";
+import PackingList from "@/features/trip/components/client/PackingList";
 import SmartPackingSuggestions from "@/features/trip/components/client/SmartPackingSuggestions";
+import TipsList from "@/features/trip/components/client/TipsList";
+import TripLayout from "@/features/trip/components/TripLayout";
+import { auth } from "@/lib/auth";
 import { getWeatherData } from "@/lib/weather";
 
 export default async function TripInfoPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -33,7 +33,7 @@ export default async function TripInfoPage({ params }: { params: Promise<{ slug:
       isConfirmed: event.isConfirmed,
       plannedBudget: event.plannedBudget || 0,
       actualExpense: event.actualExpense || 0,
-    }))
+    })),
   );
 
   return (
@@ -58,7 +58,7 @@ export default async function TripInfoPage({ params }: { params: Promise<{ slug:
             />
           </div>
           <div className="mt-8">
-          <PackingList initialItems={packingItems} tripId={trip.id} />
+            <PackingList initialItems={packingItems} tripId={trip.id} />
           </div>
         </section>
 
@@ -66,8 +66,8 @@ export default async function TripInfoPage({ params }: { params: Promise<{ slug:
         <section>
           <SectionHeader title="Knowledge & Booking" subtitle="予約情報と現地の知恵" />
           <div className="mt-8">
-            <TipsList 
-              initialTips={trip.tips.map(t => ({
+            <TipsList
+              initialTips={trip.tips.map((t) => ({
                 id: t.id,
                 title: t.title,
                 body: t.body,
@@ -77,9 +77,9 @@ export default async function TripInfoPage({ params }: { params: Promise<{ slug:
                 isConfirmed: t.isConfirmed,
                 category: t.category ?? "General",
                 deepLevel: t.deepLevel,
-                order: t.order
-              }))} 
-              tripId={trip.id} 
+                order: t.order,
+              }))}
+              tripId={trip.id}
             />
           </div>
         </section>

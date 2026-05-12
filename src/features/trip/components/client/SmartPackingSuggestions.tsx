@@ -1,11 +1,11 @@
 "use client";
 
+import { BatteryCharging, Loader2, Package2, Plus, Shirt, Sparkles, Umbrella } from "lucide-react";
 import { useMemo, useState } from "react";
-import { Loader2, Plus, Sparkles, Umbrella, BatteryCharging, Shirt, Package2 } from "lucide-react";
 import { MagazineCard } from "@/components/ui/MagazineCard";
-import { cn } from "@/lib/utils";
 import { addPackingItemAction } from "@/features/trip/api/tripActions";
 import { buildPackingRecommendations, type InsightEvent } from "@/features/trip/utils/tripInsights";
+import { cn } from "@/lib/utils";
 
 type Props = {
   tripId: string;
@@ -26,9 +26,7 @@ const categoryIcons = {
 };
 
 export default function SmartPackingSuggestions({ tripId, itemNames, events, weatherData }: Props) {
-  const [suggestions, setSuggestions] = useState(() =>
-    buildPackingRecommendations(events, weatherData, itemNames)
-  );
+  const [suggestions, setSuggestions] = useState(() => buildPackingRecommendations(events, weatherData, itemNames));
   const [isPending, setIsPending] = useState(false);
   const [addingName, setAddingName] = useState<string | null>(null);
 
@@ -47,7 +45,7 @@ export default function SmartPackingSuggestions({ tripId, itemNames, events, wea
       setSuggestions((current) => current.filter((item) => item.name !== name));
       setAddingName(null);
     } catch (err) {
-      console.error('Failed to add suggested item:', err);
+      console.error("Failed to add suggested item:", err);
     } finally {
       setIsPending(false);
     }
@@ -94,7 +92,7 @@ export default function SmartPackingSuggestions({ tripId, itemNames, events, wea
                   disabled={isPending}
                   className={cn(
                     "flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-foreground text-background transition-transform active:scale-[0.98]",
-                    isPending && "opacity-60"
+                    isPending && "opacity-60",
                   )}
                   aria-label={`${suggestion.name}を追加`}
                 >

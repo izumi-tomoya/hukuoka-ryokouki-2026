@@ -1,13 +1,22 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
 import type { GourmetAward } from "@prisma/client";
 import { Download, FileText, Sparkles } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { MagazineCard } from "@/components/ui/MagazineCard";
-import type { BudgetStats } from "@/features/trip/utils/tripUtils";
 import type { TripEvent } from "@/features/trip/types/trip";
-import { loadExpensePayers, loadTemperatureLogs, type TemperatureLogEntry } from "@/features/trip/utils/clientTripStorage";
-import { computeSettlement, summarizeTemperature, TEMPERATURE_MOOD_NARRATIVES } from "@/features/trip/utils/tripInsights";
+import {
+  loadExpensePayers,
+  loadTemperatureLogs,
+  type TemperatureLogEntry,
+} from "@/features/trip/utils/clientTripStorage";
+import {
+  computeSettlement,
+  summarizeTemperature,
+  TEMPERATURE_MOOD_NARRATIVES,
+} from "@/features/trip/utils/tripInsights";
+import { maskSecretText } from "@/features/trip/utils/tripUtils";
+import type { BudgetStats } from "@/features/trip/utils/tripUtils";
 
 interface Props {
   tripId: string;
@@ -24,10 +33,10 @@ function yen(value: number) {
 
 export default function TravelReportPanel({ tripId, tripSlug, awards, budgetStats, allEvents, photoCount }: Props) {
   const [logs, setLogs] = useState<TemperatureLogEntry[]>(() =>
-    typeof window === "undefined" ? [] : loadTemperatureLogs(tripId)
+    typeof window === "undefined" ? [] : loadTemperatureLogs(tripId),
   );
   const [payers, setPayers] = useState<Record<string, "shared" | "you" | "partner">>(() =>
-    typeof window === "undefined" ? {} : loadExpensePayers(tripId)
+    typeof window === "undefined" ? {} : loadExpensePayers(tripId),
   );
   const [isPdfLoading, setIsPdfLoading] = useState(false);
 
@@ -42,8 +51,13 @@ export default function TravelReportPanel({ tripId, tripSlug, awards, budgetStat
 
   const report = useMemo(() => {
     const visited = allEvents.filter((event) => event.isConfirmed).length;
-    const topFood = awards[0]?.title || allEvents.find((event) => event.type === "food")?.title || "未選定";
-    const memoLines = allEvents.filter((event) => event.notes).slice(0, 4).map((event) => `- ${event.time} ${event.notes}`);
+    const topFoodRaw = awards[0]?.title || allEvents.find((event) => event.type === "food")?.title || "未選定";
+    const topFood = maskSecretText(topFoodRaw, false);
+
+    const memoLines = allEvents
+      .filter((event) => event.notes)
+      .slice(0, 4)
+      .map((event) => `- ${event.time} ${event.notes}`);
     const settlement = computeSettlement(
       allEvents.map((event) => ({
         id: event.id || "",
@@ -51,15 +65,17 @@ export default function TravelReportPanel({ tripId, tripSlug, awards, budgetStat
         date: new Date().toISOString(),
         time: event.time,
         type: event.type,
-        title: event.title || event.foodName || "Untitled",
-        desc: event.desc || event.foodDesc || undefined,
+        title: maskSecretText(event.title || event.foodName || "Untitled", false),
+        desc: maskSecretText(event.desc || event.foodDesc || "", false),
         actualExpense: event.actualExpense || 0,
       })),
-      payers
+      payers,
     );
     const temperature = summarizeTemperature(logs);
     const moodLine =
-      logs.length > 0 ? `旅の温度: ${TEMPERATURE_MOOD_NARRATIVES[temperature.topMood]}が多く、また来たい登録は${temperature.revisitCount}件。` : "";
+      logs.length > 0
+        ? `旅の温度: ${TEMPERATURE_MOOD_NARRATIVES[temperature.topMood]}が多く、また来たい登録は${temperature.revisitCount}件。`
+        : "";
     const energyNotes = logs
       .filter((log) => log.note)
       .slice(0, 3)
@@ -78,7 +94,9 @@ export default function TravelReportPanel({ tripId, tripSlug, awards, budgetStat
       ...memoLines,
       energyNotes.length > 0 ? "温度ログ:" : "",
       ...energyNotes,
-    ].filter(Boolean).join("\n");
+    ]
+      .filter(Boolean)
+      .join("\n");
   }, [allEvents, awards, budgetStats.totalActual, logs, payers, photoCount]);
 
   const download = () => {
@@ -164,7 +182,9 @@ export default function TravelReportPanel({ tripId, tripSlug, awards, budgetStat
           <FileText size={14} />
           Preview
         </div>
-        <pre className="whitespace-pre-wrap font-sans text-sm font-medium leading-relaxed text-foreground">{report}</pre>
+        <pre className="whitespace-pre-wrap font-sans text-sm font-medium leading-relaxed text-foreground">
+          {report}
+        </pre>
       </div>
     </MagazineCard>
   );

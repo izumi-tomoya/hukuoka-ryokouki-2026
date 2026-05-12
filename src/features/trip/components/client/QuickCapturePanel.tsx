@@ -1,12 +1,13 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Camera, MessageSquare, X, Send, Loader2, Sparkles, Image as ImageIcon } from 'lucide-react';
-import { MagazineCard } from '@/components/ui/MagazineCard';
-import { cn } from '@/lib/utils';
-import { addPhotoToEvent } from '@/features/trip/api/tripActions';
-import { TripEvent } from '@/features/trip/types/trip';
-import { appendTemperatureLog, TEMPERATURE_MOODS, type TemperatureMood } from '@/features/trip/utils/clientTripStorage';
+import { Camera, Image as ImageIcon, Loader2, MessageSquare, Send, Sparkles, X } from "lucide-react";
+import { useState } from "react";
+import { MagazineCard } from "@/components/ui/MagazineCard";
+import { addPhotoToEvent } from "@/features/trip/api/tripActions";
+import type { TripEvent } from "@/features/trip/types/trip";
+import { appendTemperatureLog, TEMPERATURE_MOODS, type TemperatureMood } from "@/features/trip/utils/clientTripStorage";
+import { maskSecretText } from "@/features/trip/utils/tripUtils";
+import { cn } from "@/lib/utils";
 
 interface Props {
   tripId: string;
@@ -15,10 +16,10 @@ interface Props {
 
 export default function QuickCapturePanel({ tripId, events }: Props) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedEventId, setSelectedEventId] = useState<string>(events[0]?.id || '');
-  const [note, setNote] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
-  const [mood, setMood] = useState<TemperatureMood>('calm');
+  const [selectedEventId, setSelectedEventId] = useState<string>(events[0]?.id || "");
+  const [note, setNote] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [mood, setMood] = useState<TemperatureMood>("calm");
   const [isPending, setIsPending] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -32,11 +33,11 @@ export default function QuickCapturePanel({ tripId, events }: Props) {
       if (targetEvent && note.trim()) {
         appendTemperatureLog(tripId, {
           eventId: selectedEventId,
-          eventTitle: targetEvent.title || targetEvent.foodName || 'Untitled',
+          eventTitle: targetEvent.title || targetEvent.foodName || "Untitled",
           eventTime: targetEvent.time,
           mood,
-          energy: mood === 'tired' ? 2 : mood === 'joy' ? 5 : 3,
-          revisit: mood === 'again',
+          energy: mood === "tired" ? 2 : mood === "joy" ? 5 : 3,
+          revisit: mood === "again",
           note: note.trim(),
         });
       }
@@ -46,12 +47,12 @@ export default function QuickCapturePanel({ tripId, events }: Props) {
       if (imageUrl) {
         await addPhotoToEvent(selectedEventId, imageUrl);
       }
-      setNote('');
-      setImageUrl('');
-      setMood('calm');
+      setNote("");
+      setImageUrl("");
+      setMood("calm");
       setIsOpen(false);
     } catch (err) {
-      console.error('Failed to capture quick memoir:', err);
+      console.error("Failed to capture quick memoir:", err);
     } finally {
       setIsPending(false);
     }
@@ -70,17 +71,19 @@ export default function QuickCapturePanel({ tripId, events }: Props) {
 
       {/* ─── Backdrop ─── */}
       {isOpen && (
-        <div 
+        <div
           className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm animate-in fade-in duration-300"
           onClick={() => setIsOpen(false)}
         />
       )}
 
       {/* ─── Panel ─── */}
-      <div className={cn(
-        "fixed inset-x-4 bottom-8 md:inset-x-auto md:right-8 md:w-[400px] z-[70] transition-all duration-500 ease-out",
-        isOpen ? "translate-y-0 opacity-100" : "translate-y-20 opacity-0 pointer-events-none"
-      )}>
+      <div
+        className={cn(
+          "fixed inset-x-4 bottom-8 md:inset-x-auto md:right-8 md:w-[400px] z-[70] transition-all duration-500 ease-out",
+          isOpen ? "translate-y-0 opacity-100" : "translate-y-20 opacity-0 pointer-events-none",
+        )}
+      >
         <MagazineCard padding="lg" className="shadow-3xl border-white/10 bg-zinc-900 text-white overflow-hidden">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
@@ -96,14 +99,14 @@ export default function QuickCapturePanel({ tripId, events }: Props) {
             {/* Event Selector */}
             <div className="space-y-2">
               <label className="text-[9px] font-black uppercase tracking-widest text-white/40">Which moment?</label>
-              <select 
+              <select
                 value={selectedEventId}
                 onChange={(e) => setSelectedEventId(e.target.value)}
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-hidden focus:ring-1 focus:ring-primary transition-all"
               >
-                {events.map(event => (
+                {events.map((event) => (
                   <option key={event.id} value={event.id} className="bg-zinc-900">
-                    {event.time} - {event.title || event.foodName}
+                    {event.time} - {maskSecretText(event.title || event.foodName || "", false)}
                   </option>
                 ))}
               </select>
@@ -113,7 +116,7 @@ export default function QuickCapturePanel({ tripId, events }: Props) {
             <div className="space-y-2">
               <label className="text-[9px] font-black uppercase tracking-widest text-white/40">What happened?</label>
               <div className="relative">
-                <textarea 
+                <textarea
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                   placeholder="今の気持ちを一言で..."
@@ -134,7 +137,9 @@ export default function QuickCapturePanel({ tripId, events }: Props) {
                     onClick={() => setMood(value as TemperatureMood)}
                     className={cn(
                       "min-h-11 rounded-2xl border px-2 text-[10px] font-black uppercase tracking-[0.14em] transition-colors",
-                      mood === value ? "border-primary bg-primary text-black" : "border-white/10 bg-white/5 text-white/70"
+                      mood === value
+                        ? "border-primary bg-primary text-black"
+                        : "border-white/10 bg-white/5 text-white/70",
                     )}
                   >
                     <span className="block text-sm">{config.emoji}</span>
@@ -155,14 +160,14 @@ export default function QuickCapturePanel({ tripId, events }: Props) {
                 className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm placeholder:text-white/20 focus:outline-hidden focus:ring-1 focus:ring-primary"
               />
               <div className="flex gap-3">
-                <button 
+                <button
                   type="button"
                   className="flex-1 flex flex-col items-center justify-center gap-2 py-6 rounded-2xl border-2 border-dashed border-white/10 bg-white/5 hover:bg-white/10 hover:border-primary/50 transition-all text-white/60"
                 >
                   <Camera size={24} />
                   <span className="text-[10px] font-bold uppercase tracking-widest">Camera</span>
                 </button>
-                <button 
+                <button
                   type="button"
                   className="flex-1 flex flex-col items-center justify-center gap-2 py-6 rounded-2xl border-2 border-dashed border-white/10 bg-white/5 hover:bg-white/10 hover:border-primary/50 transition-all text-white/60"
                 >
@@ -172,12 +177,18 @@ export default function QuickCapturePanel({ tripId, events }: Props) {
               </div>
             </div>
 
-            <button 
+            <button
               type="submit"
               disabled={isPending || (!note && !imageUrl)}
               className="w-full h-14 rounded-2xl bg-primary text-black font-black uppercase tracking-[0.2em] text-xs flex items-center justify-center gap-3 shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-98 disabled:opacity-30 disabled:scale-100 transition-all"
             >
-              {isPending ? <Loader2 size={18} className="animate-spin" /> : <><Send size={16} /> Record Memory</>}
+              {isPending ? (
+                <Loader2 size={18} className="animate-spin" />
+              ) : (
+                <>
+                  <Send size={16} /> Record Memory
+                </>
+              )}
             </button>
           </form>
         </MagazineCard>
@@ -188,15 +199,15 @@ export default function QuickCapturePanel({ tripId, events }: Props) {
 
 function PlusIcon({ className }: { className?: string }) {
   return (
-    <svg 
-      width="24" 
-      height="24" 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke="currentColor" 
-      strokeWidth="3" 
-      strokeLinecap="round" 
-      strokeLinejoin="round" 
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="3"
+      strokeLinecap="round"
+      strokeLinejoin="round"
       className={className}
     >
       <line x1="12" y1="5" x2="12" y2="19" />

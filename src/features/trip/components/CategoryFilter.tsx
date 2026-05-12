@@ -21,7 +21,7 @@ export default function CategoryFilter() {
           "px-6 py-2 rounded-full text-xs font-bold tracking-widest uppercase transition-all border",
           activeCategory === null
             ? "bg-rose-50 border-rose-200 text-rose-600 shadow-sm"
-            : "bg-white border-border/50 text-stone-400 hover:border-rose-100"
+            : "bg-white border-border/50 text-stone-400 hover:border-rose-100",
         )}
         onClick={() => setActiveCategory(null)}
       >
@@ -34,7 +34,7 @@ export default function CategoryFilter() {
             "px-6 py-2 rounded-full text-xs font-bold tracking-widest uppercase transition-all border whitespace-nowrap",
             activeCategory === cat.id
               ? "bg-rose-50 border-rose-200 text-rose-600 shadow-sm"
-              : "bg-white border-border/50 text-stone-400 hover:border-rose-100"
+              : "bg-white border-border/50 text-stone-400 hover:border-rose-100",
           )}
           onClick={() => setActiveCategory(cat.id === activeCategory ? null : cat.id)}
         >

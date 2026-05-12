@@ -1,12 +1,12 @@
-import { Skeleton } from "@/components/ui/Skeleton";
 import { MapPin } from "lucide-react";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 export default function TripMapSkeleton() {
   return (
     <div className="group relative opacity-60">
       <div className="relative h-80 w-full rounded-[3.5rem] overflow-hidden border border-rose-100 shadow-xl shadow-rose-100/10 bg-secondary/30">
         <Skeleton className="h-full w-full" />
-        
+
         {/* Floating Label Skeleton at Top Left */}
         <div className="absolute top-6 left-6 z-10 flex flex-col gap-1">
           <div className="bg-stone-900/90 backdrop-blur-md px-4 py-1.5 rounded-full border border-stone-800 shadow-xl flex items-center gap-2">

@@ -1,6 +1,6 @@
-import NewTripForm from "@/features/trip/components/client/NewTripForm";
 import { Container } from "@/components/ui/Container";
 import { MagazineCard } from "@/components/ui/MagazineCard";
+import NewTripForm from "@/features/trip/components/client/NewTripForm";
 
 export default function NewTripPage() {
   return (

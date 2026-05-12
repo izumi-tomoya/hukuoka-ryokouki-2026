@@ -6,22 +6,22 @@ export const DAY_CONFIG: Record<number, { title: string; label: string; highligh
 };
 
 export const ESSENTIALS_BY_REGION: Record<string, { title: string; items: string[] }> = {
-  "Fukuoka": {
+  Fukuoka: {
     title: "福岡・博多旅の準備",
     items: [
       "交通系ICカード（nimoca/SUGOCA等）: 福岡の地下鉄やバスは非常に便利です。",
       "地下鉄1日乗車券: 空港や博多・天神を巡るなら必須。",
       "モバイルバッテリー: 食べ歩きや写真撮影で電池を消耗します。",
-      "少し良いハンカチ: 屋台などはタオルが必要な場合も。"
-    ]
+      "少し良いハンカチ: 屋台などはタオルが必要な場合も。",
+    ],
   },
-  "Itoshima": {
+  Itoshima: {
     title: "糸島ドライブの準備",
     items: [
       "運転免許証: レンタカーを借りる場合は忘れずに。",
       "サングラス: 糸島の海岸線は日差しが強いです。",
       "歩きやすい靴: 砂浜を歩くスポットが多いです。",
-      "現金: 小規模なカフェでは現金のみの場所も多いです。"
-    ]
-  }
+      "現金: 小規模なカフェでは現金のみの場所も多いです。",
+    ],
+  },
 };

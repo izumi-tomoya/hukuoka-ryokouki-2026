@@ -1,4 +1,4 @@
-import type { TripEvent, Tip } from "@/features/trip/types/trip";
+import type { Tip, TripEvent } from "@/features/trip/types/trip";
 
 export const day1Events: TripEvent[] = [
   {
@@ -53,14 +53,14 @@ export const day1Events: TripEvent[] = [
         station: "羽田空港第2ターミナル",
         mode: "arrival",
         desc: "到着後、出発ロビーへ。自動手荷物預け機を利用しましょう。",
-      }
-    ]
+      },
+    ],
   },
   {
     time: "07:30",
     type: "transport",
-    title: "空路、福岡へ",
-    desc: "07:30発。雲の上で、これからの二人の時間に想いを馳せて。✈️",
+    title: "空路、福岡へ（羽田空港）",
+    desc: "羽田空港 07:30発。雲の上で、これからの二人の時間に想いを馳せて。✈️",
     tag: "transport",
     tagLabel: "Flight",
     locationUrl: "https://www.google.com/maps/dir/?api=1&origin=羽田空港&destination=福岡空港&travelmode=transit",
@@ -95,8 +95,8 @@ export const day1Events: TripEvent[] = [
         station: "ホテルオークラ福岡",
         mode: "arrival",
         desc: "荷物を預け、身軽になって即座に天神へ向かいます。",
-      }
-    ]
+      },
+    ],
   },
   {
     time: "10:05",
@@ -141,8 +141,8 @@ export const day1Events: TripEvent[] = [
         time: "10:55",
         station: "和牛めんたい 神楽",
         mode: "arrival",
-      }
-    ]
+      },
+    ],
   },
   {
     time: "11:00",
@@ -177,8 +177,8 @@ export const day1Events: TripEvent[] = [
         time: "14:00",
         station: "九州国立博物館",
         mode: "arrival",
-      }
-    ]
+      },
+    ],
   },
   {
     time: "15:00",
@@ -189,7 +189,8 @@ export const day1Events: TripEvent[] = [
     tag: "hotel",
     tagLabel: "Reserved",
     isConfirmed: true,
-    locationUrl: "https://www.google.com/maps/dir/?api=1&origin=太宰府駅&destination=ホテルオークラ福岡&travelmode=transit",
+    locationUrl:
+      "https://www.google.com/maps/dir/?api=1&origin=太宰府駅&destination=ホテルオークラ福岡&travelmode=transit",
     transitSteps: [
       {
         time: "14:30",
@@ -222,8 +223,8 @@ export const day1Events: TripEvent[] = [
         time: "15:05",
         station: "中洲川端",
         mode: "arrival",
-      }
-    ]
+      },
+    ],
   },
   {
     time: "18:30",
@@ -248,8 +249,8 @@ export const day1Events: TripEvent[] = [
         time: "18:27",
         station: "はじめの一歩",
         mode: "arrival",
-      }
-    ]
+      },
+    ],
   },
   {
     time: "20:30",
@@ -259,7 +260,8 @@ export const day1Events: TripEvent[] = [
     tag: "night",
     tagLabel: "Night View",
     isYatai: true,
-    locationUrl: "https://www.google.com/maps/dir/?api=1&origin=キャナルシティ博多&destination=中洲屋台街&travelmode=walking",
+    locationUrl:
+      "https://www.google.com/maps/dir/?api=1&origin=キャナルシティ博多&destination=中洲屋台街&travelmode=walking",
     transitSteps: [
       {
         time: "20:30",
@@ -271,7 +273,7 @@ export const day1Events: TripEvent[] = [
         time: "20:35",
         station: "中洲屋台街",
         mode: "arrival",
-      }
+      },
     ],
     yataiStops: [
       { time: "20:45", stop: "中洲エリア", desc: "雰囲気を楽しむ。" },
@@ -312,8 +314,8 @@ export const day2Events: TripEvent[] = [
         time: "11:55",
         station: "水たき 長野",
         mode: "arrival",
-      }
-    ]
+      },
+    ],
   },
   {
     time: "14:00",
@@ -347,8 +349,8 @@ export const day2Events: TripEvent[] = [
         time: "13:50",
         station: "大濠公園",
         mode: "arrival",
-      }
-    ]
+      },
+    ],
   },
   {
     time: "15:30",
@@ -380,8 +382,8 @@ export const day2Events: TripEvent[] = [
         time: "15:17",
         station: "CLOUDS",
         mode: "arrival",
-      }
-    ]
+      },
+    ],
   },
   {
     time: "18:45",
@@ -405,8 +407,8 @@ export const day2Events: TripEvent[] = [
         time: "18:30",
         station: "牧のうどん 空港店",
         mode: "arrival",
-      }
-    ]
+      },
+    ],
   },
   {
     time: "20:45",
@@ -427,8 +429,8 @@ export const day2Events: TripEvent[] = [
         time: "20:05",
         station: "福岡空港ターミナル",
         mode: "arrival",
-      }
-    ]
+      },
+    ],
   },
 ];
 
@@ -452,21 +454,21 @@ export const packingList = [
   { name: "クレジットカード", category: "Essential" },
   { name: "交通系ICカード（nimoca/SUGOCA等）", category: "Essential" },
   { name: "健康保険証", category: "Essential" },
-  
+
   // 衣類
   { name: "着替え（2日分）", category: "Clothing" },
   { name: "下着・靴下", category: "Clothing" },
   { name: "パジャマ（ホテルにあるが、こだわりがあれば）", category: "Clothing" },
   { name: "歩きやすい靴", category: "Clothing" },
   { name: "羽織もの（朝晩の冷え込み対策）", category: "Clothing" },
-  
+
   // ガジェット
   { name: "モバイルバッテリー（必須！）", category: "Gadget" },
   { name: "充電ケーブル（スマホ・ウォッチ用）", category: "Gadget" },
   { name: "ACアダプター", category: "Gadget" },
   { name: "カメラ・SDカード", category: "Gadget" },
   { name: "ワイヤレスイヤホン", category: "Gadget" },
-  
+
   // その他
   { name: "常備薬（胃薬・鎮痛剤など）", category: "Other" },
   { name: "折りたたみ傘", category: "Other" },

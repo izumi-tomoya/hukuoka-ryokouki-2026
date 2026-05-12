@@ -5,19 +5,19 @@
 export async function getDetailedWeather(lat: number, lng: number) {
   try {
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current_weather=true&hourly=temperature_2m,relativehumidity_2m,precipitation_probability,uv_index&timezone=Asia%2FTokyo`;
-    
+
     const res = await fetch(url);
     if (!res.ok) return null;
-    
+
     const data = await res.json();
-    
+
     // WMO Weather interpretation codes (WW) を簡易変換
     const getWeatherIcon = (code: number) => {
-      if (code <= 3) return '☀️';
-      if (code <= 48) return '☁️';
-      if (code <= 67) return '🌧️';
-      if (code <= 77) return '❄️';
-      return '⛈️';
+      if (code <= 3) return "☀️";
+      if (code <= 48) return "☁️";
+      if (code <= 67) return "🌧️";
+      if (code <= 77) return "❄️";
+      return "⛈️";
     };
 
     return {

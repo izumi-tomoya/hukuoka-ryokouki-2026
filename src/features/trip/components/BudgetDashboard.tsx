@@ -1,7 +1,7 @@
-import { BudgetStats } from "../utils/tripUtils";
+import { PieChart, TrendingDown, TrendingUp, Wallet } from "lucide-react";
 import { MagazineCard } from "@/components/ui/MagazineCard";
 import { cn } from "@/lib/utils";
-import { PieChart, TrendingDown, TrendingUp, Wallet } from "lucide-react";
+import type { BudgetStats } from "../utils/tripUtils";
 
 interface Props {
   stats: BudgetStats;
@@ -19,30 +19,45 @@ export default function BudgetDashboard({ stats }: Props) {
           <Wallet size={22} />
         </div>
         <div className="min-w-0">
-          <h2 className="break-words text-2xl font-black text-foreground leading-none tracking-tight">Financial Overview</h2>
-          <p className="text-[10px] font-black uppercase tracking-[0.14em] sm:tracking-[0.2em] text-muted-foreground mt-1">Trip Budget Tracking</p>
+          <h2 className="break-words text-2xl font-black text-foreground leading-none tracking-tight">
+            Financial Overview
+          </h2>
+          <p className="text-[10px] font-black uppercase tracking-[0.14em] sm:tracking-[0.2em] text-muted-foreground mt-1">
+            Trip Budget Tracking
+          </p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* ─── Total Summary ─── */}
-        <MagazineCard padding="lg" className="min-w-0 lg:col-span-1 flex flex-col justify-between relative overflow-hidden group">
-          <div className={cn(
-            "absolute top-0 right-0 w-32 h-32 blur-[80px] -translate-y-1/2 translate-x-1/2 opacity-20 transition-colors duration-1000",
-            isOverBudget ? "bg-rose-500" : "bg-emerald-500"
-          )} />
-          
+        <MagazineCard
+          padding="lg"
+          className="min-w-0 lg:col-span-1 flex flex-col justify-between relative overflow-hidden group"
+        >
+          <div
+            className={cn(
+              "absolute top-0 right-0 w-32 h-32 blur-[80px] -translate-y-1/2 translate-x-1/2 opacity-20 transition-colors duration-1000",
+              isOverBudget ? "bg-rose-500" : "bg-emerald-500",
+            )}
+          />
+
           <div>
-            <span className="text-[10px] font-black uppercase tracking-[0.14em] sm:tracking-widest text-muted-foreground">Total Actual Expense</span>
+            <span className="text-[10px] font-black uppercase tracking-[0.14em] sm:tracking-widest text-muted-foreground">
+              Total Actual Expense
+            </span>
             <div className="mt-2 flex items-baseline gap-2">
-              <span className="break-words text-4xl sm:text-5xl font-playfair font-black text-foreground">¥{totalActual.toLocaleString()}</span>
+              <span className="break-words text-4xl sm:text-5xl font-playfair font-black text-foreground">
+                ¥{totalActual.toLocaleString()}
+              </span>
             </div>
-            <div className={cn(
-              "mt-4 inline-flex max-w-full items-center gap-2 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.12em] sm:tracking-widest",
-              isOverBudget ? "bg-rose-500/10 text-rose-500" : "bg-emerald-500/10 text-emerald-500"
-            )}>
+            <div
+              className={cn(
+                "mt-4 inline-flex max-w-full items-center gap-2 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.12em] sm:tracking-widest",
+                isOverBudget ? "bg-rose-500/10 text-rose-500" : "bg-emerald-500/10 text-emerald-500",
+              )}
+            >
               {isOverBudget ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
-              {isOverBudget ? 'Over Budget' : 'Under Budget'} by ¥{difference.toLocaleString()}
+              {isOverBudget ? "Over Budget" : "Under Budget"} by ¥{difference.toLocaleString()}
             </div>
           </div>
 
@@ -52,12 +67,12 @@ export default function BudgetDashboard({ stats }: Props) {
               <span>¥{totalPlanned.toLocaleString()}</span>
             </div>
             <div className="w-full h-3 bg-secondary rounded-full overflow-hidden border border-border">
-              <div 
+              <div
                 className={cn(
                   "h-full transition-all duration-1000 ease-out",
-                  isOverBudget ? "bg-rose-500" : "bg-emerald-500"
-                )} 
-                style={{ width: `${Math.min((totalActual / totalPlanned) * 100, 100)}%` }} 
+                  isOverBudget ? "bg-rose-500" : "bg-emerald-500",
+                )}
+                style={{ width: `${Math.min((totalActual / totalPlanned) * 100, 100)}%` }}
               />
             </div>
           </div>
@@ -81,12 +96,12 @@ export default function BudgetDashboard({ stats }: Props) {
                     <span className="text-muted-foreground">¥{cat.actual.toLocaleString()}</span>
                   </div>
                   <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
-                    <div 
+                    <div
                       className="h-full transition-all duration-700 group-hover:opacity-80"
-                      style={{ 
+                      style={{
                         width: `${(cat.actual / totalActual) * 100}%`,
-                        backgroundColor: cat.color
-                      }} 
+                        backgroundColor: cat.color,
+                      }}
                     />
                   </div>
                 </div>

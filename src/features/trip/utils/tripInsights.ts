@@ -1,4 +1,5 @@
 import type { ExpensePayer, TemperatureLogEntry, TemperatureMood } from "@/features/trip/utils/clientTripStorage";
+import { isSecretContent, SECRET_SPOTS } from "@/features/trip/utils/tripUtils";
 
 type TransitLikeStep = {
   time: string;
@@ -225,12 +226,10 @@ function buildRecoveryPlans(
   events: InsightEvent[],
   startIndex: number,
   conflictEventId: string,
-  minutesNeeded: number
+  minutesNeeded: number,
 ) {
   const plans: DelayRecoveryPlan[] = [];
-  const candidates = events
-    .slice(startIndex)
-    .filter((event) => event.id !== conflictEventId && !event.isConfirmed);
+  const candidates = events.slice(startIndex).filter((event) => event.id !== conflictEventId && !event.isConfirmed);
 
   const chosen: InsightEvent[] = [];
   let recovered = 0;
@@ -253,17 +252,19 @@ function buildRecoveryPlans(
   return plans;
 }
 
-export function buildPackingRecommendations(
-  events: InsightEvent[],
-  weatherData: WeatherLike,
-  existingNames: string[]
-) {
+export function buildPackingRecommendations(events: InsightEvent[], weatherData: WeatherLike, existingNames: string[]) {
   const suggestions: PackingSuggestion[] = [];
   const lowerNames = new Set(existingNames.map((name) => name.trim().toLowerCase()));
   const transportCount = events.filter((event) => event.type === "transport").length;
-  const firstEventMinutes = events.map((event) => parseMinutes(event.time)).filter((value): value is number => value !== null);
+  const firstEventMinutes = events
+    .map((event) => parseMinutes(event.time))
+    .filter((value): value is number => value !== null);
   const earliestEvent = firstEventMinutes.length > 0 ? Math.min(...firstEventMinutes) : null;
-  const hotelCount = events.filter((event) => event.type === "hotel").length;
+  const hotelCount = events.filter((event) => {
+    if (event.type !== "hotel") return false;
+    // 秘密のホテルの場合は持ち物レコメンドの判定に使わない（存在を推測させないため）
+    return !isSecretContent(event.title) && !isSecretContent(event.formalName);
+  }).length;
   const todayForecast = weatherData?.forecast?.[0];
   const currentTemp = weatherData?.current?.temp;
 
@@ -340,47 +341,72 @@ const googleMapsUrl = (name: string, location: string) =>
   `https://www.google.com/maps/search/${encodeURIComponent(`${name} ${location}`)}`;
 
 export function buildEmergencySnapshot(
-  trip: { location: string }, 
-  events: InsightEvent[], 
+  trip: { location: string },
+  events: InsightEvent[],
   tips: InsightTip[],
-  isAdmin: boolean = false
+  isAdmin: boolean = false,
 ): EmergencySnapshot {
-  const mask = (val: string, secret: boolean) => (!isAdmin && secret ? "当日までのお楽しみ" : val);
-  const maskLabel = (val: string, secret: boolean) => (!isAdmin && secret ? "🎁 Surprise Spot" : val);
+  const isSecretContent = (val: string | undefined | null) => {
+    if (!val) return false;
+    const lower = val.toLowerCase();
+    return (
+      SECRET_SPOTS.some((spot) => lower.includes(spot.toLowerCase())) ||
+      lower.includes("secret spot") ||
+      lower.includes("サプライズ")
+    );
+  };
+
+  const mask = (val: string, secret: boolean) => {
+    if (isAdmin) return val;
+    return secret || isSecretContent(val) ? "当日までのお楽しみ" : val;
+  };
+  const maskLabel = (val: string, secret: boolean) => {
+    if (isAdmin) return val;
+    return secret || isSecretContent(val) ? "🎁 Surprise Spot" : val;
+  };
 
   const hotels = events
     .filter((event) => event.type === "hotel")
-    .map((event) => ({
-      label: maskLabel(event.title, event.tag === "surprise"),
-      href: !isAdmin && event.tag === "surprise" 
-        ? undefined 
-        : (event.locationUrl || googleMapsUrl(event.formalName || event.title, trip.location)),
-      description: mask(event.desc || `${event.time} 予定`, event.tag === "surprise"),
-      isSecret: event.tag === "surprise",
-    }));
+    .map((event) => {
+      const isSurprise = event.tag === "surprise" || isSecretContent(event.title) || isSecretContent(event.formalName);
+      return {
+        label: maskLabel(event.title, isSurprise),
+        href:
+          !isAdmin && isSurprise
+            ? undefined
+            : event.locationUrl || googleMapsUrl(event.formalName || event.title, trip.location),
+        description: mask(event.desc || `${event.time} 予定`, isSurprise),
+        isSecret: isSurprise,
+      };
+    });
 
   const flights = events
     .filter((event) => /空港|flight|フライト|✈|🛬/i.test(`${event.title} ${event.desc || ""}`))
-    .map((event) => ({
-      label: maskLabel(event.title, event.tag === "surprise"),
-      href: !isAdmin && event.tag === "surprise" 
-        ? undefined 
-        : (event.locationUrl || googleMapsUrl(event.title, trip.location)),
-      description: mask(`${event.time} / ${event.desc || trip.location}`, event.tag === "surprise"),
-      isSecret: event.tag === "surprise",
-    }));
+    .map((event) => {
+      const isSurprise = event.tag === "surprise" || isSecretContent(event.title);
+      return {
+        label: maskLabel(event.title, isSurprise),
+        href: !isAdmin && isSurprise ? undefined : event.locationUrl || googleMapsUrl(event.title, trip.location),
+        description: mask(`${event.time} / ${event.desc || trip.location}`, isSurprise),
+        isSecret: isSurprise,
+      };
+    });
 
   const reservations = [
     ...events
       .filter((event) => event.isConfirmed)
-      .map((event) => ({
-        label: maskLabel(event.title, event.tag === "surprise"),
-        href: !isAdmin && event.tag === "surprise" 
-          ? undefined 
-          : (event.locationUrl || googleMapsUrl(event.formalName || event.title, trip.location)),
-        description: mask(`${event.time} / ${event.desc || "予約済み"}`, event.tag === "surprise"),
-        isSecret: event.tag === "surprise",
-      })),
+      .map((event) => {
+        const isSurprise = event.tag === "surprise" || isSecretContent(event.title) || isSecretContent(event.formalName);
+        return {
+          label: maskLabel(event.title, isSurprise),
+          href:
+            !isAdmin && isSurprise
+              ? undefined
+              : event.locationUrl || googleMapsUrl(event.formalName || event.title, trip.location),
+          description: mask(`${event.time} / ${event.desc || "予約済み"}`, isSurprise),
+          isSecret: isSurprise,
+        };
+      }),
     ...tips
       .filter((tip) => tip.category === "Reservation" || tip.isConfirmed || tip.imageUrl || tip.venue)
       .map((tip) => ({
@@ -405,17 +431,16 @@ export function buildEmergencySnapshot(
         ...tips.map((tip) => `${tip.title} ${tip.body}`),
       ]
         .flatMap((text) => text.match(PHONE_REGEX) || [])
-        .map((phone) => phone.trim())
-    )
-  ).filter(Boolean).slice(0, 4);
+        .map((phone) => phone.trim()),
+    ),
+  )
+    .filter(Boolean)
+    .slice(0, 4);
 
   return { hotels, flights, reservations, warnings, contacts };
 }
 
-export function buildEmergencyMemo(
-  trip: { title: string; location: string },
-  snapshot: EmergencySnapshot
-) {
+export function buildEmergencyMemo(trip: { title: string; location: string }, snapshot: EmergencySnapshot) {
   return [
     trip.title,
     `場所: ${trip.location}`,
@@ -453,7 +478,7 @@ export function computeSettlement(events: InsightEvent[], payers: Record<string,
       acc.total += amount;
       return acc;
     },
-    { total: 0, youPaid: 0, partnerPaid: 0 }
+    { total: 0, youPaid: 0, partnerPaid: 0 },
   );
 
   const target = Math.ceil(totals.total / 2);
@@ -483,7 +508,7 @@ export function summarizeTemperature(logs: TemperatureLogEntry[]) {
       acc[log.mood] += 1;
       return acc;
     },
-    { joy: 0, calm: 0, tired: 0, surprised: 0, again: 0 }
+    { joy: 0, calm: 0, tired: 0, surprised: 0, again: 0 },
   );
 
   const topMood = (Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] || "joy") as TemperatureMood;
@@ -501,7 +526,7 @@ export function buildFallbackAlternatives(
   trigger: "rain" | "crowd" | "tired" | "budget",
   events: InsightEvent[],
   tips: InsightTip[],
-  delayMinutes = 0
+  delayMinutes = 0,
 ) {
   const futureEvents = events.slice(0, 5);
   const hiddenTips = tips.filter((tip) => ["Hidden Gem", "General", "Gourmet"].includes(tip.category || ""));

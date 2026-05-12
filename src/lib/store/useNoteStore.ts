@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface NoteState {
   notes: Record<string, string>; // eventId -> note text
@@ -15,10 +15,10 @@ export const useNoteStore = create<NoteState>()(
         set((state) => ({
           notes: { ...state.notes, [eventId]: text },
         })),
-      getNote: (eventId) => get().notes[eventId] || '',
+      getNote: (eventId) => get().notes[eventId] || "",
     }),
     {
-      name: 'trip-notes',
-    }
-  )
+      name: "trip-notes",
+    },
+  ),
 );

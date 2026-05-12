@@ -40,7 +40,14 @@ describe("prioritizeTravelAiModelsForFastResponse()", () => {
         "gemma3:12b",
         "gemini-2.5-flash",
         "gemma3:4b",
-      ])
-    ).toEqual(["gemini-3.1-flash-lite", "gemini-2.5-flash-lite", "gemini-2.5-flash", "gemma3:4b", "gemma3:12b", "gemma-4-31b-it"]);
+      ]),
+    ).toEqual([
+      "gemini-3.1-flash-lite",
+      "gemini-2.5-flash-lite",
+      "gemini-2.5-flash",
+      "gemma3:4b",
+      "gemma3:12b",
+      "gemma-4-31b-it",
+    ]);
   });
 });

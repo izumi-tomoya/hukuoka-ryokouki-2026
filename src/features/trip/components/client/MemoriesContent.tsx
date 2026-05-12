@@ -1,22 +1,23 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { GourmetAward } from '@prisma/client';
-import { Container } from '@/components/ui/Container';
-import { MagazineCard } from '@/components/ui/MagazineCard';
-import PhotoUploadButton from '@/features/trip/components/client/PhotoUploadButton';
-import PhotoGallery from '@/features/trip/components/PhotoGallery';
-import GourmetAwardCard from '@/features/trip/components/client/GourmetAward';
-import BudgetDashboard from '@/features/trip/components/BudgetDashboard';
-import AddAwardModal from './AddAwardModal';
-import MemoryReel, { type MemoryReelPhoto } from './MemoryReel';
-import TravelReportPanel from './TravelReportPanel';
-import { Camera, Sparkles, Trophy, Play, Plus, Heart, Film, Images } from 'lucide-react';
-import { BudgetStats } from '@/features/trip/utils/tripUtils';
-import type { TripEvent } from '@/features/trip/types/trip';
-import SettlementPanel from './SettlementPanel';
-import TemperatureTimeline from './TemperatureTimeline';
-import type { InsightEvent } from '@/features/trip/utils/tripInsights';
+import type { GourmetAward } from "@prisma/client";
+import { Camera, Film, Heart, Images, Play, Plus, Sparkles, Trophy } from "lucide-react";
+import { useState } from "react";
+import { Container } from "@/components/ui/Container";
+import { MagazineCard } from "@/components/ui/MagazineCard";
+import BudgetDashboard from "@/features/trip/components/BudgetDashboard";
+import GourmetAwardCard from "@/features/trip/components/client/GourmetAward";
+import PhotoUploadButton from "@/features/trip/components/client/PhotoUploadButton";
+import PhotoGallery from "@/features/trip/components/PhotoGallery";
+import type { TripEvent } from "@/features/trip/types/trip";
+import type { InsightEvent } from "@/features/trip/utils/tripInsights";
+import { maskSecretText } from "@/features/trip/utils/tripUtils";
+import type { BudgetStats } from "@/features/trip/utils/tripUtils";
+import AddAwardModal from "./AddAwardModal";
+import MemoryReel, { type MemoryReelPhoto } from "./MemoryReel";
+import SettlementPanel from "./SettlementPanel";
+import TemperatureTimeline from "./TemperatureTimeline";
+import TravelReportPanel from "./TravelReportPanel";
 
 interface Props {
   tripId: string;
@@ -50,7 +51,10 @@ export default function MemoriesContent({
         <BudgetDashboard stats={budgetStats} />
 
         {albumPhotos.length > 0 && (
-          <MagazineCard padding="lg" className="overflow-hidden border-amber-500/20 bg-[radial-gradient(circle_at_top_left,rgba(251,191,36,0.18),transparent_32%),linear-gradient(135deg,rgba(24,24,27,1),rgba(39,39,42,0.92))] text-white">
+          <MagazineCard
+            padding="lg"
+            className="overflow-hidden border-amber-500/20 bg-[radial-gradient(circle_at_top_left,rgba(251,191,36,0.18),transparent_32%),linear-gradient(135deg,rgba(24,24,27,1),rgba(39,39,42,0.92))] text-white"
+          >
             <div className="grid gap-8 lg:grid-cols-[minmax(0,1.15fr)_340px] lg:items-center">
               <div>
                 <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.22em] text-amber-200">
@@ -91,16 +95,22 @@ export default function MemoriesContent({
                 {albumPhotos.slice(0, 4).map((photo, index) => (
                   <div
                     key={`${photo.url}-${index}`}
-                    className={`group relative overflow-hidden rounded-[1.75rem] border border-white/10 ${index === 0 ? 'col-span-2 aspect-[16/10]' : 'aspect-[4/5]'}`}
+                    className={`group relative overflow-hidden rounded-[1.75rem] border border-white/10 ${index === 0 ? "col-span-2 aspect-[16/10]" : "aspect-[4/5]"}`}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={photo.url} alt={photo.title || 'Memory preview'} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                    <img
+                      src={photo.url}
+                      alt={photo.title || "Memory preview"}
+                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
                     <div className="absolute inset-x-0 bottom-0 p-3">
                       <p className="truncate text-[9px] font-black uppercase tracking-[0.18em] text-amber-200">
-                        {photo.dayLabel || photo.dateLabel || 'Moment'}
+                        {photo.dayLabel || photo.dateLabel || "Moment"}
                       </p>
-                      <p className="mt-1 line-clamp-2 text-sm font-semibold text-white">{photo.title || photo.location || 'Travel Memory'}</p>
+                      <p className="mt-1 line-clamp-2 text-sm font-semibold text-white">
+                        {photo.title || photo.location || "Travel Memory"}
+                      </p>
                     </div>
                   </div>
                 ))}
@@ -137,7 +147,9 @@ export default function MemoriesContent({
             </div>
             <div className="min-w-0">
               <h2 className="text-2xl font-black text-foreground leading-none tracking-tight">Gourmet Awards</h2>
-              <p className="text-[10px] font-black uppercase tracking-[0.14em] sm:tracking-[0.2em] text-muted-foreground mt-1 leading-relaxed">Best Culinary Experiences</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.14em] sm:tracking-[0.2em] text-muted-foreground mt-1 leading-relaxed">
+                Best Culinary Experiences
+              </p>
             </div>
           </div>
           {isAdmin && (
@@ -159,7 +171,11 @@ export default function MemoriesContent({
         ) : (
           <div className="py-20 text-center border-2 border-dashed border-border rounded-[3rem] bg-secondary/10">
             <Heart size={40} className="mx-auto text-muted-foreground/30 mb-4" />
-            <p className="text-muted-foreground font-medium italic">まだアワードが登録されていません。<br />旅の終わりに、最高のお店を選びましょう。</p>
+            <p className="text-muted-foreground font-medium italic">
+              まだアワードが登録されていません。
+              <br />
+              旅の終わりに、最高のお店を選びましょう。
+            </p>
           </div>
         )}
       </section>
@@ -172,7 +188,9 @@ export default function MemoriesContent({
             </div>
             <div className="min-w-0">
               <h2 className="text-2xl font-black text-foreground leading-none tracking-tight">Photo Collection</h2>
-              <p className="text-[10px] font-black uppercase tracking-[0.14em] sm:tracking-[0.2em] text-muted-foreground mt-1">Captured Moments</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.14em] sm:tracking-[0.2em] text-muted-foreground mt-1">
+                Captured Moments
+              </p>
             </div>
           </div>
 
@@ -192,15 +210,23 @@ export default function MemoriesContent({
         <div className="space-y-14 md:space-y-24">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {allEvents.map((event) => (
-              <MagazineCard key={event.id} padding="sm" className="flex flex-col justify-between border-primary/10 hover:border-primary/30 transition-all group">
+              <MagazineCard
+                key={event.id}
+                padding="sm"
+                className="flex flex-col justify-between border-primary/10 hover:border-primary/30 transition-all group"
+              >
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-primary/60">{event.time}</span>
+                    <span className="text-[9px] font-black uppercase tracking-widest text-primary/60">
+                      {event.time}
+                    </span>
                     <Sparkles size={12} className="text-primary/20 group-hover:text-primary/40 transition-colors" />
                   </div>
-                  <h3 className="font-bold text-foreground mb-6 line-clamp-1">{event.title || event.foodName}</h3>
+                  <h3 className="font-bold text-foreground mb-6 line-clamp-1">
+                    {maskSecretText(event.title || event.foodName || "", isAdmin)}
+                  </h3>
                 </div>
-                <PhotoUploadButton eventId={event.id || ''} />
+                <PhotoUploadButton eventId={event.id || ""} />
               </MagazineCard>
             ))}
           </div>
@@ -210,9 +236,13 @@ export default function MemoriesContent({
               {eventsWithPhotos.map((event) => (
                 <div key={event.id} className="animate-in fade-in slide-in-from-bottom-4 duration-1000">
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:gap-4 mb-6 md:mb-8">
-                    <h3 className="break-words font-playfair text-2xl font-black text-foreground italic">{event.title || event.foodName}</h3>
+                    <h3 className="break-words font-playfair text-2xl font-black text-foreground italic">
+                      {maskSecretText(event.title || event.foodName || "", isAdmin)}
+                    </h3>
                     <div className="h-px grow bg-border/50" />
-                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{event.time}</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                      {event.time}
+                    </span>
                   </div>
                   <PhotoGallery photos={event.photos || []} eventId={event.id} />
                 </div>

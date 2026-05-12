@@ -1,11 +1,11 @@
 import { notFound } from "next/navigation";
+import { Container } from "@/components/ui/Container";
+import { getTripBySlug } from "@/features/trip/api/tripActions";
+import AssistDashboard from "@/features/trip/components/client/AssistDashboard";
+import TripLayout from "@/features/trip/components/TripLayout";
+import { ensureDate } from "@/features/trip/utils/dateUtils";
 import { auth } from "@/lib/auth";
 import { getWeatherData } from "@/lib/weather";
-import { getTripBySlug } from "@/features/trip/api/tripActions";
-import TripLayout from "@/features/trip/components/TripLayout";
-import AssistDashboard from "@/features/trip/components/client/AssistDashboard";
-import { ensureDate } from "@/features/trip/utils/dateUtils";
-import { Container } from "@/components/ui/Container";
 
 export default async function TripAssistPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -69,7 +69,7 @@ export default async function TripAssistPage({ params }: { params: Promise<{ slu
           exit: step.exit || undefined,
         })),
       };
-    })
+    }),
   );
 
   return (
@@ -103,7 +103,11 @@ export default async function TripAssistPage({ params }: { params: Promise<{ slu
             category: tip.category || undefined,
           }))}
           isAdmin={isAdmin}
-          weatherLabel={weather ? `${trip.location}: ${weather.current.condition} ${weather.current.temp}°C / ${weather.themeStatus}` : null}
+          weatherLabel={
+            weather
+              ? `${trip.location}: ${weather.current.condition} ${weather.current.temp}°C / ${weather.themeStatus}`
+              : null
+          }
           weatherData={weather}
         />
       </Container>

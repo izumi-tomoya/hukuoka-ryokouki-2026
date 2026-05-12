@@ -19,7 +19,7 @@ export function MagazineCard({ children, className, padding = "md" }: Props) {
       className={cn(
         "bg-card text-card-foreground border border-border shadow-sm rounded-3xl md:rounded-article transition-all duration-300 hover:shadow-xl hover:shadow-primary/5 dark:hover:shadow-primary/10",
         paddingMap[padding],
-        className
+        className,
       )}
     >
       {children}

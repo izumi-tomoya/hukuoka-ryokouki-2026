@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface EventUserState {
   notes: Record<string, string>; // eventId -> note text
@@ -23,12 +23,12 @@ export const useEventUserStore = create<EventUserState>()(
         set((state) => ({
           budgets: { ...state.budgets, [eventId]: amount },
         })),
-      getNote: (eventId) => get().notes[eventId] || '',
-      getBudget: (eventId, defaultAmount = 0) => 
+      getNote: (eventId) => get().notes[eventId] || "",
+      getBudget: (eventId, defaultAmount = 0) =>
         get().budgets[eventId] !== undefined ? get().budgets[eventId] : defaultAmount,
     }),
     {
-      name: 'trip-event-user-data',
-    }
-  )
+      name: "trip-event-user-data",
+    },
+  ),
 );

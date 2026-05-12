@@ -11,9 +11,9 @@ export async function getStationCoordinates(stationName: string) {
 
     const data = await res.json();
     const station = data.response.station?.[0];
-    
+
     if (!station) return null;
-    
+
     return {
       lat: parseFloat(station.y),
       lng: parseFloat(station.x),

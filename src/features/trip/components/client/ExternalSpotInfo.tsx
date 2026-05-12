@@ -1,27 +1,27 @@
-'use client';
+"use client";
 
-import { useEffect, useMemo, useState } from 'react';
 import {
-  ExternalLink,
-  Clock,
-  MapPin,
-  JapaneseYen,
-  Wifi,
-  CreditCard,
   Accessibility,
+  Clock,
+  CreditCard,
   Dog,
-  Ticket,
-  Navigation,
-  Store,
-  ParkingSquare,
   DoorOpen,
-  UtensilsCrossed,
+  ExternalLink,
+  JapaneseYen,
+  MapPin,
   Moon,
+  Navigation,
+  ParkingSquare,
+  Store,
+  Ticket,
   Train,
-} from 'lucide-react';
-import { MagazineCard } from '@/components/ui/MagazineCard';
-import Image from 'next/image';
-import { cn } from '@/lib/utils';
+  UtensilsCrossed,
+  Wifi,
+} from "lucide-react";
+import Image from "next/image";
+import { useEffect, useMemo, useState } from "react";
+import { MagazineCard } from "@/components/ui/MagazineCard";
+import { cn } from "@/lib/utils";
 
 interface NearbySpot {
   name: string;
@@ -32,7 +32,7 @@ interface NearbySpot {
 }
 
 interface SpotInfo {
-  source: 'hotpepper' | 'yahoo' | 'memoir';
+  source: "hotpepper" | "yahoo" | "memoir";
   name: string;
   address: string;
   description: string;
@@ -60,10 +60,10 @@ interface ExternalSpotInfoProps {
   compact?: boolean;
 }
 
-const sourceLabel: Record<SpotInfo['source'], string> = {
-  hotpepper: 'HotPepper Gourmet',
-  yahoo: 'Yahoo Local',
-  memoir: 'Memoir Note',
+const sourceLabel: Record<SpotInfo["source"], string> = {
+  hotpepper: "HotPepper Gourmet",
+  yahoo: "Yahoo Local",
+  memoir: "Memoir Note",
 };
 
 export function ExternalSpotInfo({
@@ -84,12 +84,12 @@ export function ExternalSpotInfo({
       setLoading(true);
       try {
         const params = new URLSearchParams({ name });
-        if (typeof lat === 'number') params.set('lat', String(lat));
-        if (typeof lng === 'number') params.set('lng', String(lng));
-        if (category) params.set('category', category);
-        if (address) params.set('address', address);
-        if (description) params.set('description', description);
-        if (locationUrl) params.set('locationUrl', locationUrl);
+        if (typeof lat === "number") params.set("lat", String(lat));
+        if (typeof lng === "number") params.set("lng", String(lng));
+        if (category) params.set("category", category);
+        if (address) params.set("address", address);
+        if (description) params.set("description", description);
+        if (locationUrl) params.set("locationUrl", locationUrl);
 
         const res = await fetch(`/api/external/spot?${params.toString()}`);
         if (!res.ok) return;
@@ -107,17 +107,17 @@ export function ExternalSpotInfo({
   const fallback = useMemo<SpotInfo | null>(() => {
     if (!name) return null;
     return {
-      source: 'memoir',
+      source: "memoir",
       name,
-      address: address || '',
-      description: description || '',
-      image: '',
-      open: '',
-      url: locationUrl || '',
-      budget: '',
-      category: category || '',
-      tags: [category || ''].filter(Boolean),
-      couponUrl: '',
+      address: address || "",
+      description: description || "",
+      image: "",
+      open: "",
+      url: locationUrl || "",
+      budget: "",
+      category: category || "",
+      tags: [category || ""].filter(Boolean),
+      couponUrl: "",
       nearby: [],
     };
   }, [address, category, description, locationUrl, name]);
@@ -125,7 +125,7 @@ export function ExternalSpotInfo({
   const display = info || fallback;
 
   if (loading && !display) {
-    return <div className={cn('w-full animate-pulse rounded-2xl bg-secondary/50', compact ? 'h-32' : 'h-24')} />;
+    return <div className={cn("w-full animate-pulse rounded-2xl bg-secondary/50", compact ? "h-32" : "h-24")} />;
   }
 
   if (!display) return null;
@@ -135,8 +135,8 @@ export function ExternalSpotInfo({
 
   return (
     <MagazineCard
-      padding={compact ? 'sm' : 'sm'}
-      className={cn('overflow-hidden border-rose-500/10 bg-rose-500/5', compact && 'rounded-3xl')}
+      padding={compact ? "sm" : "sm"}
+      className={cn("overflow-hidden border-rose-500/10 bg-rose-500/5", compact && "rounded-3xl")}
     >
       <div className="flex flex-col gap-4">
         {display.image && !compact && (
@@ -153,7 +153,7 @@ export function ExternalSpotInfo({
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-rose-400">{source}</div>
-            <h3 className={cn('font-bold text-foreground', compact ? 'text-sm' : 'text-base')}>{display.name}</h3>
+            <h3 className={cn("font-bold text-foreground", compact ? "text-sm" : "text-base")}>{display.name}</h3>
             {!display.image && display.description && (
               <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">{display.description}</p>
             )}
@@ -190,34 +190,52 @@ export function ExternalSpotInfo({
 
         {(tags.length > 0 || display.category || display.lunch || display.midnight) && (
           <div className="flex flex-wrap gap-2 pt-1">
-            {(display.category && !tags.includes(display.category) ? [display.category, ...tags] : tags).slice(0, compact ? 3 : 5).map((tag) => (
-              <div key={tag} className="rounded-full bg-white/80 px-2 py-0.5 text-[9px] font-bold text-rose-500">
-                {tag}
-              </div>
-            ))}
+            {(display.category && !tags.includes(display.category) ? [display.category, ...tags] : tags)
+              .slice(0, compact ? 3 : 5)
+              .map((tag) => (
+                <div key={tag} className="rounded-full bg-white/80 px-2 py-0.5 text-[9px] font-bold text-rose-500">
+                  {tag}
+                </div>
+              ))}
             {display.lunch?.includes("あり") && (
-              <div className="flex items-center gap-1 rounded-full bg-orange-50 px-2 py-0.5 text-[9px] font-bold text-orange-600"><UtensilsCrossed size={10} /> ランチ</div>
+              <div className="flex items-center gap-1 rounded-full bg-orange-50 px-2 py-0.5 text-[9px] font-bold text-orange-600">
+                <UtensilsCrossed size={10} /> ランチ
+              </div>
             )}
             {display.midnight?.includes("あり") && (
-              <div className="flex items-center gap-1 rounded-full bg-violet-50 px-2 py-0.5 text-[9px] font-bold text-violet-600"><Moon size={10} /> 深夜</div>
+              <div className="flex items-center gap-1 rounded-full bg-violet-50 px-2 py-0.5 text-[9px] font-bold text-violet-600">
+                <Moon size={10} /> 深夜
+              </div>
             )}
-            {display.tags.some((tag) => tag.includes('Wi-Fi')) && (
-              <div className="flex items-center gap-1 rounded-full bg-sky-50 px-2 py-0.5 text-[9px] font-bold text-sky-600"><Wifi size={10} /> Wi-Fi</div>
+            {display.tags.some((tag) => tag.includes("Wi-Fi")) && (
+              <div className="flex items-center gap-1 rounded-full bg-sky-50 px-2 py-0.5 text-[9px] font-bold text-sky-600">
+                <Wifi size={10} /> Wi-Fi
+              </div>
             )}
-            {display.tags.some((tag) => tag.includes('カード')) && (
-              <div className="flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[9px] font-bold text-emerald-600"><CreditCard size={10} /> Card</div>
+            {display.tags.some((tag) => tag.includes("カード")) && (
+              <div className="flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[9px] font-bold text-emerald-600">
+                <CreditCard size={10} /> Card
+              </div>
             )}
-            {display.tags.some((tag) => tag.includes('バリア')) && (
-              <div className="flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[9px] font-bold text-amber-600"><Accessibility size={10} /> Accessible</div>
+            {display.tags.some((tag) => tag.includes("バリア")) && (
+              <div className="flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[9px] font-bold text-amber-600">
+                <Accessibility size={10} /> Accessible
+              </div>
             )}
-            {display.tags.some((tag) => tag.includes('ペット')) && (
-              <div className="flex items-center gap-1 rounded-full bg-indigo-50 px-2 py-0.5 text-[9px] font-bold text-indigo-600"><Dog size={10} /> Pet OK</div>
+            {display.tags.some((tag) => tag.includes("ペット")) && (
+              <div className="flex items-center gap-1 rounded-full bg-indigo-50 px-2 py-0.5 text-[9px] font-bold text-indigo-600">
+                <Dog size={10} /> Pet OK
+              </div>
             )}
-            {display.tags.some((tag) => tag.includes('駐車場')) && (
-              <div className="flex items-center gap-1 rounded-full bg-slate-50 px-2 py-0.5 text-[9px] font-bold text-slate-600"><ParkingSquare size={10} /> 駐車場</div>
+            {display.tags.some((tag) => tag.includes("駐車場")) && (
+              <div className="flex items-center gap-1 rounded-full bg-slate-50 px-2 py-0.5 text-[9px] font-bold text-slate-600">
+                <ParkingSquare size={10} /> 駐車場
+              </div>
             )}
-            {display.tags.some((tag) => tag.includes('個室')) && (
-              <div className="flex items-center gap-1 rounded-full bg-pink-50 px-2 py-0.5 text-[9px] font-bold text-pink-600"><DoorOpen size={10} /> 個室</div>
+            {display.tags.some((tag) => tag.includes("個室")) && (
+              <div className="flex items-center gap-1 rounded-full bg-pink-50 px-2 py-0.5 text-[9px] font-bold text-pink-600">
+                <DoorOpen size={10} /> 個室
+              </div>
             )}
           </div>
         )}
@@ -227,16 +245,19 @@ export function ExternalSpotInfo({
             <div className="mb-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Nearby</div>
             <div className="space-y-2">
               {display.nearby.slice(0, 2).map((spot) => (
-                <div key={`${spot.name}-${spot.address || ''}`} className="text-[11px] leading-relaxed text-muted-foreground">
+                <div
+                  key={`${spot.name}-${spot.address || ""}`}
+                  className="text-[11px] leading-relaxed text-muted-foreground"
+                >
                   <span className="font-bold text-foreground">{spot.name}</span>
-                  {spot.category ? ` / ${spot.category}` : ''}
+                  {spot.category ? ` / ${spot.category}` : ""}
                 </div>
               ))}
             </div>
           </div>
         )}
 
-        <div className={cn('grid gap-2', compact ? 'grid-cols-1' : 'grid-cols-2')}>
+        <div className={cn("grid gap-2", compact ? "grid-cols-1" : "grid-cols-2")}>
           {(display.url || locationUrl) && (
             <a
               href={display.url || locationUrl}
@@ -245,7 +266,7 @@ export function ExternalSpotInfo({
               suppressHydrationWarning
               className="flex items-center justify-center gap-2 rounded-xl border border-rose-100 bg-white py-3 text-[10px] font-black uppercase tracking-widest text-rose-500 transition-all hover:bg-rose-50"
             >
-              {display.source === 'hotpepper' ? '詳細を見る' : '外部リンク'}
+              {display.source === "hotpepper" ? "詳細を見る" : "外部リンク"}
               <ExternalLink size={12} />
             </a>
           )}

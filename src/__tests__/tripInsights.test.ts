@@ -87,7 +87,7 @@ describe("buildPackingRecommendations()", () => {
         current: { temp: 13 },
         forecast: [{ date: "2026-05-24", tempMax: 18, tempMin: 12, text: "雨", condition: "🌧️" }],
       },
-      []
+      [],
     );
 
     expect(result.some((item) => item.name === "折りたたみ傘")).toBe(true);
@@ -122,7 +122,7 @@ describe("computeSettlement()", () => {
       {
         a: "you",
         b: "shared",
-      }
+      },
     );
 
     expect(result.total).toBe(6000);

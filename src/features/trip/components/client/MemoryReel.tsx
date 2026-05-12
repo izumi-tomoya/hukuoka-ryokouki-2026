@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback } from 'react';
+import { AnimatePresence, m } from "framer-motion";
 import {
-  X,
+  CalendarDays,
   ChevronLeft,
   ChevronRight,
-  Play,
-  Pause,
-  Sparkles,
-  MapPin,
   Clock3,
-  CalendarDays,
   FileText,
-} from 'lucide-react';
-import Image from 'next/image';
-import { AnimatePresence, m } from 'framer-motion';
+  MapPin,
+  Pause,
+  Play,
+  Sparkles,
+  X,
+} from "lucide-react";
+import Image from "next/image";
+import { useCallback, useEffect, useState } from "react";
 
 export interface MemoryReelPhoto {
   url: string;
@@ -61,17 +61,17 @@ export default function MemoryReel({ photos, isOpen, onClose }: Props) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isOpen) return;
-      if (e.key === 'ArrowRight') next();
-      if (e.key === 'ArrowLeft') prev();
-      if (e.key === 'Escape') onClose();
-      if (e.key === ' ') {
+      if (e.key === "ArrowRight") next();
+      if (e.key === "ArrowLeft") prev();
+      if (e.key === "Escape") onClose();
+      if (e.key === " ") {
         e.preventDefault();
         setIsPlaying((playing) => !playing);
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, next, onClose, prev]);
 
   if (!isOpen || photos.length === 0) return null;
@@ -90,7 +90,12 @@ export default function MemoryReel({ photos, isOpen, onClose }: Props) {
           transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
           className="absolute inset-0"
         >
-          <Image src={currentPhoto.url} alt="background memory" fill className="object-cover blur-[110px] saturate-[1.15] scale-125" />
+          <Image
+            src={currentPhoto.url}
+            alt="background memory"
+            fill
+            className="object-cover blur-[110px] saturate-[1.15] scale-125"
+          />
         </m.div>
       </AnimatePresence>
 
@@ -132,10 +137,14 @@ export default function MemoryReel({ photos, isOpen, onClose }: Props) {
             className="grid w-full max-w-7xl items-stretch gap-6 lg:grid-cols-[minmax(0,1.25fr)_380px]"
           >
             <div className="relative min-h-[52vh] overflow-hidden rounded-[2.5rem] border border-white/10 bg-white/5 shadow-[0_30px_100px_rgba(0,0,0,0.45)]">
-              <m.div animate={{ scale: [1, 1.08] }} transition={{ duration: 5.5, ease: 'linear' }} className="h-full w-full">
+              <m.div
+                animate={{ scale: [1, 1.08] }}
+                transition={{ duration: 5.5, ease: "linear" }}
+                className="h-full w-full"
+              >
                 <Image
                   src={currentPhoto.url}
-                  alt={currentPhoto.title || 'Memory'}
+                  alt={currentPhoto.title || "Memory"}
                   fill
                   priority
                   className="object-cover"
@@ -150,7 +159,7 @@ export default function MemoryReel({ photos, isOpen, onClose }: Props) {
                   Highlight Frame
                 </div>
                 <h3 className="max-w-3xl font-playfair text-4xl font-black italic leading-[0.95] tracking-tight text-white md:text-6xl">
-                  {currentPhoto.title || 'Untitled Moment'}
+                  {currentPhoto.title || "Untitled Moment"}
                 </h3>
               </div>
             </div>
@@ -161,33 +170,44 @@ export default function MemoryReel({ photos, isOpen, onClose }: Props) {
                   <div>
                     <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/40">Frame Data</p>
                     <p className="mt-2 text-3xl font-playfair font-black italic text-white">
-                      {String(currentIndex + 1).padStart(2, '0')}
+                      {String(currentIndex + 1).padStart(2, "0")}
                     </p>
                   </div>
                   <p className="text-right text-[10px] font-black uppercase tracking-[0.2em] text-white/40">
-                    of {String(photos.length).padStart(2, '0')}
+                    of {String(photos.length).padStart(2, "0")}
                   </p>
                 </div>
 
                 <div className="space-y-4">
-                  <MetaRow icon={<CalendarDays size={14} />} label="When" value={[currentPhoto.dayLabel, currentPhoto.dateLabel].filter(Boolean).join(' / ') || '日付未設定'} />
-                  <MetaRow icon={<Clock3 size={14} />} label="Time" value={currentPhoto.time || '時刻未設定'} />
-                  <MetaRow icon={<MapPin size={14} />} label="Where" value={currentPhoto.location || '場所情報なし'} />
-                  <MetaRow icon={<FileText size={14} />} label="What" value={currentPhoto.description || currentPhoto.title || 'メモなし'} multiline />
+                  <MetaRow
+                    icon={<CalendarDays size={14} />}
+                    label="When"
+                    value={[currentPhoto.dayLabel, currentPhoto.dateLabel].filter(Boolean).join(" / ") || "日付未設定"}
+                  />
+                  <MetaRow icon={<Clock3 size={14} />} label="Time" value={currentPhoto.time || "時刻未設定"} />
+                  <MetaRow icon={<MapPin size={14} />} label="Where" value={currentPhoto.location || "場所情報なし"} />
+                  <MetaRow
+                    icon={<FileText size={14} />}
+                    label="What"
+                    value={currentPhoto.description || currentPhoto.title || "メモなし"}
+                    multiline
+                  />
                 </div>
               </div>
 
               <div className="mt-8">
                 <div className="mb-3 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.2em] text-white/35">
                   <span>Sequence Progress</span>
-                  <span>{currentIndex + 1} / {photos.length}</span>
+                  <span>
+                    {currentIndex + 1} / {photos.length}
+                  </span>
                 </div>
                 <div className="h-2 overflow-hidden rounded-full bg-white/10">
                   <m.div
                     className="h-full rounded-full bg-gradient-to-r from-amber-300 via-rose-300 to-orange-400"
-                    initial={{ width: '0%' }}
+                    initial={{ width: "0%" }}
                     animate={{ width: `${progress}%` }}
-                    transition={{ duration: 0.6, ease: 'easeOut' }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
                   />
                 </div>
               </div>
@@ -219,11 +239,15 @@ export default function MemoryReel({ photos, isOpen, onClose }: Props) {
                 onClick={() => setIsPlaying((playing) => !playing)}
                 className="flex h-14 w-14 items-center justify-center rounded-full bg-white text-black shadow-[0_0_24px_rgba(255,255,255,0.25)] transition-all hover:scale-105 active:scale-95"
               >
-                {isPlaying ? <Pause size={24} fill="currentColor" /> : <Play size={24} className="ml-0.5" fill="currentColor" />}
+                {isPlaying ? (
+                  <Pause size={24} fill="currentColor" />
+                ) : (
+                  <Play size={24} className="ml-0.5" fill="currentColor" />
+                )}
               </button>
               <div>
                 <p className="text-[10px] font-black uppercase tracking-[0.25em] text-white/40">Playback</p>
-                <p className="mt-1 text-sm font-medium text-white/80">{isPlaying ? '自動再生中' : '一時停止中'}</p>
+                <p className="mt-1 text-sm font-medium text-white/80">{isPlaying ? "自動再生中" : "一時停止中"}</p>
               </div>
             </div>
 
@@ -239,10 +263,10 @@ export default function MemoryReel({ photos, isOpen, onClose }: Props) {
                       setCurrentIndex(photoIndex);
                     }}
                     className={`relative h-14 overflow-hidden rounded-2xl border transition-all ${
-                      active ? 'border-amber-300 scale-[1.02]' : 'border-white/10 opacity-70 hover:opacity-100'
+                      active ? "border-amber-300 scale-[1.02]" : "border-white/10 opacity-70 hover:opacity-100"
                     }`}
                   >
-                    <Image src={photo.url} alt={photo.title || 'thumbnail'} fill className="object-cover" />
+                    <Image src={photo.url} alt={photo.title || "thumbnail"} fill className="object-cover" />
                   </button>
                 );
               })}
@@ -277,7 +301,7 @@ function MetaRow({
         {icon}
         <span>{label}</span>
       </div>
-      <p className={`text-sm text-white/85 ${multiline ? 'leading-6' : ''}`}>{value}</p>
+      <p className={`text-sm text-white/85 ${multiline ? "leading-6" : ""}`}>{value}</p>
     </div>
   );
 }

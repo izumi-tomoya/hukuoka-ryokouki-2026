@@ -1,15 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
 import { Banknote, Coins, HandCoins, ReceiptText } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { MagazineCard } from "@/components/ui/MagazineCard";
-import { cn } from "@/lib/utils";
-import {
-  loadExpensePayers,
-  saveExpensePayers,
-  type ExpensePayer,
-} from "@/features/trip/utils/clientTripStorage";
+import { type ExpensePayer, loadExpensePayers, saveExpensePayers } from "@/features/trip/utils/clientTripStorage";
 import { computeSettlement, currency, type InsightEvent } from "@/features/trip/utils/tripInsights";
+import { cn } from "@/lib/utils";
 
 type Props = {
   tripId: string;
@@ -24,7 +20,7 @@ const payerLabels: Array<{ value: ExpensePayer; label: string }> = [
 
 export default function SettlementPanel({ tripId, events }: Props) {
   const [payers, setPayers] = useState<Record<string, ExpensePayer>>(() =>
-    typeof window === "undefined" ? {} : loadExpensePayers(tripId)
+    typeof window === "undefined" ? {} : loadExpensePayers(tripId),
   );
 
   useEffect(() => {
@@ -51,9 +47,7 @@ export default function SettlementPanel({ tripId, events }: Props) {
         </div>
         <div>
           <h2 className="text-2xl font-black tracking-tight text-foreground">Settlement Mode</h2>
-          <p className="mt-1 text-[10px] font-black uppercase tracking-[0.18em] text-muted-foreground">
-            Who Paid What
-          </p>
+          <p className="mt-1 text-[10px] font-black uppercase tracking-[0.18em] text-muted-foreground">Who Paid What</p>
         </div>
       </div>
 
@@ -69,7 +63,9 @@ export default function SettlementPanel({ tripId, events }: Props) {
               <div className="mt-2 text-2xl font-black text-foreground">{currency(settlement.youPaid)}</div>
             </div>
             <div className="rounded-2xl bg-secondary/30 p-4">
-              <div className="text-[10px] font-black uppercase tracking-[0.16em] text-muted-foreground">Partner Paid</div>
+              <div className="text-[10px] font-black uppercase tracking-[0.16em] text-muted-foreground">
+                Partner Paid
+              </div>
               <div className="mt-2 text-2xl font-black text-foreground">{currency(settlement.partnerPaid)}</div>
             </div>
           </div>
@@ -117,7 +113,7 @@ export default function SettlementPanel({ tripId, events }: Props) {
                           "min-h-11 rounded-full border px-3 py-2 text-xs font-black transition-colors",
                           payer === option.value
                             ? "border-primary bg-primary text-primary-foreground"
-                            : "border-border bg-background text-muted-foreground"
+                            : "border-border bg-background text-muted-foreground",
                         )}
                       >
                         {option.label}

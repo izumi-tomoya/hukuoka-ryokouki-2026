@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
 import { buildFallbackAlternatives } from "@/features/trip/utils/tripInsights";
 import { generateTravelTextWithFallback } from "@/lib/aiProvider";
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
@@ -30,7 +31,17 @@ function safeJsonParse<T>(input: string): T | null {
 
 export async function POST(request: Request) {
   try {
-    const { slug, trigger, delayMinutes = 0 } = (await request.json()) as {
+    const session = await auth();
+    const isAdmin = !!session?.user?.isAdmin;
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const {
+      slug,
+      trigger,
+      delayMinutes = 0,
+    } = (await request.json()) as {
       slug?: string;
       trigger?: Trigger;
       delayMinutes?: number;
@@ -70,7 +81,7 @@ export async function POST(request: Request) {
         isConfirmed: event.isConfirmed,
         plannedBudget: event.plannedBudget || 0,
         actualExpense: event.actualExpense || 0,
-      }))
+      })),
     );
 
     const tips = trip.tips.map((tip) => ({
@@ -84,9 +95,25 @@ export async function POST(request: Request) {
       category: tip.category || undefined,
     }));
 
+    const isSecretContent = (val: string | undefined | null) => {
+      if (!val) return false;
+      const lower = val.toLowerCase();
+      return (
+        ["ヒルトン", "ヒルトン福岡シーホーク", "CLOUDS", "天空のサプライズ", "secret spot", "サプライズ"].some((spot) =>
+          lower.includes(spot.toLowerCase()),
+        ) || false
+      );
+    };
+
     const itinerary = events
       .slice(0, 10)
-      .map((event) => `${event.time} ${event.title}${event.isConfirmed ? " [fixed]" : ""}`)
+      .map((event) => {
+        const isSecret =
+          !isAdmin &&
+          ((event as { tag?: string }).tag === "surprise" || isSecretContent(event.title) || isSecretContent(event.desc));
+        const displayName = isSecret ? "🎁 Surprise Spot" : event.title;
+        return `${event.time} ${displayName}${event.isConfirmed ? " [fixed]" : ""}`;
+      })
       .join("\n");
     const knowledge = tips
       .slice(0, 8)
@@ -112,7 +139,7 @@ ${knowledge}`;
     let providerSource = "";
 
     const systemInstruction =
-      "You are a travel operations concierge. Return only a valid JSON array with 2-3 objects shaped as {\"title\": string, \"reason\": string, \"action\": string}. Do not include markdown code blocks or extra text.";
+      'You are a travel operations concierge. Return only a valid JSON array with 2-3 objects shaped as {"title": string, "reason": string, "action": string}. Do not include markdown code blocks or extra text.';
 
     try {
       const result = await generateTravelTextWithFallback({
@@ -130,7 +157,8 @@ ${knowledge}`;
     }
 
     const parsed = content ? safeJsonParse<Array<{ title: string; reason: string; action: string }>>(content) : null;
-    const suggestions = parsed && parsed.length > 0 ? parsed.slice(0, 3) : buildFallbackAlternatives(trigger, events, tips, delayMinutes);
+    const suggestions =
+      parsed && parsed.length > 0 ? parsed.slice(0, 3) : buildFallbackAlternatives(trigger, events, tips, delayMinutes);
 
     return NextResponse.json({ suggestions, provider: usedProvider, providerSource });
   } catch (error) {

@@ -1,5 +1,5 @@
 import TipsSection from "@/features/trip/components/TipsSection";
-import { Tip } from "@/features/trip/types/trip";
+import type { Tip } from "@/features/trip/types/trip";
 
 interface Props {
   tips: Tip[];

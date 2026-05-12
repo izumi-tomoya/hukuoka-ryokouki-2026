@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
 import { searchGourmet } from "@/lib/external/hotpepper";
 import { searchNearbySpots } from "@/lib/external/yahoo";
 
@@ -14,10 +15,15 @@ function isGourmetLike(name: string, category?: string | null) {
   if (category && /^(food|gourmet|restaurant|cafe)$/i.test(category)) return true;
 
   const text = `${name} ${category || ""}`;
-  return /食|グルメ|レストラン|居酒屋|カフェ|喫茶|ラーメン|うどん|そば|寿司|焼肉|ホテル|海鮮|めんたい|和牛|水たき|水炊き|うなぎ|天ぷら|定食|弁当|焼き鳥|焼鳥|串|刺身|ちゃんぽん|博多|屋台|もつ鍋|鍋|カレー|バーガー|ピザ|イタリア|フレンチ|中華|韓国/.test(text);
+  return /食|グルメ|レストラン|居酒屋|カフェ|喫茶|ラーメン|うどん|そば|寿司|焼肉|ホテル|海鮮|めんたい|和牛|水たき|水炊き|うなぎ|天ぷら|定食|弁当|焼き鳥|焼鳥|串|刺身|ちゃんぽん|博多|屋台|もつ鍋|鍋|カレー|バーガー|ピザ|イタリア|フレンチ|中華|韓国/.test(
+    text,
+  );
 }
 
 export async function GET(request: Request) {
+  const session = await auth();
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
   const { searchParams } = new URL(request.url);
   const name = searchParams.get("name");
   const latParam = searchParams.get("lat");
@@ -69,8 +75,9 @@ export async function GET(request: Request) {
     if (allowCoords) {
       const nearby = await searchNearbySpots(lat as number, lng as number, keyword);
       const matched =
-        nearby.find((spot: { name: string; address: string; category?: string; lat: string; lng: string }) => 
-          keyword.includes(spot.name) || spot.name.includes(keyword)
+        nearby.find(
+          (spot: { name: string; address: string; category?: string; lat: string; lng: string }) =>
+            keyword.includes(spot.name) || spot.name.includes(keyword),
         ) || nearby[0];
 
       if (matched) {

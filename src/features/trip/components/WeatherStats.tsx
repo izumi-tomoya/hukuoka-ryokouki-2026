@@ -1,5 +1,5 @@
-import { Sun, Droplets, Thermometer } from 'lucide-react';
-import { type WeatherStats } from '@/features/trip/types/trip';
+import { Droplets, Sun, Thermometer } from "lucide-react";
+import type { WeatherStats } from "@/features/trip/types/trip";
 
 export default function WeatherStatsDisplay({ stats }: { stats: WeatherStats }) {
   return (
@@ -10,9 +10,9 @@ export default function WeatherStatsDisplay({ stats }: { stats: WeatherStats }) 
       </div>
       <div className="grid grid-cols-3 gap-3">
         {[
-          { icon: Thermometer, val: `${stats.temp}°C`, label: 'Temp' },
-          { icon: Sun, val: `UV ${stats.uvIndex}`, label: 'UV' },
-          { icon: Droplets, val: `${stats.humidity}%`, label: 'Humid' },
+          { icon: Thermometer, val: `${stats.temp}°C`, label: "Temp" },
+          { icon: Sun, val: `UV ${stats.uvIndex}`, label: "UV" },
+          { icon: Droplets, val: `${stats.humidity}%`, label: "Humid" },
         ].map((item, i) => (
           <div
             key={i}
@@ -20,9 +20,7 @@ export default function WeatherStatsDisplay({ stats }: { stats: WeatherStats }) 
           >
             <item.icon size={18} className="mb-2 text-rose-300" />
             <span className="text-base font-bold text-rose-900">{item.val}</span>
-            <span className="text-[9px] font-black text-rose-300 uppercase tracking-widest">
-              {item.label}
-            </span>
+            <span className="text-[9px] font-black text-rose-300 uppercase tracking-widest">{item.label}</span>
           </div>
         ))}
       </div>

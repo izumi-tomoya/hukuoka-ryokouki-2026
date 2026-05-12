@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Settings, Plus, Loader2 } from 'lucide-react';
-import { addDayAction } from '@/features/trip/api/tripActions';
-import Link from 'next/link';
+import { Loader2, Plus, Settings } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+import { addDayAction } from "@/features/trip/api/tripActions";
 
 interface Props {
   tripId: string;
@@ -22,7 +22,7 @@ export function TripManagementActions({ tripId, slug }: Props) {
       }
     } catch (error) {
       console.error(error);
-      alert('エラーが発生しました');
+      alert("エラーが発生しました");
     } finally {
       setIsAddingDay(false);
     }
@@ -37,7 +37,7 @@ export function TripManagementActions({ tripId, slug }: Props) {
         <Settings size={14} />
         Edit Trip
       </Link>
-      
+
       <button
         onClick={handleAddDay}
         disabled={isAddingDay}

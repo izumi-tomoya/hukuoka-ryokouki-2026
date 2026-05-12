@@ -1,13 +1,13 @@
 "use client";
 
-import { useForm, SubmitHandler } from "react-hook-form";
+import { Loader2, Save, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { EventFormData } from "@/lib/formvalidation/eventSchema";
-import { updateEventAction, deleteEventAction } from "@/features/trip/api/tripActions";
-import { TripEvent } from "@/features/trip/types/trip";
-import { Button } from "@/components/ui/button";
-import { Trash2, Loader2, Save } from "lucide-react";
 import { useState } from "react";
+import { type SubmitHandler, useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import { deleteEventAction, updateEventAction } from "@/features/trip/api/tripActions";
+import type { TripEvent } from "@/features/trip/types/trip";
+import type { EventFormData } from "@/lib/formvalidation/eventSchema";
 
 interface Props {
   event: TripEvent;
@@ -15,13 +15,13 @@ interface Props {
 }
 
 const EVENT_TYPES = [
-  { value: 'sightseeing', label: '観光' },
-  { value: 'food', label: '食事' },
-  { value: 'transport', label: '移動' },
-  { value: 'shopping', label: '買い物' },
-  { value: 'hotel', label: 'ホテル' },
-  { value: 'surprise', label: 'サプライズ' },
-  { value: 'basic', label: 'その他' },
+  { value: "sightseeing", label: "観光" },
+  { value: "food", label: "食事" },
+  { value: "transport", label: "移動" },
+  { value: "shopping", label: "買い物" },
+  { value: "hotel", label: "ホテル" },
+  { value: "surprise", label: "サプライズ" },
+  { value: "basic", label: "その他" },
 ];
 
 export function EditEventForm({ event, onSuccess }: Props) {
@@ -76,13 +76,24 @@ export function EditEventForm({ event, onSuccess }: Props) {
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">時間</label>
-          <input {...register("time")} type="time" className="w-full bg-secondary/30 border border-border p-3 rounded-xl text-foreground focus:bg-background outline-none transition-all" />
+          <input
+            {...register("time")}
+            type="time"
+            className="w-full bg-secondary/30 border border-border p-3 rounded-xl text-foreground focus:bg-background outline-none transition-all"
+          />
         </div>
         <div className="space-y-2">
-          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">カテゴリ</label>
-          <select {...register("type")} className="w-full bg-secondary/30 border border-border p-3 rounded-xl text-foreground focus:bg-background outline-none transition-all appearance-none">
-            {EVENT_TYPES.map(t => (
-              <option key={t.value} value={t.value}>{t.label}</option>
+          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
+            カテゴリ
+          </label>
+          <select
+            {...register("type")}
+            className="w-full bg-secondary/30 border border-border p-3 rounded-xl text-foreground focus:bg-background outline-none transition-all appearance-none"
+          >
+            {EVENT_TYPES.map((t) => (
+              <option key={t.value} value={t.value}>
+                {t.label}
+              </option>
             ))}
           </select>
         </div>
@@ -90,58 +101,94 @@ export function EditEventForm({ event, onSuccess }: Props) {
 
       <div className="space-y-2">
         <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">タイトル</label>
-        <input {...register("title")} className="w-full bg-secondary/30 border border-border p-3 rounded-xl text-foreground focus:bg-background outline-none transition-all" />
+        <input
+          {...register("title")}
+          className="w-full bg-secondary/30 border border-border p-3 rounded-xl text-foreground focus:bg-background outline-none transition-all"
+        />
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">タグ表示名 (例: ランチ)</label>
-          <input {...register("tagLabel")} className="w-full bg-secondary/30 border border-border p-3 rounded-xl text-foreground focus:bg-background outline-none transition-all" />
+          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
+            タグ表示名 (例: ランチ)
+          </label>
+          <input
+            {...register("tagLabel")}
+            className="w-full bg-secondary/30 border border-border p-3 rounded-xl text-foreground focus:bg-background outline-none transition-all"
+          />
         </div>
         <div className="space-y-2">
-          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">確定済み</label>
+          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
+            確定済み
+          </label>
           <div className="flex items-center h-12 px-4 bg-secondary/30 border border-border rounded-xl">
-            <input type="checkbox" {...register("isConfirmed")} className="h-5 w-5 rounded border-border text-primary" />
+            <input
+              type="checkbox"
+              {...register("isConfirmed")}
+              className="h-5 w-5 rounded border-border text-primary"
+            />
           </div>
         </div>
       </div>
 
       <div className="space-y-2">
         <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">説明</label>
-        <textarea {...register("desc")} className="w-full bg-secondary/30 border border-border p-3 rounded-xl text-foreground focus:bg-background outline-none transition-all resize-none" rows={2} />
+        <textarea
+          {...register("desc")}
+          className="w-full bg-secondary/30 border border-border p-3 rounded-xl text-foreground focus:bg-background outline-none transition-all resize-none"
+          rows={2}
+        />
       </div>
 
       <div className="p-4 rounded-2xl bg-amber-500/5 border border-amber-500/10 space-y-4">
         <div className="text-[10px] font-black uppercase tracking-widest text-amber-600">Pro Advice & Food Info</div>
-        <input {...register("highlight")} placeholder="✨ Highlight / アドバイス" className="w-full bg-background/50 border border-amber-500/20 p-3 rounded-xl text-xs" />
+        <input
+          {...register("highlight")}
+          placeholder="✨ Highlight / アドバイス"
+          className="w-full bg-background/50 border border-amber-500/20 p-3 rounded-xl text-xs"
+        />
         <div className="grid grid-cols-2 gap-3">
-          <input {...register("foodName")} placeholder="料理名" className="w-full bg-background/50 border border-amber-500/20 p-3 rounded-xl text-xs" />
-          <input {...register("foodDesc")} placeholder="料理の説明" className="w-full bg-background/50 border border-amber-500/20 p-3 rounded-xl text-xs" />
+          <input
+            {...register("foodName")}
+            placeholder="料理名"
+            className="w-full bg-background/50 border border-amber-500/20 p-3 rounded-xl text-xs"
+          />
+          <input
+            {...register("foodDesc")}
+            placeholder="料理の説明"
+            className="w-full bg-background/50 border border-amber-500/20 p-3 rounded-xl text-xs"
+          />
         </div>
       </div>
 
       <div className="space-y-2">
-        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Google Maps URL</label>
-        <input {...register("locationUrl")} type="url" className="w-full bg-secondary/30 border border-border p-3 rounded-xl text-foreground focus:bg-background outline-none transition-all" />
+        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
+          Google Maps URL
+        </label>
+        <input
+          {...register("locationUrl")}
+          type="url"
+          className="w-full bg-secondary/30 border border-border p-3 rounded-xl text-foreground focus:bg-background outline-none transition-all"
+        />
       </div>
 
       <div className="flex gap-3 pt-4">
-        <Button 
-          variant="destructive" 
-          type="button" 
-          onClick={handleDelete} 
+        <Button
+          variant="destructive"
+          type="button"
+          onClick={handleDelete}
           disabled={isDeleting || isUpdating}
           className="h-14 px-6 rounded-xl flex items-center justify-center gap-2"
         >
           {isDeleting ? <Loader2 size={18} className="animate-spin" /> : <Trash2 size={18} />}
         </Button>
-        <Button 
-          type="submit" 
+        <Button
+          type="submit"
           disabled={isDeleting || isUpdating}
           className="flex-1 h-14 rounded-xl text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2"
         >
           {isUpdating ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
-          {isUpdating ? '更新中...' : '保存する'}
+          {isUpdating ? "更新中..." : "保存する"}
         </Button>
       </div>
     </form>

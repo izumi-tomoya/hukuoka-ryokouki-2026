@@ -11,10 +11,9 @@ describe("parseGoogleTravelAiModels()", () => {
   });
 
   it("trims values and removes duplicates while preserving order", () => {
-    expect(parseGoogleTravelAiModels(" gemini-3.1-flash-lite , gemini-3.1-flash-lite, gemini-2.5-flash-lite ")).toEqual([
-      "gemini-3.1-flash-lite",
-      "gemini-2.5-flash-lite",
-    ]);
+    expect(parseGoogleTravelAiModels(" gemini-3.1-flash-lite , gemini-3.1-flash-lite, gemini-2.5-flash-lite ")).toEqual(
+      ["gemini-3.1-flash-lite", "gemini-2.5-flash-lite"],
+    );
   });
 });
 

@@ -8,7 +8,9 @@
     "build": "next build",
     "prebuild": "prisma generate",
     "start": "next start",
-    "lint": "eslint",
+    "lint": "biome lint .",
+    "format": "biome format --write .",
+    "check": "biome check --write .",
     "test": "jest"
   },
   "prisma": {
@@ -39,6 +41,7 @@
     "zustand": "^5.0.12"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.4.15",
     "@next/bundle-analyzer": "^16.2.4",
     "@tailwindcss/postcss": "^4",
     "@types/jest": "^30.0.0",
@@ -47,8 +50,6 @@
     "@types/pg": "^8.20.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.2.4",
     "jest": "^30.3.0",
     "jest-mock-extended": "^4.0.1",
     "prisma": "^7.7.0",

@@ -1,10 +1,10 @@
-import { Skeleton } from "@/components/ui/Skeleton";
 import { MagazineCard } from "@/components/ui/MagazineCard";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 export default function BudgetSummarySkeleton() {
   return (
-    <MagazineCard 
-      padding="sm" 
+    <MagazineCard
+      padding="sm"
       className="flex items-center gap-3 md:gap-4 bg-rose-50/50 dark:bg-background border-rose-100 dark:border-border opacity-60"
     >
       <Skeleton className="h-10 w-10 md:h-12 md:w-12 rounded-xl md:rounded-2xl shrink-0" />

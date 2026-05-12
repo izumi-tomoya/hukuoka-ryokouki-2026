@@ -1,13 +1,13 @@
 import { notFound, redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
-import { getTripBySlug } from "@/features/trip/api/tripActions";
-import TripLayout from "@/features/trip/components/TripLayout";
 import { Container } from "@/components/ui/Container";
+import { getTripBySlug } from "@/features/trip/api/tripActions";
 import TipsList from "@/features/trip/components/client/TipsList";
+import TripLayout from "@/features/trip/components/TripLayout";
+import { auth } from "@/lib/auth";
 
 export default async function TipsPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  
+
   const session = await auth();
   if (!session?.user?.isAdmin) redirect(`/trip/${slug}`);
 
@@ -15,14 +15,14 @@ export default async function TipsPage({ params }: { params: Promise<{ slug: str
   if (!trip) return notFound();
 
   // Tipsデータを整形して渡す
-  const tips = trip.tips.map((t) => ({ 
+  const tips = trip.tips.map((t) => ({
     id: t.id,
-    title: t.title, 
-    body: t.body, 
+    title: t.title,
+    body: t.body,
     isWarning: t.isWarning,
     category: t.category ?? "General",
     deepLevel: t.deepLevel,
-    order: t.order
+    order: t.order,
   }));
 
   return (

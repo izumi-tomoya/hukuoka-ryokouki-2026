@@ -10,7 +10,7 @@ export async function searchGourmet(keyword: string, lat?: number, lng?: number)
 
   try {
     let url = `https://webservice.recruit.co.jp/hotpepper/gourmet/v1/?key=${apiKey}&keyword=${encodeURIComponent(keyword)}&format=json&count=1`;
-    
+
     if (lat && lng) {
       url += `&lat=${lat}&lng=${lng}&range=4`; // 2000m以内（range: 1=300m, 2=500m, 3=1000m, 4=2000m, 5=3000m）
     }
@@ -20,7 +20,7 @@ export async function searchGourmet(keyword: string, lat?: number, lng?: number)
 
     const data = await res.json();
     const shop = data.results.shop?.[0];
-    
+
     if (!shop) return null;
 
     return {

@@ -17,7 +17,7 @@ export default function AccessRow({ chips }: AccessRowProps) {
           >
             📍 {chip}
           </span>
-        )
+        ),
       )}
     </div>
   );

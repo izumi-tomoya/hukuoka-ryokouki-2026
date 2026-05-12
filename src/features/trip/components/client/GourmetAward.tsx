@@ -1,11 +1,12 @@
-'use client';
+"use client";
 
-import { GourmetAward } from '@prisma/client';
-import { MagazineCard } from '@/components/ui/MagazineCard';
-import { Trophy, Quote, Trash2, Award, Star } from 'lucide-react';
-import Image from 'next/image';
-import { deleteGourmetAwardAction } from '../../api/tripActions';
-import { useState } from 'react';
+import type { GourmetAward } from "@prisma/client";
+import { Award, Quote, Star, Trash2, Trophy } from "lucide-react";
+import Image from "next/image";
+import { useState } from "react";
+import { MagazineCard } from "@/components/ui/MagazineCard";
+import { maskSecretText } from "@/features/trip/utils/tripUtils";
+import { deleteGourmetAwardAction } from "../../api/tripActions";
 
 interface Props {
   award: GourmetAward;
@@ -16,7 +17,7 @@ export default function GourmetAwardCard({ award, isAdmin }: Props) {
   const [isPending, setIsPending] = useState(false);
 
   const handleDelete = async () => {
-    if (!window.confirm('このアワードを削除しますか？')) return;
+    if (!window.confirm("このアワードを削除しますか？")) return;
     setIsPending(true);
     try {
       await deleteGourmetAwardAction(award.id);
@@ -26,11 +27,19 @@ export default function GourmetAwardCard({ award, isAdmin }: Props) {
   };
 
   return (
-    <MagazineCard padding="none" className="group relative overflow-hidden bg-zinc-900 border-zinc-800 text-white min-h-[400px] flex flex-col transition-all hover:scale-[1.01] hover:shadow-2xl hover:shadow-primary/20">
+    <MagazineCard
+      padding="none"
+      className="group relative overflow-hidden bg-zinc-900 border-zinc-800 text-white min-h-[400px] flex flex-col transition-all hover:scale-[1.01] hover:shadow-2xl hover:shadow-primary/20"
+    >
       {/* ─── Background Photo ─── */}
       {award.imageUrl ? (
         <div className="absolute inset-0 z-0">
-          <Image src={award.imageUrl} alt={award.title} fill className="object-cover opacity-60 group-hover:scale-110 transition-transform duration-[2000ms]" />
+          <Image
+            src={award.imageUrl}
+            alt={award.title}
+            fill
+            className="object-cover opacity-60 group-hover:scale-110 transition-transform duration-[2000ms]"
+          />
           <div className="absolute inset-0 bg-linear-to-t from-zinc-950 via-zinc-900/40 to-transparent" />
         </div>
       ) : (
@@ -50,7 +59,7 @@ export default function GourmetAwardCard({ award, isAdmin }: Props) {
           </div>
 
           {isAdmin && (
-            <button 
+            <button
               onClick={handleDelete}
               disabled={isPending}
               className="p-2 bg-white/10 hover:bg-rose-500/20 rounded-xl transition-all opacity-0 group-hover:opacity-100 v2-focus"
@@ -62,18 +71,20 @@ export default function GourmetAwardCard({ award, isAdmin }: Props) {
 
         <div className="mt-auto pt-20">
           <div className="flex items-center gap-1 mb-4 text-amber-400">
-            {[...Array(5)].map((_, i) => <Star key={i} size={14} fill="currentColor" />)}
+            {[...Array(5)].map((_, i) => (
+              <Star key={i} size={14} fill="currentColor" />
+            ))}
           </div>
-          
+
           <h3 className="font-playfair text-4xl md:text-5xl font-black leading-none tracking-tighter mb-4 italic">
-            {award.title}
+            {maskSecretText(award.title, !!isAdmin)}
           </h3>
 
           {award.comment && (
             <div className="relative pt-6 border-t border-white/10 mt-6">
               <Quote size={20} className="absolute top-4 left-0 text-amber-500/30 -translate-x-1" />
               <p className="text-sm md:text-base font-medium text-zinc-100 leading-relaxed italic pl-6">
-                {award.comment}
+                {maskSecretText(award.comment, !!isAdmin)}
               </p>
             </div>
           )}

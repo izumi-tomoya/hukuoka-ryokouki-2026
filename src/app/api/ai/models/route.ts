@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getPreferredAiProvider, resolveTravelAiRuntime } from "@/lib/aiProvider";
+import { auth } from "@/lib/auth";
 import {
   DEFAULT_GOOGLE_TRAVEL_AI_MODELS,
   getGoogleApiKey,
@@ -18,6 +19,9 @@ import {
 export const dynamic = "force-dynamic";
 
 export async function GET() {
+  const session = await auth();
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
   const preferredProvider = getPreferredAiProvider();
   const localConfig = getLocalTravelAiModelsConfig();
   const googleConfig = getGoogleTravelAiModelsConfig();
@@ -31,10 +35,14 @@ export async function GET() {
   const installedLocalModels = localResult.status === "fulfilled" ? localResult.value : [];
   const installedGemmaModels = getInstalledGemmaModels(installedLocalModels);
   const googleModels = googleResult.status === "fulfilled" ? googleResult.value : [];
-  const generateContentGoogleModels = googleModels.filter((model) => model.supportedGenerationMethods.includes("generateContent"));
+  const generateContentGoogleModels = googleModels.filter((model) =>
+    model.supportedGenerationMethods.includes("generateContent"),
+  );
   const googleModelsById = new Map(generateContentGoogleModels.map((model) => [model.model, model]));
   const resolvedLocalConfig =
-    localResult.status === "fulfilled" ? await resolveLocalTravelAiModels(installedLocalModels) : await resolveLocalTravelAiModels();
+    localResult.status === "fulfilled"
+      ? await resolveLocalTravelAiModels(installedLocalModels)
+      : await resolveLocalTravelAiModels();
 
   return NextResponse.json({
     ok: runtime.status === "fulfilled",

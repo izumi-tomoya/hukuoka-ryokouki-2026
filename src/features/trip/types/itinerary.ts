@@ -1,10 +1,4 @@
-export type TransportMode =
-  | "walk"
-  | "train"
-  | "plane"
-  | "taxi"
-  | "none"
-  | "subway";
+export type TransportMode = "walk" | "train" | "plane" | "taxi" | "none" | "subway";
 
 export interface ScheduleItem {
   time: string;

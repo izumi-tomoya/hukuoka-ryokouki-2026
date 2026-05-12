@@ -1,6 +1,6 @@
-import React from "react";
-import { Document, Font, Image, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
 import path from "node:path";
+import { Document, Font, Image, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
+import React from "react";
 import type { TripWithRelations } from "@/features/trip/api/tripActions";
 
 export type ReportTemperatureLog = {
@@ -532,10 +532,13 @@ function getEventTypeLabel(type: string) {
 
 function buildTripSummary(trip: TripWithRelations) {
   const eventCount = trip.days.reduce((sum, day) => sum + day.events.length, 0);
-  const photoCount = trip.days.reduce((sum, day) => sum + day.events.reduce((eventSum, event) => eventSum + event.photos.length, 0), 0);
+  const photoCount = trip.days.reduce(
+    (sum, day) => sum + day.events.reduce((eventSum, event) => eventSum + event.photos.length, 0),
+    0,
+  );
   const actualTotal = trip.days.reduce(
     (sum, day) => sum + day.events.reduce((eventSum, event) => eventSum + (event.actualExpense || 0), 0),
-    0
+    0,
   );
 
   return { eventCount, photoCount, actualTotal };
@@ -550,7 +553,7 @@ function buildPhotoMoments(day: TripDay, trip: TripWithRelations) {
       date: formatDate(day.date, { month: "long", day: "numeric", weekday: "short" }),
       location: getEventLocation(event, day, trip),
       description: getEventDescription(event),
-    }))
+    })),
   );
 }
 
@@ -585,9 +588,7 @@ const moodLabels: Record<ReportTemperatureLog["mood"], string> = {
 };
 
 function buildDayTemperatureLogs(logs: ReportTemperatureLog[], dayNumber: number) {
-  return logs
-    .filter((log) => log.dayNumber === dayNumber)
-    .sort((a, b) => a.eventTime.localeCompare(b.eventTime));
+  return logs.filter((log) => log.dayNumber === dayNumber).sort((a, b) => a.eventTime.localeCompare(b.eventTime));
 }
 
 export default function TripReportDocument({
@@ -660,7 +661,8 @@ export default function TripReportDocument({
                   <View style={styles.contentsTitleWrap}>
                     <Text style={styles.contentsTitle}>{day.title || trip.location}</Text>
                     <Text style={styles.contentsMeta}>
-                      {formatDate(day.date, { month: "long", day: "numeric", weekday: "short" })} / {day.events.length} events / {dayPhotos.length} photos
+                      {formatDate(day.date, { month: "long", day: "numeric", weekday: "short" })} / {day.events.length}{" "}
+                      events / {dayPhotos.length} photos
                     </Text>
                   </View>
                 </View>
@@ -710,14 +712,17 @@ export default function TripReportDocument({
 
                   <View style={styles.dividerSummary}>
                     <Text style={styles.dividerSummaryText}>
-                      {leadEvent ? `${leadEvent.time} に ${getEventTitle(leadEvent)} から始まる一日。` : "この日の記録。"}
+                      {leadEvent
+                        ? `${leadEvent.time} に ${getEventTitle(leadEvent)} から始まる一日。`
+                        : "この日の記録。"}
                       {day.highlight ? ` ハイライト: ${day.highlight}` : ""}
                     </Text>
                   </View>
                   {dayTemperatureLogs.length > 0 && (
                     <View style={styles.dividerSummary}>
                       <Text style={styles.dividerSummaryText}>
-                        気分ログ: {dayTemperatureLogs[0].eventTime} の {dayTemperatureLogs[0].eventTitle} で「{moodLabels[dayTemperatureLogs[0].mood]}」。
+                        気分ログ: {dayTemperatureLogs[0].eventTime} の {dayTemperatureLogs[0].eventTitle} で「
+                        {moodLabels[dayTemperatureLogs[0].mood]}」。
                         {dayTemperatureLogs[0].note ? ` ${dayTemperatureLogs[0].note}` : ""}
                       </Text>
                     </View>
@@ -735,7 +740,9 @@ export default function TripReportDocument({
                   </View>
                   <View style={[styles.dividerStatCard, styles.dividerStatCardLast]}>
                     <Text style={styles.dividerStatLabel}>Budget</Text>
-                    <Text style={styles.dividerStatValue}>{formatCurrency(actualTotal)} / {formatCurrency(plannedTotal)}</Text>
+                    <Text style={styles.dividerStatValue}>
+                      {formatCurrency(actualTotal)} / {formatCurrency(plannedTotal)}
+                    </Text>
                   </View>
                 </View>
               </View>
@@ -745,7 +752,9 @@ export default function TripReportDocument({
               <View style={styles.dayHeader}>
                 <Text style={styles.dayKicker}>Day {day.dayNumber}</Text>
                 <Text style={styles.dayTitle}>{day.title || "Travel Itinerary"}</Text>
-                <Text style={styles.dayDate}>{formatDate(day.date, { year: "numeric", month: "long", day: "numeric", weekday: "long" })}</Text>
+                <Text style={styles.dayDate}>
+                  {formatDate(day.date, { year: "numeric", month: "long", day: "numeric", weekday: "long" })}
+                </Text>
 
                 <View style={styles.statsRow}>
                   <View style={styles.statCard}>
@@ -814,39 +823,43 @@ export default function TripReportDocument({
               </View>
             </Page>
 
-            {Math.max(photoChunks.length, 1) > 0 && (photoChunks.length > 0 ? photoChunks : [[]]).map((chunk, index) => (
-              <Page size="A4" style={styles.page} key={`${day.id}-photos-${index}`}>
-                <Text style={styles.photoPageTitle}>Day {day.dayNumber} Photo Album</Text>
-                <Text style={styles.photoPageSubtitle}>
-                  {day.title || trip.location} / {formatDate(day.date, { month: "long", day: "numeric", weekday: "short" })}
-                </Text>
+            {Math.max(photoChunks.length, 1) > 0 &&
+              (photoChunks.length > 0 ? photoChunks : [[]]).map((chunk, index) => (
+                <Page size="A4" style={styles.page} key={`${day.id}-photos-${index}`}>
+                  <Text style={styles.photoPageTitle}>Day {day.dayNumber} Photo Album</Text>
+                  <Text style={styles.photoPageSubtitle}>
+                    {day.title || trip.location} /{" "}
+                    {formatDate(day.date, { month: "long", day: "numeric", weekday: "short" })}
+                  </Text>
 
-                {chunk.length > 0 ? (
-                  <View style={styles.photoGrid}>
-                    {chunk.map((photo, photoIndex) => (
-                      <View style={styles.photoCard} key={`${photo.url}-${photoIndex}`} wrap={false}>
-                        {/* eslint-disable-next-line jsx-a11y/alt-text */}
-                        <Image src={photo.url} style={styles.photoImage} />
-                        <View style={styles.photoCaption}>
-                          <Text style={styles.photoCaptionTitle}>{photo.title}</Text>
-                          <Text style={styles.photoCaptionMeta}>{photo.date} / {photo.time} / {photo.location}</Text>
-                          <Text style={styles.photoCaptionText}>{photo.description}</Text>
+                  {chunk.length > 0 ? (
+                    <View style={styles.photoGrid}>
+                      {chunk.map((photo, photoIndex) => (
+                        <View style={styles.photoCard} key={`${photo.url}-${photoIndex}`} wrap={false}>
+                          {/* eslint-disable-next-line jsx-a11y/alt-text */}
+                          <Image src={photo.url} style={styles.photoImage} />
+                          <View style={styles.photoCaption}>
+                            <Text style={styles.photoCaptionTitle}>{photo.title}</Text>
+                            <Text style={styles.photoCaptionMeta}>
+                              {photo.date} / {photo.time} / {photo.location}
+                            </Text>
+                            <Text style={styles.photoCaptionText}>{photo.description}</Text>
+                          </View>
                         </View>
-                      </View>
-                    ))}
-                  </View>
-                ) : (
-                  <View style={styles.closingCard}>
-                    <Text style={styles.closingBody}>この日はまだ写真が登録されていない。</Text>
-                  </View>
-                )}
+                      ))}
+                    </View>
+                  ) : (
+                    <View style={styles.closingCard}>
+                      <Text style={styles.closingBody}>この日はまだ写真が登録されていない。</Text>
+                    </View>
+                  )}
 
-                <View style={styles.footer} fixed>
-                  <Text>{trip.title}</Text>
-                  <Text render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`} />
-                </View>
-              </Page>
-            ))}
+                  <View style={styles.footer} fixed>
+                    <Text>{trip.title}</Text>
+                    <Text render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`} />
+                  </View>
+                </Page>
+              ))}
           </React.Fragment>
         );
       })}

@@ -17,10 +17,7 @@ export interface TemperatureLogEntry {
   createdAt: string;
 }
 
-export const TEMPERATURE_MOODS: Record<
-  TemperatureMood,
-  { emoji: string; label: string; accent: string }
-> = {
+export const TEMPERATURE_MOODS: Record<TemperatureMood, { emoji: string; label: string; accent: string }> = {
   joy: { emoji: "✦", label: "楽しい", accent: "text-rose-500" },
   calm: { emoji: "◌", label: "落ち着く", accent: "text-sky-500" },
   tired: { emoji: "⋯", label: "疲れた", accent: "text-amber-500" },

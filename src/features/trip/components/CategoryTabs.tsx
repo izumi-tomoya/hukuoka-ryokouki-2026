@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useEffect, useRef } from 'react';
-import Link from 'next/link';
-import { cn } from '@/lib/utils';
-import { Home, Calendar, Compass, Info as InfoIcon, LucideIcon, LifeBuoy, Camera } from 'lucide-react';
+import { Calendar, Camera, Compass, Home, Info as InfoIcon, LifeBuoy, type LucideIcon } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useRef } from "react";
+import { cn } from "@/lib/utils";
 
 interface NavItem {
   href: string;
@@ -22,32 +22,32 @@ export default function CategoryTabs({ slug, activePath, isSecretMode, days }: C
   const containerRef = useRef<HTMLDivElement>(null);
   const activeTabRef = useRef<HTMLAnchorElement>(null);
 
-  const dayNumbers = days ? days.map(d => d.dayNumber) : [1, 2];
+  const dayNumbers = days ? days.map((d) => d.dayNumber) : [1, 2];
 
   const navItems: NavItem[] = [
-    { href: `/trip/${slug}`, label: 'Plan', icon: Home },
-    ...dayNumbers.map(num => ({
+    { href: `/trip/${slug}`, label: "Plan", icon: Home },
+    ...dayNumbers.map((num) => ({
       href: `/trip/${slug}/day/${num}`,
       label: `Day ${num}`,
-      icon: Calendar
+      icon: Calendar,
     })),
-    { href: `/trip/${slug}/assist`, label: 'Assist', icon: LifeBuoy },
-    { href: `/trip/${slug}/memories`, label: 'Memories', icon: Camera },
-    { href: `/trip/${slug}/info`, label: 'Info', icon: InfoIcon },
-    ...(isSecretMode ? [{ href: `/trip/${slug}/tips`, label: 'Tips', icon: Compass }] : []),
+    { href: `/trip/${slug}/assist`, label: "Assist", icon: LifeBuoy },
+    { href: `/trip/${slug}/memories`, label: "Memories", icon: Camera },
+    { href: `/trip/${slug}/info`, label: "Info", icon: InfoIcon },
+    ...(isSecretMode ? [{ href: `/trip/${slug}/tips`, label: "Tips", icon: Compass }] : []),
   ];
 
   useEffect(() => {
     if (activeTabRef.current && containerRef.current) {
       const container = containerRef.current;
       const tab = activeTabRef.current;
-      const scrollLeft = tab.offsetLeft - (container.offsetWidth / 2) + (tab.offsetWidth / 2);
-      container.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+      const scrollLeft = tab.offsetLeft - container.offsetWidth / 2 + tab.offsetWidth / 2;
+      container.scrollTo({ left: scrollLeft, behavior: "smooth" });
     }
   }, [activePath]);
 
   return (
-    <div 
+    <div
       ref={containerRef}
       className="relative flex items-center justify-start lg:justify-center gap-2 md:gap-3 mb-8 md:mb-16 overflow-x-auto no-scrollbar scroll-smooth -mx-4 px-6 md:mx-0 md:px-0"
     >
@@ -65,7 +65,7 @@ export default function CategoryTabs({ slug, activePath, isSecretMode, days }: C
               "flex min-h-11 shrink-0 items-center gap-2 rounded-full border px-5 py-3 text-[10px] font-black uppercase tracking-[0.14em] transition-all sm:px-6 md:px-8 md:py-4 md:text-xs md:tracking-[0.2em]",
               isActive
                 ? "bg-primary border-primary text-primary-foreground shadow-lg shadow-primary/20"
-                : "bg-card border-border text-muted-foreground hover:border-primary/50 hover:text-primary"
+                : "bg-card border-border text-muted-foreground hover:border-primary/50 hover:text-primary",
             )}
           >
             <Icon size={12} className="md:w-3.5 md:h-3.5" strokeWidth={isActive ? 3 : 2} />

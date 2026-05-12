@@ -1,7 +1,8 @@
 "use client";
 
-import { TransitStep } from "@/features/trip/types/trip";
-import { Train, Bus, Footprints, MapPin, ChevronRight, Info } from "lucide-react";
+import { Bus, ChevronRight, Footprints, Info, MapPin, Train } from "lucide-react";
+import type { TransitStep } from "@/features/trip/types/trip";
+import { maskLineName, maskSecretText } from "@/features/trip/utils/tripUtils";
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -9,34 +10,31 @@ interface Props {
   isAdmin?: boolean;
 }
 
-const SECRET_SPOTS = ['ヒルトン', 'ヒルトン福岡シーホーク', 'CLOUDS', '天空のサプライズ'];
-
-const maskStation = (name: string, isAdmin: boolean) => {
-  if (isAdmin) return name;
-  return SECRET_SPOTS.some(spot => name.includes(spot)) ? "✨ Surprise Destination" : name;
-};
-
-const maskLineName = (name: string | undefined, isAdmin: boolean) => {
-  if (!name || isAdmin) return name;
-  return SECRET_SPOTS.some(spot => name.includes(spot)) ? "？？？" : name;
-};
-
 const getModeIcon = (mode: string) => {
   switch (mode) {
-    case 'walking': return <Footprints size={14} className="text-muted-foreground" />;
-    case 'subway': return <Train size={14} className="text-blue-500" />;
-    case 'train': return <Train size={14} className="text-rose-500" />;
-    case 'bus': return <Bus size={14} className="text-green-500" />;
-    case 'arrival': return <MapPin size={14} className="text-rose-600" />;
-    default: return <Info size={14} />;
+    case "walking":
+      return <Footprints size={14} className="text-muted-foreground" />;
+    case "subway":
+      return <Train size={14} className="text-blue-500" />;
+    case "train":
+      return <Train size={14} className="text-rose-500" />;
+    case "bus":
+      return <Bus size={14} className="text-green-500" />;
+    case "arrival":
+      return <MapPin size={14} className="text-rose-600" />;
+    default:
+      return <Info size={14} />;
   }
 };
 
 const getLineColor = (mode: string) => {
   switch (mode) {
-    case 'subway': return "bg-blue-500";
-    case 'train': return "bg-rose-500";
-    default: return "bg-border";
+    case "subway":
+      return "bg-blue-500";
+    case "train":
+      return "bg-rose-500";
+    default:
+      return "bg-border";
   }
 };
 
@@ -45,28 +43,32 @@ export default function TransitTimeline({ steps, isAdmin = false }: Props) {
     <div className="mt-6 space-y-0">
       {steps.map((step, index) => {
         const isLast = index === steps.length - 1;
-        const isWalking = step.mode === 'walking';
-        const isArrival = step.mode === 'arrival';
+        const isWalking = step.mode === "walking";
+        const isArrival = step.mode === "arrival";
 
         return (
           <div key={index} className="relative flex gap-4">
             {/* Left: Time and Line */}
             <div className="flex flex-col items-center w-12 shrink-0">
               <span className="text-[10px] font-bold text-muted-foreground mb-1">{step.time}</span>
-              
+
               <div className="relative flex-1 flex flex-col items-center">
                 {/* Dot */}
-                <div className={cn(
-                  "h-3 w-3 rounded-full border-2 border-background shadow-sm z-10",
-                  isArrival ? "bg-rose-600" : isWalking ? "bg-muted" : getLineColor(step.mode)
-                )} />
-                
+                <div
+                  className={cn(
+                    "h-3 w-3 rounded-full border-2 border-background shadow-sm z-10",
+                    isArrival ? "bg-rose-600" : isWalking ? "bg-muted" : getLineColor(step.mode),
+                  )}
+                />
+
                 {/* Line */}
                 {!isLast && (
-                  <div className={cn(
-                    "w-1 flex-1 -mt-1 -mb-1",
-                    isWalking ? "border-l-2 border-dotted border-border" : getLineColor(step.mode)
-                  )} />
+                  <div
+                    className={cn(
+                      "w-1 flex-1 -mt-1 -mb-1",
+                      isWalking ? "border-l-2 border-dotted border-border" : getLineColor(step.mode),
+                    )}
+                  />
                 )}
               </div>
             </div>
@@ -74,11 +76,13 @@ export default function TransitTimeline({ steps, isAdmin = false }: Props) {
             {/* Right: Content */}
             <div className={cn("flex-1 pb-6 min-w-0", isLast && "pb-0")}>
               <div className="flex items-center justify-between gap-2">
-                <h5 className={cn(
-                  "text-sm font-bold tracking-tight truncate",
-                  isArrival ? "text-rose-600 dark:text-rose-400" : "text-foreground"
-                )}>
-                  {maskStation(step.station, isAdmin)}
+                <h5
+                  className={cn(
+                    "text-sm font-bold tracking-tight truncate",
+                    isArrival ? "text-rose-600 dark:text-rose-400" : "text-foreground",
+                  )}
+                >
+                  {maskSecretText(step.station, isAdmin)}
                 </h5>
                 {step.fare && (
                   <span className="text-[10px] font-bold text-muted-foreground bg-secondary px-1.5 py-0.5 rounded shrink-0 transition-colors">
@@ -100,12 +104,10 @@ export default function TransitTimeline({ steps, isAdmin = false }: Props) {
                           {maskLineName(step.lineName, isAdmin) || (isWalking ? "徒歩" : "")}
                         </span>
                         {step.duration && (
-                          <span className="text-[10px] font-bold text-muted-foreground shrink-0">
-                            {step.duration}
-                          </span>
+                          <span className="text-[10px] font-bold text-muted-foreground shrink-0">{step.duration}</span>
                         )}
                       </div>
-                      
+
                       {(step.platform || step.exit) && (
                         <div className="mt-1 flex gap-2">
                           {step.platform && (
@@ -132,3 +134,4 @@ export default function TransitTimeline({ steps, isAdmin = false }: Props) {
     </div>
   );
 }
+

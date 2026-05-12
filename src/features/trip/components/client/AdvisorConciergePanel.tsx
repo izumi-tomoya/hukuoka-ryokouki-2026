@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { Loader2, MessageCircleHeart, Send, Sparkles } from "lucide-react";
+import { useState } from "react";
 import { MagazineCard } from "@/components/ui/MagazineCard";
 import { cn } from "@/lib/utils";
 
@@ -122,7 +122,7 @@ export default function AdvisorConciergePanel({ slug }: Props) {
               "rounded-[1.25rem] px-5 py-4 text-sm leading-relaxed transition-all",
               message.role === "assistant"
                 ? "mr-8 bg-card text-card-foreground shadow-sm border border-border/40 dark:bg-card/80 dark:border-border/50"
-                : "ml-8 bg-primary text-primary-foreground shadow-md font-medium"
+                : "ml-8 bg-primary text-primary-foreground shadow-md font-medium",
             )}
           >
             {message.content.split("\n").map((line, i) => (

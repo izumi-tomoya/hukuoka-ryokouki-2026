@@ -1,16 +1,9 @@
-import type { TripEvent } from "@/features/trip/types/trip";
+import { BadgeCheck, CalendarCheck2, Clock, Footprints, MapPin, Route, Utensils } from "lucide-react";
 import { MagazineCard } from "@/components/ui/MagazineCard";
-import { cn } from "@/lib/utils";
+import type { TripEvent } from "@/features/trip/types/trip";
+import { isSecretEvent, maskSecretText } from "@/features/trip/utils/tripUtils";
 import { cleanLocationName } from "@/features/trip/utils/locationCatalog";
-import {
-  BadgeCheck,
-  CalendarCheck2,
-  Clock,
-  Footprints,
-  MapPin,
-  Route,
-  Utensils,
-} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface Props {
   events: TripEvent[];
@@ -18,8 +11,9 @@ interface Props {
   locationNames?: string[];
 }
 
-function eventLabel(event: TripEvent) {
-  return event.foodName || event.title || "Untitled";
+function eventLabel(event: TripEvent, isAdmin: boolean) {
+  const label = event.foodName || event.title || "Untitled";
+  return maskSecretText(label, isAdmin);
 }
 
 function actionText(event: TripEvent) {
@@ -39,9 +33,9 @@ function hasMapPoint(event: TripEvent, locationNames: string[]) {
     ...(event.yataiStops || []).map((stop) => stop.stop),
   ].filter((n): n is string => !!n);
 
-  return names.some(name => {
+  return names.some((name) => {
     const cleaned = cleanLocationName(name);
-    return locationNames.some(masterName => {
+    return locationNames.some((masterName) => {
       const cleanedMaster = cleanLocationName(masterName);
       return cleaned.includes(cleanedMaster) || cleanedMaster.includes(cleaned);
     });
@@ -50,11 +44,16 @@ function hasMapPoint(event: TripEvent, locationNames: string[]) {
 
 function isReserved(event: TripEvent) {
   const text = [event.tagLabel, event.desc, event.foodDesc, event.highlight].filter(Boolean).join(" ");
-  return event.isConfirmed || event.type === "food" || event.type === "hotel" || /予約|Reserved|予約済み|確認済み/i.test(text);
+  return (
+    event.isConfirmed ||
+    event.type === "food" ||
+    event.type === "hotel" ||
+    /予約|Reserved|予約済み|確認済み/i.test(text)
+  );
 }
 
 export default function ActionSummary({ events, isAdmin = false, locationNames = [] }: Props) {
-  const mappedCount = events.filter(ev => hasMapPoint(ev, locationNames)).length;
+  const mappedCount = events.filter((ev) => hasMapPoint(ev, locationNames)).length;
   const reservedCount = events.filter(isReserved).length;
 
   return (
@@ -81,7 +80,7 @@ export default function ActionSummary({ events, isAdmin = false, locationNames =
 
       <div className="grid gap-3">
         {events.map((event, index) => {
-          const isSurprise = event.tag === "surprise" && !isAdmin;
+          const isSurprise = isSecretEvent(event, isAdmin);
           const mapped = !isSurprise && hasMapPoint(event, locationNames);
           const reserved = isReserved(event);
           const routeCount = event.transitSteps?.length || 0;
@@ -105,27 +104,33 @@ export default function ActionSummary({ events, isAdmin = false, locationNames =
                 <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                   <div className="min-w-0">
                     <h3 className="break-words text-base font-black text-foreground">
-                      {isSurprise ? "🎁 Surprise Spot" : eventLabel(event)}
+                      {isSurprise ? "🎁 Surprise Spot" : eventLabel(event, isAdmin)}
                     </h3>
                     {(event.desc || event.foodDesc) && (
                       <p className="mt-1 line-clamp-2 text-sm font-medium leading-relaxed text-muted-foreground">
-                        {isSurprise ? "当日までのお楽しみ。ふたりの特別な時間が待っています。" : (event.foodDesc || event.desc)}
+                        {isSurprise
+                          ? "当日までのお楽しみ。ふたりの特別な時間が待っています。"
+                          : maskSecretText(event.foodDesc || event.desc || "", isAdmin)}
                       </p>
                     )}
                   </div>
 
                   <div className="flex flex-wrap gap-2 md:justify-end">
-                    <span className={cn(
-                      "inline-flex min-h-8 items-center gap-1.5 rounded-full px-3 text-[10px] font-black uppercase tracking-[0.12em]",
-                      reserved ? "bg-emerald-500/10 text-emerald-600" : "bg-secondary text-muted-foreground"
-                    )}>
+                    <span
+                      className={cn(
+                        "inline-flex min-h-8 items-center gap-1.5 rounded-full px-3 text-[10px] font-black uppercase tracking-[0.12em]",
+                        reserved ? "bg-emerald-500/10 text-emerald-600" : "bg-secondary text-muted-foreground",
+                      )}
+                    >
                       <BadgeCheck size={12} />
                       {reserved ? "予約済み" : "確認"}
                     </span>
-                    <span className={cn(
-                      "inline-flex min-h-8 items-center gap-1.5 rounded-full px-3 text-[10px] font-black uppercase tracking-[0.12em]",
-                      mapped ? "bg-sky-500/10 text-sky-600" : "bg-amber-500/10 text-amber-600"
-                    )}>
+                    <span
+                      className={cn(
+                        "inline-flex min-h-8 items-center gap-1.5 rounded-full px-3 text-[10px] font-black uppercase tracking-[0.12em]",
+                        mapped ? "bg-sky-500/10 text-sky-600" : "bg-amber-500/10 text-amber-600",
+                      )}
+                    >
                       <MapPin size={12} />
                       {mapped ? "地図反映" : "地図未登録"}
                     </span>

@@ -1,5 +1,5 @@
-import Google from "next-auth/providers/google";
 import type { NextAuthConfig } from "next-auth";
+import Google from "next-auth/providers/google";
 
 export default {
   providers: [
@@ -34,7 +34,7 @@ export default {
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days (最長で安全な標準期間)
-    updateAge: 24 * 60 * 60,   // 24 hours (セッションを更新する頻度)
+    updateAge: 24 * 60 * 60, // 24 hours (セッションを更新する頻度)
   },
   pages: {
     signIn: "/auth/signin",

@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
 import { HeartPulse, Sparkles } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { MagazineCard } from "@/components/ui/MagazineCard";
 import {
   loadTemperatureLogs,
@@ -16,7 +16,7 @@ type Props = {
 
 export default function TemperatureTimeline({ tripId }: Props) {
   const [logs, setLogs] = useState<TemperatureLogEntry[]>(() =>
-    typeof window === "undefined" ? [] : loadTemperatureLogs(tripId)
+    typeof window === "undefined" ? [] : loadTemperatureLogs(tripId),
   );
 
   useEffect(() => {
@@ -59,7 +59,9 @@ export default function TemperatureTimeline({ tripId }: Props) {
                     <div className={`text-xl ${config.accent}`}>{config.emoji}</div>
                     <div>
                       <div className="text-sm font-black text-foreground">{config.label}</div>
-                      <div className="text-xs text-muted-foreground">{TEMPERATURE_MOOD_NARRATIVES[mood as keyof typeof TEMPERATURE_MOOD_NARRATIVES]}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {TEMPERATURE_MOOD_NARRATIVES[mood as keyof typeof TEMPERATURE_MOOD_NARRATIVES]}
+                      </div>
                     </div>
                   </div>
                   <div className="text-lg font-black text-foreground">{count}</div>

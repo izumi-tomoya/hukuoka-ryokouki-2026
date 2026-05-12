@@ -8,10 +8,10 @@ export default auth((req) => {
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
   const isAdmin = !!req.auth?.user?.isAdmin;
-  
+
   const isAuthPage = nextUrl.pathname.startsWith("/auth/signin");
-  const isPublicAsset = 
-    nextUrl.pathname.startsWith("/_next") || 
+  const isPublicAsset =
+    nextUrl.pathname.startsWith("/_next") ||
     nextUrl.pathname.startsWith("/api") || // APIは一旦通すが、必要に応じて中身でチェック
     nextUrl.pathname.includes(".") || // 画像、favicon等
     nextUrl.pathname === "/manifest.json" ||

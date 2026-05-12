@@ -17,16 +17,10 @@ export default function FavoriteToggle({ eventId }: { eventId: string }) {
       }}
       className={cn(
         "flex h-8 w-8 items-center justify-center rounded-full transition-all",
-        favorite ? "bg-amber-100" : "bg-muted/50 hover:bg-stone-200"
+        favorite ? "bg-amber-100" : "bg-muted/50 hover:bg-stone-200",
       )}
     >
-      <Star
-        size={16}
-        className={cn(
-          "transition-all",
-          favorite ? "fill-amber-400 text-amber-400" : "text-stone-400"
-        )}
-      />
+      <Star size={16} className={cn("transition-all", favorite ? "fill-amber-400 text-amber-400" : "text-stone-400")} />
     </button>
   );
 }

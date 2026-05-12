@@ -1,40 +1,41 @@
-import type { TripEvent } from '@/features/trip/types/trip';
-import { Badge } from '@/components/ui/badge';
-import AccessRow from '@/features/trip/components/AccessRow';
-import PhotoGallery from '@/features/trip/components/PhotoGallery';
-import WeatherStatsDisplay from '@/features/trip/components/WeatherStats';
-import { MagazineCard } from '@/components/ui/MagazineCard';
-import { cn } from '@/lib/utils';
 import {
-  MapPin,
-  Utensils,
-  Star,
   Bus,
-  ShoppingBag,
-  Eye,
-  Moon,
-  Home,
-  MessageSquareQuote,
-  JapaneseYen,
   ExternalLink,
-} from 'lucide-react';
-import ClickableCard from '@/features/trip/components/client/ClickableCard';
-import ConfirmCheckbox from '@/features/trip/components/client/ConfirmCheckbox';
-import { EventActionButtons } from '@/features/trip/components/client/EventActionButtons';
-import YataiLiveTracker from '@/features/trip/components/client/YataiLiveTracker';
-import { SafeLink } from '@/features/trip/components/client/SafeLink';
-import Image from 'next/image';
-import { ExternalSpotInfo } from '@/features/trip/components/client/ExternalSpotInfo';
-import { getLocationCoordinates } from '@/features/trip/utils/locationCatalog';
+  Eye,
+  Home,
+  JapaneseYen,
+  MapPin,
+  MessageSquareQuote,
+  Moon,
+  ShoppingBag,
+  Star,
+  Utensils,
+} from "lucide-react";
+import Image from "next/image";
+import { Badge } from "@/components/ui/badge";
+import { MagazineCard } from "@/components/ui/MagazineCard";
+import AccessRow from "@/features/trip/components/AccessRow";
+import ClickableCard from "@/features/trip/components/client/ClickableCard";
+import ConfirmCheckbox from "@/features/trip/components/client/ConfirmCheckbox";
+import { EventActionButtons } from "@/features/trip/components/client/EventActionButtons";
+import { ExternalSpotInfo } from "@/features/trip/components/client/ExternalSpotInfo";
+import { SafeLink } from "@/features/trip/components/client/SafeLink";
+import YataiLiveTracker from "@/features/trip/components/client/YataiLiveTracker";
+import PhotoGallery from "@/features/trip/components/PhotoGallery";
+import WeatherStatsDisplay from "@/features/trip/components/WeatherStats";
+import type { TripEvent } from "@/features/trip/types/trip";
+import { isSecretEvent, maskSecretText } from "@/features/trip/utils/tripUtils";
+import { getLocationCoordinates } from "@/features/trip/utils/locationCatalog";
+import { cn } from "@/lib/utils";
 
 const tagConfig: Record<string, { className: string; icon: React.ElementType }> = {
-  food: { className: 'bg-rose-500/10 text-rose-500 border-rose-500/20', icon: Utensils },
-  transport: { className: 'bg-zinc-500/10 text-zinc-500 border-zinc-500/20', icon: Bus },
-  sightseeing: { className: 'bg-sky-500/10 text-sky-500 border-sky-500/20', icon: Eye },
-  hotel: { className: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20', icon: Home },
-  shopping: { className: 'bg-pink-500/10 text-pink-500 border-pink-500/20', icon: ShoppingBag },
-  surprise: { className: 'bg-purple-500/10 text-purple-500 border-purple-500/20', icon: Star },
-  night: { className: 'bg-indigo-500/10 text-indigo-500 border-indigo-500/20', icon: Moon },
+  food: { className: "bg-rose-500/10 text-rose-500 border-rose-500/20", icon: Utensils },
+  transport: { className: "bg-zinc-500/10 text-zinc-500 border-zinc-500/20", icon: Bus },
+  sightseeing: { className: "bg-sky-500/10 text-sky-500 border-sky-500/20", icon: Eye },
+  hotel: { className: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20", icon: Home },
+  shopping: { className: "bg-pink-500/10 text-pink-500 border-pink-500/20", icon: ShoppingBag },
+  surprise: { className: "bg-purple-500/10 text-purple-500 border-purple-500/20", icon: Star },
+  night: { className: "bg-indigo-500/10 text-indigo-500 border-indigo-500/20", icon: Moon },
 };
 
 function TagBadge({ tag, label }: { tag: string; label: string }) {
@@ -44,8 +45,8 @@ function TagBadge({ tag, label }: { tag: string; label: string }) {
     <Badge
       variant="outline"
       className={cn(
-        'mb-4 gap-2 px-3 md:px-4 py-1 md:py-1.5 text-[10px] font-black uppercase tracking-[0.2em] whitespace-nowrap border rounded-full transition-colors',
-        config.className
+        "mb-4 gap-2 px-3 md:px-4 py-1 md:py-1.5 text-[10px] font-black uppercase tracking-[0.2em] whitespace-nowrap border rounded-full transition-colors",
+        config.className,
       )}
     >
       <Icon size={12} />
@@ -56,24 +57,20 @@ function TagBadge({ tag, label }: { tag: string; label: string }) {
 
 function BasicCard({ event, isAdmin }: { event: TripEvent; isAdmin?: boolean }) {
   const hasMemoir = !!(event.notes || (event.actualPhotos && event.actualPhotos.length > 0));
-  const isSurprise = event.tag === 'surprise';
-  const isFood = event.type === 'food';
+  const isSurprise = isSecretEvent(event, !!isAdmin);
+  const isFood = event.type === "food";
 
-  const coords = getLocationCoordinates(event.foodName || event.title || '');
+  const coords = getLocationCoordinates(event.foodName || event.title || "");
 
   return (
     <MagazineCard
       className={cn(
-        'h-full relative overflow-hidden transition-all duration-500',
-        event.isConfirmed && 'opacity-60 grayscale-[0.5]'
+        "h-full relative overflow-hidden transition-all duration-500",
+        event.isConfirmed && "opacity-60 grayscale-[0.5]",
       )}
     >
       <div className="flex justify-between items-start mb-4 md:mb-6 relative z-10">
-        {event.tag && event.tagLabel ? (
-          <TagBadge tag={event.tag} label={event.tagLabel} />
-        ) : (
-          <div />
-        )}
+        {event.tag && event.tagLabel ? <TagBadge tag={event.tag} label={event.tagLabel} /> : <div />}
         <div className="flex gap-2">
           {event.actualExpense !== undefined && event.actualExpense > 0 && (
             <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary text-[10px] font-bold text-muted-foreground border border-border">
@@ -94,12 +91,12 @@ function BasicCard({ event, isAdmin }: { event: TripEvent; isAdmin?: boolean }) 
         <div className="md:grid md:grid-cols-[1fr_auto] md:gap-8 items-start">
           <div className="min-w-0">
             <h3 className="font-playfair text-xl md:text-3xl font-black text-foreground tracking-tight leading-snug mb-3">
-              {!isAdmin && isSurprise ? '✨ Surprise Spot' : event.title}
+              {isSurprise ? "✨ Surprise Spot" : maskSecretText(event.title || "", !!isAdmin)}
             </h3>
             <p className="text-[13px] md:text-base leading-relaxed text-muted-foreground font-medium mb-6 line-clamp-3">
-              {!isAdmin && isSurprise
-                ? '当日までのお楽しみ。ふたりの特別な時間が待っています。'
-                : event.desc}
+              {isSurprise
+                ? "当日までのお楽しみ。ふたりの特別な時間が待っています。"
+                : maskSecretText(event.desc || "", !!isAdmin)}
             </p>
           </div>
 
@@ -125,7 +122,7 @@ function BasicCard({ event, isAdmin }: { event: TripEvent; isAdmin?: boolean }) 
         {isFood && (isAdmin || !isSurprise) && (
           <div className="mb-8 animate-in fade-in slide-in-from-top-2 duration-700">
             <ExternalSpotInfo
-              name={event.foodName || event.title || ''}
+              name={maskSecretText(event.foodName || event.title || "", !!isAdmin)}
               lat={coords ? coords[0] : undefined}
               lng={coords ? coords[1] : undefined}
               category={event.type}
@@ -136,7 +133,7 @@ function BasicCard({ event, isAdmin }: { event: TripEvent; isAdmin?: boolean }) 
           </div>
         )}
 
-        <div className={cn(isFood && 'md:grid md:grid-cols-2 md:gap-6')}>
+        <div className={cn(isFood && "md:grid md:grid-cols-2 md:gap-6")}>
           <PhotoGallery photos={event.photos || []} eventId={event.id} />
 
           {event.highlight && (
@@ -145,7 +142,7 @@ function BasicCard({ event, isAdmin }: { event: TripEvent; isAdmin?: boolean }) 
                 <Star size={12} /> Highlight
               </div>
               <p className="text-sm font-bold text-amber-900 leading-relaxed italic">
-                &ldquo;{event.highlight}&rdquo;
+                &ldquo;{maskSecretText(event.highlight, !!isAdmin)}&rdquo;
               </p>
             </div>
           )}
@@ -202,7 +199,7 @@ function BasicCard({ event, isAdmin }: { event: TripEvent; isAdmin?: boolean }) 
                 <MapPin size={14} /> Open Maps
               </SafeLink>
             )}
-            {isFood && event.locationUrl && (
+            {isFood && event.locationUrl && (isAdmin || !isSurprise) && (
               <SafeLink
                 href={event.locationUrl}
                 className="inline-flex items-center gap-2 text-[10px] font-black text-rose-500 hover:text-rose-600 tracking-widest uppercase transition-colors"
@@ -211,7 +208,11 @@ function BasicCard({ event, isAdmin }: { event: TripEvent; isAdmin?: boolean }) 
               </SafeLink>
             )}
           </div>
-          {event.access && <AccessRow chips={event.access} />}
+          {event.access && (
+            <AccessRow
+              chips={event.access.map((a) => maskSecretText(a, !!isAdmin))}
+            />
+          )}
         </div>
 
         {event.weatherStats && (

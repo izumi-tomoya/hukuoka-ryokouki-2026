@@ -1,8 +1,9 @@
-import { Calendar, ChevronRight, Clock, MapPin } from "lucide-react";
+import { Calendar, Camera, ChevronRight, Clock, Hotel, MapPin, Plane, Utensils } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/ui/Container";
 import { MagazineCard } from "@/components/ui/MagazineCard";
+import { BentoTile } from "@/components/ui/BentoTile";
 import { getTripBySlug } from "@/features/trip/api/tripActions";
 import { TripCountdown } from "@/features/trip/components/client/TripCountdown";
 import { TripManagementActions } from "@/features/trip/components/client/TripManagementActions";
@@ -122,6 +123,52 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
               <TripWeatherSummary location={trip.location} endDate={trip.endDate} />
             </div>
           </MagazineCard>
+
+          {/* ─── Collections ─── */}
+          <div className="space-y-10">
+            <div className="flex items-center gap-4">
+              <div className="bg-border h-px grow" />
+              <h2 className="font-playfair text-foreground px-2 text-center text-2xl font-black sm:px-4 md:text-3xl">
+                Explore Collections
+              </h2>
+              <div className="bg-border h-px grow" />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
+              <BentoTile
+                href={`/trip/${slug}/category/food`}
+                title="Gourmet"
+                subtitle="美味しい思い出"
+                icon={Utensils}
+                color="rose"
+                className="col-span-1"
+              />
+              <BentoTile
+                href={`/trip/${slug}/category/sightseeing`}
+                title="Sightseeing"
+                subtitle="絶景と体験"
+                icon={Camera}
+                color="sky"
+                className="col-span-1"
+              />
+              <BentoTile
+                href={`/trip/${slug}/category/transport`}
+                title="Transport"
+                subtitle="移動の記録"
+                icon={Plane}
+                color="zinc"
+                className="col-span-1"
+              />
+              <BentoTile
+                href={`/trip/${slug}/category/hotel`}
+                title="Stay"
+                subtitle="安らぎの場所"
+                icon={Hotel}
+                color="emerald"
+                className="col-span-1"
+              />
+            </div>
+          </div>
 
           {/* ─── Itinerary ─── */}
           <div className="space-y-12">

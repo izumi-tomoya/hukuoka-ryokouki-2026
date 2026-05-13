@@ -1,7 +1,9 @@
 "use client";
 
 import type { PackingItem } from "@prisma/client";
-import { Briefcase, CheckCircle2, Circle, Loader2, Package, Plus, Shirt, Smartphone, Trash2 } from "lucide-react";
+import { Briefcase, CheckCircle2, Circle, ExternalLink, Loader2, Package, Plus, Shirt, Smartphone, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { useParams } from "next/navigation";
 import { useState } from "react";
 import { MagazineCard } from "@/components/ui/MagazineCard";
 import { cn } from "@/lib/utils";
@@ -20,6 +22,8 @@ const CATEGORIES = [
 ];
 
 export default function PackingList({ initialItems, tripId }: Props) {
+  const params = useParams();
+  const slug = params?.slug as string;
   const [items, setItems] = useState(initialItems);
   const [activeTab, setActiveTab] = useState("Essential");
   const [newItemName, setNewItemName] = useState("");
@@ -210,6 +214,16 @@ export default function PackingList({ initialItems, tripId }: Props) {
             <p className="text-muted-foreground font-medium">このカテゴリーの持ち物はまだありません</p>
           </div>
         )}
+
+        <div className="mt-4 flex justify-center">
+          <Link
+            href={`/trip/${slug}/checklist/${activeTab.toLowerCase()}`}
+            className="text-primary hover:text-primary/80 inline-flex items-center gap-2 text-xs font-black tracking-widest uppercase transition-colors"
+          >
+            <ExternalLink size={14} />
+            {activeTab} チェックリストを詳しく見る
+          </Link>
+        </div>
       </div>
     </div>
   );

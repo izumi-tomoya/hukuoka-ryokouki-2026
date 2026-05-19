@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Bus, ExternalLink, Map, Train } from "lucide-react";
+import { ArrowRight, Bus, ExternalLink, Map as MapIcon, Train } from "lucide-react";
 import { MagazineCard } from "@/components/ui/MagazineCard";
 import { cn } from "@/lib/utils";
 
@@ -30,7 +30,7 @@ export default function TransitDashboard({ isSecretMode }: TransitDashboardProps
       title: "ヒルトン ⇄ 市街地 (バス/タクシー)",
       desc: "地上123mの聖域から、活気ある街へ。最適なルートをその手に。",
       url: "https://www.nishitetsu.jp/bus/rosen/paypaydome/",
-      icon: Map,
+      icon: MapIcon,
       color: "bg-muted/50 text-stone-700",
       secret: true,
     },
@@ -41,8 +41,8 @@ export default function TransitDashboard({ isSecretMode }: TransitDashboardProps
   return (
     <div className="space-y-6">
       <div className={cn("grid grid-cols-1 gap-6", routes.length === 3 ? "md:grid-cols-3" : "md:grid-cols-2")}>
-        {routes.map((route, i) => (
-          <a key={i} href={route.url} target="_blank" rel="noopener noreferrer" className="group block">
+        {routes.map((route) => (
+          <a key={route.url} href={route.url} target="_blank" rel="noopener noreferrer" className="group block">
             <MagazineCard
               padding="md"
               className="border-border/50 h-full shadow-sm transition-all duration-500 hover:-translate-y-1 hover:shadow-xl hover:shadow-stone-200/50"

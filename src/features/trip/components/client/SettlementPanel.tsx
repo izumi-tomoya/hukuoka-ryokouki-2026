@@ -108,6 +108,7 @@ export default function SettlementPanel({ tripId, events }: Props) {
                     {payerLabels.map((option) => (
                       <button
                         key={option.value}
+                        type="button"
                         onClick={() => updatePayer(event.id, option.value)}
                         className={cn(
                           "min-h-11 rounded-full border px-3 py-2 text-xs font-black transition-colors",

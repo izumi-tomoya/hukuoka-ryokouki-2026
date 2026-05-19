@@ -72,8 +72,8 @@ export default function GourmetAwardCard({ award, isAdmin }: Props) {
 
         <div className="mt-auto pt-20">
           <div className="mb-4 flex items-center gap-1 text-amber-400">
-            {[...Array(5)].map((_, i) => (
-              <Star key={`star-${award.id}-${i}`} size={14} fill="currentColor" />
+            {[1, 2, 3, 4, 5].map((num) => (
+              <Star key={`${award.id}-star-${num}`} size={14} fill="currentColor" />
             ))}
           </div>
 

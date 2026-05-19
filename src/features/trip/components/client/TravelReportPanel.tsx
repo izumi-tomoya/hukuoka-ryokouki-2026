@@ -162,6 +162,7 @@ export default function TravelReportPanel({ tripId, tripSlug, awards, budgetStat
           </p>
         </div>
         <button
+          type="button"
           onClick={download}
           className="bg-foreground text-background inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 text-[10px] font-black tracking-widest uppercase transition-transform active:scale-[0.98]"
         >
@@ -169,6 +170,7 @@ export default function TravelReportPanel({ tripId, tripSlug, awards, budgetStat
           Download
         </button>
         <button
+          type="button"
           onClick={downloadPdf}
           disabled={isPdfLoading}
           className="border-border text-foreground inline-flex items-center justify-center gap-2 rounded-2xl border px-5 py-3 text-[10px] font-black tracking-widest uppercase transition-transform active:scale-[0.98] disabled:opacity-50"

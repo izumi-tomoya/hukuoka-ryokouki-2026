@@ -96,7 +96,7 @@ export default function MemoriesContent({
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-2">
                 {albumPhotos.slice(0, 4).map((photo, index) => (
                   <div
-                    key={`preview-${photo.url}-${index}`}
+                    key={`preview-${photo.url}`}
                     className={`group relative overflow-hidden rounded-[1.75rem] border border-white/10 ${index === 0 ? "col-span-2 aspect-[16/10]" : "aspect-[4/5]"}`}
                   >
                     <Image

@@ -92,8 +92,8 @@ export function UserSettingsForm({ initialName, initialMotto }: UserSettingsForm
         </div>
 
         {/* テーマ設定 */}
-        <div className="space-y-4">
-          <label className="ml-1 text-xs font-black tracking-widest text-zinc-400 uppercase">画面テーマ</label>
+        <fieldset className="space-y-4 border-none p-0">
+          <legend className="ml-1 text-xs font-black tracking-widest text-zinc-400 uppercase">画面テーマ</legend>
           <div className="grid grid-cols-3 gap-3">
             {[
               { id: "light", icon: Sun, label: "Light" },
@@ -115,7 +115,7 @@ export function UserSettingsForm({ initialName, initialMotto }: UserSettingsForm
               </button>
             ))}
           </div>
-        </div>
+        </fieldset>
 
         {message && (
           <div

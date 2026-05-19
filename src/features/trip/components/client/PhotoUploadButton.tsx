@@ -71,6 +71,7 @@ export default function PhotoUploadButton({ eventId }: PhotoUploadButtonProps) {
       <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleUpload} />
 
       <button
+        type="button"
         onClick={() => fileInputRef.current?.click()}
         disabled={status !== "idle"}
         className="group flex w-full items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-stone-200 py-6 text-[12px] font-bold text-stone-400 transition-all hover:border-rose-300 hover:bg-rose-50 hover:text-rose-500 disabled:cursor-not-allowed disabled:opacity-50"

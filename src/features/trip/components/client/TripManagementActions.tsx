@@ -39,6 +39,7 @@ export function TripManagementActions({ tripId, slug }: Props) {
       </Link>
 
       <button
+        type="button"
         onClick={handleAddDay}
         disabled={isAddingDay}
         className="bg-primary text-primary-foreground shadow-primary/20 flex items-center gap-2 rounded-full px-6 py-2.5 text-[11px] font-black tracking-widest uppercase shadow-lg transition-all hover:opacity-90 disabled:opacity-50"

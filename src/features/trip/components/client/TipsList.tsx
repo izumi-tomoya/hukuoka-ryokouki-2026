@@ -159,6 +159,7 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
     >
       <div className="mb-6 flex items-start justify-between">
         <button
+          type="button"
           onClick={() => tip.id && handleToggleConfirm(tip.id, !!tip.isConfirmed)}
           className={cn(
             "flex items-center gap-2 rounded-full border px-3 py-1.5 text-[9px] font-black tracking-widest uppercase transition-all",
@@ -173,12 +174,14 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
 
         <div className="flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
           <button
+            type="button"
             onClick={() => setEditingTip(tip)}
             className="hover:bg-secondary text-muted-foreground hover:text-primary rounded-lg p-2 transition-colors"
           >
             <Edit2 size={14} />
           </button>
           <button
+            type="button"
             onClick={() => tip.id && handleDelete(tip.id)}
             className="text-muted-foreground rounded-lg p-2 transition-colors hover:bg-rose-500/10 hover:text-rose-500"
           >
@@ -202,6 +205,7 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
 
         {tip.imageUrl && (
           <button
+            type="button"
             onClick={() => setSelectedTicketUrl(tip.imageUrl || null)}
             className="mt-6 flex w-full items-center justify-center gap-3 rounded-2xl bg-indigo-500 py-4 text-[10px] font-black tracking-[0.2em] text-white uppercase shadow-lg shadow-indigo-500/20 transition-all hover:scale-[1.02] active:scale-95"
           >
@@ -212,11 +216,11 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
 
       <div className="border-border mt-6 flex items-center justify-between border-t pt-5">
         <div className="flex gap-0.5">
-          {[...Array(5)].map((_, i) => (
+          {[1, 2, 3, 4, 5].map((num) => (
             <Star
-              key={i}
+              key={num}
               size={10}
-              className={cn(i < (tip.deepLevel || 1) ? "fill-amber-400 text-amber-400" : "text-border")}
+              className={cn(num <= (tip.deepLevel || 1) ? "fill-amber-400 text-amber-400" : "text-border")}
             />
           ))}
         </div>
@@ -250,6 +254,7 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
 
           <div className="bg-secondary/50 grid shrink-0 grid-cols-2 rounded-2xl p-1">
             <button
+              type="button"
               onClick={() => setViewMode("venue")}
               className={cn(
                 "flex min-h-10 items-center justify-center gap-2 rounded-xl px-3 py-2 text-[10px] font-black tracking-[0.12em] uppercase transition-all sm:px-4 sm:tracking-widest",
@@ -261,6 +266,7 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
               <Store size={14} /> Shop View
             </button>
             <button
+              type="button"
               onClick={() => setViewMode("grid")}
               className={cn(
                 "flex min-h-10 items-center justify-center gap-2 rounded-xl px-3 py-2 text-[10px] font-black tracking-[0.12em] uppercase transition-all sm:px-4 sm:tracking-widest",
@@ -279,6 +285,7 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
             {categories.map((cat) => (
               <button
                 key={cat}
+                type="button"
                 onClick={() => setSelectedCategory(cat)}
                 className={cn(
                   "min-h-10 shrink-0 rounded-full border px-4 py-2 text-[10px] font-black tracking-[0.12em] whitespace-nowrap uppercase transition-all sm:tracking-widest",
@@ -293,6 +300,7 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
           </div>
 
           <Button
+            type="button"
             onClick={() =>
               setEditingTip({
                 title: "",
@@ -349,14 +357,16 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
 
       {/* ─── Ticket Lightbox ─── */}
       {selectedTicketUrl && (
-        <div
+        <button
+          type="button"
+          aria-label="Close ticket view"
           className="animate-in fade-in fixed inset-0 z-[200] flex flex-col items-center justify-center bg-black/95 p-4 backdrop-blur-md duration-300"
           onClick={() => setSelectedTicketUrl(null)}
         >
           <div className="relative flex h-full w-full max-w-xl flex-col items-center justify-center gap-6 sm:gap-8">
-            <button className="absolute top-0 right-0 min-h-12 min-w-12 p-3 text-white transition-transform hover:scale-110 sm:p-4">
+            <div className="absolute top-0 right-0 min-h-12 min-w-12 p-3 text-white transition-transform hover:scale-110 sm:p-4">
               <X size={32} />
-            </button>
+            </div>
             <div className="relative aspect-[9/16] max-h-[78vh] w-full overflow-hidden rounded-3xl border-4 border-white/10 shadow-2xl">
               <Image src={selectedTicketUrl} alt="Ticket" fill className="object-contain" />
             </div>
@@ -364,13 +374,18 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
               Screen Tap to Close
             </p>
           </div>
-        </div>
+        </button>
       )}
 
       {/* ─── Edit Modal ─── */}
       {editingTip && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="bg-background/80 absolute inset-0 backdrop-blur-sm" onClick={() => setEditingTip(null)} />
+          <button
+            type="button"
+            aria-label="Close modal"
+            className="bg-background/80 absolute inset-0 backdrop-blur-sm"
+            onClick={() => setEditingTip(null)}
+          />
           <MagazineCard
             padding="lg"
             className="animate-in zoom-in-95 border-primary/20 relative max-h-[90vh] w-full max-w-xl overflow-y-auto shadow-2xl duration-200"
@@ -380,8 +395,10 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
                 {editingTip.id ? "Edit Item" : "New Item"}
               </h2>
               <button
+                type="button"
                 onClick={() => setEditingTip(null)}
                 className="hover:bg-secondary min-h-10 min-w-10 rounded-full p-2"
+                aria-label="Close"
               >
                 <X size={20} />
               </button>
@@ -389,12 +406,16 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
 
             <form onSubmit={handleSave} className="space-y-6">
               <div className="space-y-2">
-                <label className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
+                <label
+                  htmlFor="venue-input"
+                  className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase"
+                >
                   Location / Shop Name
                 </label>
                 <div className="relative">
                   <MapPin className="text-muted-foreground absolute top-1/2 left-4 -translate-y-1/2" size={16} />
                   <input
+                    id="venue-input"
                     value={editingTip.venue || ""}
                     onChange={(e) => setEditingTip({ ...editingTip, venue: e.target.value })}
                     className="bg-secondary/50 border-border v2-focus min-h-12 w-full rounded-2xl border py-4 pr-5 pl-12 text-base transition-all sm:text-sm"
@@ -404,11 +425,14 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
               </div>
 
               <div className="space-y-2">
-                <label className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
+                <label
+                  htmlFor="title-input"
+                  className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase"
+                >
                   Title
                 </label>
                 <input
-                  autoFocus
+                  id="title-input"
                   value={editingTip.title || ""}
                   onChange={(e) => setEditingTip({ ...editingTip, title: e.target.value })}
                   className="bg-secondary/50 border-border v2-focus min-h-12 w-full rounded-2xl border px-5 py-4 text-base transition-all sm:text-sm"
@@ -418,7 +442,10 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
               </div>
 
               <div className="space-y-4 rounded-3xl border border-indigo-500/20 bg-indigo-500/5 p-4 sm:rounded-[2rem] sm:p-5">
-                <label className="ml-1 flex items-center gap-2 text-[10px] font-black tracking-widest text-indigo-400 uppercase">
+                <label
+                  htmlFor="file-upload"
+                  className="ml-1 flex cursor-pointer items-center gap-2 text-[10px] font-black tracking-widest text-indigo-400 uppercase"
+                >
                   <Ticket size={12} /> Boarding Pass / Screenshot
                 </label>
 
@@ -434,7 +461,10 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
                     </button>
                   </div>
                 ) : (
-                  <label className="flex aspect-video w-full cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-indigo-500/30 bg-indigo-500/5 transition-all hover:bg-indigo-500/10">
+                  <label
+                    htmlFor="file-upload"
+                    className="flex aspect-video w-full cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-indigo-500/30 bg-indigo-500/5 transition-all hover:bg-indigo-500/10"
+                  >
                     {isUploading ? (
                       <Loader2 className="animate-spin text-indigo-500" size={32} />
                     ) : (
@@ -443,17 +473,21 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
                         <span className="text-xs font-bold text-indigo-400">スクリーンショットをアップロード</span>
                       </>
                     )}
-                    <input type="file" accept="image/*" className="hidden" onChange={handleFileUpload} />
+                    <input id="file-upload" type="file" accept="image/*" className="hidden" onChange={handleFileUpload} />
                   </label>
                 )}
               </div>
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <label className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
+                  <label
+                    htmlFor="category-select"
+                    className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase"
+                  >
                     Category
                   </label>
                   <select
+                    id="category-select"
                     value={editingTip.category || "General"}
                     onChange={(e) => setEditingTip({ ...editingTip, category: e.target.value })}
                     className="bg-secondary/50 border-border focus:ring-primary/10 min-h-12 w-full appearance-none rounded-2xl border px-5 py-4 text-base outline-none focus:ring-4 sm:text-sm"
@@ -468,25 +502,35 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
+                  <label
+                    htmlFor="priority-input"
+                    className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase"
+                  >
                     Priority
                   </label>
                   <input
+                    id="priority-input"
                     type="number"
                     min="1"
                     max="5"
                     value={editingTip.deepLevel || 1}
-                    onChange={(e) => setEditingTip({ ...editingTip, deepLevel: parseInt(e.target.value) })}
+                    onChange={(e) =>
+                      setEditingTip({ ...editingTip, deepLevel: Number.parseInt(e.target.value, 10) })
+                    }
                     className="bg-secondary/50 border-border v2-focus min-h-12 w-full rounded-2xl border px-5 py-4 text-base sm:text-sm"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
+                <label
+                  htmlFor="details-input"
+                  className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase"
+                >
                   Details
                 </label>
                 <textarea
+                  id="details-input"
                   rows={3}
                   value={editingTip.body || ""}
                   onChange={(e) => setEditingTip({ ...editingTip, body: e.target.value })}

@@ -88,6 +88,7 @@ export default function SmartPackingSuggestions({ tripId, itemNames, events, wea
                   </div>
                 </div>
                 <button
+                  type="button"
                   onClick={() => addSuggestion(suggestion.name, suggestion.category)}
                   disabled={isPending}
                   className={cn(

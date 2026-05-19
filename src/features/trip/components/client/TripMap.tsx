@@ -1,7 +1,7 @@
 "use client";
 
 import type { Location } from "@prisma/client";
-import { Info, MapPin, Navigation2, Star, X } from "lucide-react";
+import { MapPin, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { MapContainer, Marker, Polyline, TileLayer, useMap, ZoomControl } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -10,11 +10,18 @@ import L from "leaflet";
 import { MagazineCard } from "@/components/ui/MagazineCard";
 import type { TripEvent } from "@/features/trip/types/trip";
 import { cleanLocationName } from "@/features/trip/utils/locationCatalog";
-import { isSecretEvent, maskSecretText } from "@/features/trip/utils/tripUtils";
+import { isSecretEvent } from "@/features/trip/utils/tripUtils";
 import { useModalStore } from "@/lib/store/useModalStore";
 import { cn } from "@/lib/utils";
 import { getWeatherData } from "@/lib/weather";
 import TripMapSkeleton from "../TripMapSkeleton";
+
+interface MapMarker {
+  id: string;
+  name: string;
+  coords: { lat: number; lng: number };
+  description?: string;
+}
 
 // --- Leaflet Fix for Marker Icons ---
 const DefaultIcon = L.icon({
@@ -26,7 +33,7 @@ const DefaultIcon = L.icon({
 L.Marker.prototype.options.icon = DefaultIcon;
 
 // Helper to auto-fit bounds
-function MapController({ markers }: { markers: any[] }) {
+function MapController({ markers }: { markers: MapMarker[] }) {
   const map = useMap();
   useEffect(() => {
     if (markers.length > 0) {
@@ -47,9 +54,9 @@ export default function TripMap({
   locationMaster?: Location[];
 }) {
   const { isOpen: isModalOpen } = useModalStore();
-  const [selectedMarker, setSelectedMarker] = useState<any>(null);
+  const [selectedMarker, setSelectedMarker] = useState<MapMarker | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [envStats, setEnvStats] = useState<any>(null);
+  const [envStats, setEnvStats] = useState<{ temp?: number } | null>(null);
 
   // Markers processing - Wrapped in useMemo to prevent unnecessary zoom resets
   const markersData = useMemo(() => {
@@ -63,13 +70,16 @@ export default function TripMap({
           return searchName.includes(cleanedMaster) || cleanedMaster.includes(searchName);
         });
 
+        if (isSecret || !spot) return null;
+
         return {
-          name: isSecret ? "🎁 Surprise Spot" : title,
-          coords: isSecret ? null : spot ? { lat: spot.lat, lng: spot.lng } : null,
-          description: isSecret ? "当日までのお楽しみ" : event.foodDesc || event.desc || event.highlight,
-        };
+          id: event.id || `${spot.lat}-${spot.lng}`,
+          name: title,
+          coords: { lat: spot.lat, lng: spot.lng },
+          description: event.foodDesc || event.desc || event.highlight,
+        } as MapMarker;
       })
-      .filter((m): m is any => m.coords !== null);
+      .filter((m): m is MapMarker => m !== null);
   }, [events, locationMaster, isAdmin]);
 
   useEffect(() => {
@@ -127,9 +137,9 @@ export default function TripMap({
             maxZoom={20}
           />
 
-          {markersData.map((m, i) => (
+          {markersData.map((m) => (
             <Marker
-              key={i}
+              key={m.id}
               position={[m.coords.lat, m.coords.lng]}
               icon={customMarkerIcon}
               eventHandlers={{ click: () => setSelectedMarker(m) }}
@@ -181,6 +191,7 @@ export default function TripMap({
                 <h3 className="font-playfair text-xl font-bold">{selectedMarker.name}</h3>
               </div>
               <button
+                type="button"
                 onClick={() => setSelectedMarker(null)}
                 className="rounded-full p-2 transition-colors hover:bg-rose-50"
               >

@@ -48,7 +48,7 @@ export function YataiCourseSelector({ eventId, onSuccess }: { eventId: string; o
           <p className="mb-4 text-[10px] text-stone-500 italic">{course.desc}</p>
           <div className="mb-4 space-y-2">
             {course.stops.map((stop, i) => (
-              <div key={i} className="flex items-center gap-3 text-[11px]">
+              <div key={`${course.id}-${stop.stop}`} className="flex items-center gap-3 text-[11px]">
                 <span className="font-bold text-rose-500">{i + 1}</span>
                 <span className="font-bold text-stone-700">{stop.stop}</span>
                 <span className="text-stone-400">({stop.time})</span>
@@ -56,6 +56,7 @@ export function YataiCourseSelector({ eventId, onSuccess }: { eventId: string; o
             ))}
           </div>
           <button
+            type="button"
             onClick={() => handleApply(course)}
             className="w-full rounded-xl bg-rose-500 py-2 text-xs font-bold tracking-widest text-white uppercase shadow-lg shadow-rose-200 hover:bg-rose-600"
           >

@@ -24,7 +24,7 @@ export default function YataiLiveTracker({ stops }: YataiLiveTrackerProps) {
 
       <div className="space-y-6">
         {stops.map((stop, i) => (
-          <div key={i} className="group relative flex gap-4">
+          <div key={stop.stop} className="group relative flex gap-4">
             {/* Connecting line */}
             {i !== stops.length - 1 && (
               <div className="bg-muted/50 absolute top-6 bottom-[-24px] left-[13px] w-px transition-colors group-hover:bg-rose-100" />

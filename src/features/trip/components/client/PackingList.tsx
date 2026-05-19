@@ -114,6 +114,7 @@ export default function PackingList({ initialItems, tripId }: Props) {
 
           return (
             <button
+              type="button"
               key={cat.id}
               onClick={() => setActiveTab(cat.id)}
               className={cn(
@@ -159,6 +160,7 @@ export default function PackingList({ initialItems, tripId }: Props) {
             )}
           >
             <button
+              type="button"
               onClick={() => handleToggle(item.id, item.isPacked)}
               className={cn(
                 "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-all",
@@ -180,6 +182,7 @@ export default function PackingList({ initialItems, tripId }: Props) {
             </span>
 
             <button
+              type="button"
               onClick={() => handleDelete(item.id)}
               className="text-muted-foreground min-h-10 min-w-10 p-2 opacity-100 transition-opacity group-hover:opacity-100 hover:text-rose-500 sm:opacity-0"
             >

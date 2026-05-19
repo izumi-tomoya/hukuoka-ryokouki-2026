@@ -57,7 +57,7 @@ export default function PhotoUploadButton({ eventId }: PhotoUploadButtonProps) {
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "unknown upload error";
       console.error("Upload Error:", message);
-      alert("アップロードに失敗しました: " + message);
+      alert(`アップロードに失敗しました: ${message}`);
     } finally {
       setStatus("idle");
       if (fileInputRef.current) fileInputRef.current.value = "";

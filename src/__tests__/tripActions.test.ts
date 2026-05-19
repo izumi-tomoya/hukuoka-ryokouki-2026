@@ -26,7 +26,7 @@ import { mockPrisma } from "./helpers/prismaMock";
 
 // @/lib/prisma の prisma インスタンスをモックに差し替える
 jest.mock("@/lib/prisma", () => ({
-  prisma: mockPrisma,
+  prisma: require("./helpers/prismaMock").mockPrisma,
 }));
 
 // next/cache はサーバー専用 API なのでスタブ化

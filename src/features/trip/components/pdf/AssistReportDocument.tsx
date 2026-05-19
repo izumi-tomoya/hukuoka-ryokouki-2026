@@ -1,5 +1,4 @@
 import { Document, Font, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
-import React from "react";
 import type { TemperatureLogEntry } from "@/features/trip/utils/clientTripStorage";
 import type { InsightEvent, InsightTip } from "@/features/trip/utils/tripInsights";
 

@@ -547,6 +547,7 @@ function buildTripSummary(trip: TripWithRelations) {
 function buildPhotoMoments(day: TripDay, trip: TripWithRelations) {
   return day.events.flatMap((event) =>
     event.photos.map((photo) => ({
+      id: photo.id,
       url: photo.url,
       title: getEventTitle(event),
       time: event.time,
@@ -824,8 +825,12 @@ export default function TripReportDocument({
             </Page>
 
             {Math.max(photoChunks.length, 1) > 0 &&
-              (photoChunks.length > 0 ? photoChunks : [[]]).map((chunk, index) => (
-                <Page size="A4" style={styles.page} key={`${day.id}-photos-${index}`}>
+              (photoChunks.length > 0 ? photoChunks : [[]]).map((chunk) => (
+                <Page
+                  size="A4"
+                  style={styles.page}
+                  key={`${day.id}-photos-${chunk[0]?.id || "empty"}`}
+                >
                   <Text style={styles.photoPageTitle}>Day {day.dayNumber} Photo Album</Text>
                   <Text style={styles.photoPageSubtitle}>
                     {day.title || trip.location} /{" "}
@@ -834,8 +839,8 @@ export default function TripReportDocument({
 
                   {chunk.length > 0 ? (
                     <View style={styles.photoGrid}>
-                      {chunk.map((photo, photoIndex) => (
-                        <View style={styles.photoCard} key={`${photo.url}-${photoIndex}`} wrap={false}>
+                      {chunk.map((photo) => (
+                        <View style={styles.photoCard} key={photo.id} wrap={false}>
                           {/* eslint-disable-next-line jsx-a11y/alt-text */}
                           <Image src={photo.url} style={styles.photoImage} />
                           <View style={styles.photoCaption}>

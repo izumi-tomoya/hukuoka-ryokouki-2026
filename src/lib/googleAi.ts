@@ -64,8 +64,16 @@ export type GoogleModelMetadata = {
 export const DEFAULT_GOOGLE_TRAVEL_AI_MODELS = [...PREFERRED_GOOGLE_TRAVEL_AI_CANDIDATES] as const;
 
 const GOOGLE_TRAVEL_AI_MODEL_ENV_KEYS = ["GOOGLE_AI_MODELS", "GEMINI_MODELS"] as const;
-const GOOGLE_MODELS_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models";
+const GOOGLE_API_BASE_URL = "https://generativelanguage.googleapis.com";
 const unavailableGoogleModels = new Set<string>();
+
+export function getGoogleBaseUrl() {
+  const gatewayUrl = process.env.GOOGLE_AI_GATEWAY_URL;
+  if (gatewayUrl && gatewayUrl.startsWith("http")) {
+    return gatewayUrl;
+  }
+  return GOOGLE_API_BASE_URL;
+}
 
 function isGemmaModel(model: string) {
   return model.toLowerCase().includes("gemma");
@@ -141,8 +149,10 @@ function normalizeGoogleModel(model: GoogleModelResponse): GoogleModelMetadata {
 
 export async function listGoogleModels() {
   const apiKey = getGoogleApiKey();
-  if (!apiKey) {
-    throw new Error("GOOGLE_GENERATIVE_AI_API_KEY か GEMINI_API_KEY が設定されていません。");
+  const oidcToken = process.env.VERCEL_OIDC_TOKEN;
+
+  if (!apiKey && !oidcToken) {
+    throw new Error("GOOGLE_GENERATIVE_AI_API_KEY または VERCEL_OIDC_TOKEN が設定されていません。");
   }
 
   const models: GoogleModelMetadata[] = [];
@@ -154,10 +164,15 @@ export async function listGoogleModels() {
       searchParams.set("pageToken", pageToken);
     }
 
-    const response = await fetch(`${GOOGLE_MODELS_ENDPOINT}?${searchParams.toString()}`, {
-      headers: {
-        "x-goog-api-key": apiKey,
-      },
+    const headers: Record<string, string> = {};
+    if (oidcToken) {
+      headers["Authorization"] = `Bearer ${oidcToken}`;
+    } else if (apiKey) {
+      headers["x-goog-api-key"] = apiKey;
+    }
+
+    const response = await fetch(`${getGoogleBaseUrl()}/v1beta/models?${searchParams.toString()}`, {
+      headers,
       cache: "no-store",
     });
 
@@ -194,8 +209,10 @@ export async function generateGoogleText({
   }
 
   const apiKey = getGoogleApiKey();
-  if (!apiKey) {
-    throw new Error("GOOGLE_GENERATIVE_AI_API_KEY か GEMINI_API_KEY が設定されていません。");
+  const oidcToken = process.env.VERCEL_OIDC_TOKEN;
+
+  if (!apiKey && !oidcToken) {
+    throw new Error("GOOGLE_GENERATIVE_AI_API_KEY または VERCEL_OIDC_TOKEN が設定されていません。");
   }
 
   const payload: Record<string, unknown> = {
@@ -216,13 +233,19 @@ export async function generateGoogleText({
   const controller = timeoutMs ? new AbortController() : undefined;
   const timeout = controller ? setTimeout(() => controller.abort(), timeoutMs) : undefined;
 
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+  if (oidcToken) {
+    headers["Authorization"] = `Bearer ${oidcToken}`;
+  } else if (apiKey) {
+    headers["x-goog-api-key"] = apiKey;
+  }
+
   try {
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+    const response = await fetch(`${getGoogleBaseUrl()}/v1beta/models/${model}:generateContent`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-goog-api-key": apiKey,
-      },
+      headers,
       cache: "no-store",
       signal: controller?.signal,
       body: JSON.stringify(payload),

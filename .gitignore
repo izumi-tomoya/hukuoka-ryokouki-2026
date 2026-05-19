@@ -60,3 +60,4 @@ src/**/*.png
 src/**/*.jpg
 src/**/*.jpeg
 src/**/*.webp
+.env*.local

@@ -12,6 +12,7 @@ import {
   Plane,
   Utensils,
 } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BentoTile } from "@/components/ui/BentoTile";
@@ -27,6 +28,26 @@ import { formatDateRange, formatDateWithWeekday } from "@/features/trip/utils/da
 import { auth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import { getWeatherData } from "@/lib/weather";
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const trip = await getTripBySlug(slug);
+
+  if (!trip) return { title: "Trip Not Found" };
+
+  return {
+    title: trip.title,
+    description: trip.description || `${trip.location}への旅行のしおり`,
+    alternates: {
+      canonical: `/trip/${slug}`,
+    },
+    openGraph: {
+      title: trip.title,
+      description: trip.description || `${trip.location}への旅行のしおり`,
+      type: "website",
+    },
+  };
+}
 
 export default async function TripPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -68,6 +89,29 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
       events={allTripEvents as TripEvent[]}
       tips={trip.tips as Tip[]}
     >
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": trip.title,
+                "item": `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/trip/${slug}`
+              }
+            ]
+          })
+        }}
+      />
       <Container className="pb-24">
         <div className="grid grid-cols-1 gap-10 md:gap-16">
           {/* ─── Hero / Overview Card ─── */}

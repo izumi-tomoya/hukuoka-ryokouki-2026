@@ -2,7 +2,7 @@
 
 import { Calendar, FileText, Loader2, MapPin, Palette, Save, Sparkles, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { createTrip, deleteTripAction, updateTripAction } from "@/features/trip/api/tripActions";
 import { cn } from "@/lib/utils";
 
@@ -36,6 +36,13 @@ export default function NewTripForm({ initialData }: Props) {
   const [isPending, setIsPending] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [selectedColor, setSelectedColor] = useState(initialData?.accentColor || COLOR_PRESETS[0].value);
+
+  const titleId = useId();
+  const descId = useId();
+  const locationId = useId();
+  const startId = useId();
+  const endId = useId();
+  const colorId = useId();
 
   async function handleSubmit(formData: FormData) {
     setIsPending(true);
@@ -80,10 +87,11 @@ export default function NewTripForm({ initialData }: Props) {
     <form action={handleSubmit} className="space-y-8">
       {/* Title Field */}
       <div>
-        <label className={labelCls}>Journey Title</label>
+        <label htmlFor={titleId} className={labelCls}>Journey Title</label>
         <div className="relative">
           <Sparkles size={16} className="text-primary/40 absolute top-1/2 left-4 -translate-y-1/2" />
           <input
+            id={titleId}
             name="title"
             required
             defaultValue={initialData?.title}
@@ -95,10 +103,11 @@ export default function NewTripForm({ initialData }: Props) {
 
       {/* Description Field */}
       <div>
-        <label className={labelCls}>Short Description</label>
+        <label htmlFor={descId} className={labelCls}>Short Description</label>
         <div className="relative">
           <FileText size={16} className="text-muted-foreground/40 absolute top-4 left-4" />
           <textarea
+            id={descId}
             name="description"
             defaultValue={initialData?.description || ""}
             placeholder="この旅のテーマや目的を一言で..."
@@ -109,10 +118,11 @@ export default function NewTripForm({ initialData }: Props) {
 
       {/* Location Field */}
       <div>
-        <label className={labelCls}>Destination</label>
+        <label htmlFor={locationId} className={labelCls}>Destination</label>
         <div className="relative">
           <MapPin size={16} className="text-muted-foreground/40 absolute top-1/2 left-4 -translate-y-1/2" />
           <input
+            id={locationId}
             name="location"
             required
             defaultValue={initialData?.location}
@@ -125,13 +135,14 @@ export default function NewTripForm({ initialData }: Props) {
       {/* Date Range */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
         <div>
-          <label className={labelCls}>Departure</label>
+          <label htmlFor={startId} className={labelCls}>Departure</label>
           <div className="relative">
             <Calendar
               size={16}
               className="text-muted-foreground/40 pointer-events-none absolute top-1/2 left-4 -translate-y-1/2"
             />
             <input
+              id={startId}
               name="startDate"
               type="date"
               required
@@ -141,13 +152,14 @@ export default function NewTripForm({ initialData }: Props) {
           </div>
         </div>
         <div>
-          <label className={labelCls}>Return</label>
+          <label htmlFor={endId} className={labelCls}>Return</label>
           <div className="relative">
             <Calendar
               size={16}
               className="text-muted-foreground/40 pointer-events-none absolute top-1/2 left-4 -translate-y-1/2"
             />
             <input
+              id={endId}
               name="endDate"
               type="date"
               required
@@ -160,7 +172,7 @@ export default function NewTripForm({ initialData }: Props) {
 
       {/* Accent Color Selection */}
       <div className="pt-2">
-        <label className={labelCls}>Theme Accent</label>
+        <label htmlFor={colorId} className={labelCls}>Theme Accent</label>
         <div className="mb-4 grid grid-cols-4 gap-3 sm:grid-cols-7">
           {COLOR_PRESETS.map((color) => (
             <button
@@ -186,6 +198,7 @@ export default function NewTripForm({ initialData }: Props) {
           <div className="border-border/50 bg-secondary/30 relative flex h-10 w-full items-center justify-center overflow-hidden rounded-xl border">
             <Palette size={14} className="text-muted-foreground/40" />
             <input
+              id={colorId}
               name="accentColor"
               type="color"
               value={selectedColor}

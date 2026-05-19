@@ -76,7 +76,7 @@ export default function AdventureCard() {
           <p className="max-w-lg text-sm leading-relaxed text-stone-500 italic">&ldquo;{adventure.desc}&rdquo;</p>
         </div>
 
-        <button onClick={handleNext} className="group v2-focus flex shrink-0 flex-col items-center gap-3 rounded-full">
+        <button type="button" onClick={handleNext} className="group v2-focus flex shrink-0 flex-col items-center gap-3 rounded-full">
           <div className="flex h-16 w-16 items-center justify-center rounded-full border border-rose-100 bg-white text-rose-400 shadow-lg transition-all group-hover:bg-rose-500 group-hover:text-white group-active:scale-90">
             <RefreshCcw size={24} className={cn("transition-transform duration-700", isAnimating && "rotate-180")} />
           </div>

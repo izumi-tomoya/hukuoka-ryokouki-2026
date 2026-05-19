@@ -2,7 +2,6 @@
 import { Cloud, CloudLightning, CloudRain, Sun, Umbrella, Wind } from "lucide-react";
 import { useEffect, useState } from "react";
 import { MagazineCard } from "@/components/ui/MagazineCard";
-import TripWeatherSummarySkeleton from "./TripWeatherSummarySkeleton";
 
 interface ForecastDay {
   date: string;

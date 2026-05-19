@@ -2,7 +2,7 @@
 
 import { Loader2, Save, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { deleteEventAction, updateEventAction } from "@/features/trip/api/tripActions";
@@ -28,6 +28,14 @@ export function EditEventForm({ event, onSuccess }: Props) {
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  
+  const timeId = useId();
+  const typeId = useId();
+  const titleId = useId();
+  const tagLabelId = useId();
+  const isConfirmedId = useId();
+  const descId = useId();
+  const locationUrlId = useId();
 
   const { register, handleSubmit } = useForm<EventFormData>({
     defaultValues: {
@@ -50,7 +58,7 @@ export function EditEventForm({ event, onSuccess }: Props) {
       await updateEventAction(event.id, data);
       onSuccess();
       router.refresh();
-    } catch (err) {
+    } catch (_err) {
       alert("更新に失敗しました");
     } finally {
       setIsUpdating(false);
@@ -64,7 +72,7 @@ export function EditEventForm({ event, onSuccess }: Props) {
       await deleteEventAction(event.id);
       onSuccess();
       router.refresh();
-    } catch (err) {
+    } catch (_err) {
       alert("削除に失敗しました");
     } finally {
       setIsDeleting(false);
@@ -75,18 +83,20 @@ export function EditEventForm({ event, onSuccess }: Props) {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <label className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">時間</label>
+          <label htmlFor={timeId} className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">時間</label>
           <input
+            id={timeId}
             {...register("time")}
             type="time"
             className="bg-secondary/30 border-border text-foreground focus:bg-background w-full rounded-xl border p-3 transition-all outline-none"
           />
         </div>
         <div className="space-y-2">
-          <label className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
+          <label htmlFor={typeId} className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
             カテゴリ
           </label>
           <select
+            id={typeId}
             {...register("type")}
             className="bg-secondary/30 border-border text-foreground focus:bg-background w-full appearance-none rounded-xl border p-3 transition-all outline-none"
           >
@@ -100,8 +110,9 @@ export function EditEventForm({ event, onSuccess }: Props) {
       </div>
 
       <div className="space-y-2">
-        <label className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">タイトル</label>
+        <label htmlFor={titleId} className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">タイトル</label>
         <input
+          id={titleId}
           {...register("title")}
           className="bg-secondary/30 border-border text-foreground focus:bg-background w-full rounded-xl border p-3 transition-all outline-none"
         />
@@ -109,20 +120,22 @@ export function EditEventForm({ event, onSuccess }: Props) {
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <label className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
+          <label htmlFor={tagLabelId} className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
             タグ表示名 (例: ランチ)
           </label>
           <input
+            id={tagLabelId}
             {...register("tagLabel")}
             className="bg-secondary/30 border-border text-foreground focus:bg-background w-full rounded-xl border p-3 transition-all outline-none"
           />
         </div>
         <div className="space-y-2">
-          <label className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
+          <label htmlFor={isConfirmedId} className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
             確定済み
           </label>
           <div className="bg-secondary/30 border-border flex h-12 items-center rounded-xl border px-4">
             <input
+              id={isConfirmedId}
               type="checkbox"
               {...register("isConfirmed")}
               className="border-border text-primary h-5 w-5 rounded"
@@ -132,8 +145,9 @@ export function EditEventForm({ event, onSuccess }: Props) {
       </div>
 
       <div className="space-y-2">
-        <label className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">説明</label>
+        <label htmlFor={descId} className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">説明</label>
         <textarea
+          id={descId}
           {...register("desc")}
           className="bg-secondary/30 border-border text-foreground focus:bg-background w-full resize-none rounded-xl border p-3 transition-all outline-none"
           rows={2}
@@ -162,10 +176,11 @@ export function EditEventForm({ event, onSuccess }: Props) {
       </div>
 
       <div className="space-y-2">
-        <label className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
+        <label htmlFor={locationUrlId} className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
           Google Maps URL
         </label>
         <input
+          id={locationUrlId}
           {...register("locationUrl")}
           type="url"
           className="bg-secondary/30 border-border text-foreground focus:bg-background w-full rounded-xl border p-3 transition-all outline-none"

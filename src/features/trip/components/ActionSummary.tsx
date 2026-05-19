@@ -56,7 +56,7 @@ function isReserved(event: TripEvent) {
   );
 }
 
-export default function ActionSummary({ events, slug, isAdmin = false, locationNames = [] }: Props) {
+export default function ActionSummary({ events, isAdmin = false, locationNames = [] }: Props) {
   const mappedCount = events.filter((ev) => hasMapPoint(ev, locationNames)).length;
   const reservedCount = events.filter(isReserved).length;
   const openModal = useModalStore((s) => s.openModal);
@@ -97,17 +97,10 @@ export default function ActionSummary({ events, slug, isAdmin = false, locationN
             : null;
 
           return (
-            <div
+            <button
               key={event.id || `${event.time}-${index}`}
-              role="button"
-              tabIndex={0}
+              type="button"
               onClick={() => openModal(event, prevLoc)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  openModal(event, prevLoc);
-                }
-              }}
               className="border-border bg-background/60 group grid cursor-pointer gap-3 rounded-3xl p-4 text-left transition-all hover:border-primary/30 hover:shadow-lg active:scale-[0.99] sm:grid-cols-[5rem_1fr] sm:p-5"
             >
               <div className="flex items-center gap-3 sm:block">
@@ -180,7 +173,7 @@ export default function ActionSummary({ events, slug, isAdmin = false, locationN
                   </div>
                 )}
               </div>
-            </div>
+            </button>
           );
         })}
       </div>

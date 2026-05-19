@@ -2,7 +2,7 @@
 
 import { Calendar, Camera, Compass, Home, Info as InfoIcon, LifeBuoy, type LucideIcon } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useCallback, useRef } from "react";
 import { cn } from "@/lib/utils";
 
 interface NavItem {
@@ -20,7 +20,14 @@ interface CategoryTabsProps {
 
 export default function CategoryTabs({ slug, activePath, isSecretMode, days }: CategoryTabsProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const activeTabRef = useRef<HTMLAnchorElement>(null);
+
+  const activeTabCallback = useCallback((node: HTMLAnchorElement | null) => {
+    if (node && containerRef.current) {
+      const container = containerRef.current;
+      const scrollLeft = node.offsetLeft - container.offsetWidth / 2 + node.offsetWidth / 2;
+      container.scrollTo({ left: scrollLeft, behavior: "smooth" });
+    }
+  }, []);
 
   const dayNumbers = days ? days.map((d) => d.dayNumber) : [1, 2];
 
@@ -37,15 +44,6 @@ export default function CategoryTabs({ slug, activePath, isSecretMode, days }: C
     ...(isSecretMode ? [{ href: `/trip/${slug}/tips`, label: "Tips", icon: Compass }] : []),
   ];
 
-  useEffect(() => {
-    if (activeTabRef.current && containerRef.current) {
-      const container = containerRef.current;
-      const tab = activeTabRef.current;
-      const scrollLeft = tab.offsetLeft - container.offsetWidth / 2 + tab.offsetWidth / 2;
-      container.scrollTo({ left: scrollLeft, behavior: "smooth" });
-    }
-  }, [activePath]);
-
   return (
     <div
       ref={containerRef}
@@ -60,7 +58,7 @@ export default function CategoryTabs({ slug, activePath, isSecretMode, days }: C
           <Link
             key={item.href}
             href={item.href}
-            ref={isActive ? activeTabRef : undefined}
+            ref={isActive ? activeTabCallback : undefined}
             className={cn(
               "flex min-h-11 shrink-0 items-center gap-2 rounded-full border px-5 py-3 text-[10px] font-black tracking-[0.14em] uppercase transition-all sm:px-6 md:px-8 md:py-4 md:text-xs md:tracking-[0.2em]",
               isActive

@@ -1,4 +1,3 @@
-import { Map } from "lucide-react";
 import BudgetSummary from "@/features/trip/components/BudgetSummary";
 import { CommonTipsSection } from "@/features/trip/components/CommonTipsSection";
 import EventFilterWrapper from "@/features/trip/components/client/EventFilterWrapper";

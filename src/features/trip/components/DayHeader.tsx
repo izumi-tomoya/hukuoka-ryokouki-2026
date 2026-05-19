@@ -1,4 +1,4 @@
-import { Calendar, ChevronLeft, ChevronRight, Clock, MapPin } from "lucide-react";
+import { Calendar, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { MagazineCard } from "@/components/ui/MagazineCard";

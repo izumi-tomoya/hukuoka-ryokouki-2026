@@ -89,7 +89,7 @@ export async function updateTripAction(tripId: string, formData: FormData) {
 export async function deleteTripAction(tripId: string) {
   await checkAdmin();
   try {
-    const trip = await prisma.trip.delete({
+    const _trip = await prisma.trip.delete({
       where: { id: tripId },
     });
     revalidatePath("/");

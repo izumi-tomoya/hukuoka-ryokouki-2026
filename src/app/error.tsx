@@ -32,6 +32,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
 
           <div className="flex flex-col gap-3">
             <button
+              type="button"
               onClick={() => reset()}
               className="bg-foreground text-background flex w-full items-center justify-center gap-2 rounded-2xl px-6 py-4 text-xs font-black tracking-widest uppercase transition-all hover:opacity-90 active:scale-[0.98]"
             >

@@ -11,6 +11,7 @@ export default function MapLink({ url, label = "Google Map で見る" }: { url: 
 
   return (
     <button
+      type="button"
       onClick={handleClick}
       className="v2-focus mt-4 inline-flex items-center gap-2 rounded-lg text-[10px] font-bold whitespace-nowrap text-rose-500 transition-all hover:gap-3"
     >

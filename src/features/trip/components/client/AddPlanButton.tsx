@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { MagazineCard } from "@/components/ui/MagazineCard";
 import { createEventAction } from "@/features/trip/api/tripActions";
-import { cn } from "@/lib/utils";
 
 interface Props {
   dayId: string;
@@ -64,6 +63,7 @@ export default function AddPlanButton({ dayId }: Props) {
   return (
     <>
       <button
+        type="button"
         onClick={() => setIsOpen(true)}
         className="bg-secondary/50 border-border text-muted-foreground hover:bg-primary/5 hover:border-primary/50 hover:text-primary group flex w-full items-center justify-center gap-3 rounded-[2rem] border-2 border-dashed py-6 transition-all"
       >
@@ -76,8 +76,10 @@ export default function AddPlanButton({ dayId }: Props) {
       {/* Modal */}
       {isOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div
-            className="bg-background/80 animate-in fade-in absolute inset-0 backdrop-blur-xl duration-300"
+          <button
+            type="button"
+            aria-label="Close modal"
+            className="bg-background/80 animate-in fade-in absolute inset-0 cursor-default backdrop-blur-xl duration-300"
             onClick={() => setIsOpen(false)}
           />
 
@@ -98,6 +100,7 @@ export default function AddPlanButton({ dayId }: Props) {
                 </div>
               </div>
               <button
+                type="button"
                 onClick={() => setIsOpen(false)}
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
@@ -108,10 +111,14 @@ export default function AddPlanButton({ dayId }: Props) {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <div className="space-y-2">
-                  <label className="text-muted-foreground ml-1 flex items-center gap-2 text-[10px] font-black tracking-widest uppercase">
+                  <label
+                    htmlFor="plan-time"
+                    className="text-muted-foreground ml-1 flex items-center gap-2 text-[10px] font-black tracking-widest uppercase"
+                  >
                     <Clock size={12} /> Time
                   </label>
                   <input
+                    id="plan-time"
                     name="time"
                     type="time"
                     required
@@ -120,10 +127,14 @@ export default function AddPlanButton({ dayId }: Props) {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-muted-foreground ml-1 flex items-center gap-2 text-[10px] font-black tracking-widest uppercase">
+                  <label
+                    htmlFor="plan-type"
+                    className="text-muted-foreground ml-1 flex items-center gap-2 text-[10px] font-black tracking-widest uppercase"
+                  >
                     <Tag size={12} /> Category
                   </label>
                   <select
+                    id="plan-type"
                     name="type"
                     className="bg-secondary/30 border-border focus:bg-background focus:ring-primary/5 w-full appearance-none rounded-2xl border px-4 py-4 text-sm font-bold transition-all outline-none focus:ring-4"
                   >
@@ -138,10 +149,14 @@ export default function AddPlanButton({ dayId }: Props) {
 
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <div className="space-y-2">
-                  <label className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
+                  <label
+                    htmlFor="plan-title"
+                    className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase"
+                  >
                     Title
                   </label>
                   <input
+                    id="plan-title"
                     name="title"
                     required
                     placeholder="例: 太宰府天満宮でお参り"
@@ -149,10 +164,14 @@ export default function AddPlanButton({ dayId }: Props) {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
+                  <label
+                    htmlFor="plan-tagLabel"
+                    className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase"
+                  >
                     Tag Label
                   </label>
                   <input
+                    id="plan-tagLabel"
                     name="tagLabel"
                     placeholder="例: 絶品ランチ"
                     className="bg-secondary/30 border-border focus:bg-background focus:ring-primary/5 w-full rounded-2xl border px-4 py-4 text-sm font-bold transition-all outline-none focus:ring-4"
@@ -161,10 +180,14 @@ export default function AddPlanButton({ dayId }: Props) {
               </div>
 
               <div className="space-y-2">
-                <label className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
+                <label
+                  htmlFor="plan-desc"
+                  className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase"
+                >
                   Description
                 </label>
                 <textarea
+                  id="plan-desc"
                   name="desc"
                   placeholder="見どころや注意点など..."
                   rows={2}
@@ -178,17 +201,20 @@ export default function AddPlanButton({ dayId }: Props) {
                 </div>
                 <input
                   name="highlight"
+                  aria-label="Pro Advice / Highlight"
                   placeholder="✨ Highlight / 泉へのアドバイス"
                   className="bg-background/50 focus:bg-background w-full rounded-xl border border-amber-500/20 px-4 py-3 text-xs font-bold transition-all outline-none"
                 />
                 <div className="grid grid-cols-2 gap-3">
                   <input
                     name="foodName"
+                    aria-label="Food Name"
                     placeholder="料理名"
                     className="bg-background/50 focus:bg-background w-full rounded-xl border border-amber-500/20 px-4 py-3 text-xs font-bold transition-all outline-none"
                   />
                   <input
                     name="foodDesc"
+                    aria-label="Food Description"
                     placeholder="料理の説明"
                     className="bg-background/50 focus:bg-background w-full rounded-xl border border-amber-500/20 px-4 py-3 text-xs font-bold transition-all outline-none"
                   />
@@ -196,10 +222,14 @@ export default function AddPlanButton({ dayId }: Props) {
               </div>
 
               <div className="space-y-2">
-                <label className="text-muted-foreground ml-1 flex items-center gap-2 text-[10px] font-black tracking-widest uppercase">
+                <label
+                  htmlFor="plan-locationUrl"
+                  className="text-muted-foreground ml-1 flex items-center gap-2 text-[10px] font-black tracking-widest uppercase"
+                >
                   <MapPin size={12} /> Google Maps URL
                 </label>
                 <input
+                  id="plan-locationUrl"
                   name="locationUrl"
                   type="url"
                   placeholder="https://goo.gl/maps/..."

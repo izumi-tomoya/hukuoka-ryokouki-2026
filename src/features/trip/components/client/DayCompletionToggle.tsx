@@ -29,6 +29,7 @@ export default function DayCompletionToggle({ dayId, initialCompleted = false }:
 
   return (
     <button
+      type="button"
       onClick={handleToggle}
       disabled={isLoading}
       className={cn(

@@ -1,6 +1,6 @@
 import { put } from "@vercel/blob";
 import { NextResponse } from "next/server";
-import path from "path";
+import path from "node:path";
 import { auth } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";

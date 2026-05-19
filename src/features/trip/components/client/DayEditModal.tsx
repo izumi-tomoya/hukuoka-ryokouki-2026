@@ -45,6 +45,7 @@ export default function DayEditModal({ dayId, initialTitle = "", initialHighligh
   return (
     <>
       <button
+        type="button"
         onClick={() => setIsOpen(true)}
         className="border-border bg-background text-muted-foreground hover:text-primary hover:border-primary/30 flex h-10 w-10 items-center justify-center rounded-full border shadow-sm transition-all"
       >
@@ -53,8 +54,10 @@ export default function DayEditModal({ dayId, initialTitle = "", initialHighligh
 
       {isOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div
-            className="bg-background/80 animate-in fade-in absolute inset-0 backdrop-blur-xl duration-300"
+          <button
+            type="button"
+            aria-label="Close modal"
+            className="bg-background/80 animate-in fade-in absolute inset-0 cursor-default backdrop-blur-xl duration-300"
             onClick={() => setIsOpen(false)}
           />
 
@@ -75,6 +78,7 @@ export default function DayEditModal({ dayId, initialTitle = "", initialHighligh
                 </div>
               </div>
               <button
+                type="button"
                 onClick={() => setIsOpen(false)}
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
@@ -84,10 +88,14 @@ export default function DayEditModal({ dayId, initialTitle = "", initialHighligh
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
-                <label className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
+                <label
+                  htmlFor="day-title"
+                  className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase"
+                >
                   Title
                 </label>
                 <input
+                  id="day-title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="Day Title"
@@ -96,10 +104,14 @@ export default function DayEditModal({ dayId, initialTitle = "", initialHighligh
               </div>
 
               <div className="space-y-2">
-                <label className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
+                <label
+                  htmlFor="day-highlight"
+                  className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase"
+                >
                   Highlight
                 </label>
                 <textarea
+                  id="day-highlight"
                   value={highlight}
                   onChange={(e) => setHighlight(e.target.value)}
                   placeholder="一日のキャッチコピー・意気込み..."

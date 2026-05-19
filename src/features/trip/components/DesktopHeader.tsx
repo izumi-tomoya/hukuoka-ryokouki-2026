@@ -87,7 +87,11 @@ export default function Header() {
             </Link>
           )}
 
-          <button className="dark:text-muted-foreground p-2 text-zinc-600 md:hidden" onClick={() => setIsOpen(!isOpen)}>
+          <button
+            type="button"
+            className="dark:text-muted-foreground p-2 text-zinc-600 md:hidden"
+            onClick={() => setIsOpen(!isOpen)}
+          >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>

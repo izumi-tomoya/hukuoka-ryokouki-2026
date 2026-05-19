@@ -1,6 +1,5 @@
 import { renderToBuffer } from "@react-pdf/renderer";
 import { NextResponse } from "next/server";
-import React from "react";
 import { getTripBySlug } from "@/features/trip/api/tripActions";
 import TripReportDocument, { type ReportTemperatureLog } from "@/features/trip/components/pdf/TripReportDocument";
 
@@ -50,8 +49,7 @@ async function buildPdfResponse(
   trip: NonNullable<Awaited<ReturnType<typeof getTripBySlug>>>,
   temperatureLogs: ReportTemperatureLog[],
 ) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const buffer = await renderToBuffer(React.createElement(TripReportDocument, { trip, temperatureLogs }) as any);
+  const buffer = await renderToBuffer(<TripReportDocument trip={trip} temperatureLogs={temperatureLogs} />);
   return new Response(new Uint8Array(buffer), {
     headers: {
       "Content-Type": "application/pdf",

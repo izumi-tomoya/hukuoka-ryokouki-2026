@@ -2,6 +2,7 @@
 
 import type { GourmetAward } from "@prisma/client";
 import { Camera, Film, Heart, Images, Play, Plus, Sparkles, Trophy } from "lucide-react";
+import Image from "next/image";
 import { useState } from "react";
 import { Container } from "@/components/ui/Container";
 import { MagazineCard } from "@/components/ui/MagazineCard";
@@ -81,6 +82,7 @@ export default function MemoriesContent({
                 </div>
 
                 <button
+                  type="button"
                   onClick={() => setIsReelOpen(true)}
                   className="mt-8 inline-flex min-h-12 items-center gap-4 rounded-full bg-white px-6 py-3 text-black shadow-xl transition-all hover:scale-[1.02] active:scale-95"
                 >
@@ -94,13 +96,13 @@ export default function MemoriesContent({
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-2">
                 {albumPhotos.slice(0, 4).map((photo, index) => (
                   <div
-                    key={`${photo.url}-${index}`}
+                    key={`preview-${photo.url}-${index}`}
                     className={`group relative overflow-hidden rounded-[1.75rem] border border-white/10 ${index === 0 ? "col-span-2 aspect-[16/10]" : "aspect-[4/5]"}`}
                   >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                    <Image
                       src={photo.url}
                       alt={photo.title || "Memory preview"}
+                      fill
                       className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
@@ -154,6 +156,7 @@ export default function MemoriesContent({
           </div>
           {isAdmin && (
             <button
+              type="button"
               onClick={() => setIsAwardModalOpen(true)}
               className="group bg-card border-border hover:border-primary hover:text-primary flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl border px-5 py-3 text-[10px] font-black tracking-[0.14em] uppercase shadow-sm transition-all sm:w-auto sm:tracking-widest"
             >
@@ -196,6 +199,7 @@ export default function MemoriesContent({
 
           {albumPhotos.length > 0 && (
             <button
+              type="button"
               onClick={() => setIsReelOpen(true)}
               className="group flex min-h-12 w-full items-center justify-center gap-4 rounded-2xl border border-white/10 bg-zinc-900 px-6 py-3 text-white shadow-xl transition-all hover:scale-[1.02] active:scale-95 sm:w-auto"
             >

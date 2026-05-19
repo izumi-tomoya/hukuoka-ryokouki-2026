@@ -33,6 +33,7 @@ export default function ConfirmCheckbox({ eventId, initialConfirmed }: ConfirmCh
 
   return (
     <button
+      type="button"
       onClick={handleToggle}
       disabled={isPending}
       className={cn(

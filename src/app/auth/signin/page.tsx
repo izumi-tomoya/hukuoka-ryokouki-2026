@@ -1,4 +1,4 @@
-import { LogIn, Map, Sparkles } from "lucide-react";
+import { LogIn, Sparkles } from "lucide-react";
 import Image from "next/image";
 import { signIn } from "@/lib/auth";
 

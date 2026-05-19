@@ -22,8 +22,7 @@ export default function EventFilterWrapper({
   const filteredEvents = activeCategory ? events.filter((e) => e.type === activeCategory) : events;
 
   return (
-    <>
-      <div className="space-y-8">
+    <div className="space-y-8">
         <CategoryFilter />
 
         {isAdmin && dayId && (
@@ -33,7 +32,6 @@ export default function EventFilterWrapper({
         )}
 
         <Timeline events={filteredEvents} dayNumber={dayNumber} isAdmin={isAdmin} />
-      </div>
-    </>
+    </div>
   );
 }

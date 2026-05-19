@@ -77,8 +77,10 @@ export default function AddAwardModal({ tripId, isOpen, onClose }: Props) {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      <div
-        className="bg-background/80 animate-in fade-in absolute inset-0 backdrop-blur-md duration-300"
+      <button
+        type="button"
+        aria-label="Close modal"
+        className="bg-background/80 animate-in fade-in absolute inset-0 cursor-default backdrop-blur-md duration-300"
         onClick={onClose}
       />
 
@@ -93,7 +95,11 @@ export default function AddAwardModal({ tripId, isOpen, onClose }: Props) {
             </div>
             <h2 className="text-foreground text-2xl font-black">New Gourmet Award</h2>
           </div>
-          <button onClick={onClose} className="hover:bg-secondary rounded-full p-2 transition-colors">
+          <button
+            type="button"
+            onClick={onClose}
+            className="hover:bg-secondary rounded-full p-2 transition-colors"
+          >
             <X size={24} />
           </button>
         </div>
@@ -101,11 +107,14 @@ export default function AddAwardModal({ tripId, isOpen, onClose }: Props) {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="space-y-2">
-              <label className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
+              <label
+                htmlFor="award-title"
+                className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase"
+              >
                 Award Title / Shop Name
               </label>
               <input
-                autoFocus
+                id="award-title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 className="bg-secondary/50 border-border text-foreground placeholder:text-muted-foreground/50 v2-focus w-full rounded-2xl border px-5 py-4 transition-all"
@@ -114,10 +123,14 @@ export default function AddAwardModal({ tripId, isOpen, onClose }: Props) {
               />
             </div>
             <div className="relative space-y-2">
-              <label className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
+              <label
+                htmlFor="award-category"
+                className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase"
+              >
                 Category
               </label>
               <select
+                id="award-category"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 className="bg-secondary/50 border-border text-foreground dark:bg-card v2-focus w-full appearance-none rounded-2xl border px-5 py-4"
@@ -135,10 +148,14 @@ export default function AddAwardModal({ tripId, isOpen, onClose }: Props) {
           </div>
 
           <div className="space-y-2">
-            <label className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
+            <label
+              htmlFor="award-comment"
+              className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase"
+            >
               Comments
             </label>
             <textarea
+              id="award-comment"
               rows={3}
               value={comment}
               onChange={(e) => setComment(e.target.value)}
@@ -149,7 +166,10 @@ export default function AddAwardModal({ tripId, isOpen, onClose }: Props) {
 
           {/* Photo Upload Area */}
           <div className="space-y-4">
-            <label className="text-muted-foreground ml-1 flex items-center gap-2 text-[10px] font-black tracking-widest uppercase">
+            <label
+              htmlFor="photo-upload"
+              className="text-muted-foreground ml-1 flex items-center gap-2 text-[10px] font-black tracking-widest uppercase"
+            >
               <Camera size={12} /> Award Photo
             </label>
 
@@ -165,7 +185,10 @@ export default function AddAwardModal({ tripId, isOpen, onClose }: Props) {
                 </button>
               </div>
             ) : (
-              <label className="border-border bg-secondary/20 hover:bg-secondary/40 flex aspect-video w-full cursor-pointer flex-col items-center justify-center rounded-3xl border-2 border-dashed transition-all">
+              <label
+                htmlFor="photo-upload"
+                className="border-border bg-secondary/20 hover:bg-secondary/40 flex aspect-video w-full cursor-pointer flex-col items-center justify-center rounded-3xl border-2 border-dashed transition-all"
+              >
                 {isUploading ? (
                   <Loader2 className="text-primary animate-spin" size={32} />
                 ) : (
@@ -174,7 +197,13 @@ export default function AddAwardModal({ tripId, isOpen, onClose }: Props) {
                     <span className="text-muted-foreground text-xs font-bold">最高の1枚をアップロード</span>
                   </>
                 )}
-                <input type="file" accept="image/*" className="hidden" onChange={handleFileUpload} />
+                <input
+                  id="photo-upload"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleFileUpload}
+                />
               </label>
             )}
           </div>

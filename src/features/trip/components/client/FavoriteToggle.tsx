@@ -10,6 +10,7 @@ export default function FavoriteToggle({ eventId }: { eventId: string }) {
 
   return (
     <button
+      type="button"
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();

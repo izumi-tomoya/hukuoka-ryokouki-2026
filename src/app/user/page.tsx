@@ -1,4 +1,4 @@
-import { Calendar, ChevronRight, Image as ImageIcon, Mail, Map, Quote, ShieldCheck } from "lucide-react";
+import { Calendar, ChevronRight, Image as ImageIcon, Mail, Quote, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Badge } from "@/components/ui/badge";

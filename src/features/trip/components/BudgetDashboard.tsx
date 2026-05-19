@@ -89,8 +89,8 @@ export default function BudgetDashboard({ stats }: Props) {
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
             {/* Visual Bars */}
             <div className="space-y-5">
-              {byCategory.map((cat, i) => (
-                <div key={i} className="group">
+              {byCategory.map((cat) => (
+                <div key={cat.category} className="group">
                   <div className="mb-2 flex justify-between text-[11px] font-bold">
                     <span className="text-foreground wrap-break-word">{cat.category}</span>
                     <span className="text-muted-foreground">¥{cat.actual.toLocaleString()}</span>
@@ -111,8 +111,8 @@ export default function BudgetDashboard({ stats }: Props) {
             {/* Stats List */}
             <div className="bg-secondary/20 border-border/50 rounded-3xl border p-4 sm:p-6">
               <div className="space-y-4">
-                {byCategory.map((cat, i) => (
-                  <div key={i} className="flex items-center justify-between gap-3">
+                {byCategory.map((cat) => (
+                  <div key={cat.category} className="flex items-center justify-between gap-3">
                     <div className="flex min-w-0 items-center gap-3">
                       <div className="h-2 w-2 rounded-full" style={{ backgroundColor: cat.color }} />
                       <span className="text-muted-foreground truncate text-xs font-medium">{cat.category}</span>

@@ -4,7 +4,6 @@ import {
   AlertTriangle,
   Clock,
   Edit2,
-  ExternalLink,
   FileText,
   JapaneseYen,
   Lightbulb,
@@ -60,7 +59,7 @@ export default function EventDetailModal() {
     if (selectedEvent.id) {
       setNote(selectedEvent.id, noteText);
       const amount = parseInt(budgetAmount, 10);
-      setBudget(selectedEvent.id, isNaN(amount) ? 0 : amount);
+      setBudget(selectedEvent.id, Number.isNaN(amount) ? 0 : amount);
       setIsUserEditing(false);
     }
   };
@@ -87,6 +86,7 @@ export default function EventDetailModal() {
             <div className="absolute top-6 right-6 flex gap-2">
               {isAdmin && (
                 <button
+                  type="button"
                   onClick={() => setIsEditing(!isEditing)}
                   className="bg-background/50 hover:bg-background border-border/50 rounded-full border p-2.5 backdrop-blur transition-all"
                 >
@@ -156,12 +156,12 @@ export default function EventDetailModal() {
                         return (
                           (venue && eventName.includes(venue)) ||
                           (tipTitle && eventName.includes(tipTitle)) ||
-                          (venue && venue.includes(eventName))
+                          (venue?.includes(eventName))
                         );
                       })
-                      .map((tip, idx) => (
+                      .map((tip) => (
                         <MagazineCard
-                          key={idx}
+                          key={tip.id}
                           padding="sm"
                           className={cn(
                             "border-l-4",
@@ -196,6 +196,7 @@ export default function EventDetailModal() {
                     </div>
                     {isAdmin && (
                       <button
+                        type="button"
                         onClick={() => (isUserEditing ? handleSaveUserData() : setIsUserEditing(true))}
                         className="text-primary hover:text-primary/80 text-[10px] font-bold transition-colors"
                       >
@@ -293,9 +294,8 @@ export default function EventDetailModal() {
                       <MapPin size={14} />
                       <span className="text-[10px] font-black tracking-widest uppercase">Access & Location</span>
                     </div>
-                    {selectedEvent.access &&
-                      selectedEvent.access.map((line, idx) => (
-                        <p key={idx} className="text-muted-foreground text-sm">
+                    {selectedEvent.access?.map((line, idx) => (
+                        <p key={`access-${idx}`} className="text-muted-foreground text-sm">
                           {maskSecretText(line, isAdmin)}
                         </p>
                       ))}

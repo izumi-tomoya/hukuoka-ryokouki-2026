@@ -1,6 +1,6 @@
 "use client";
 
-import { MessageSquareQuote, Save, Trash2 } from "lucide-react";
+import { MessageSquareQuote, Save } from "lucide-react";
 import { useState } from "react";
 import { MagazineCard } from "@/components/ui/MagazineCard";
 import { updateDayAction } from "@/features/trip/api/tripActions";
@@ -48,6 +48,7 @@ export default function DayNotes({ dayId, initialNotes = "", isAdmin }: DayNotes
 
         {isAdmin && (
           <button
+            type="button"
             onClick={() => (isEditing ? handleSave() : setIsEditing(true))}
             disabled={isSaving}
             className={cn(

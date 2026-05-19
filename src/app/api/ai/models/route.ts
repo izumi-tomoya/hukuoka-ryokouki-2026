@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { getPreferredAiProvider, resolveTravelAiRuntime } from "@/lib/aiProvider";
-import { auth } from "@/lib/auth";
 import {
   DEFAULT_GOOGLE_TRAVEL_AI_MODELS,
   getGoogleApiKey,

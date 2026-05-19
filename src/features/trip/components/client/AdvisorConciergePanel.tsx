@@ -102,6 +102,7 @@ export default function AdvisorConciergePanel({ slug }: Props) {
       <div className="mt-6 flex flex-wrap gap-2">
         {starterPrompts.map((prompt) => (
           <button
+            type="button"
             key={prompt}
             onClick={() => {
               void ask(prompt);

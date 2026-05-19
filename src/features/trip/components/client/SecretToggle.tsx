@@ -22,6 +22,7 @@ export default function SecretToggle({ isSecretMode }: SecretToggleProps) {
 
   return (
     <button
+      type="button"
       onClick={handleToggle}
       disabled={isPending}
       className={`v2-focus mb-3 inline-flex items-center gap-2 rounded-md border px-4 py-1.5 text-[11px] font-medium tracking-[0.1em] transition-all duration-300 disabled:opacity-50 ${

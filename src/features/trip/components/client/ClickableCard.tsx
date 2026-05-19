@@ -18,25 +18,16 @@ export default function ClickableCard({ event, children, className, previousLoca
     openModal(event, previousLocation);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      handlePress();
-    }
-  };
-
   return (
-    <div
-      role="button"
-      tabIndex={0}
+    <button
+      type="button"
       onClick={handlePress}
-      onKeyDown={handleKeyDown}
       className={cn(
-        "w-full cursor-pointer text-left transition-transform active:scale-[0.98] outline-hidden",
+        "w-full text-left transition-transform active:scale-[0.98] outline-hidden",
         className
       )}
     >
       {children}
-    </div>
+    </button>
   );
 }

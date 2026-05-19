@@ -118,6 +118,7 @@ export default function MemoryReel({ photos, isOpen, onClose }: Props) {
         </div>
 
         <button
+          type="button"
           onClick={onClose}
           className="flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-white/10 backdrop-blur-md transition-all hover:bg-white/15 active:scale-95"
         >
@@ -217,12 +218,14 @@ export default function MemoryReel({ photos, isOpen, onClose }: Props) {
 
         <div className="pointer-events-none absolute inset-x-0 top-1/2 z-20 flex -translate-y-1/2 justify-between px-4 md:px-10">
           <button
+            type="button"
             onClick={prev}
             className="pointer-events-auto flex h-14 w-14 items-center justify-center rounded-full border border-white/10 bg-black/30 text-white opacity-0 backdrop-blur-md transition-all group-hover:opacity-100 hover:bg-black/45 active:scale-95"
           >
             <ChevronLeft size={28} />
           </button>
           <button
+            type="button"
             onClick={next}
             className="pointer-events-auto flex h-14 w-14 items-center justify-center rounded-full border border-white/10 bg-black/30 text-white opacity-0 backdrop-blur-md transition-all group-hover:opacity-100 hover:bg-black/45 active:scale-95"
           >
@@ -236,6 +239,7 @@ export default function MemoryReel({ photos, isOpen, onClose }: Props) {
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div className="flex items-center gap-3">
               <button
+                type="button"
                 onClick={() => setIsPlaying((playing) => !playing)}
                 className="flex h-14 w-14 items-center justify-center rounded-full bg-white text-black shadow-[0_0_24px_rgba(255,255,255,0.25)] transition-all hover:scale-105 active:scale-95"
               >
@@ -258,6 +262,7 @@ export default function MemoryReel({ photos, isOpen, onClose }: Props) {
                 return (
                   <button
                     key={`${photo.url}-${photoIndex}`}
+                    type="button"
                     onClick={() => {
                       setDirection(photoIndex > currentIndex ? 1 : -1);
                       setCurrentIndex(photoIndex);

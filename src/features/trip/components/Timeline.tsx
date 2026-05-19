@@ -2,7 +2,6 @@
 
 import dynamic from "next/dynamic";
 import type { TripEvent } from "@/features/trip/types/trip";
-import { isSecretEvent } from "@/features/trip/utils/tripUtils";
 import { cn } from "@/lib/utils";
 import EventCardSkeleton from "./EventCardSkeleton";
 import TransitTimeline from "./TransitTimeline";

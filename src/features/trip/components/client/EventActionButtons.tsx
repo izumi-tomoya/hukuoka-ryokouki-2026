@@ -43,6 +43,7 @@ export function EventActionButtons({ event }: Props) {
   return (
     <div className="flex gap-1.5">
       <button
+        type="button"
         onClick={handleEdit}
         className="bg-secondary text-muted-foreground hover:bg-primary/10 hover:text-primary border-border rounded-full border p-2 transition-all"
         title="編集"
@@ -50,6 +51,7 @@ export function EventActionButtons({ event }: Props) {
         <Edit2 size={12} />
       </button>
       <button
+        type="button"
         onClick={handleDelete}
         disabled={isDeleting}
         className="bg-secondary text-muted-foreground border-border rounded-full border p-2 transition-all hover:bg-rose-50 hover:text-rose-500 disabled:opacity-50"

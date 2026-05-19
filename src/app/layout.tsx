@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import Script from "next/script";
 import { DynamicEventModal } from "@/features/trip/components/client/DynamicEventModal";
 import PwaRegistrar from "@/features/trip/components/client/PwaRegistrar";
 import Header from "@/features/trip/components/DesktopHeader";
@@ -39,26 +40,24 @@ export default async function RootLayout({
   return (
     <html lang="ja" suppressHydrationWarning>
       <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                try {
-                  var theme = localStorage.getItem('theme');
-                  var supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
-                  if (!theme && supportDarkMode) theme = 'dark';
-                  if (theme === 'dark') {
-                    document.documentElement.classList.add('dark');
-                  } else if (theme === 'light') {
-                    document.documentElement.classList.remove('dark');
-                  } else if (theme === 'system' || !theme) {
-                    if (supportDarkMode) document.documentElement.classList.add('dark');
-                  }
-                } catch (e) {}
-              })();
-            `,
-          }}
-        />
+        <Script id="theme-script" strategy="beforeInteractive">
+          {`
+            (function() {
+              try {
+                var theme = localStorage.getItem('theme');
+                var supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+                if (!theme && supportDarkMode) theme = 'dark';
+                if (theme === 'dark') {
+                  document.documentElement.classList.add('dark');
+                } else if (theme === 'light') {
+                  document.documentElement.classList.remove('dark');
+                } else if (theme === 'system' || !theme) {
+                  if (supportDarkMode) document.documentElement.classList.add('dark');
+                }
+              } catch (e) {}
+            })();
+          `}
+        </Script>
       </head>
       <body className="bg-background text-foreground flex min-h-screen flex-col font-sans antialiased transition-colors duration-300 dark:bg-zinc-950 dark:text-zinc-100">
         <SessionProvider session={session}>

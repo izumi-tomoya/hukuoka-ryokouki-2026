@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
 import { searchGourmet } from "@/lib/external/hotpepper";
 import { searchNearbySpots } from "@/lib/external/yahoo";
 

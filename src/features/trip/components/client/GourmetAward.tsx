@@ -60,6 +60,7 @@ export default function GourmetAwardCard({ award, isAdmin }: Props) {
 
           {isAdmin && (
             <button
+              type="button"
               onClick={handleDelete}
               disabled={isPending}
               className="v2-focus rounded-xl bg-white/10 p-2 opacity-0 transition-all group-hover:opacity-100 hover:bg-rose-500/20"
@@ -72,7 +73,7 @@ export default function GourmetAwardCard({ award, isAdmin }: Props) {
         <div className="mt-auto pt-20">
           <div className="mb-4 flex items-center gap-1 text-amber-400">
             {[...Array(5)].map((_, i) => (
-              <Star key={i} size={14} fill="currentColor" />
+              <Star key={`star-${award.id}-${i}`} size={14} fill="currentColor" />
             ))}
           </div>
 

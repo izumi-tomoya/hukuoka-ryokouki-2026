@@ -73,8 +73,13 @@ export default async function RootLayout({
           <Footer />
           <DynamicEventModal />
           <PwaRegistrar />
+          <Analytics />
         </SessionProvider>
       </body>
+    </html>
+  );
+}
+  </body>
     </html>
   );
 }

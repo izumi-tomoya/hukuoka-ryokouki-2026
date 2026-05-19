@@ -1,4 +1,4 @@
-import { LogIn, Sparkles } from "lucide-react";
+import { LogIn, Map as MapIcon, Sparkles } from "lucide-react";
 import Image from "next/image";
 import { signIn } from "@/lib/auth";
 
@@ -125,7 +125,7 @@ export default async function SignInPage({ searchParams }: { searchParams: Searc
 
           {/* Footer Decoration */}
           <div className="mt-16 flex justify-center gap-6 border-t border-stone-50 pt-8 text-stone-300">
-            <Map size={14} />
+            <MapIcon size={14} />
             <div className="h-4 w-px bg-stone-100" />
             <LogIn size={14} />
           </div>

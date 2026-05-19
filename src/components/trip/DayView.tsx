@@ -1,3 +1,4 @@
+import { Map as MapIcon } from "lucide-react";
 import BudgetSummary from "@/features/trip/components/BudgetSummary";
 import { CommonTipsSection } from "@/features/trip/components/CommonTipsSection";
 import EventFilterWrapper from "@/features/trip/components/client/EventFilterWrapper";
@@ -66,7 +67,7 @@ export default async function DayView({
               className="group rounded-article bg-card border-border text-foreground hover:border-primary/50 flex items-center gap-4 border px-8 py-5 transition-all hover:shadow-2xl active:scale-95"
             >
               <div className="bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground flex h-12 w-12 items-center justify-center rounded-2xl transition-all">
-                <Map size={24} />
+                <MapIcon size={24} />
               </div>
               <div>
                 <span className="text-muted-foreground group-hover:text-primary mb-1 block text-[10px] font-black tracking-[0.3em] uppercase transition-colors">

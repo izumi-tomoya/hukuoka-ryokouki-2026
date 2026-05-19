@@ -1,4 +1,4 @@
-import { Calendar, ChevronRight, Image as ImageIcon, Mail, Quote, ShieldCheck } from "lucide-react";
+import { Calendar, ChevronRight, Image as ImageIcon, Mail, Map as MapIcon, Quote, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
@@ -92,7 +92,7 @@ export default async function UserPage() {
               </h3>
               <div className="grid grid-cols-3 gap-2">
                 <div className="flex flex-col items-center rounded-2xl border border-zinc-100 bg-stone-50 p-4 transition-transform hover:scale-[1.02] dark:border-zinc-800 dark:bg-zinc-800/50">
-                  <Map size={18} className="mb-2 text-rose-500" />
+                  <MapIcon size={18} className="mb-2 text-rose-500" />
                   <span className="font-playfair text-xl font-black text-zinc-900 dark:text-zinc-100">
                     {tripsCount}
                   </span>
@@ -142,7 +142,7 @@ export default async function UserPage() {
                       className="group flex items-center gap-6 rounded-3xl border border-zinc-100 bg-stone-50 p-6 transition-all hover:-translate-y-1 hover:bg-white hover:shadow-xl dark:border-zinc-800 dark:bg-zinc-800/30 dark:hover:bg-zinc-800"
                     >
                       <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-rose-100 dark:bg-rose-900/30">
-                        <Map className="text-rose-500" size={24} />
+                        <MapIcon className="text-rose-500" size={24} />
                       </div>
                       <div className="min-w-0 grow">
                         <h4 className="truncate text-lg font-bold text-zinc-900 dark:text-zinc-100">{trip.title}</h4>

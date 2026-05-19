@@ -70,7 +70,7 @@ export default function TemperatureTimeline({ tripId }: Props) {
             })}
           </div>
 
-          <div className="border-border bg-secondary/20 text-muted-foreground mt-6 rounded-[1.5rem] border p-5 text-sm leading-relaxed">
+          <div className="border-border bg-secondary/20 text-muted-foreground mt-6 rounded-3xl border p-5 text-sm leading-relaxed">
             また来たい登録: <span className="text-foreground font-black">{summary.revisitCount}</span> 件
           </div>
         </MagazineCard>
@@ -80,13 +80,13 @@ export default function TemperatureTimeline({ tripId }: Props) {
             {summary.highlightedLogs.map((log) => {
               const mood = TEMPERATURE_MOODS[log.mood];
               return (
-                <div key={log.id} className="border-border bg-secondary/20 rounded-[1.5rem] border p-4">
+                <div key={log.id} className="border-border bg-secondary/20 rounded-3xl border p-4">
                   <div className="flex items-start justify-between gap-4">
                     <div className="min-w-0">
                       <div className="text-muted-foreground text-[10px] font-black tracking-[0.16em] uppercase">
                         Day {log.dayNumber ?? "-"} / {log.eventTime}
                       </div>
-                      <div className="text-foreground mt-1 text-sm font-black break-words">{log.eventTitle}</div>
+                      <div className="text-foreground mt-1 text-sm font-black wrap-break-word">{log.eventTitle}</div>
                     </div>
                     <div className={`text-xl ${mood.accent}`}>{mood.emoji}</div>
                   </div>

@@ -177,7 +177,7 @@ export default function TravelReportPanel({ tripId, tripSlug, awards, budgetStat
           {isPdfLoading ? "Building PDF" : "PDF Album"}
         </button>
       </div>
-      <div className="border-border bg-secondary/30 mt-8 rounded-[1.5rem] border p-5">
+      <div className="border-border bg-secondary/30 mt-8 rounded-3xl border p-5">
         <div className="text-muted-foreground mb-4 flex items-center gap-2 text-[10px] font-black tracking-widest uppercase">
           <FileText size={14} />
           Preview

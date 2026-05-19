@@ -70,7 +70,7 @@ export default function SettlementPanel({ tripId, events }: Props) {
             </div>
           </div>
 
-          <div className="mt-6 rounded-[1.5rem] border border-emerald-500/20 bg-emerald-500/8 p-5">
+          <div className="mt-6 rounded-3xl border border-emerald-500/20 bg-emerald-500/8 p-5">
             <div className="flex items-center gap-2 text-[10px] font-black tracking-[0.18em] text-emerald-600 uppercase">
               <Coins size={14} />
               Balance
@@ -90,13 +90,13 @@ export default function SettlementPanel({ tripId, events }: Props) {
               const payer = payers[event.id] || "shared";
 
               return (
-                <div key={event.id} className="border-border bg-secondary/20 rounded-[1.5rem] border p-4">
+                <div key={event.id} className="border-border bg-secondary/20 rounded-3xl border p-4">
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div className="min-w-0">
                       <div className="text-muted-foreground text-[10px] font-black tracking-[0.16em] uppercase">
                         {event.time} / Day {event.dayNumber}
                       </div>
-                      <div className="text-foreground mt-1 text-sm font-black break-words">{event.title}</div>
+                      <div className="text-foreground mt-1 text-sm font-black wrap-break-word">{event.title}</div>
                     </div>
                     <div className="bg-background text-foreground inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-black">
                       <Banknote size={14} className="text-emerald-600" />

@@ -11,7 +11,7 @@ export default function WeatherStatsSkeleton() {
         {[1, 2, 3].map((i) => (
           <div
             key={i}
-            className="flex flex-col items-center justify-center rounded-[1.5rem] border border-white bg-white/80 p-4 shadow-sm"
+            className="flex flex-col items-center justify-center rounded-3xl border border-white bg-white/80 p-4 shadow-sm"
           >
             <Skeleton className="mb-2 h-[18px] w-[18px] rounded-full" />
             <Skeleton className="mb-2 h-5 w-12" />

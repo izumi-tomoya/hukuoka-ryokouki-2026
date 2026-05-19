@@ -58,7 +58,7 @@ export async function updateTripAction(tripId: string, formData: FormData) {
 
   const validated = tripSchema.safeParse(rawData);
   if (!validated.success) {
-    return { success: false, error: validated.error.errors[0].message };
+    return { success: false, error: validated.error.issues[0].message };
   }
 
   const { title, description, location, accentColor, startDate, endDate } = validated.data;
@@ -147,7 +147,7 @@ export async function createTrip(formData: FormData) {
 
   const validated = tripSchema.safeParse(rawData);
   if (!validated.success) {
-    return { success: false, error: validated.error.errors[0].message };
+    return { success: false, error: validated.error.issues[0].message };
   }
 
   const { title, description, location, accentColor, startDate, endDate } = validated.data;
@@ -274,7 +274,7 @@ export async function createEventAction(dayId: string, data: unknown) {
     });
 
     revalidatePath(`/trip/${event.day.trip.slug}`);
-    revalidateTag(`trip-${event.day.trip.slug}`);
+    revalidateTag(`trip-${event.day.trip.slug}`, "default");
     return { success: true };
   } catch (error) {
     console.error("Failed to create event:", error);
@@ -312,7 +312,7 @@ export async function updateEventAction(eventId: string, data: unknown) {
     });
 
     revalidatePath(`/trip/${event.day.trip.slug}`);
-    revalidateTag(`trip-${event.day.trip.slug}`);
+    revalidateTag(`trip-${event.day.trip.slug}`, "default");
     return { success: true };
   } catch (error) {
     console.error("Failed to update event:", error);
@@ -328,7 +328,7 @@ export async function deleteEventAction(eventId: string) {
       include: { day: { include: { trip: true } } },
     });
     revalidatePath(`/trip/${event.day.trip.slug}`);
-    revalidateTag(`trip-${event.day.trip.slug}`);
+    revalidateTag(`trip-${event.day.trip.slug}`, "default");
     return { success: true };
   } catch (error) {
     console.error("Failed to delete event:", error);

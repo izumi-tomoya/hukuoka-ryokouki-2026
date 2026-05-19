@@ -26,13 +26,16 @@ const getIcon = (condition: string) => {
   return <Cloud className="text-stone-400" size={24} />;
 };
 
-export default function TripWeatherSummary({ location, endDate }: { location: string; endDate?: string }) {
+export default function TripWeatherSummary({ location, endDate }: { location: string; endDate?: string | Date }) {
   const [forecast, setForecast] = useState<ForecastDay[] | null>(null);
 
   useEffect(() => {
     const url = new URL("/api/weather", window.location.origin);
     url.searchParams.set("location", location);
-    if (endDate) url.searchParams.set("endDate", endDate);
+    if (endDate) {
+      const dateStr = endDate instanceof Date ? endDate.toISOString() : endDate;
+      url.searchParams.set("endDate", dateStr);
+    }
 
     fetch(url.toString())
       .then((res) => res.json())

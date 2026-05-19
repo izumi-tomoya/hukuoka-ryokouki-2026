@@ -115,7 +115,7 @@ export default async function UserPage() {
               </div>
             </div>
 
-            <div className="rounded-[1.5rem] border border-zinc-200 bg-white p-3 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+            <div className="rounded-3xl border border-zinc-200 bg-white p-3 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
               <LogoutButton>
                 <div className="w-full rounded-xl border border-zinc-100 bg-stone-50 px-4 py-4 text-center text-xs font-black tracking-widest text-zinc-600 uppercase transition-all hover:bg-rose-50 hover:text-rose-600 dark:border-zinc-800 dark:bg-zinc-800/50 dark:text-zinc-400 dark:hover:bg-rose-900/20">
                   Logout

@@ -87,7 +87,7 @@ export default function PackingList({ initialItems, tripId }: Props) {
       <MagazineCard padding="lg" className="from-primary/5 border-primary/10 min-w-0 bg-linear-to-br to-transparent">
         <div className="flex flex-col justify-between gap-6 md:flex-row md:items-center">
           <div className="min-w-0">
-            <h2 className="text-foreground mb-2 text-2xl font-black break-words">Packing Progress</h2>
+            <h2 className="text-foreground mb-2 text-2xl font-black wrap-break-word">Packing Progress</h2>
             <p className="text-muted-foreground text-sm">忘れ物はありませんか？準備を整えましょう。</p>
           </div>
           <div className="flex w-full flex-col items-center gap-2 md:w-auto md:items-end">
@@ -152,7 +152,7 @@ export default function PackingList({ initialItems, tripId }: Props) {
           <div
             key={item.id}
             className={cn(
-              "group md:rounded-article flex min-w-0 items-center gap-3 rounded-[1.5rem] border p-4 transition-all duration-300 sm:gap-4 sm:p-5",
+              "group md:rounded-article flex min-w-0 items-center gap-3 rounded-3xl border p-4 transition-all duration-300 sm:gap-4 sm:p-5",
               item.isPacked
                 ? "bg-secondary/30 border-transparent opacity-60"
                 : "bg-card border-border hover:border-primary/30 hover:shadow-primary/5 hover:shadow-xl",
@@ -172,7 +172,7 @@ export default function PackingList({ initialItems, tripId }: Props) {
 
             <span
               className={cn(
-                "min-w-0 flex-1 text-sm font-bold break-words transition-all",
+                "min-w-0 flex-1 text-sm font-bold wrap-break-word transition-all",
                 item.isPacked ? "text-muted-foreground line-through decoration-2" : "text-foreground",
               )}
             >
@@ -196,7 +196,7 @@ export default function PackingList({ initialItems, tripId }: Props) {
               placeholder={`${activeTab === "Gadget" ? "充電器、カメラなど..." : "持ち物を追加..."}`}
               value={newItemName}
               onChange={(e) => setNewItemName(e.target.value)}
-              className="bg-secondary/50 focus:bg-card focus:border-primary/30 v2-focus min-h-14 w-full rounded-[1.5rem] border border-transparent py-4 pr-16 pl-5 text-base transition-all sm:rounded-[2rem] sm:py-5 sm:pl-6 sm:text-sm"
+              className="bg-secondary/50 focus:bg-card focus:border-primary/30 v2-focus min-h-14 w-full rounded-3xl border border-transparent py-4 pr-16 pl-5 text-base transition-all sm:rounded-[2rem] sm:py-5 sm:pl-6 sm:text-sm"
             />
             <button
               type="submit"

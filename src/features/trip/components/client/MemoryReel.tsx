@@ -296,7 +296,7 @@ function MetaRow({
   multiline?: boolean;
 }) {
   return (
-    <div className="rounded-[1.5rem] border border-white/8 bg-white/[0.04] px-4 py-3">
+    <div className="rounded-3xl border border-white/8 bg-white/[0.04] px-4 py-3">
       <div className="mb-2 flex items-center gap-2 text-[10px] font-black tracking-[0.25em] text-white/38 uppercase">
         {icon}
         <span>{label}</span>

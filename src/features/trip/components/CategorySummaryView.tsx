@@ -12,6 +12,7 @@ import {
   Sparkles,
   Utensils,
 } from "lucide-react";
+import Link from "next/link";
 import { useModalStore } from "@/lib/store/useModalStore";
 import { cn } from "@/lib/utils";
 import type { TripEvent } from "../types/trip";

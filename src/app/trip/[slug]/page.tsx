@@ -1,9 +1,9 @@
 import { Calendar, Camera, ChevronRight, Clock, Hotel, MapPin, Plane, Utensils } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { BentoTile } from "@/components/ui/BentoTile";
 import { Container } from "@/components/ui/Container";
 import { MagazineCard } from "@/components/ui/MagazineCard";
-import { BentoTile } from "@/components/ui/BentoTile";
 import { getTripBySlug } from "@/features/trip/api/tripActions";
 import { TripCountdown } from "@/features/trip/components/client/TripCountdown";
 import { TripManagementActions } from "@/features/trip/components/client/TripManagementActions";
@@ -75,7 +75,7 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
                   <div className="bg-primary h-1.5 w-1.5 animate-pulse rounded-full" />
                   <span className="truncate">Upcoming Chapter</span>
                 </div>
-                <h3 className="font-playfair text-foreground mb-6 text-3xl leading-tight font-black tracking-tight break-words sm:text-4xl md:mb-8 md:text-6xl">
+                <h3 className="font-playfair text-foreground mb-6 text-3xl leading-tight font-black tracking-tight wrap-break-word sm:text-4xl md:mb-8 md:text-6xl">
                   この旅が、
                   <br />
                   ふたりの新しい記憶になる。
@@ -104,7 +104,7 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
                 </div>
               </div>
 
-              <div className="md:rounded-article bg-primary/5 border-primary/10 flex w-full shrink-0 flex-col items-center rounded-[1.5rem] border p-6 shadow-inner backdrop-blur-md md:p-10 lg:w-auto">
+              <div className="md:rounded-article bg-primary/5 border-primary/10 flex w-full shrink-0 flex-col items-center rounded-3xl border p-6 shadow-inner backdrop-blur-md md:p-10 lg:w-auto">
                 <div className="text-primary mb-6 flex items-center gap-2 text-[10px] font-black tracking-[0.18em] uppercase sm:tracking-[0.3em]">
                   <Clock size={12} />
                   Departure In
@@ -135,38 +135,70 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
             </div>
 
             <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
-              <BentoTile
-                href={`/trip/${slug}/category/food`}
-                title="Gourmet"
-                subtitle="美味しい思い出"
-                icon={Utensils}
-                color="rose"
-                className="col-span-1"
-              />
-              <BentoTile
-                href={`/trip/${slug}/category/sightseeing`}
-                title="Sightseeing"
-                subtitle="絶景と体験"
-                icon={Camera}
-                color="sky"
-                className="col-span-1"
-              />
-              <BentoTile
-                href={`/trip/${slug}/category/transport`}
-                title="Transport"
-                subtitle="移動の記録"
-                icon={Plane}
-                color="zinc"
-                className="col-span-1"
-              />
-              <BentoTile
-                href={`/trip/${slug}/category/hotel`}
-                title="Stay"
-                subtitle="安らぎの場所"
-                icon={Hotel}
-                color="emerald"
-                className="col-span-1"
-              />
+              {(() => {
+                const allEvents = (trip.days?.flatMap((d) => d.events) || []) as unknown as TripEvent[];
+                const getCount = (cat: string) =>
+                  allEvents.filter(
+                    (e) => e.type === cat || e.tag === cat || e.tagLabel?.toLowerCase() === cat.toLowerCase(),
+                  ).length;
+
+                return (
+                  <>
+                    <BentoTile
+                      href={`/trip/${slug}/category/food`}
+                      title="Gourmet"
+                      subtitle="美味しい思い出"
+                      icon={Utensils}
+                      color="rose"
+                      className="col-span-1"
+                    >
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-2xl font-black text-rose-600">{getCount("food")}</span>
+                        <span className="text-[10px] font-bold text-rose-400 uppercase tracking-widest">Spots</span>
+                      </div>
+                    </BentoTile>
+                    <BentoTile
+                      href={`/trip/${slug}/category/sightseeing`}
+                      title="Sightseeing"
+                      subtitle="絶景と体験"
+                      icon={Camera}
+                      color="sky"
+                      className="col-span-1"
+                    >
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-2xl font-black text-sky-600">{getCount("sightseeing")}</span>
+                        <span className="text-[10px] font-bold text-sky-400 uppercase tracking-widest">Spots</span>
+                      </div>
+                    </BentoTile>
+                    <BentoTile
+                      href={`/trip/${slug}/category/transport`}
+                      title="Transport"
+                      subtitle="移動の記録"
+                      icon={Plane}
+                      color="zinc"
+                      className="col-span-1"
+                    >
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-2xl font-black text-zinc-600">{getCount("transport")}</span>
+                        <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Routes</span>
+                      </div>
+                    </BentoTile>
+                    <BentoTile
+                      href={`/trip/${slug}/category/hotel`}
+                      title="Stay"
+                      subtitle="安らぎの場所"
+                      icon={Hotel}
+                      color="emerald"
+                      className="col-span-1"
+                    >
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-2xl font-black text-emerald-600">{getCount("hotel")}</span>
+                        <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Hotels</span>
+                      </div>
+                    </BentoTile>
+                  </>
+                );
+              })()}
             </div>
           </div>
 

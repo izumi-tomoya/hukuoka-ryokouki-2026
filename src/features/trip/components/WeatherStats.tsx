@@ -16,7 +16,7 @@ export default function WeatherStatsDisplay({ stats }: { stats: WeatherStats }) 
         ].map((item, i) => (
           <div
             key={i}
-            className="flex flex-col items-center justify-center rounded-[1.5rem] border border-white bg-white/80 p-4 shadow-sm"
+            className="flex flex-col items-center justify-center rounded-3xl border border-white bg-white/80 p-4 shadow-sm"
           >
             <item.icon size={18} className="mb-2 text-rose-300" />
             <span className="text-base font-bold text-rose-900">{item.val}</span>

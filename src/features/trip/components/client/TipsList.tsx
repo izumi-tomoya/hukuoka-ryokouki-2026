@@ -323,7 +323,7 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
                   <MapPin size={20} />
                 </div>
                 <div className="min-w-0">
-                  <h2 className="text-foreground text-xl leading-tight font-bold break-words">{venue}</h2>
+                  <h2 className="text-foreground text-xl leading-tight font-bold wrap-break-word">{venue}</h2>
                   <p className="text-muted-foreground mt-1 text-[10px] leading-relaxed font-black tracking-[0.14em] uppercase sm:tracking-[0.2em]">
                     {venueTips.length} Items for this location
                   </p>
@@ -376,7 +376,7 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
             className="animate-in zoom-in-95 border-primary/20 relative max-h-[90vh] w-full max-w-xl overflow-y-auto shadow-2xl duration-200"
           >
             <div className="mb-6 flex items-center justify-between gap-4 sm:mb-8">
-              <h2 className="text-foreground text-2xl font-bold break-words">
+              <h2 className="text-foreground text-2xl font-bold wrap-break-word">
                 {editingTip.id ? "Edit Item" : "New Item"}
               </h2>
               <button
@@ -417,7 +417,7 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
                 />
               </div>
 
-              <div className="space-y-4 rounded-[1.5rem] border border-indigo-500/20 bg-indigo-500/5 p-4 sm:rounded-[2rem] sm:p-5">
+              <div className="space-y-4 rounded-3xl border border-indigo-500/20 bg-indigo-500/5 p-4 sm:rounded-[2rem] sm:p-5">
                 <label className="ml-1 flex items-center gap-2 text-[10px] font-black tracking-widest text-indigo-400 uppercase">
                   <Ticket size={12} /> Boarding Pass / Screenshot
                 </label>

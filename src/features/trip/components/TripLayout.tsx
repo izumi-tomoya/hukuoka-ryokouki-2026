@@ -53,11 +53,11 @@ export default function TripLayout({
             </>
           ) : (
             <>
-              <h1 className="font-playfair text-foreground mb-3 text-[2rem] leading-tight font-extrabold tracking-tight break-words sm:text-4xl md:mb-4 md:text-5xl">
+              <h1 className="font-playfair text-foreground mb-3 text-[2rem] leading-tight font-extrabold tracking-tight wrap-break-word sm:text-4xl md:mb-4 md:text-5xl">
                 {title}
               </h1>
               {subtitle && (
-                <p className="text-muted-foreground text-[10px] leading-relaxed font-bold tracking-[0.14em] break-words uppercase sm:tracking-[0.2em] md:text-xs">
+                <p className="text-muted-foreground text-[10px] leading-relaxed font-bold tracking-[0.14em] wrap-break-word uppercase sm:tracking-[0.2em] md:text-xs">
                   {subtitle}
                 </p>
               )}

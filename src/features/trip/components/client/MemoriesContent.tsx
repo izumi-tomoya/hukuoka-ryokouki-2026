@@ -236,7 +236,7 @@ export default function MemoriesContent({
               {eventsWithPhotos.map((event) => (
                 <div key={event.id} className="animate-in fade-in slide-in-from-bottom-4 duration-1000">
                   <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-baseline sm:gap-4 md:mb-8">
-                    <h3 className="font-playfair text-foreground text-2xl font-black break-words italic">
+                    <h3 className="font-playfair text-foreground text-2xl font-black wrap-break-word italic">
                       {maskSecretText(event.title || event.foodName || "", isAdmin)}
                     </h3>
                     <div className="bg-border/50 h-px grow" />

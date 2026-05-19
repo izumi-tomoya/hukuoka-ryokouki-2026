@@ -19,7 +19,7 @@ export default function BudgetDashboard({ stats }: Props) {
           <Wallet size={22} />
         </div>
         <div className="min-w-0">
-          <h2 className="text-foreground text-2xl leading-none font-black tracking-tight break-words">
+          <h2 className="text-foreground text-2xl leading-none font-black tracking-tight wrap-break-word">
             Financial Overview
           </h2>
           <p className="text-muted-foreground mt-1 text-[10px] font-black tracking-[0.14em] uppercase sm:tracking-[0.2em]">
@@ -46,7 +46,7 @@ export default function BudgetDashboard({ stats }: Props) {
               Total Actual Expense
             </span>
             <div className="mt-2 flex items-baseline gap-2">
-              <span className="font-playfair text-foreground text-4xl font-black break-words sm:text-5xl">
+              <span className="font-playfair text-foreground text-4xl font-black wrap-break-word sm:text-5xl">
                 ¥{totalActual.toLocaleString()}
               </span>
             </div>
@@ -92,7 +92,7 @@ export default function BudgetDashboard({ stats }: Props) {
               {byCategory.map((cat, i) => (
                 <div key={i} className="group">
                   <div className="mb-2 flex justify-between text-[11px] font-bold">
-                    <span className="text-foreground break-words">{cat.category}</span>
+                    <span className="text-foreground wrap-break-word">{cat.category}</span>
                     <span className="text-muted-foreground">¥{cat.actual.toLocaleString()}</span>
                   </div>
                   <div className="bg-secondary h-2 w-full overflow-hidden rounded-full">

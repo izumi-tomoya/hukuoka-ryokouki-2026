@@ -122,6 +122,7 @@ model Day {
 model Event {
   id            String        @id @default(cuid())
   dayId         String
+  slug          String?
   time          String
   type          String
   title         String?

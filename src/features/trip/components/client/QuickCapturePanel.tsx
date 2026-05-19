@@ -63,7 +63,7 @@ export default function QuickCapturePanel({ tripId, events }: Props) {
       {/* ─── Floating Action Button ─── */}
       <button
         onClick={() => setIsOpen(true)}
-        className="group fixed right-8 bottom-8 z-50 flex h-16 w-16 items-center justify-center rounded-full border border-white/10 bg-zinc-900 text-white shadow-2xl transition-all hover:scale-110 active:scale-95"
+        className="group fixed right-8 bottom-8 z-[500] flex h-16 w-16 items-center justify-center rounded-full border border-white/10 bg-zinc-900 text-white shadow-2xl transition-all hover:scale-110 active:scale-95"
       >
         <div className="bg-primary absolute inset-0 animate-ping rounded-full opacity-0 transition-opacity group-hover:opacity-20" />
         <PlusIcon className={cn("transition-transform duration-500", isOpen ? "rotate-45" : "rotate-0")} />
@@ -72,7 +72,7 @@ export default function QuickCapturePanel({ tripId, events }: Props) {
       {/* ─── Backdrop ─── */}
       {isOpen && (
         <div
-          className="animate-in fade-in fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm duration-300"
+          className="animate-in fade-in fixed inset-0 z-[1100] bg-black/60 backdrop-blur-sm duration-300"
           onClick={() => setIsOpen(false)}
         />
       )}
@@ -80,7 +80,7 @@ export default function QuickCapturePanel({ tripId, events }: Props) {
       {/* ─── Panel ─── */}
       <div
         className={cn(
-          "fixed inset-x-4 bottom-8 z-[70] transition-all duration-500 ease-out md:inset-x-auto md:right-8 md:w-[400px]",
+          "fixed inset-x-4 bottom-8 z-[1200] transition-all duration-500 ease-out md:inset-x-auto md:right-8 md:w-[400px]",
           isOpen ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-20 opacity-0",
         )}
       >

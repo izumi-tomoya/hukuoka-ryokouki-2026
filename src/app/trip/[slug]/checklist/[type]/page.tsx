@@ -11,7 +11,7 @@ type PageProps = {
 
 export default async function ChecklistPage({ params }: PageProps) {
   const { slug, type } = await params;
-  const items = await getPackingListByCategory(type);
+  const items = await getPackingListByCategory(type, slug);
 
   if (items.length === 0) {
     notFound();

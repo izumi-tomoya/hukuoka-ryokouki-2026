@@ -4,6 +4,7 @@ export const day1Events: TripEvent[] = [
   {
     time: "04:33",
     type: "transport",
+    slug: "departure-hachioji",
     title: "出発：八王子から羽田空港へ",
     desc: "静寂の八王子駅から、二人の旅が始まります。羽田までは約1時間45分の移動です。",
     tag: "transport",
@@ -59,6 +60,7 @@ export const day1Events: TripEvent[] = [
   {
     time: "07:30",
     type: "transport",
+    slug: "flight-to-fukuoka",
     title: "空路、福岡へ（羽田空港）",
     desc: "羽田空港 07:30発。雲の上で、これからの二人の時間に想いを馳せて。✈️",
     tag: "transport",
@@ -69,6 +71,7 @@ export const day1Events: TripEvent[] = [
   {
     time: "09:25",
     type: "sightseeing",
+    slug: "arrival-fukuoka-airport",
     title: "🛬 福岡空港 到着",
     desc: "福岡に到着！降機後、地下鉄駅へ。11時のランチ予約に向けて移動を開始します。",
     tag: "sightseeing",
@@ -101,6 +104,7 @@ export const day1Events: TripEvent[] = [
   {
     time: "10:05",
     type: "transport",
+    slug: "to-dazaifu-train",
     title: "太宰府へ：西鉄観光列車の旅",
     desc: "中洲川端から天神へ。西鉄の急行で太宰府を目指します。",
     tag: "transport",
@@ -147,6 +151,7 @@ export const day1Events: TripEvent[] = [
   {
     time: "11:00",
     type: "food",
+    slug: "lunch-kagura",
     title: "和牛めんたい 神楽",
     formalName: "和牛めんたい 神楽",
     foodName: "🍱 和牛めんたい 神楽 (KAGURA)",
@@ -160,6 +165,7 @@ export const day1Events: TripEvent[] = [
   {
     time: "14:00",
     type: "sightseeing",
+    slug: "kyushu-national-museum",
     title: "九州国立博物館",
     formalName: "九州国立博物館",
     desc: "太宰府天満宮に隣接。美しい建築と展示をゆっくり見学。",
@@ -183,6 +189,7 @@ export const day1Events: TripEvent[] = [
   {
     time: "15:00",
     type: "hotel",
+    slug: "hotel-checkin",
     title: "🏨 ホテルオークラ福岡 チェックイン",
     formalName: "ホテルオークラ福岡",
     desc: "ホテルに戻りチェックイン。一休みしてから夜の街へ。",
@@ -229,6 +236,7 @@ export const day1Events: TripEvent[] = [
   {
     time: "18:30",
     type: "food",
+    slug: "dinner-hajimenoippo",
     title: "海鮮屋 はじめの一歩",
     formalName: "はじめの一歩 キャナルシティ博多店",
     foodName: "🐟 海鮮屋 はじめの一歩 キャナルシティ博多店",
@@ -255,6 +263,7 @@ export const day1Events: TripEvent[] = [
   {
     time: "20:30",
     type: "basic",
+    slug: "nakasu-yatai-stroll",
     title: "中洲・屋台散策",
     desc: "福岡の夜の定番、屋台巡り。キャナルから中洲へはすぐです。",
     tag: "night",
@@ -286,6 +295,7 @@ export const day2Events: TripEvent[] = [
   {
     time: "08:00",
     type: "hotel",
+    slug: "breakfast-okura",
     title: "🍳 オークラで朝食",
     desc: "ホテルでのゆったりとした朝食。フレンチトーストが絶品です。",
     tag: "hotel",
@@ -295,6 +305,7 @@ export const day2Events: TripEvent[] = [
   {
     time: "12:00",
     type: "food",
+    slug: "lunch-nagano",
     title: "水たき 長野",
     formalName: "水たき 長野",
     foodName: "🍲 水たき 長野",
@@ -320,6 +331,7 @@ export const day2Events: TripEvent[] = [
   {
     time: "14:00",
     type: "sightseeing",
+    slug: "ohori-park",
     title: "大濠公園 / 大濠テラス",
     formalName: "大濠公園",
     desc: "水辺を散策した後は、大濠テラスで八女茶を。静かな時間が、この後の特別なひとときをより輝かせます。",
@@ -355,6 +367,7 @@ export const day2Events: TripEvent[] = [
   {
     time: "15:30",
     type: "food",
+    slug: "surprise-afternoon-tea",
     title: "✨ Afternoon Tea (Secret Spot)",
     formalName: "バー＆ダイニング CLOUDS",
     foodName: "🍰 天空のサプライズ・ティータイム",
@@ -388,6 +401,7 @@ export const day2Events: TripEvent[] = [
   {
     time: "18:45",
     type: "food",
+    slug: "dinner-makinoudon",
     title: "牧のうどん",
     formalName: "牧のうどん 空港店",
     foodName: "🍜 牧のうどん 空港店",
@@ -413,6 +427,7 @@ export const day2Events: TripEvent[] = [
   {
     time: "20:45",
     type: "transport",
+    slug: "return-flight-haneda",
     title: "福岡空港から羽田へ",
     desc: "20:45発。二人の素晴らしい旅の締めくくりです。✈️",
     tag: "transport",

@@ -1,11 +1,24 @@
 "use client";
 import { Dialog } from "@base-ui/react/dialog";
-import { AlertTriangle, Clock, Edit2, FileText, JapaneseYen, Lightbulb, MapPin, Route, Star, X } from "lucide-react";
+import {
+  AlertTriangle,
+  Clock,
+  Edit2,
+  ExternalLink,
+  FileText,
+  JapaneseYen,
+  Lightbulb,
+  MapPin,
+  Route,
+  Star,
+  X,
+} from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { MagazineCard } from "@/components/ui/MagazineCard";
 import { getLocationCoordinates } from "@/features/trip/utils/locationCatalog";
 import { isSecretEvent, maskSecretText } from "@/features/trip/utils/tripUtils";
+import { getDirectionsUrl } from "@/lib/mapUtils";
 import { useEventUserStore } from "@/lib/store/useEventUserStore";
 import { useModalStore } from "@/lib/store/useModalStore";
 import { cn } from "@/lib/utils";
@@ -15,7 +28,7 @@ import { EditEventForm } from "./EditEventForm";
 import { ExternalSpotInfo } from "./ExternalSpotInfo";
 
 export default function EventDetailModal() {
-  const { isOpen, selectedEvent, closeModal, tripTips } = useModalStore();
+  const { isOpen, selectedEvent, closeModal, tripTips, previousLocation } = useModalStore();
   const { getNote, setNote, getBudget, setBudget } = useEventUserStore();
   const { data: session } = useSession();
   const isAdmin = !!session?.user?.isAdmin;
@@ -34,6 +47,14 @@ export default function EventDetailModal() {
   const isFood = selectedEvent.type === "food";
   const shouldShowExternalSpotInfo = ["food", "hotel", "sightseeing", "shopping"].includes(selectedEvent.type);
   const coords = getLocationCoordinates(selectedEvent.foodName || selectedEvent.title || "");
+
+  const destinationName = selectedEvent.foodName || selectedEvent.formalName || selectedEvent.title || "";
+  const directionsUrl = previousLocation ? getDirectionsUrl([previousLocation, destinationName]) : null;
+
+  // Google Maps Iframe URL
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "";
+  const locationName = selectedEvent.foodName || selectedEvent.title || "";
+  const mapSearchUrl = `https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${encodeURIComponent(locationName)}`;
 
   const handleSaveUserData = () => {
     if (selectedEvent.id) {
@@ -56,10 +77,10 @@ export default function EventDetailModal() {
       }}
     >
       <Dialog.Portal>
-        <Dialog.Backdrop className="fixed inset-0 z-50 bg-stone-950/20 backdrop-blur-sm" />
+        <Dialog.Backdrop className="fixed inset-0 z-[1000] bg-stone-950/20 backdrop-blur-sm" />
         <Dialog.Popup
           key={selectedEvent?.id}
-          className="bg-card text-card-foreground border-border fixed top-1/2 left-1/2 z-50 flex max-h-[90vh] w-[94%] max-w-xl -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-[2.5rem] border shadow-2xl"
+          className="bg-card text-card-foreground border-border fixed top-1/2 left-1/2 z-[1001] flex max-h-[90vh] w-[94%] max-w-xl -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-[2.5rem] border shadow-2xl"
         >
           {/* Header */}
           <div className="bg-secondary relative flex h-40 items-end p-8">
@@ -234,8 +255,39 @@ export default function EventDetailModal() {
                   </MagazineCard>
                 )}
 
+                {/* Map Preview */}
+                {(isAdmin || !isSurprise) && selectedEvent.locationUrl && (
+                  <div className="space-y-3">
+                    <div className="text-muted-foreground flex items-center gap-2">
+                      <MapPin size={14} />
+                      <span className="text-[10px] font-black tracking-widest uppercase">Location Map</span>
+                    </div>
+                    {apiKey ? (
+                      <div className="aspect-video w-full overflow-hidden rounded-3xl border border-slate-200 bg-slate-100">
+                        <iframe
+                          title="Location Map"
+                          width="100%"
+                          height="100%"
+                          style={{ border: 0 }}
+                          loading="lazy"
+                          allowFullScreen
+                          src={mapSearchUrl}
+                        />
+                      </div>
+                    ) : (
+                      <div className="bg-secondary/50 flex aspect-video w-full flex-col items-center justify-center gap-3 rounded-3xl border border-dashed border-stone-200">
+                        <MapPin size={24} className="text-stone-300" />
+                        <div className="text-center px-6">
+                          <p className="text-xs font-bold text-stone-500">Google Maps API キーが設定されていません</p>
+                          <p className="mt-1 text-[10px] text-stone-400">.env に NEXT_PUBLIC_GOOGLE_MAPS_API_KEY を設定してください</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {/* Access */}
-                {(selectedEvent.access || selectedEvent.locationUrl) && (isAdmin || !isSurprise) && (
+                {(selectedEvent.access || selectedEvent.locationUrl || directionsUrl) && (isAdmin || !isSurprise) && (
                   <MagazineCard padding="sm" className="space-y-4">
                     <div className="text-muted-foreground mb-2 flex items-center gap-2">
                       <MapPin size={14} />
@@ -247,17 +299,31 @@ export default function EventDetailModal() {
                           {maskSecretText(line, isAdmin)}
                         </p>
                       ))}
-                    {selectedEvent.locationUrl && (isAdmin || !isSurprise) && (
-                      <a
-                        href={selectedEvent.locationUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-primary inline-flex items-center gap-2 text-sm font-bold hover:underline"
-                      >
-                        Google Maps で見る
-                        <JapaneseYen size={12} className="rotate-45" />
-                      </a>
-                    )}
+
+                    <div className="flex flex-col gap-3 pt-2">
+                      {directionsUrl && (
+                        <a
+                          href={directionsUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary inline-flex items-center gap-2 text-sm font-bold hover:underline"
+                        >
+                          <Route size={14} className="text-primary" />
+                          {maskSecretText(previousLocation || "", isAdmin)} からの経路
+                        </a>
+                      )}
+                      {selectedEvent.locationUrl && (
+                        <a
+                          href={selectedEvent.locationUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-muted-foreground hover:text-primary inline-flex items-center gap-2 text-sm font-bold hover:underline"
+                        >
+                          <MapPin size={14} />
+                          Google Maps で見る
+                        </a>
+                      )}
+                    </div>
                   </MagazineCard>
                 )}
 

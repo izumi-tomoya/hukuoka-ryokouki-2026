@@ -1,11 +1,12 @@
+"use client";
+
 import { BadgeCheck, CalendarCheck2, Clock, Footprints, MapPin, Route, Utensils } from "lucide-react";
-import Link from "next/link";
 import { MagazineCard } from "@/components/ui/MagazineCard";
 import type { TripEvent } from "@/features/trip/types/trip";
 import { cleanLocationName } from "@/features/trip/utils/locationCatalog";
 import { isSecretEvent, maskSecretText } from "@/features/trip/utils/tripUtils";
+import { useModalStore } from "@/lib/store/useModalStore";
 import { cn } from "@/lib/utils";
-import { generateEventSlug } from "../api/getExtendedTripData";
 
 interface Props {
   events: TripEvent[];
@@ -58,6 +59,7 @@ function isReserved(event: TripEvent) {
 export default function ActionSummary({ events, slug, isAdmin = false, locationNames = [] }: Props) {
   const mappedCount = events.filter((ev) => hasMapPoint(ev, locationNames)).length;
   const reservedCount = events.filter(isReserved).length;
+  const openModal = useModalStore((s) => s.openModal);
 
   return (
     <MagazineCard className="border-primary/10 bg-card min-w-0">
@@ -87,13 +89,26 @@ export default function ActionSummary({ events, slug, isAdmin = false, locationN
           const mapped = !isSurprise && hasMapPoint(event, locationNames);
           const reserved = isReserved(event);
           const routeCount = event.transitSteps?.length || 0;
-          const spotId = generateEventSlug(event);
+
+          // Calculate previous location for directions
+          const previousEvent = index > 0 ? events[index - 1] : null;
+          const prevLoc = previousEvent
+            ? previousEvent.foodName || previousEvent.formalName || previousEvent.title
+            : null;
 
           return (
-            <Link
+            <div
               key={event.id || `${event.time}-${index}`}
-              href={`/trip/${slug}/spot/${spotId}`}
-              className="border-border bg-background/60 group grid gap-3 rounded-3xl p-4 transition-all hover:border-primary/30 hover:shadow-lg active:scale-[0.99] sm:grid-cols-[5rem_1fr] sm:p-5"
+              role="button"
+              tabIndex={0}
+              onClick={() => openModal(event, prevLoc)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  openModal(event, prevLoc);
+                }
+              }}
+              className="border-border bg-background/60 group grid cursor-pointer gap-3 rounded-3xl p-4 text-left transition-all hover:border-primary/30 hover:shadow-lg active:scale-[0.99] sm:grid-cols-[5rem_1fr] sm:p-5"
             >
               <div className="flex items-center gap-3 sm:block">
                 <div className="bg-primary/10 text-primary inline-flex min-h-10 items-center gap-2 rounded-full px-3 text-xs font-black sm:mb-2">
@@ -165,7 +180,7 @@ export default function ActionSummary({ events, slug, isAdmin = false, locationN
                   </div>
                 )}
               </div>
-            </Link>
+            </div>
           );
         })}
       </div>

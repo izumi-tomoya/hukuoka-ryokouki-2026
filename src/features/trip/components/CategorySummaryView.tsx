@@ -12,9 +12,8 @@ import {
   Sparkles,
   Utensils,
 } from "lucide-react";
-import Link from "next/link";
+import { useModalStore } from "@/lib/store/useModalStore";
 import { cn } from "@/lib/utils";
-import { generateEventSlug } from "../api/getExtendedTripData";
 import type { TripEvent } from "../types/trip";
 
 type CategorySummaryViewProps = {
@@ -47,6 +46,7 @@ const item = {
 export default function CategorySummaryView({ category, events, slug }: CategorySummaryViewProps) {
   const theme = categoryTheme[category.toLowerCase()] || categoryTheme.basic;
   const Icon = theme.icon;
+  const openModal = useModalStore((s) => s.openModal);
 
   return (
     <div className="min-h-screen bg-slate-50/50 pb-32">
@@ -110,9 +110,17 @@ export default function CategorySummaryView({ category, events, slug }: Category
           ) : (
             events.map((event) => (
               <motion.div key={`${event.time}-${event.title}`} variants={item} layout>
-                <Link
-                  href={`/trip/${slug}/spot/${generateEventSlug(event)}`}
-                  className="group relative flex flex-col gap-4 rounded-[2.5rem] border border-transparent bg-white p-6 shadow-sm transition-all hover:border-slate-200 hover:shadow-xl hover:shadow-slate-200/50 active:scale-98"
+                <motion.div
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => openModal(event)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      openModal(event);
+                    }
+                  }}
+                  className="group relative flex cursor-pointer flex-col gap-4 rounded-[2.5rem] border border-transparent bg-white p-6 shadow-sm transition-all hover:border-slate-200 hover:shadow-xl hover:shadow-slate-200/50 active:scale-98"
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-4">
@@ -152,7 +160,7 @@ export default function CategorySummaryView({ category, events, slug }: Category
                       </span>
                     </div>
                   )}
-                </Link>
+                </motion.div>
               </motion.div>
             ))
           )}

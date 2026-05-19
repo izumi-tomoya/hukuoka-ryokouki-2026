@@ -7,6 +7,7 @@ import {
   MapPin,
   MessageSquareQuote,
   Moon,
+  Route,
   ShoppingBag,
   Star,
   Utensils,
@@ -24,6 +25,7 @@ import YataiLiveTracker from "@/features/trip/components/client/YataiLiveTracker
 import PhotoGallery from "@/features/trip/components/PhotoGallery";
 import WeatherStatsDisplay from "@/features/trip/components/WeatherStats";
 import type { TripEvent } from "@/features/trip/types/trip";
+import { getDirectionsUrl } from "@/lib/mapUtils";
 import { getLocationCoordinates } from "@/features/trip/utils/locationCatalog";
 import { isSecretEvent, maskSecretText } from "@/features/trip/utils/tripUtils";
 import { cn } from "@/lib/utils";
@@ -55,12 +57,23 @@ function TagBadge({ tag, label }: { tag: string; label: string }) {
   );
 }
 
-function BasicCard({ event, isAdmin }: { event: TripEvent; isAdmin?: boolean }) {
+function BasicCard({
+  event,
+  isAdmin,
+  previousLocation,
+}: {
+  event: TripEvent;
+  isAdmin?: boolean;
+  previousLocation?: string;
+}) {
   const hasMemoir = !!(event.notes || (event.actualPhotos && event.actualPhotos.length > 0));
   const isSurprise = isSecretEvent(event, !!isAdmin);
   const isFood = event.type === "food";
 
   const coords = getLocationCoordinates(event.foodName || event.title || "");
+
+  const destinationName = event.foodName || event.formalName || event.title || "";
+  const directionsUrl = previousLocation ? getDirectionsUrl([previousLocation, destinationName]) : null;
 
   return (
     <MagazineCard className={cn("relative h-full overflow-hidden transition-all duration-500")}>
@@ -186,12 +199,21 @@ function BasicCard({ event, isAdmin }: { event: TripEvent; isAdmin?: boolean }) 
 
         <div className="border-border mt-8 flex flex-wrap items-center justify-between gap-4 border-t pt-6">
           <div className="flex items-center gap-4">
+            {directionsUrl && (isAdmin || !isSurprise) && (
+              <SafeLink
+                href={directionsUrl}
+                className="text-primary hover:text-primary/80 inline-flex items-center gap-2 text-[10px] font-black tracking-widest uppercase transition-colors"
+              >
+                <Route size={14} />
+                {maskSecretText(previousLocation || "", !!isAdmin)} から
+              </SafeLink>
+            )}
             {event.locationUrl && (isAdmin || !isSurprise) && (
               <SafeLink
                 href={event.locationUrl}
-                className="text-primary hover:text-primary/80 inline-flex items-center gap-2 text-[10px] font-black tracking-widest uppercase transition-colors"
+                className="text-muted-foreground hover:text-primary inline-flex items-center gap-2 text-[10px] font-black tracking-widest uppercase transition-colors"
               >
-                <MapPin size={14} /> Open Maps
+                <MapPin size={14} /> Maps
               </SafeLink>
             )}
             {isFood && event.locationUrl && (isAdmin || !isSurprise) && (
@@ -216,10 +238,18 @@ function BasicCard({ event, isAdmin }: { event: TripEvent; isAdmin?: boolean }) 
   );
 }
 
-export default function EventCard({ event, isAdmin }: { event: TripEvent; isAdmin?: boolean }) {
+export default function EventCard({
+  event,
+  isAdmin,
+  previousLocation,
+}: {
+  event: TripEvent;
+  isAdmin?: boolean;
+  previousLocation?: string;
+}) {
   return (
-    <ClickableCard event={event}>
-      <BasicCard event={event} isAdmin={isAdmin} />
+    <ClickableCard event={event} previousLocation={previousLocation}>
+      <BasicCard event={event} isAdmin={isAdmin} previousLocation={previousLocation} />
     </ClickableCard>
   );
 }

@@ -44,6 +44,7 @@ export interface TripMedia {
 
 export interface TripEvent {
   id?: string;
+  slug?: string; // URL 用の英語スラグ
   time: string;
   type: EventType;
   title?: string;

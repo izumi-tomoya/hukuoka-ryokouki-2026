@@ -11,7 +11,7 @@ type PageProps = {
 
 export default async function CategoryPage({ params }: PageProps) {
   const { slug, category } = await params;
-  const events = await getEventsByCategory(category);
+  const events = await getEventsByCategory(category, slug);
 
   if (events.length === 0) {
     // 存在しないカテゴリの場合は 404

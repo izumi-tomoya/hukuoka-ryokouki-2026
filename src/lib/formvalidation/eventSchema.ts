@@ -2,6 +2,10 @@ import { z } from "zod";
 
 export const eventSchema = z.object({
   time: z.string().optional(),
+  slug: z
+    .string()
+    .optional()
+    .transform((val) => val?.trim()),
   type: z.enum(["food", "transport", "sightseeing", "hotel", "shopping", "surprise", "basic"]).optional(),
   title: z
     .string()

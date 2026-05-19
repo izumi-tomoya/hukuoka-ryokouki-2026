@@ -1,44 +1,39 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { type Location } from "@prisma/client";
+import { Info, MapPin, Navigation2, Star, X } from "lucide-react";
+import { useEffect, useState, useMemo } from "react";
+import { MapContainer, TileLayer, Marker, Polyline, useMap, ZoomControl } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import type { Location } from "@prisma/client";
-import type Leaflet from "leaflet";
-import { MapPin, Navigation2, Star, X } from "lucide-react";
-import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
+import L from "leaflet";
+
 import { MagazineCard } from "@/components/ui/MagazineCard";
 import type { TripEvent } from "@/features/trip/types/trip";
 import { cleanLocationName } from "@/features/trip/utils/locationCatalog";
-import { isSecretEvent, SECRET_SPOTS } from "@/features/trip/utils/tripUtils";
+import { isSecretEvent, maskSecretText } from "@/features/trip/utils/tripUtils";
+import { useModalStore } from "@/lib/store/useModalStore";
+import { cn } from "@/lib/utils";
+import { getWeatherData } from "@/lib/weather";
 import TripMapSkeleton from "../TripMapSkeleton";
-import { ExternalSpotInfo } from "./ExternalSpotInfo";
 
-interface MapMarker {
-  name: string;
-  coords: [number, number];
-  address?: string | null;
-  category?: string | null;
-  locationUrl?: string;
-  description?: string;
-  isSecret?: boolean;
-  events: Array<{
-    title: string;
-    time: string;
-    description?: string;
-    locationUrl?: string;
-  }>;
-}
+// --- Leaflet Fix for Marker Icons ---
+const DefaultIcon = L.icon({
+  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+});
+L.Marker.prototype.options.icon = DefaultIcon;
 
-function MapController({ markers, L }: { markers: MapMarker[]; L: typeof Leaflet }) {
+// Helper to auto-fit bounds
+function MapController({ markers }: { markers: any[] }) {
   const map = useMap();
-
   useEffect(() => {
-    if (markers.length > 0 && L && map) {
-      const bounds = L.latLngBounds(markers.map((m) => m.coords));
-      map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
+    if (markers.length > 0) {
+      const bounds = L.latLngBounds(markers.map(m => [m.coords.lat, m.coords.lng]));
+      map.fitBounds(bounds, { padding: [60, 60] });
     }
-  }, [markers, L, map]);
-
+  }, [markers, map]);
   return null;
 }
 
@@ -51,265 +46,157 @@ export default function TripMap({
   isAdmin?: boolean;
   locationMaster?: Location[];
 }) {
-  const [L, setL] = useState<typeof Leaflet | null>(null);
-  const [customIcon, setCustomIcon] = useState<Leaflet.DivIcon | null>(null);
-  const [selectedMarker, setSelectedMarker] = useState<MapMarker | null>(null);
+  const { isOpen: isModalOpen } = useModalStore();
+  const [selectedMarker, setSelectedMarker] = useState<any>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [envStats, setEnvStats] = useState<any>(null);
+
+  // Markers processing - Wrapped in useMemo to prevent unnecessary zoom resets
+  const markersData = useMemo(() => {
+    return events
+      .map((event) => {
+        const title = event.title || event.foodName || "";
+        const isSecret = isSecretEvent(event, isAdmin);
+        const spot = locationMaster.find((loc) => {
+          const cleanedMaster = cleanLocationName(loc.name);
+          const searchName = event.formalName ? cleanLocationName(event.formalName) : cleanLocationName(title);
+          return searchName.includes(cleanedMaster) || cleanedMaster.includes(searchName);
+        });
+
+        return {
+          name: isSecret ? "🎁 Surprise Spot" : title,
+          coords: isSecret ? null : spot ? { lat: spot.lat, lng: spot.lng } : null,
+          description: isSecret ? "当日までのお楽しみ" : event.foodDesc || event.desc || event.highlight,
+        };
+      })
+      .filter((m): m is any => m.coords !== null);
+  }, [events, locationMaster, isAdmin]);
 
   useEffect(() => {
-    import("leaflet").then((leaflet) => {
-      setL(leaflet);
-      const icon = leaflet.divIcon({
-        className: "custom-div-icon",
-        html: `<div class="w-4 h-4 bg-rose-500 rounded-full border-2 border-white shadow-lg ring-4 ring-rose-500/20"></div>`,
-        iconSize: [16, 16],
-        iconAnchor: [8, 8],
-      });
-      setCustomIcon(icon as Leaflet.DivIcon);
-    });
+    setIsLoaded(true);
+    const fetchWeather = async () => {
+      const data = await getWeatherData("福岡市");
+      if (data) setEnvStats({ temp: data.current?.temp });
+    };
+    fetchWeather();
   }, []);
 
-  const markers = events
-    .map((event) => {
-      const title = event.title || event.foodName || "";
-      const cleaned = cleanLocationName(title);
+  const customMarkerIcon = L.divIcon({
+    className: "custom-div-icon",
+    html: `<div class="relative flex items-center justify-center">
+             <div class="absolute w-10 h-10 bg-rose-500/25 rounded-full animate-ping"></div>
+             <div class="w-5 h-5 bg-rose-500 rounded-full border-[3px] border-white shadow-xl shadow-rose-200/50"></div>
+           </div>`,
+    iconSize: [32, 32],
+    iconAnchor: [16, 16],
+  });
 
-      // シークレット判定
-      const isSecret = isSecretEvent(event, isAdmin);
+  if (!isLoaded) return <TripMapSkeleton />;
 
-      // データベースから取得したマスタから座標を検索
-      // formalName があれば優先、なければ cleaned で検索
-      const searchName = event.formalName ? cleanLocationName(event.formalName) : cleaned;
-
-      const spot = locationMaster.find((loc) => {
-        const cleanedMaster = cleanLocationName(loc.name);
-        return searchName.includes(cleanedMaster) || cleanedMaster.includes(searchName);
-      });
-
-      const displayName = isSecret ? "🎁 Surprise Spot" : title;
-      const displayDesc = isSecret ? "当日までのお楽しみ" : event.foodDesc || event.desc || event.highlight;
-
-      return {
-        name: displayName,
-        coords: isSecret ? null : spot ? ([spot.lat, spot.lng] as [number, number]) : null,
-        address: isSecret ? null : spot?.address,
-        category: isSecret ? "Surprise" : spot?.category,
-        locationUrl: isSecret ? undefined : event.locationUrl,
-        description: displayDesc,
-        rawTitle: isSecret ? "🎁 Surprise Spot" : title,
-        time: event.time,
-        isSecret,
-      };
-    })
-    .filter(
-      (
-        m,
-      ): m is {
-        name: string;
-        coords: [number, number];
-        address: string | null | undefined;
-        category: string | null | undefined;
-        locationUrl: string | undefined;
-        description: string | undefined;
-        rawTitle: string;
-        time: string;
-        isSecret: boolean;
-      } => m.coords !== null,
-    )
-    .reduce<MapMarker[]>((acc, marker) => {
-      const existing = acc.find(
-        (item) =>
-          item.name === marker.name && item.coords[0] === marker.coords[0] && item.coords[1] === marker.coords[1],
-      );
-
-      if (existing) {
-        existing.events.push({
-          title: marker.name, // DisplayNameを使用（シークレット時は🎁 Surprise Spot）
-          time: marker.time,
-          description: marker.description,
-          locationUrl: marker.locationUrl,
-        });
-        if (!existing.locationUrl && marker.locationUrl) existing.locationUrl = marker.locationUrl;
-        if (!existing.description && marker.description) existing.description = marker.description;
-        if (!existing.address && marker.address) existing.address = marker.address;
-        if (!existing.category && marker.category) existing.category = marker.category;
-        return acc;
-      }
-
-      acc.push({
-        name: marker.name,
-        coords: marker.coords,
-        address: marker.address,
-        category: marker.category,
-        locationUrl: marker.locationUrl,
-        description: marker.description,
-        events: [
-          {
-            title: marker.name, // DisplayNameを使用
-            time: marker.time,
-            description: marker.description,
-            locationUrl: marker.locationUrl,
-          },
-        ],
-      });
-      return acc;
-    }, []);
-
-  if (!L || !customIcon) return <TripMapSkeleton />;
-
-  if (markers.length === 0) {
+  if (markersData.length === 0) {
     return (
       <MagazineCard className="bg-secondary/30 border-border/50 flex h-80 flex-col items-center justify-center rounded-[3rem] text-stone-400 shadow-sm">
         <MapPin size={32} className="mb-2 opacity-20" />
-        <p className="text-[10px] font-black tracking-widest uppercase">No matching locations for map</p>
+        <p className="text-[10px] font-black tracking-widest uppercase">No locations found</p>
       </MagazineCard>
     );
   }
 
-  const center = markers.length > 0 ? markers[0].coords : ([33.5902, 130.4017] as [number, number]);
-
   return (
-    <div className="group relative">
-      <div className="bg-secondary/30 relative h-80 w-full overflow-hidden rounded-[3.5rem] border border-rose-100 shadow-2xl ring-1 shadow-rose-100/20 ring-rose-100/50">
+    <div className="group relative w-full">
+      <div
+        className={cn(
+          "bg-slate-200 relative h-[420px] w-full overflow-hidden rounded-[3.5rem] border border-rose-100 shadow-2xl transition-all duration-700",
+          isModalOpen && "scale-[0.98] opacity-40 blur-[2px]",
+        )}
+      >
         <MapContainer
-          center={center}
+          center={[33.5902, 130.4017]}
           zoom={13}
-          style={{ height: "100%", width: "100%", minHeight: "320px" }}
-          scrollWheelZoom={true}
-          zoomControl={true}
+          zoomControl={false}
+          style={{ height: "100%", width: "100%" }}
         >
-          <MapController markers={markers} L={L} />
-          <TileLayer attribution="&copy; Google" url="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}" />
-          {markers.map((marker, idx) => (
-            <Marker
-              key={idx}
-              position={marker.coords}
-              icon={customIcon}
-              eventHandlers={{
-                click: () => setSelectedMarker(marker),
-              }}
+          <MapController markers={markersData} />
+          
+          {/* --- The "Magic" Tile Layer: Direct Google Maps Tiles --- */}
+          {/* lyrs=m: Standard Roadmap */}
+          <TileLayer
+            attribution='&copy; Google Maps'
+            url="https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
+            subdomains={['mt0', 'mt1', 'mt2', 'mt3']}
+            maxZoom={20}
+          />
+
+          {markersData.map((m, i) => (
+            <Marker 
+              key={i} 
+              position={[m.coords.lat, m.coords.lng]} 
+              icon={customMarkerIcon}
+              eventHandlers={{ click: () => setSelectedMarker(m) }}
             />
           ))}
+
+          {markersData.length >= 2 && (
+            <Polyline
+              positions={markersData.map(m => [m.coords.lat, m.coords.lng])}
+              color="#f43f5e"
+              weight={5}
+              opacity={0.5}
+              lineCap="round"
+              lineJoin="round"
+            />
+          )}
+
+          {/* Reposition controls to match Google Maps (bottom right) */}
+          <ZoomControl position="bottomright" />
         </MapContainer>
 
-        {/* Floating Label */}
-        <div className="pointer-events-none absolute top-6 left-6 z-[400] flex flex-col gap-1">
-          <div className="flex max-w-fit items-center gap-2 rounded-full border border-stone-800 bg-stone-900/90 px-4 py-1.5 shadow-xl backdrop-blur-md">
+        {/* UI Overlays */}
+        {!isModalOpen && (
+          <div className="pointer-events-none absolute top-6 left-6 z-[1000] flex items-center gap-2 rounded-full border border-stone-800 bg-stone-900/90 px-4 py-2 shadow-xl backdrop-blur-md animate-in fade-in">
             <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-rose-500" />
-            <span className="text-[9px] font-black tracking-[0.3em] text-white uppercase">Cartography</span>
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-5 px-2">
-        {selectedMarker ? (
-          <MagazineCard className="bg-card border-rose-200/80 shadow-xl shadow-rose-100/20">
-            <div className="flex items-start justify-between gap-4">
-              <div className="min-w-0">
-                <div className="text-[10px] font-black tracking-[0.2em] text-rose-400 uppercase">Selected Pin</div>
-                <h3 className="font-playfair text-foreground mt-2 text-2xl font-bold break-words">
-                  {selectedMarker.name}
-                </h3>
-                {selectedMarker.category && (
-                  <div className="mt-3 inline-flex rounded-full bg-rose-500/10 px-3 py-1 text-[10px] font-black tracking-widest text-rose-500 uppercase">
-                    {selectedMarker.category}
-                  </div>
-                )}
-              </div>
-              <button
-                onClick={() => setSelectedMarker(null)}
-                className="border-border bg-background text-muted-foreground hover:text-foreground flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition-colors"
-                aria-label="選択中のピン情報を閉じる"
-              >
-                <X size={16} />
-              </button>
-            </div>
-
-            {selectedMarker.events.length > 0 && (
-              <div className="mt-6">
-                <div className="text-muted-foreground mb-3 text-[10px] font-black tracking-[0.2em] uppercase">
-                  Moments Here
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {selectedMarker.events.map((event, eventIndex) => (
-                    <div
-                      key={`${event.time}-${eventIndex}`}
-                      className="border-border bg-secondary/30 text-foreground rounded-full border px-3 py-1.5 text-[11px] font-bold"
-                    >
-                      {event.time} {maskSecretText(event.title, isAdmin)}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {(selectedMarker.description || selectedMarker.address || selectedMarker.events[0]?.description) && (
-              <div className="border-border bg-secondary/15 text-muted-foreground mt-6 rounded-[1.5rem] border px-4 py-4 text-sm leading-relaxed">
-                <p className="text-foreground">{selectedMarker.description || selectedMarker.events[0]?.description}</p>
-                {selectedMarker.address && (
-                  <p className="text-muted-foreground mt-3 text-xs">{selectedMarker.address}</p>
-                )}
-              </div>
-            )}
-
-            <div className="mt-6 max-h-[28rem] overflow-y-auto overscroll-contain pr-1">
-              {!selectedMarker.isSecret && (
-                <ExternalSpotInfo
-                  name={selectedMarker.events[0]?.title || selectedMarker.name}
-                  lat={selectedMarker.coords[0]}
-                  lng={selectedMarker.coords[1]}
-                  category={selectedMarker.category || undefined}
-                  address={selectedMarker.address || undefined}
-                  description={selectedMarker.description || selectedMarker.events[0]?.description}
-                  locationUrl={selectedMarker.locationUrl}
-                />
-              )}
-              {selectedMarker.isSecret && (
-                <div className="flex flex-col items-center justify-center rounded-[2rem] border border-dashed border-rose-200 bg-rose-50 p-8">
-                  <Star size={24} className="mb-3 text-rose-400" />
-                  <p className="text-xs font-bold text-rose-900">Surprise Spot</p>
-                  <p className="mt-1 text-[10px] tracking-widest text-rose-400 uppercase">当日までのお楽しみ</p>
-                </div>
-              )}
-            </div>
-          </MagazineCard>
-        ) : (
-          <div className="text-muted-foreground rounded-[2rem] border border-dashed border-rose-200 bg-rose-50/40 px-5 py-4 text-sm">
-            ピンをタップすると、この場所の予定とスポット情報を下に表示します。
+            <span className="text-[9px] font-black tracking-[0.3em] text-white uppercase italic">Geospatial Intelligence</span>
+            {envStats && <span className="ml-2 pl-2 border-l border-white/20 text-[9px] font-black text-rose-300">{envStats.temp}°C</span>}
           </div>
         )}
-      </div>
 
-      {/* Caption */}
-      <div className="mt-5 flex flex-col justify-between gap-4 px-4 md:flex-row md:items-end">
-        <div className="flex flex-col gap-3">
-          <div className="flex items-center gap-4">
-            <div className="h-px w-12 bg-rose-200" />
-            <p className="text-[10px] font-black tracking-[0.2em] text-stone-400 uppercase italic">
-              Fig. 04 — Itinerary Mapping
-            </p>
-          </div>
-          <div className="flex items-baseline gap-2 pl-16">
-            <span className="font-playfair text-3xl leading-none font-bold text-stone-900">{markers.length}</span>
-            <span className="border-l border-rose-100 py-0.5 pl-2 text-[10px] font-black tracking-widest text-rose-400 uppercase">
-              Verified Stops
-            </span>
-          </div>
-        </div>
-
-        <div className="flex flex-col items-end gap-2 pr-4">
-          <div className="flex items-center gap-2 text-[9px] font-black tracking-[0.2em] text-rose-300 uppercase">
-            <Navigation2 size={10} className="fill-rose-300" />
-            Coordinates Synchronized
-          </div>
-          <p className="text-[10px] font-medium text-stone-300 italic">Scale: Auto — Fukuoka Central</p>
+        {/* Bottom Logo Attribution (Google Style) */}
+        <div className="pointer-events-none absolute bottom-5 left-8 z-[1000] flex items-baseline gap-1 opacity-40">
+           <span className="text-[10px] font-black tracking-tighter text-stone-600">Google</span>
         </div>
       </div>
+
+      {selectedMarker && !isModalOpen && (
+        <div className="mt-4 px-2 animate-in fade-in slide-in-from-bottom-2">
+          <MagazineCard className="bg-card border-rose-200 shadow-xl">
+            <div className="flex items-start justify-between">
+              <div>
+                <div className="text-[9px] font-black tracking-widest text-rose-400 uppercase mb-1">Route Point</div>
+                <h3 className="font-playfair text-xl font-bold">{selectedMarker.name}</h3>
+              </div>
+              <button onClick={() => setSelectedMarker(null)} className="p-2 hover:bg-rose-50 rounded-full transition-colors"><X size={16} /></button>
+            </div>
+            <p className="text-muted-foreground mt-3 text-sm leading-relaxed italic">{selectedMarker.description}</p>
+          </MagazineCard>
+        </div>
+      )}
 
       <style jsx global>{`
         .leaflet-container {
-          background: #f5f5f4 !important;
-          height: 100% !important;
-          width: 100% !important;
+          background: #e5e7eb !important;
+          cursor: crosshair !important;
+        }
+        /* Custom Zoom Control Styling to match Google */
+        .leaflet-bar {
+          border: none !important;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+          border-radius: 12px !important;
+          overflow: hidden;
+        }
+        .leaflet-bar a {
+          background-color: white !important;
+          color: #666 !important;
+          border-bottom: 1px solid #f0f0f0 !important;
         }
       `}</style>
     </div>

@@ -4,8 +4,9 @@ import type { Tip, TripEvent } from "@/features/trip/types/trip";
 interface ModalState {
   isOpen: boolean;
   selectedEvent: TripEvent | null;
+  previousLocation: string | null;
   tripTips: Tip[];
-  openModal: (event: TripEvent) => void;
+  openModal: (event: TripEvent, previousLocation?: string | null) => void;
   closeModal: () => void;
   updateTips: (tips: Tip[]) => void;
 }
@@ -13,8 +14,10 @@ interface ModalState {
 export const useModalStore = create<ModalState>((set) => ({
   isOpen: false,
   selectedEvent: null,
+  previousLocation: null,
   tripTips: [],
-  openModal: (event) => set({ isOpen: true, selectedEvent: event }),
-  closeModal: () => set({ isOpen: false, selectedEvent: null }),
+  openModal: (event, previousLocation = null) =>
+    set({ isOpen: true, selectedEvent: event, previousLocation: previousLocation }),
+  closeModal: () => set({ isOpen: false, selectedEvent: null, previousLocation: null }),
   updateTips: (tips) => set({ tripTips: tips }),
 }));

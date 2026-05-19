@@ -1,26 +1,21 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useModalStore } from "@/lib/store/useModalStore";
 import type { TripEvent } from "@/features/trip/types/trip";
 import { cn } from "@/lib/utils";
-import { generateEventSlug } from "../../api/getExtendedTripData";
 
 interface ClickableCardProps {
   event: TripEvent;
   children: React.ReactNode;
   className?: string;
+  previousLocation?: string;
 }
 
-export default function ClickableCard({ event, children, className }: ClickableCardProps) {
-  const router = useRouter();
-  const params = useParams();
-  const slug = params?.slug as string;
+export default function ClickableCard({ event, children, className, previousLocation }: ClickableCardProps) {
+  const openModal = useModalStore((s) => s.openModal);
 
   const handlePress = () => {
-    if (slug) {
-      const spotId = generateEventSlug(event);
-      router.push(`/trip/${slug}/spot/${spotId}`);
-    }
+    openModal(event, previousLocation);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {

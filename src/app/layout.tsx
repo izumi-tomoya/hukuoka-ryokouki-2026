@@ -23,6 +23,11 @@ export const metadata: Metadata = {
     locale: "ja_JP",
     type: "website",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Memoir — ふたりの旅の記憶",
+    description: "ふたりだけの特別な旅行記・しおりポータル",
+  },
 };
 
 export const viewport = {

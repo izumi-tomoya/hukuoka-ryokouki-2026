@@ -57,7 +57,7 @@ export default function Timeline({ events, dayNumber = 1, isAdmin }: TimelinePro
             : null;
 
           return (
-            <div key={index} className="group relative flex gap-2 md:gap-4">
+            <div key={event.slug || event.id || index} className="group relative flex gap-2 md:gap-4">
               {/* Left column: dot */}
               <div className="relative flex w-4 shrink-0 flex-col items-center pt-4 md:w-6">
                 <div

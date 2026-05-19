@@ -62,7 +62,9 @@ export default function QuickCapturePanel({ tripId, events }: Props) {
     <>
       {/* ─── Floating Action Button ─── */}
       <button
+        type="button"
         onClick={() => setIsOpen(true)}
+        aria-label="Open quick memoir panel"
         className="group fixed right-8 bottom-8 z-[500] flex h-16 w-16 items-center justify-center rounded-full border border-white/10 bg-zinc-900 text-white shadow-2xl transition-all hover:scale-110 active:scale-95"
       >
         <div className="bg-primary absolute inset-0 animate-ping rounded-full opacity-0 transition-opacity group-hover:opacity-20" />
@@ -71,7 +73,9 @@ export default function QuickCapturePanel({ tripId, events }: Props) {
 
       {/* ─── Backdrop ─── */}
       {isOpen && (
-        <div
+        <button
+          type="button"
+          aria-label="Close panel"
           className="animate-in fade-in fixed inset-0 z-[1100] bg-black/60 backdrop-blur-sm duration-300"
           onClick={() => setIsOpen(false)}
         />
@@ -90,7 +94,12 @@ export default function QuickCapturePanel({ tripId, events }: Props) {
               <Sparkles size={16} className="text-primary" />
               <span className="text-[10px] font-black tracking-[0.3em] text-white/60 uppercase">Quick Memoir</span>
             </div>
-            <button onClick={() => setIsOpen(false)} className="text-white/40 transition-colors hover:text-white">
+            <button
+              type="button"
+              onClick={() => setIsOpen(false)}
+              className="text-white/40 transition-colors hover:text-white"
+              aria-label="Close"
+            >
               <X size={20} />
             </button>
           </div>
@@ -98,8 +107,11 @@ export default function QuickCapturePanel({ tripId, events }: Props) {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Event Selector */}
             <div className="space-y-2">
-              <label className="text-[9px] font-black tracking-widest text-white/40 uppercase">Which moment?</label>
+              <label htmlFor="event-selector" className="text-[9px] font-black tracking-widest text-white/40 uppercase">
+                Which moment?
+              </label>
               <select
+                id="event-selector"
                 value={selectedEventId}
                 onChange={(e) => setSelectedEventId(e.target.value)}
                 className="focus:ring-primary w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm transition-all focus:ring-1 focus:outline-hidden"
@@ -114,9 +126,12 @@ export default function QuickCapturePanel({ tripId, events }: Props) {
 
             {/* Note Input */}
             <div className="space-y-2">
-              <label className="text-[9px] font-black tracking-widest text-white/40 uppercase">What happened?</label>
+              <label htmlFor="note-input" className="text-[9px] font-black tracking-widest text-white/40 uppercase">
+                What happened?
+              </label>
               <div className="relative">
                 <textarea
+                  id="note-input"
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                   placeholder="今の気持ちを一言で..."
@@ -127,8 +142,8 @@ export default function QuickCapturePanel({ tripId, events }: Props) {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-[9px] font-black tracking-widest text-white/40 uppercase">Temperature</label>
+            <fieldset className="space-y-2 border-none p-0">
+              <legend className="text-[9px] font-black tracking-widest text-white/40 uppercase">Temperature</legend>
               <div className="grid grid-cols-5 gap-2">
                 {Object.entries(TEMPERATURE_MOODS).map(([value, config]) => (
                   <button
@@ -147,12 +162,15 @@ export default function QuickCapturePanel({ tripId, events }: Props) {
                   </button>
                 ))}
               </div>
-            </div>
+            </fieldset>
 
             {/* Photo Preview (Placeholder) */}
             <div className="space-y-2">
-              <label className="text-[9px] font-black tracking-widest text-white/40 uppercase">Add Photo</label>
+              <label htmlFor="photo-url" className="text-[9px] font-black tracking-widest text-white/40 uppercase">
+                Add Photo
+              </label>
               <input
+                id="photo-url"
                 type="url"
                 value={imageUrl}
                 onChange={(event) => setImageUrl(event.target.value)}
@@ -209,7 +227,9 @@ function PlusIcon({ className }: { className?: string }) {
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
+      aria-hidden="true"
     >
+      <title>Plus icon</title>
       <line x1="12" y1="5" x2="12" y2="19" />
       <line x1="5" y1="12" x2="19" y2="12" />
     </svg>

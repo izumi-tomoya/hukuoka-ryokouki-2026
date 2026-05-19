@@ -1,7 +1,18 @@
 "use client";
 
 import type { PackingItem } from "@prisma/client";
-import { Briefcase, CheckCircle2, Circle, ExternalLink, Loader2, Package, Plus, Shirt, Smartphone, Trash2 } from "lucide-react";
+import {
+  Briefcase,
+  CheckCircle2,
+  Circle,
+  ExternalLink,
+  Loader2,
+  Package,
+  Plus,
+  Shirt,
+  Smartphone,
+  Trash2,
+} from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";

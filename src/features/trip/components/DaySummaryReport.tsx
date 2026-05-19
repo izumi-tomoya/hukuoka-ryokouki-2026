@@ -43,22 +43,28 @@ export default function DaySummaryReport({ dayId, events, tips, slug }: DaySumma
 
       <div className="container mx-auto -mt-8 max-w-md space-y-6 px-6">
         {/* Quick Stats */}
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-3 sm:gap-4">
           {[
-            { label: "Events", value: events.length, icon: Flag },
-            { label: "Gourmet", value: foodEvents.length, icon: Coffee },
-            { label: "Transit", value: transportEvents.length, icon: MapPin },
+            { label: "Events", value: events.length, icon: Flag, color: "text-indigo-500", bg: "bg-indigo-50" },
+            { label: "Gourmet", value: foodEvents.length, icon: Coffee, color: "text-rose-500", bg: "bg-rose-50" },
+            { label: "Transit", value: transportEvents.length, icon: MapPin, color: "text-sky-500", bg: "bg-sky-50" },
           ].map((stat, idx) => (
             <motion.div
               key={stat.label}
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.1 * idx }}
-              className="rounded-3xl bg-white p-4 text-center shadow-xl shadow-slate-200/50"
+              className="rounded-3xl border border-white/40 bg-white/80 p-3 text-center shadow-2xl shadow-slate-200/50 backdrop-blur-sm sm:p-5"
             >
-              <stat.icon className="mx-auto mb-2 h-5 w-5 text-slate-300" />
-              <p className="text-xl font-bold text-slate-800">{stat.value}</p>
-              <p className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">{stat.label}</p>
+              <div
+                className={`mx-auto mb-2 flex h-8 w-8 items-center justify-center rounded-xl sm:h-10 sm:w-10 ${stat.bg}`}
+              >
+                <stat.icon className={`h-4 w-4 sm:h-5 sm:w-5 ${stat.color}`} />
+              </div>
+              <p className={`text-xl font-black sm:text-2xl ${stat.color}`}>{stat.value}</p>
+              <p className="text-[9px] font-black tracking-widest text-slate-400 uppercase sm:text-[10px]">
+                {stat.label}
+              </p>
             </motion.div>
           ))}
         </div>

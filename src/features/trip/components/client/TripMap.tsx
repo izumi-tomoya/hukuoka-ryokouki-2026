@@ -1,9 +1,9 @@
 "use client";
 
-import { type Location } from "@prisma/client";
+import type { Location } from "@prisma/client";
 import { Info, MapPin, Navigation2, Star, X } from "lucide-react";
-import { useEffect, useState, useMemo } from "react";
-import { MapContainer, TileLayer, Marker, Polyline, useMap, ZoomControl } from "react-leaflet";
+import { useEffect, useMemo, useState } from "react";
+import { MapContainer, Marker, Polyline, TileLayer, useMap, ZoomControl } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
@@ -30,7 +30,7 @@ function MapController({ markers }: { markers: any[] }) {
   const map = useMap();
   useEffect(() => {
     if (markers.length > 0) {
-      const bounds = L.latLngBounds(markers.map(m => [m.coords.lat, m.coords.lng]));
+      const bounds = L.latLngBounds(markers.map((m) => [m.coords.lat, m.coords.lng]));
       map.fitBounds(bounds, { padding: [60, 60] });
     }
   }, [markers, map]);
@@ -106,7 +106,7 @@ export default function TripMap({
     <div className="group relative w-full">
       <div
         className={cn(
-          "bg-slate-200 relative h-[420px] w-full overflow-hidden rounded-[3.5rem] border border-rose-100 shadow-2xl transition-all duration-700",
+          "relative h-[420px] w-full overflow-hidden rounded-[3.5rem] border border-rose-100 bg-slate-200 shadow-2xl transition-all duration-700",
           isModalOpen && "scale-[0.98] opacity-40 blur-[2px]",
         )}
       >
@@ -117,20 +117,20 @@ export default function TripMap({
           style={{ height: "100%", width: "100%" }}
         >
           <MapController markers={markersData} />
-          
+
           {/* --- The "Magic" Tile Layer: Direct Google Maps Tiles --- */}
           {/* lyrs=m: Standard Roadmap */}
           <TileLayer
-            attribution='&copy; Google Maps'
+            attribution="&copy; Google Maps"
             url="https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
-            subdomains={['mt0', 'mt1', 'mt2', 'mt3']}
+            subdomains={["mt0", "mt1", "mt2", "mt3"]}
             maxZoom={20}
           />
 
           {markersData.map((m, i) => (
-            <Marker 
-              key={i} 
-              position={[m.coords.lat, m.coords.lng]} 
+            <Marker
+              key={i}
+              position={[m.coords.lat, m.coords.lng]}
               icon={customMarkerIcon}
               eventHandlers={{ click: () => setSelectedMarker(m) }}
             />
@@ -138,7 +138,7 @@ export default function TripMap({
 
           {markersData.length >= 2 && (
             <Polyline
-              positions={markersData.map(m => [m.coords.lat, m.coords.lng])}
+              positions={markersData.map((m) => [m.coords.lat, m.coords.lng])}
               color="#f43f5e"
               weight={5}
               opacity={0.5}
@@ -153,28 +153,39 @@ export default function TripMap({
 
         {/* UI Overlays */}
         {!isModalOpen && (
-          <div className="pointer-events-none absolute top-6 left-6 z-[1000] flex items-center gap-2 rounded-full border border-stone-800 bg-stone-900/90 px-4 py-2 shadow-xl backdrop-blur-md animate-in fade-in">
+          <div className="animate-in fade-in pointer-events-none absolute top-6 left-6 z-[1000] flex items-center gap-2 rounded-full border border-stone-800 bg-stone-900/90 px-4 py-2 shadow-xl backdrop-blur-md">
             <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-rose-500" />
-            <span className="text-[9px] font-black tracking-[0.3em] text-white uppercase italic">Geospatial Intelligence</span>
-            {envStats && <span className="ml-2 pl-2 border-l border-white/20 text-[9px] font-black text-rose-300">{envStats.temp}°C</span>}
+            <span className="text-[9px] font-black tracking-[0.3em] text-white uppercase italic">
+              Geospatial Intelligence
+            </span>
+            {envStats && (
+              <span className="ml-2 border-l border-white/20 pl-2 text-[9px] font-black text-rose-300">
+                {envStats.temp}°C
+              </span>
+            )}
           </div>
         )}
 
         {/* Bottom Logo Attribution (Google Style) */}
         <div className="pointer-events-none absolute bottom-5 left-8 z-[1000] flex items-baseline gap-1 opacity-40">
-           <span className="text-[10px] font-black tracking-tighter text-stone-600">Google</span>
+          <span className="text-[10px] font-black tracking-tighter text-stone-600">Google</span>
         </div>
       </div>
 
       {selectedMarker && !isModalOpen && (
-        <div className="mt-4 px-2 animate-in fade-in slide-in-from-bottom-2">
+        <div className="animate-in fade-in slide-in-from-bottom-2 mt-4 px-2">
           <MagazineCard className="bg-card border-rose-200 shadow-xl">
             <div className="flex items-start justify-between">
               <div>
-                <div className="text-[9px] font-black tracking-widest text-rose-400 uppercase mb-1">Route Point</div>
+                <div className="mb-1 text-[9px] font-black tracking-widest text-rose-400 uppercase">Route Point</div>
                 <h3 className="font-playfair text-xl font-bold">{selectedMarker.name}</h3>
               </div>
-              <button onClick={() => setSelectedMarker(null)} className="p-2 hover:bg-rose-50 rounded-full transition-colors"><X size={16} /></button>
+              <button
+                onClick={() => setSelectedMarker(null)}
+                className="rounded-full p-2 transition-colors hover:bg-rose-50"
+              >
+                <X size={16} />
+              </button>
             </div>
             <p className="text-muted-foreground mt-3 text-sm leading-relaxed italic">{selectedMarker.description}</p>
           </MagazineCard>
@@ -189,7 +200,7 @@ export default function TripMap({
         /* Custom Zoom Control Styling to match Google */
         .leaflet-bar {
           border: none !important;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
           border-radius: 12px !important;
           overflow: hidden;
         }

@@ -1,4 +1,17 @@
-import { Calendar, Camera, ChevronRight, Clock, Hotel, MapPin, Plane, Utensils } from "lucide-react";
+import {
+  Calendar,
+  Camera,
+  CheckSquare,
+  ChevronRight,
+  Clock,
+  Hotel,
+  Image as ImageIcon,
+  LifeBuoy,
+  Lightbulb,
+  MapPin,
+  Plane,
+  Utensils,
+} from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BentoTile } from "@/components/ui/BentoTile";
@@ -36,6 +49,9 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
           id: event.id,
           time: event.time,
           title: event.title,
+          type: event.type,
+          tag: event.tag,
+          tagLabel: event.tagLabel,
           foodName: event.foodName,
         })) ?? [],
     ) ?? [];
@@ -134,7 +150,7 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
               <div className="bg-border h-px grow" />
             </div>
 
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
+            <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-6 lg:grid-cols-6">
               {(() => {
                 const allEvents = (trip.days?.flatMap((d) => d.events) || []) as unknown as TripEvent[];
                 const getCount = (cat: string) =>
@@ -150,50 +166,128 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
                       subtitle="美味しい思い出"
                       icon={Utensils}
                       color="rose"
-                      className="col-span-1"
+                      className="md:col-span-3 lg:col-span-3"
                     >
-                      <div className="flex items-baseline gap-1">
-                        <span className="text-2xl font-black text-rose-600">{getCount("food")}</span>
-                        <span className="text-[10px] font-bold text-rose-400 uppercase tracking-widest">Spots</span>
+                      <div className="flex items-end justify-between">
+                        <div className="flex items-baseline gap-1">
+                          <span className="text-4xl font-black text-rose-600 sm:text-5xl">{getCount("food")}</span>
+                          <span className="text-[10px] font-bold tracking-widest text-rose-400 uppercase">Spots</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="hidden text-[9px] font-black tracking-widest text-rose-400 uppercase sm:inline">
+                            Explore
+                          </span>
+                          <ChevronRight size={14} className="text-rose-400" />
+                        </div>
                       </div>
                     </BentoTile>
+
                     <BentoTile
                       href={`/trip/${slug}/category/sightseeing`}
                       title="Sightseeing"
                       subtitle="絶景と体験"
                       icon={Camera}
                       color="sky"
-                      className="col-span-1"
+                      className="md:col-span-3 lg:col-span-3"
                     >
-                      <div className="flex items-baseline gap-1">
-                        <span className="text-2xl font-black text-sky-600">{getCount("sightseeing")}</span>
-                        <span className="text-[10px] font-bold text-sky-400 uppercase tracking-widest">Spots</span>
+                      <div className="flex items-end justify-between">
+                        <div className="flex items-baseline gap-1">
+                          <span className="text-4xl font-black text-sky-600 sm:text-5xl">
+                            {getCount("sightseeing")}
+                          </span>
+                          <span className="text-[10px] font-bold tracking-widest text-sky-400 uppercase">Spots</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="hidden text-[9px] font-black tracking-widest text-sky-400 uppercase sm:inline">
+                            View all
+                          </span>
+                          <ChevronRight size={14} className="text-sky-400" />
+                        </div>
                       </div>
                     </BentoTile>
+
+                    <BentoTile
+                      href={`/trip/${slug}/memories`}
+                      title="Memories"
+                      subtitle="残したい瞬間"
+                      icon={ImageIcon}
+                      color="indigo"
+                      className="md:col-span-2 lg:col-span-2"
+                    >
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-2xl font-black text-indigo-600">{trip.gourmetAwards?.length || 0}</span>
+                        <span className="text-[10px] font-bold tracking-widest text-indigo-400 uppercase">Stories</span>
+                      </div>
+                    </BentoTile>
+
+                    <BentoTile
+                      href={`/trip/${slug}/info`}
+                      title="Checklist"
+                      subtitle="旅の準備"
+                      icon={CheckSquare}
+                      color="amber"
+                      className="md:col-span-2 lg:col-span-2"
+                    >
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-2xl font-black text-amber-600">{trip.packingItems?.length || 0}</span>
+                        <span className="text-[10px] font-bold tracking-widest text-amber-400 uppercase">Items</span>
+                      </div>
+                    </BentoTile>
+
+                    <BentoTile
+                      href={`/trip/${slug}/tips`}
+                      title="Travel Tips"
+                      subtitle="役立つ知識"
+                      icon={Lightbulb}
+                      color="zinc"
+                      className="md:col-span-2 lg:col-span-2"
+                    >
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-2xl font-black text-zinc-600">{trip.tips?.length || 0}</span>
+                        <span className="text-[10px] font-bold tracking-widest text-zinc-400 uppercase">Notes</span>
+                      </div>
+                    </BentoTile>
+
                     <BentoTile
                       href={`/trip/${slug}/category/transport`}
                       title="Transport"
                       subtitle="移動の記録"
                       icon={Plane}
                       color="zinc"
-                      className="col-span-1"
+                      className="md:col-span-2 lg:col-span-2"
                     >
                       <div className="flex items-baseline gap-1">
                         <span className="text-2xl font-black text-zinc-600">{getCount("transport")}</span>
-                        <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Routes</span>
+                        <span className="text-[10px] font-bold tracking-widest text-zinc-400 uppercase">Routes</span>
                       </div>
                     </BentoTile>
+
                     <BentoTile
                       href={`/trip/${slug}/category/hotel`}
                       title="Stay"
                       subtitle="安らぎの場所"
                       icon={Hotel}
                       color="emerald"
-                      className="col-span-1"
+                      className="md:col-span-2 lg:col-span-2"
                     >
                       <div className="flex items-baseline gap-1">
                         <span className="text-2xl font-black text-emerald-600">{getCount("hotel")}</span>
-                        <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Hotels</span>
+                        <span className="text-[10px] font-bold tracking-widest text-emerald-400 uppercase">Hotels</span>
+                      </div>
+                    </BentoTile>
+
+                    <BentoTile
+                      href={`/trip/${slug}/assist`}
+                      title="Assist"
+                      subtitle="AIコンシェルジュ"
+                      icon={LifeBuoy}
+                      color="rose"
+                      className="md:col-span-2 lg:col-span-2"
+                    >
+                      <div className="flex items-center justify-center rounded-xl bg-rose-50 py-2">
+                        <span className="text-primary text-[10px] font-black tracking-widest uppercase">
+                          AI Powered
+                        </span>
                       </div>
                     </BentoTile>
                   </>

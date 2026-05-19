@@ -20,7 +20,6 @@ function isGourmetLike(name: string, category?: string | null) {
 }
 
 export async function GET(request: Request) {
-
   const { searchParams } = new URL(request.url);
   const name = searchParams.get("name");
   const latParam = searchParams.get("lat");

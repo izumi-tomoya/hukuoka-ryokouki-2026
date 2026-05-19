@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import Script from "next/script";
+import { Suspense } from "react";
 import { DynamicEventModal } from "@/features/trip/components/client/DynamicEventModal";
 import PwaRegistrar from "@/features/trip/components/client/PwaRegistrar";
 import Header from "@/features/trip/components/DesktopHeader";

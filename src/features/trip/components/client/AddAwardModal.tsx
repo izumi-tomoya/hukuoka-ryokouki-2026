@@ -95,11 +95,7 @@ export default function AddAwardModal({ tripId, isOpen, onClose }: Props) {
             </div>
             <h2 className="text-foreground text-2xl font-black">New Gourmet Award</h2>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="hover:bg-secondary rounded-full p-2 transition-colors"
-          >
+          <button type="button" onClick={onClose} className="hover:bg-secondary rounded-full p-2 transition-colors">
             <X size={24} />
           </button>
         </div>
@@ -197,13 +193,7 @@ export default function AddAwardModal({ tripId, isOpen, onClose }: Props) {
                     <span className="text-muted-foreground text-xs font-bold">最高の1枚をアップロード</span>
                   </>
                 )}
-                <input
-                  id="photo-upload"
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleFileUpload}
-                />
+                <input id="photo-upload" type="file" accept="image/*" className="hidden" onChange={handleFileUpload} />
               </label>
             )}
           </div>

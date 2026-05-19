@@ -47,7 +47,7 @@ export default function TransitTimeline({ steps, isAdmin = false }: Props) {
         const isArrival = step.mode === "arrival";
 
         return (
-          <div key={index} className="relative flex gap-4">
+          <div key={step.id || `${step.time}-${step.station}`} className="relative flex gap-4">
             {/* Left: Time and Line */}
             <div className="flex w-12 shrink-0 flex-col items-center">
               <span className="text-muted-foreground mb-1 text-[10px] font-bold">{step.time}</span>

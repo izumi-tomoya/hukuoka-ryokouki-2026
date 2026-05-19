@@ -87,7 +87,9 @@ export default function NewTripForm({ initialData }: Props) {
     <form action={handleSubmit} className="space-y-8">
       {/* Title Field */}
       <div>
-        <label htmlFor={titleId} className={labelCls}>Journey Title</label>
+        <label htmlFor={titleId} className={labelCls}>
+          Journey Title
+        </label>
         <div className="relative">
           <Sparkles size={16} className="text-primary/40 absolute top-1/2 left-4 -translate-y-1/2" />
           <input
@@ -103,7 +105,9 @@ export default function NewTripForm({ initialData }: Props) {
 
       {/* Description Field */}
       <div>
-        <label htmlFor={descId} className={labelCls}>Short Description</label>
+        <label htmlFor={descId} className={labelCls}>
+          Short Description
+        </label>
         <div className="relative">
           <FileText size={16} className="text-muted-foreground/40 absolute top-4 left-4" />
           <textarea
@@ -118,7 +122,9 @@ export default function NewTripForm({ initialData }: Props) {
 
       {/* Location Field */}
       <div>
-        <label htmlFor={locationId} className={labelCls}>Destination</label>
+        <label htmlFor={locationId} className={labelCls}>
+          Destination
+        </label>
         <div className="relative">
           <MapPin size={16} className="text-muted-foreground/40 absolute top-1/2 left-4 -translate-y-1/2" />
           <input
@@ -135,7 +141,9 @@ export default function NewTripForm({ initialData }: Props) {
       {/* Date Range */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
         <div>
-          <label htmlFor={startId} className={labelCls}>Departure</label>
+          <label htmlFor={startId} className={labelCls}>
+            Departure
+          </label>
           <div className="relative">
             <Calendar
               size={16}
@@ -152,7 +160,9 @@ export default function NewTripForm({ initialData }: Props) {
           </div>
         </div>
         <div>
-          <label htmlFor={endId} className={labelCls}>Return</label>
+          <label htmlFor={endId} className={labelCls}>
+            Return
+          </label>
           <div className="relative">
             <Calendar
               size={16}
@@ -172,7 +182,9 @@ export default function NewTripForm({ initialData }: Props) {
 
       {/* Accent Color Selection */}
       <div className="pt-2">
-        <label htmlFor={colorId} className={labelCls}>Theme Accent</label>
+        <label htmlFor={colorId} className={labelCls}>
+          Theme Accent
+        </label>
         <div className="mb-4 grid grid-cols-4 gap-3 sm:grid-cols-7">
           {COLOR_PRESETS.map((color) => (
             <button

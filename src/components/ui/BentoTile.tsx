@@ -25,16 +25,29 @@ export function BentoTile({ children, className, title, subtitle, href, icon: Ic
   const content = (
     <div
       className={cn(
-        "group h-full relative rounded-[2.5rem] border border-zinc-100 bg-white p-6 md:p-8 transition-all duration-500 hover:shadow-2xl hover:shadow-zinc-200/50 hover:-translate-y-1",
+        "group relative h-full overflow-hidden rounded-[2.5rem] border border-zinc-100 bg-white/70 p-6 backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl hover:shadow-zinc-200/50 md:p-8",
         className,
       )}
     >
-      <div className="flex flex-col h-full justify-between gap-6">
+      {/* Decorative Background Element */}
+      <div
+        className={cn(
+          "absolute -top-4 -right-4 h-24 w-24 rounded-full opacity-5 blur-2xl transition-all duration-700 group-hover:scale-150 group-hover:opacity-10",
+          color === "rose" && "bg-rose-500",
+          color === "sky" && "bg-sky-500",
+          color === "zinc" && "bg-zinc-500",
+          color === "emerald" && "bg-emerald-500",
+          color === "amber" && "bg-amber-500",
+          color === "indigo" && "bg-indigo-500",
+        )}
+      />
+
+      <div className="relative z-10 flex h-full flex-col justify-between gap-6">
         <div>
           {Icon && (
             <div
               className={cn(
-                "w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500 mb-6",
+                "mb-6 flex h-12 w-12 items-center justify-center rounded-2xl transition-all duration-500",
                 colorStyles[color],
               )}
             >
@@ -42,7 +55,7 @@ export function BentoTile({ children, className, title, subtitle, href, icon: Ic
             </div>
           )}
 
-          {title && <h3 className="text-lg font-black tracking-tight text-zinc-900 mb-1">{title}</h3>}
+          {title && <h3 className="mb-1 text-lg font-black tracking-tight text-zinc-900">{title}</h3>}
 
           {subtitle && <p className="text-[11px] font-bold tracking-widest text-zinc-400 uppercase">{subtitle}</p>}
         </div>

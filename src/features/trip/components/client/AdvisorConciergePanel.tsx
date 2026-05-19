@@ -118,6 +118,7 @@ export default function AdvisorConciergePanel({ slug }: Props) {
       <div className="no-scrollbar border-border bg-secondary/10 dark:bg-card/30 mt-6 max-h-96 space-y-4 overflow-y-auto rounded-[1.75rem] border p-4">
         {messages.map((message, index) => (
           <div
+            // biome-ignore lint/suspicious/noArrayIndexKey: chat messages are appended sequentially
             key={`${message.role}-${index}`}
             className={cn(
               "rounded-[1.25rem] px-5 py-4 text-sm leading-relaxed transition-all",
@@ -127,6 +128,7 @@ export default function AdvisorConciergePanel({ slug }: Props) {
             )}
           >
             {message.content.split("\n").map((line, i) => (
+              // biome-ignore lint/suspicious/noArrayIndexKey: splitting content by newline is stable
               <p key={i} className={cn(i !== 0 && "mt-2")}>
                 {line}
               </p>

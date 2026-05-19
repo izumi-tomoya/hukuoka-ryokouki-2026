@@ -28,7 +28,7 @@ export function EditEventForm({ event, onSuccess }: Props) {
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
-  
+
   const timeId = useId();
   const typeId = useId();
   const titleId = useId();
@@ -83,7 +83,12 @@ export function EditEventForm({ event, onSuccess }: Props) {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <label htmlFor={timeId} className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">時間</label>
+          <label
+            htmlFor={timeId}
+            className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase"
+          >
+            時間
+          </label>
           <input
             id={timeId}
             {...register("time")}
@@ -92,7 +97,10 @@ export function EditEventForm({ event, onSuccess }: Props) {
           />
         </div>
         <div className="space-y-2">
-          <label htmlFor={typeId} className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
+          <label
+            htmlFor={typeId}
+            className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase"
+          >
             カテゴリ
           </label>
           <select
@@ -110,7 +118,12 @@ export function EditEventForm({ event, onSuccess }: Props) {
       </div>
 
       <div className="space-y-2">
-        <label htmlFor={titleId} className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">タイトル</label>
+        <label
+          htmlFor={titleId}
+          className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase"
+        >
+          タイトル
+        </label>
         <input
           id={titleId}
           {...register("title")}
@@ -120,7 +133,10 @@ export function EditEventForm({ event, onSuccess }: Props) {
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <label htmlFor={tagLabelId} className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
+          <label
+            htmlFor={tagLabelId}
+            className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase"
+          >
             タグ表示名 (例: ランチ)
           </label>
           <input
@@ -130,7 +146,10 @@ export function EditEventForm({ event, onSuccess }: Props) {
           />
         </div>
         <div className="space-y-2">
-          <label htmlFor={isConfirmedId} className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
+          <label
+            htmlFor={isConfirmedId}
+            className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase"
+          >
             確定済み
           </label>
           <div className="bg-secondary/30 border-border flex h-12 items-center rounded-xl border px-4">
@@ -145,7 +164,9 @@ export function EditEventForm({ event, onSuccess }: Props) {
       </div>
 
       <div className="space-y-2">
-        <label htmlFor={descId} className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">説明</label>
+        <label htmlFor={descId} className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
+          説明
+        </label>
         <textarea
           id={descId}
           {...register("desc")}
@@ -176,7 +197,10 @@ export function EditEventForm({ event, onSuccess }: Props) {
       </div>
 
       <div className="space-y-2">
-        <label htmlFor={locationUrlId} className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase">
+        <label
+          htmlFor={locationUrlId}
+          className="text-muted-foreground ml-1 text-[10px] font-black tracking-widest uppercase"
+        >
           Google Maps URL
         </label>
         <input

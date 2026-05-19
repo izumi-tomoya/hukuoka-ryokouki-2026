@@ -25,9 +25,9 @@ import YataiLiveTracker from "@/features/trip/components/client/YataiLiveTracker
 import PhotoGallery from "@/features/trip/components/PhotoGallery";
 import WeatherStatsDisplay from "@/features/trip/components/WeatherStats";
 import type { TripEvent } from "@/features/trip/types/trip";
-import { getDirectionsUrl } from "@/lib/mapUtils";
 import { getLocationCoordinates } from "@/features/trip/utils/locationCatalog";
 import { isSecretEvent, maskSecretText } from "@/features/trip/utils/tripUtils";
+import { getDirectionsUrl } from "@/lib/mapUtils";
 import { cn } from "@/lib/utils";
 
 const tagConfig: Record<string, { className: string; icon: React.ElementType }> = {
@@ -178,9 +178,9 @@ function BasicCard({
 
             {event.actualPhotos && event.actualPhotos.length > 0 && (
               <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3">
-                {event.actualPhotos.map((photo, i) => (
+                {event.actualPhotos.map((photo) => (
                   <div
-                    key={i}
+                    key={photo.id}
                     className="border-border group/photo relative aspect-square overflow-hidden rounded-3xl border shadow-inner"
                   >
                     <Image

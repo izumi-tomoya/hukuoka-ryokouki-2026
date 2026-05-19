@@ -13,9 +13,9 @@ export default function WeatherStatsDisplay({ stats }: { stats: WeatherStats }) 
           { icon: Thermometer, val: `${stats.temp}°C`, label: "Temp" },
           { icon: Sun, val: `UV ${stats.uvIndex}`, label: "UV" },
           { icon: Droplets, val: `${stats.humidity}%`, label: "Humid" },
-        ].map((item, i) => (
+        ].map((item) => (
           <div
-            key={i}
+            key={item.label}
             className="flex flex-col items-center justify-center rounded-3xl border border-white bg-white/80 p-4 shadow-sm"
           >
             <item.icon size={18} className="mb-2 text-rose-300" />

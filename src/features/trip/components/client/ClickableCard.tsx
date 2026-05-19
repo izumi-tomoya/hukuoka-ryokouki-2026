@@ -1,7 +1,7 @@
 "use client";
 
-import { useModalStore } from "@/lib/store/useModalStore";
 import type { TripEvent } from "@/features/trip/types/trip";
+import { useModalStore } from "@/lib/store/useModalStore";
 import { cn } from "@/lib/utils";
 
 interface ClickableCardProps {
@@ -22,10 +22,7 @@ export default function ClickableCard({ event, children, className, previousLoca
     <button
       type="button"
       onClick={handlePress}
-      className={cn(
-        "w-full text-left transition-transform active:scale-[0.98] outline-hidden",
-        className
-      )}
+      className={cn("w-full text-left outline-hidden transition-transform active:scale-[0.98]", className)}
     >
       {children}
     </button>

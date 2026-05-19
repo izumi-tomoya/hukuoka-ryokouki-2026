@@ -101,7 +101,7 @@ export default function ActionSummary({ events, isAdmin = false, locationNames =
               key={event.id || `${event.time}-${index}`}
               type="button"
               onClick={() => openModal(event, prevLoc)}
-              className="border-border bg-background/60 group grid cursor-pointer gap-3 rounded-3xl p-4 text-left transition-all hover:border-primary/30 hover:shadow-lg active:scale-[0.99] sm:grid-cols-[5rem_1fr] sm:p-5"
+              className="border-border bg-background/60 group hover:border-primary/30 grid cursor-pointer gap-3 rounded-3xl p-4 text-left transition-all hover:shadow-lg active:scale-[0.99] sm:grid-cols-[5rem_1fr] sm:p-5"
             >
               <div className="flex items-center gap-3 sm:block">
                 <div className="bg-primary/10 text-primary inline-flex min-h-10 items-center gap-2 rounded-full px-3 text-xs font-black sm:mb-2">
@@ -116,7 +116,7 @@ export default function ActionSummary({ events, isAdmin = false, locationNames =
               <div className="min-w-0">
                 <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                   <div className="min-w-0">
-                    <h3 className="text-foreground group-hover:text-primary text-base font-black transition-colors wrap-break-word">
+                    <h3 className="text-foreground group-hover:text-primary text-base font-black wrap-break-word transition-colors">
                       {isSurprise ? "🎁 Surprise Spot" : eventLabel(event, isAdmin)}
                     </h3>
                     {(event.desc || event.foodDesc) && (

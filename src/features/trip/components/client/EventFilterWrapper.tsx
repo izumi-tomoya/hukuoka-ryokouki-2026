@@ -23,15 +23,15 @@ export default function EventFilterWrapper({
 
   return (
     <div className="space-y-8">
-        <CategoryFilter />
+      <CategoryFilter />
 
-        {isAdmin && dayId && (
-          <div className="animate-in fade-in slide-in-from-top-4 duration-700">
-            <AddPlanButton dayId={dayId} />
-          </div>
-        )}
+      {isAdmin && dayId && (
+        <div className="animate-in fade-in slide-in-from-top-4 duration-700">
+          <AddPlanButton dayId={dayId} />
+        </div>
+      )}
 
-        <Timeline events={filteredEvents} dayNumber={dayNumber} isAdmin={isAdmin} />
+      <Timeline events={filteredEvents} dayNumber={dayNumber} isAdmin={isAdmin} />
     </div>
   );
 }

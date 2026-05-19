@@ -1,6 +1,6 @@
 import { day1Events, day2Events, packingList } from "@/data/tripData";
-import { getTripBySlug } from "./tripActions";
 import type { TripEvent } from "../types/trip";
+import { getTripBySlug } from "./tripActions";
 
 /**
  * イベントのタイトルや料理名からスラグを生成します

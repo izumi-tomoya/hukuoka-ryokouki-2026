@@ -1,17 +1,6 @@
 "use client";
 import { Dialog } from "@base-ui/react/dialog";
-import {
-  AlertTriangle,
-  Clock,
-  Edit2,
-  FileText,
-  JapaneseYen,
-  Lightbulb,
-  MapPin,
-  Route,
-  Star,
-  X,
-} from "lucide-react";
+import { AlertTriangle, Clock, Edit2, FileText, JapaneseYen, Lightbulb, MapPin, Route, Star, X } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { MagazineCard } from "@/components/ui/MagazineCard";
@@ -156,7 +145,7 @@ export default function EventDetailModal() {
                         return (
                           (venue && eventName.includes(venue)) ||
                           (tipTitle && eventName.includes(tipTitle)) ||
-                          (venue?.includes(eventName))
+                          venue?.includes(eventName)
                         );
                       })
                       .map((tip) => (
@@ -278,9 +267,11 @@ export default function EventDetailModal() {
                     ) : (
                       <div className="bg-secondary/50 flex aspect-video w-full flex-col items-center justify-center gap-3 rounded-3xl border border-dashed border-stone-200">
                         <MapPin size={24} className="text-stone-300" />
-                        <div className="text-center px-6">
+                        <div className="px-6 text-center">
                           <p className="text-xs font-bold text-stone-500">Google Maps API キーが設定されていません</p>
-                          <p className="mt-1 text-[10px] text-stone-400">.env に NEXT_PUBLIC_GOOGLE_MAPS_API_KEY を設定してください</p>
+                          <p className="mt-1 text-[10px] text-stone-400">
+                            .env に NEXT_PUBLIC_GOOGLE_MAPS_API_KEY を設定してください
+                          </p>
                         </div>
                       </div>
                     )}
@@ -295,10 +286,14 @@ export default function EventDetailModal() {
                       <span className="text-[10px] font-black tracking-widest uppercase">Access & Location</span>
                     </div>
                     {selectedEvent.access?.map((line, idx) => (
-                        <p key={`access-${idx}`} className="text-muted-foreground text-sm">
-                          {maskSecretText(line, isAdmin)}
-                        </p>
-                      ))}
+                      <p
+                        // biome-ignore lint/suspicious/noArrayIndexKey: access lines are static descriptions
+                        key={`access-${line}-${idx}`}
+                        className="text-muted-foreground text-sm"
+                      >
+                        {maskSecretText(line, isAdmin)}
+                      </p>
+                    ))}
 
                     <div className="flex flex-col gap-3 pt-2">
                       {directionsUrl && (

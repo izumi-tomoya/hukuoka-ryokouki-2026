@@ -18,7 +18,6 @@ import {
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-
   const preferredProvider = getPreferredAiProvider();
   const localConfig = getLocalTravelAiModelsConfig();
   const googleConfig = getGoogleTravelAiModelsConfig();

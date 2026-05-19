@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 
 export default function TripMapSkeleton() {
   return (
-    <div className="group relative opacity-60">
+    <div className="group relative">
       <div className="bg-secondary/30 relative h-80 w-full overflow-hidden rounded-[3.5rem] border border-rose-100 shadow-xl shadow-rose-100/10">
         <Skeleton className="h-full w-full" />
 

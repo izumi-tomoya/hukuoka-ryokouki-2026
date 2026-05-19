@@ -3,6 +3,9 @@ import { Skeleton } from "@/components/ui/Skeleton";
 export default function HeroSkeleton() {
   return (
     <div className="bg-background relative w-full overflow-hidden">
+      {/* Background Gradient Placeholder */}
+      <div className="bg-primary/5 absolute inset-0 opacity-10 dark:opacity-20" />
+
       <div className="relative mx-auto max-w-5xl px-6 pt-24 pb-16 md:pt-32 md:pb-24">
         <div className="flex flex-col items-center text-center md:items-start md:text-left">
           <Skeleton className="mb-6 h-6 w-32 rounded-full" />
@@ -22,7 +25,9 @@ export default function HeroSkeleton() {
           </div>
         </div>
       </div>
-      <div className="bg-border/50 absolute right-0 bottom-0 left-0 h-px" />
+
+      {/* Decorative Line */}
+      <div className="via-border absolute right-0 bottom-0 left-0 h-px bg-linear-to-r from-transparent to-transparent" />
     </div>
   );
 }

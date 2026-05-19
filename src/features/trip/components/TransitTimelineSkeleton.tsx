@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 export default function TransitTimelineSkeleton() {
   return (
-    <div className="mt-6 space-y-0 opacity-60">
+    <div className="mt-6 space-y-0">
       {[1, 2, 3].map((i) => {
         const isLast = i === 3;
         return (

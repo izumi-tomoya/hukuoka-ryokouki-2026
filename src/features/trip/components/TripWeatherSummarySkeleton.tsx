@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 
 export default function TripWeatherSummarySkeleton() {
   return (
-    <div className="relative mt-8 opacity-60">
+    <div className="relative mt-8">
       <div className="no-scrollbar flex gap-4 overflow-x-auto pb-4 sm:grid sm:grid-cols-2 sm:overflow-visible sm:pb-0 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
         {[1, 2, 3, 4, 5, 6, 7].map((i) => (
           <MagazineCard

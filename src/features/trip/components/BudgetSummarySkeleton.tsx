@@ -5,7 +5,7 @@ export default function BudgetSummarySkeleton() {
   return (
     <MagazineCard
       padding="sm"
-      className="dark:bg-background dark:border-border flex items-center gap-3 border-rose-100 bg-rose-50/50 opacity-60 md:gap-4"
+      className="dark:bg-background dark:border-border flex items-center gap-3 border-rose-100 bg-rose-50/50 md:gap-4"
     >
       <Skeleton className="h-10 w-10 shrink-0 rounded-xl md:h-12 md:w-12 md:rounded-2xl" />
       <div className="min-w-0 flex-1">

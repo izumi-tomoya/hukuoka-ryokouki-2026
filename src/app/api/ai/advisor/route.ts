@@ -1,12 +1,12 @@
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { createOpenAI } from "@ai-sdk/openai";
 import { Sandbox } from "@vercel/sandbox";
-import { generateText, stepCountIs, tool } from "ai";
+import { generateText, type ModelMessage, stepCountIs, tool } from "ai";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { compactAdvisorAnswer } from "@/lib/advisorResponse";
 import { auth } from "@/lib/auth";
-import { getGoogleApiKey, getGoogleBaseUrl, getGoogleTravelAiModelsConfig } from "@/lib/googleAi";
+import { getGoogleApiKey, getGoogleTravelAiModelsConfig } from "@/lib/googleAi";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -29,10 +29,9 @@ function getAiProvider() {
     });
   }
 
-  // 直接 Google AI に接続
+  // 直接 Google AI に接続 (v1beta: systemInstruction/tools/toolConfig サポート)
   return createGoogleGenerativeAI({
     apiKey: googleApiKey ?? "",
-    baseURL: `${getGoogleBaseUrl()}/v1`, // v1beta より安定した v1 を優先
   });
 }
 
@@ -52,7 +51,7 @@ export async function POST(req: Request) {
     } = (await req.json()) as {
       slug?: string;
       message?: string;
-      history?: any[];
+      history?: { role: "user" | "assistant"; content: string }[];
     };
 
     if (!slug || !message) {
@@ -78,7 +77,9 @@ export async function POST(req: Request) {
           .slice(0, ADVISOR_MAX_EVENTS_PER_DAY)
           .map((event) => {
             const titleText = event.title || event.foodName || "";
-            const isSecret = !isAdmin && (event.tag === "surprise" || ["ヒルトン", "CLOUDS", "サプライズ"].some(s => titleText.includes(s)));
+            const isSecret =
+              !isAdmin &&
+              (event.tag === "surprise" || ["ヒルトン", "CLOUDS", "サプライズ"].some((s) => titleText.includes(s)));
             return `${event.time} ${isSecret ? "🎁 Surprise" : titleText}${event.isConfirmed ? " [fixed]" : ""}`;
           })
           .join(" / ");
@@ -110,19 +111,18 @@ export async function POST(req: Request) {
 ${itineraryContext}`;
 
     // 履歴の正規化
-    const messages = [
-      ...history
-        .filter(m => m.role === "user" || m.role === "assistant")
-        .slice(-ADVISOR_MAX_HISTORY_MESSAGES)
-        .map(m => ({
-          role: m.role as "user" | "assistant",
-          content: m.content
-        })),
-      { role: "user", content: message }
-    ] as any[];
+    const messages: ModelMessage[] = [
+      ...history.slice(-ADVISOR_MAX_HISTORY_MESSAGES).map((m) => ({
+        role: m.role,
+        content: m.content,
+      })),
+      { role: "user" as const, content: message },
+    ];
 
     // モデルIDの決定
-    const isUnifiedGateway = !!(process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN) && process.env.AI_PROVIDER !== "google_direct";
+    const isUnifiedGateway =
+      !!(process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN) &&
+      process.env.AI_PROVIDER !== "google_direct";
     const gatewayModel = process.env.AI_GATEWAY_MODEL || "anthropic/claude-3-haiku";
     const modelId = isUnifiedGateway ? gatewayModel : defaultModel;
 
@@ -132,8 +132,9 @@ ${itineraryContext}`;
       messages,
       tools: {
         runPythonCode: tool({
-          description: "Pythonコードを実行して計算やデータ処理を行います。予算の計算や時間の計算、スケジュールの分析に使用してください。",
-          parameters: z.object({
+          description:
+            "Pythonコードを実行して計算やデータ処理を行います。予算の計算や時間の計算、スケジュールの分析に使用してください。",
+          inputSchema: z.object({
             code: z.string().describe("実行するPythonコード"),
           }),
           execute: async ({ code }) => {
@@ -148,7 +149,10 @@ ${itineraryContext}`;
               }
             } catch (sandboxError) {
               console.error("Sandbox Execution Failed:", sandboxError);
-              return { error: "Sandbox environment is currently unavailable. Please perform calculation manually or try again later." };
+              return {
+                error:
+                  "Sandbox environment is currently unavailable. Please perform calculation manually or try again later.",
+              };
             }
           },
         }),
@@ -163,18 +167,17 @@ ${itineraryContext}`;
 
     return NextResponse.json({
       answer: finalAnswer,
-      history: [
-        ...history,
-        { role: "user", content: message },
-        { role: "assistant", content: finalAnswer }
-      ],
+      history: [...history, { role: "user", content: message }, { role: "assistant", content: finalAnswer }],
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("AI Advisor Error:", error);
-    const errorMessage = error.message || "Unknown error";
-    return NextResponse.json({ 
-      error: "AIとの通信中にエラーが発生しました",
-      details: errorMessage 
-    }, { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    return NextResponse.json(
+      {
+        error: "AIとの通信中にエラーが発生しました",
+        details: errorMessage,
+      },
+      { status: 500 },
+    );
   }
 }

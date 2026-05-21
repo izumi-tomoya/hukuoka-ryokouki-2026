@@ -1,11 +1,9 @@
 "use client";
 
 import type { Location } from "@prisma/client";
+import { importLibrary, setOptions } from "@googlemaps/js-api-loader";
 import { MapPin, X } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-import { MapContainer, Marker, Polyline, TileLayer, useMap, ZoomControl } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import L from "leaflet";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { MagazineCard } from "@/components/ui/MagazineCard";
 import type { TripEvent } from "@/features/trip/types/trip";
@@ -16,32 +14,14 @@ import { cn } from "@/lib/utils";
 import { getWeatherData } from "@/lib/weather";
 import TripMapSkeleton from "../TripMapSkeleton";
 
+// モジュールレベルで一度だけ設定
+setOptions({ key: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "", v: "weekly" });
+
 interface MapMarker {
   id: string;
   name: string;
   coords: { lat: number; lng: number };
   description?: string;
-}
-
-// --- Leaflet Fix for Marker Icons ---
-const DefaultIcon = L.icon({
-  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-});
-L.Marker.prototype.options.icon = DefaultIcon;
-
-// Helper to auto-fit bounds
-function MapController({ markers }: { markers: MapMarker[] }) {
-  const map = useMap();
-  useEffect(() => {
-    if (markers.length > 0) {
-      const bounds = L.latLngBounds(markers.map((m) => [m.coords.lat, m.coords.lng]));
-      map.fitBounds(bounds, { padding: [60, 60] });
-    }
-  }, [markers, map]);
-  return null;
 }
 
 export default function TripMap({
@@ -54,11 +34,11 @@ export default function TripMap({
   locationMaster?: Location[];
 }) {
   const { isOpen: isModalOpen } = useModalStore();
+  const mapRef = useRef<HTMLDivElement>(null);
   const [selectedMarker, setSelectedMarker] = useState<MapMarker | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [envStats, setEnvStats] = useState<{ temp?: number } | null>(null);
 
-  // Markers processing - Wrapped in useMemo to prevent unnecessary zoom resets
   const markersData = useMemo(() => {
     return events
       .map((event) => {
@@ -69,9 +49,7 @@ export default function TripMap({
           const searchName = event.formalName ? cleanLocationName(event.formalName) : cleanLocationName(title);
           return searchName.includes(cleanedMaster) || cleanedMaster.includes(searchName);
         });
-
         if (isSecret || !spot) return null;
-
         return {
           id: event.id || `${spot.lat}-${spot.lng}`,
           name: title,
@@ -83,7 +61,6 @@ export default function TripMap({
   }, [events, locationMaster, isAdmin]);
 
   useEffect(() => {
-    setIsLoaded(true);
     const fetchWeather = async () => {
       const data = await getWeatherData("福岡市");
       if (data) setEnvStats({ temp: data.current?.temp });
@@ -91,15 +68,85 @@ export default function TripMap({
     fetchWeather();
   }, []);
 
-  const customMarkerIcon = L.divIcon({
-    className: "custom-div-icon",
-    html: `<div class="relative flex items-center justify-center">
-             <div class="absolute w-10 h-10 bg-rose-500/25 rounded-full animate-ping"></div>
-             <div class="w-5 h-5 bg-rose-500 rounded-full border-[3px] border-white shadow-xl shadow-rose-200/50"></div>
-           </div>`,
-    iconSize: [32, 32],
-    iconAnchor: [16, 16],
-  });
+  useEffect(() => {
+    if (!mapRef.current || markersData.length === 0) {
+      setIsLoaded(true);
+      return;
+    }
+
+    let map: google.maps.Map;
+    const advMarkers: google.maps.marker.AdvancedMarkerElement[] = [];
+    let polyline: google.maps.Polyline | null = null;
+
+    Promise.all([
+      importLibrary("maps"),
+      importLibrary("marker"),
+    ]).then(([{ Map }, { AdvancedMarkerElement }]) => {
+      if (!mapRef.current) return;
+
+      map = new Map(mapRef.current, {
+        center: markersData[0].coords,
+        zoom: 13,
+        mapId: "DEMO_MAP_ID",
+        disableDefaultUI: true,
+        zoomControl: true,
+        zoomControlOptions: { position: google.maps.ControlPosition.RIGHT_BOTTOM },
+        gestureHandling: "cooperative",
+      });
+
+      // Fit bounds
+      if (markersData.length > 1) {
+        const bounds = new google.maps.LatLngBounds();
+        markersData.forEach((m) => bounds.extend(m.coords));
+        map.fitBounds(bounds, 80);
+      }
+
+      // Custom dot marker HTML
+      const makePin = (idx: number) => {
+        const el = document.createElement("div");
+        el.style.cssText = `
+          width:32px;height:32px;border-radius:50%;
+          background:#f43f5e;border:3px solid white;
+          box-shadow:0 2px 8px rgba(244,63,94,0.4);
+          display:flex;align-items:center;justify-content:center;
+          color:white;font-size:11px;font-weight:900;
+          cursor:pointer;
+        `;
+        el.textContent = String(idx + 1);
+        return el;
+      };
+
+      markersData.forEach((m, idx) => {
+        const marker = new AdvancedMarkerElement({
+          position: m.coords,
+          map,
+          content: makePin(idx),
+          title: m.name,
+        });
+        marker.addListener("click", () => setSelectedMarker(m));
+        advMarkers.push(marker);
+      });
+
+      // Route polyline
+      if (markersData.length >= 2) {
+        polyline = new google.maps.Polyline({
+          path: markersData.map((m) => m.coords),
+          geodesic: true,
+          strokeColor: "#f43f5e",
+          strokeOpacity: 0.5,
+          strokeWeight: 4,
+          map,
+        });
+      }
+
+      setIsLoaded(true);
+    });
+
+    return () => {
+      advMarkers.forEach((m) => { m.map = null; });
+      polyline?.setMap(null);
+    };
+  }, [markersData]);
 
   if (!isLoaded) return <TripMapSkeleton />;
 
@@ -120,53 +167,14 @@ export default function TripMap({
           isModalOpen && "scale-[0.98] opacity-40 blur-[2px]",
         )}
       >
-        <MapContainer
-          center={[33.5902, 130.4017]}
-          zoom={13}
-          zoomControl={false}
-          style={{ height: "100%", width: "100%" }}
-        >
-          <MapController markers={markersData} />
+        <div ref={mapRef} className="h-full w-full" />
 
-          {/* --- The "Magic" Tile Layer: Direct Google Maps Tiles --- */}
-          {/* lyrs=m: Standard Roadmap */}
-          <TileLayer
-            attribution="&copy; Google Maps"
-            url="https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
-            subdomains={["mt0", "mt1", "mt2", "mt3"]}
-            maxZoom={20}
-          />
-
-          {markersData.map((m) => (
-            <Marker
-              key={m.id}
-              position={[m.coords.lat, m.coords.lng]}
-              icon={customMarkerIcon}
-              eventHandlers={{ click: () => setSelectedMarker(m) }}
-            />
-          ))}
-
-          {markersData.length >= 2 && (
-            <Polyline
-              positions={markersData.map((m) => [m.coords.lat, m.coords.lng])}
-              color="#f43f5e"
-              weight={5}
-              opacity={0.5}
-              lineCap="round"
-              lineJoin="round"
-            />
-          )}
-
-          {/* Reposition controls to match Google Maps (bottom right) */}
-          <ZoomControl position="bottomright" />
-        </MapContainer>
-
-        {/* UI Overlays */}
+        {/* Geospatial badge */}
         {!isModalOpen && (
-          <div className="animate-in fade-in pointer-events-none absolute top-6 left-6 z-[1000] flex items-center gap-2 rounded-full border border-stone-800 bg-stone-900/90 px-4 py-2 shadow-xl backdrop-blur-md">
+          <div className="animate-in fade-in pointer-events-none absolute top-6 left-6 z-10 flex items-center gap-2 rounded-full border border-stone-800 bg-stone-900/90 px-4 py-2 shadow-xl backdrop-blur-md">
             <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-rose-500" />
             <span className="text-[9px] font-black tracking-[0.3em] text-white uppercase italic">
-              Geospatial Intelligence
+              Geospatial Path
             </span>
             {envStats && (
               <span className="ml-2 border-l border-white/20 pl-2 text-[9px] font-black text-rose-300">
@@ -175,11 +183,6 @@ export default function TripMap({
             )}
           </div>
         )}
-
-        {/* Bottom Logo Attribution (Google Style) */}
-        <div className="pointer-events-none absolute bottom-5 left-8 z-[1000] flex items-baseline gap-1 opacity-40">
-          <span className="text-[10px] font-black tracking-tighter text-stone-600">Google</span>
-        </div>
       </div>
 
       {selectedMarker && !isModalOpen && (
@@ -198,29 +201,12 @@ export default function TripMap({
                 <X size={16} />
               </button>
             </div>
-            <p className="text-muted-foreground mt-3 text-sm leading-relaxed italic">{selectedMarker.description}</p>
+            {selectedMarker.description && (
+              <p className="text-muted-foreground mt-3 text-sm leading-relaxed italic">{selectedMarker.description}</p>
+            )}
           </MagazineCard>
         </div>
       )}
-
-      <style jsx global>{`
-        .leaflet-container {
-          background: #e5e7eb !important;
-          cursor: crosshair !important;
-        }
-        /* Custom Zoom Control Styling to match Google */
-        .leaflet-bar {
-          border: none !important;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
-          border-radius: 12px !important;
-          overflow: hidden;
-        }
-        .leaflet-bar a {
-          background-color: white !important;
-          color: #666 !important;
-          border-bottom: 1px solid #f0f0f0 !important;
-        }
-      `}</style>
     </div>
   );
 }

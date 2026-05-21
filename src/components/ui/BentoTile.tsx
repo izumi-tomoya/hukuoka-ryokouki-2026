@@ -10,60 +10,90 @@ interface BentoTileProps {
   href?: string;
   icon?: LucideIcon;
   color?: "rose" | "sky" | "zinc" | "emerald" | "amber" | "indigo";
+  variant?: "featured" | "card";
 }
 
-const colorStyles = {
-  rose: "bg-rose-50 text-rose-500 border-rose-100 group-hover:bg-rose-500 group-hover:text-white",
-  sky: "bg-sky-50 text-sky-500 border-sky-100 group-hover:bg-sky-500 group-hover:text-white",
-  zinc: "bg-zinc-50 text-zinc-500 border-zinc-100 group-hover:bg-zinc-900 group-hover:text-white",
-  emerald: "bg-emerald-50 text-emerald-500 border-emerald-100 group-hover:bg-emerald-500 group-hover:text-white",
-  amber: "bg-amber-50 text-amber-500 border-amber-100 group-hover:bg-amber-500 group-hover:text-white",
-  indigo: "bg-indigo-50 text-indigo-500 border-indigo-100 group-hover:bg-indigo-500 group-hover:text-white",
+const accentColor = {
+  rose:    { icon: "bg-rose-50 text-rose-500",    num: "text-rose-500",    border: "border-rose-100",   glow: "bg-rose-400" },
+  sky:     { icon: "bg-sky-50 text-sky-500",      num: "text-sky-500",     border: "border-sky-100",    glow: "bg-sky-400" },
+  zinc:    { icon: "bg-zinc-100 text-zinc-500",   num: "text-zinc-700",    border: "border-zinc-100",   glow: "bg-zinc-400" },
+  emerald: { icon: "bg-emerald-50 text-emerald-500", num: "text-emerald-600", border: "border-emerald-100", glow: "bg-emerald-400" },
+  amber:   { icon: "bg-amber-50 text-amber-500",  num: "text-amber-500",   border: "border-amber-100",  glow: "bg-amber-400" },
+  indigo:  { icon: "bg-indigo-50 text-indigo-500", num: "text-indigo-500", border: "border-indigo-100", glow: "bg-indigo-400" },
 };
 
-export function BentoTile({ children, className, title, subtitle, href, icon: Icon, color = "zinc" }: BentoTileProps) {
-  const content = (
-    <div
-      className={cn(
-        "group relative h-full overflow-hidden rounded-[2.5rem] border border-zinc-100 bg-white/70 p-6 backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl hover:shadow-zinc-200/50 md:p-8",
-        className,
-      )}
-    >
-      {/* Decorative Background Element */}
+export function BentoTile({
+  children,
+  className,
+  title,
+  subtitle,
+  href,
+  icon: Icon,
+  color = "zinc",
+  variant = "card",
+}: BentoTileProps) {
+  const c = accentColor[color];
+
+  const content =
+    variant === "featured" ? (
       <div
         className={cn(
-          "absolute -top-4 -right-4 h-24 w-24 rounded-full opacity-5 blur-2xl transition-all duration-700 group-hover:scale-150 group-hover:opacity-10",
-          color === "rose" && "bg-rose-500",
-          color === "sky" && "bg-sky-500",
-          color === "zinc" && "bg-zinc-500",
-          color === "emerald" && "bg-emerald-500",
-          color === "amber" && "bg-amber-500",
-          color === "indigo" && "bg-indigo-500",
+          "group relative h-full overflow-hidden rounded-3xl border bg-white/80 p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-slate-200/60 md:p-6",
+          c.border,
+          className,
         )}
-      />
+      >
+        {/* Subtle color wash */}
+        <div className={cn("absolute inset-0 opacity-[0.03] transition-opacity duration-500 group-hover:opacity-[0.06]", c.glow)} />
 
-      <div className="relative z-10 flex h-full flex-col justify-between gap-6">
-        <div>
+        <div className="relative z-10 flex h-full flex-col justify-between gap-5">
+          <div className="flex items-start justify-between">
+            {Icon && (
+              <div className={cn("flex h-11 w-11 items-center justify-center rounded-2xl", c.icon)}>
+                <Icon size={22} />
+              </div>
+            )}
+          </div>
+
+          <div>
+            {title && (
+              <h3 className="mb-0.5 text-base font-black tracking-tight text-zinc-900">{title}</h3>
+            )}
+            {subtitle && (
+              <p className="text-[10px] font-bold tracking-widest text-zinc-400 uppercase">{subtitle}</p>
+            )}
+          </div>
+
+          {children}
+        </div>
+      </div>
+    ) : (
+      <div
+        className={cn(
+          "group relative h-full overflow-hidden rounded-2xl border border-zinc-100 bg-white/70 p-4 backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-zinc-100/80 md:p-5",
+          className,
+        )}
+      >
+        <div className="relative z-10 flex h-full flex-col justify-between gap-3">
           {Icon && (
-            <div
-              className={cn(
-                "mb-6 flex h-12 w-12 items-center justify-center rounded-2xl transition-all duration-500",
-                colorStyles[color],
-              )}
-            >
-              <Icon size={24} />
+            <div className={cn("flex h-9 w-9 items-center justify-center rounded-xl transition-colors", c.icon)}>
+              <Icon size={17} />
             </div>
           )}
 
-          {title && <h3 className="mb-1 text-lg font-black tracking-tight text-zinc-900">{title}</h3>}
+          <div>
+            {title && (
+              <h3 className="mb-0.5 text-sm font-black tracking-tight text-zinc-900">{title}</h3>
+            )}
+            {subtitle && (
+              <p className="text-[9px] font-bold tracking-widest text-zinc-400 uppercase">{subtitle}</p>
+            )}
+          </div>
 
-          {subtitle && <p className="text-[11px] font-bold tracking-widest text-zinc-400 uppercase">{subtitle}</p>}
+          {children}
         </div>
-
-        {children}
       </div>
-    </div>
-  );
+    );
 
   if (href) {
     return (

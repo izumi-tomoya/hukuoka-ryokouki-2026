@@ -28,6 +28,16 @@ export default async function TripInfoPage({ params }: { params: Promise<{ slug:
   // Prisma のイベントデータを TripEvent 型に変換
   const allEvents = trip.days.flatMap((day) => day.events.map((e) => mapEventToTripEvent(e as any)));
   const budgetStats = calculateBudgetStats(allEvents);
+
+  const dayStats = trip.days.map((day) => {
+    const events = day.events.map((e) => mapEventToTripEvent(e as never));
+    return {
+      dayNumber: day.dayNumber,
+      title: day.title,
+      planned: events.reduce((s, e) => s + (e.plannedBudget || 0), 0),
+      actual: events.reduce((s, e) => s + (e.actualExpense || 0), 0),
+    };
+  });
   const transitEvents = allEvents.filter((e) => e.type === "transport" || (e.transitSteps && e.transitSteps.length > 0));
 
   const insightEvents = allEvents.map((event, index) => ({
@@ -66,7 +76,7 @@ export default async function TripInfoPage({ params }: { params: Promise<{ slug:
         <section>
           <SectionHeader title="Budget Overview" subtitle="旅の支出と予算の状況" />
           <div className="mt-8">
-            <BudgetDashboard stats={budgetStats} />
+            <BudgetDashboard stats={budgetStats} dayStats={dayStats} />
           </div>
         </section>
 

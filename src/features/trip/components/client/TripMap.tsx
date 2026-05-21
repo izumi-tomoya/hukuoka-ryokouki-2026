@@ -1,7 +1,8 @@
+/// <reference types="@types/google.maps" />
 "use client";
 
-import type { Location } from "@prisma/client";
 import { importLibrary, setOptions } from "@googlemaps/js-api-loader";
+import type { Location } from "@prisma/client";
 import { MapPin, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
@@ -78,13 +79,10 @@ export default function TripMap({
     const advMarkers: google.maps.marker.AdvancedMarkerElement[] = [];
     let polyline: google.maps.Polyline | null = null;
 
-    Promise.all([
-      importLibrary("maps"),
-      importLibrary("marker"),
-    ]).then(([{ Map }, { AdvancedMarkerElement }]) => {
+    Promise.all([importLibrary("maps"), importLibrary("marker")]).then(([{ Map: GMap }, { AdvancedMarkerElement }]) => {
       if (!mapRef.current) return;
 
-      map = new Map(mapRef.current, {
+      map = new GMap(mapRef.current, {
         center: markersData[0].coords,
         zoom: 13,
         mapId: "DEMO_MAP_ID",
@@ -97,7 +95,7 @@ export default function TripMap({
       // Fit bounds
       if (markersData.length > 1) {
         const bounds = new google.maps.LatLngBounds();
-        markersData.forEach((m) => bounds.extend(m.coords));
+        for (const m of markersData) bounds.extend(m.coords);
         map.fitBounds(bounds, 80);
       }
 
@@ -143,7 +141,9 @@ export default function TripMap({
     });
 
     return () => {
-      advMarkers.forEach((m) => { m.map = null; });
+      advMarkers.forEach((m) => {
+        m.map = null;
+      });
       polyline?.setMap(null);
     };
   }, [markersData]);
@@ -163,7 +163,7 @@ export default function TripMap({
     <div className="group relative w-full">
       <div
         className={cn(
-          "relative h-[420px] w-full overflow-hidden rounded-[3.5rem] border border-rose-100 bg-slate-200 shadow-2xl transition-all duration-700",
+          "relative h-105 w-full overflow-hidden rounded-[3.5rem] border border-rose-100 bg-slate-200 shadow-2xl transition-all duration-700",
           isModalOpen && "scale-[0.98] opacity-40 blur-[2px]",
         )}
       >
@@ -173,9 +173,7 @@ export default function TripMap({
         {!isModalOpen && (
           <div className="animate-in fade-in pointer-events-none absolute top-6 left-6 z-10 flex items-center gap-2 rounded-full border border-stone-800 bg-stone-900/90 px-4 py-2 shadow-xl backdrop-blur-md">
             <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-rose-500" />
-            <span className="text-[9px] font-black tracking-[0.3em] text-white uppercase italic">
-              Geospatial Path
-            </span>
+            <span className="text-[9px] font-black tracking-[0.3em] text-white uppercase italic">Geospatial Path</span>
             {envStats && (
               <span className="ml-2 border-l border-white/20 pl-2 text-[9px] font-black text-rose-300">
                 {envStats.temp}°C

@@ -30,7 +30,7 @@ interface TipsListProps {
   tripId: string;
 }
 
-const categories = ["All", "Gourmet", "Hidden Gem", "General", "Warning", "Transport", "Reservation"];
+const categories = ["All", "Gourmet", "Hidden Gem", "Warning", "Transport", "Reservation"];
 
 export default function TipsList({ initialTips, tripId }: TipsListProps) {
   const [tips, setTips] = useState<Tip[]>(initialTips);
@@ -63,7 +63,7 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
   const groupedByVenue = useMemo(() => {
     const groups: Record<string, Tip[]> = {};
     filteredTips.forEach((tip) => {
-      const v = tip.venue || "General / Unsorted";
+      const v = tip.venue || "その他";
       if (!groups[v]) groups[v] = [];
       groups[v].push(tip);
     });

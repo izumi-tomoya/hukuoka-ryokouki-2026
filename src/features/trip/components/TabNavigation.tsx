@@ -1,6 +1,6 @@
 "use client";
 
-import { Calendar, Camera, Compass, Home, Info as InfoIcon } from "lucide-react";
+import { Calendar, Camera, Compass, Home, Info as InfoIcon, Wallet } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -23,7 +23,10 @@ export default function TabNavigation({ isSecretMode }: TabNavigationProps) {
     { href: `/trip/${slug}/day/2`, label: "Day 2", icon: Calendar },
     { href: `/trip/${slug}/memories`, label: "Memories", icon: Camera },
     { href: `/trip/${slug}/info`, label: "Essentials", icon: InfoIcon },
-    ...(isSecretMode ? [{ href: `/trip/${slug}/tips`, label: "Secret Tips", icon: Compass }] : []),
+    ...(isSecretMode ? [
+      { href: `/trip/${slug}/tips`, label: "Secret Tips", icon: Compass },
+      { href: `/trip/${slug}/budget`, label: "Budget", icon: Wallet },
+    ] : []),
   ];
 
   return (

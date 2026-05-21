@@ -139,6 +139,8 @@ model Event {
   isConfirmed   Boolean       @default(false)
   isPending     Boolean       @default(false)
   actualExpense Int?          @default(0)
+  myExpense     Int?          @default(0)
+  herExpense    Int?          @default(0)
   actualTime    DateTime?
   notes         String?
   plannedBudget Int?          @default(0)

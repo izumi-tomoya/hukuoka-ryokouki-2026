@@ -93,8 +93,9 @@ export default function DaySummaryReport({ dayId, events, tips, slug }: DaySumma
               Important Tips
             </h2>
             <div className="space-y-4">
-              {tips.map((tip) => (
-                <div key={tip.title} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+              {tips.map((tip, i) => (
+                // biome-ignore lint/suspicious/noArrayIndexKey: tips have no stable unique id
+                <div key={tip.id || `${tip.title}-${i}`} className="rounded-2xl border border-white/10 bg-white/5 p-4">
                   <h3 className="mb-1 text-sm font-bold text-white">{tip.title}</h3>
                   <p className="text-xs leading-relaxed text-white/60">{tip.body}</p>
                 </div>

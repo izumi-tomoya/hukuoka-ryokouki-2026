@@ -320,6 +320,28 @@ export async function updateEventAction(eventId: string, data: unknown) {
   }
 }
 
+export async function updateEventBudgetAction(
+  eventId: string,
+  plannedBudget: number | null,
+  myExpense: number | null,
+  herExpense: number | null,
+) {
+  await checkAdmin();
+  const actualExpense = (myExpense ?? 0) + (herExpense ?? 0) || null;
+  try {
+    const event = await prisma.event.update({
+      where: { id: eventId },
+      data: { plannedBudget, actualExpense, myExpense, herExpense },
+      include: { day: { include: { trip: true } } },
+    });
+    revalidatePath(`/trip/${event.day.trip.slug}`);
+    revalidatePath(`/trip/${event.day.trip.slug}/info`);
+    return { success: true };
+  } catch {
+    return { success: false, error: "Failed to update budget" };
+  }
+}
+
 export async function deleteEventAction(eventId: string) {
   await checkAdmin();
   try {

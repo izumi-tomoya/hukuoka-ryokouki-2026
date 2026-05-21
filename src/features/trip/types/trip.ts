@@ -73,7 +73,9 @@ export interface TripEvent {
 
   // Budget
   plannedBudget?: number; // 予定予算
-  actualExpense?: number; // 実際の出費
+  actualExpense?: number; // 実費合計
+  myExpense?: number;     // 智也の支払い
+  herExpense?: number;    // 知里の支払い
   budget?: number; // 互換性のため（plannedBudget 優先）
 
   // Status & Notes

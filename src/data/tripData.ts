@@ -9,6 +9,7 @@ export const day1Events: TripEvent[] = [
     desc: "静寂の八王子駅から、二人の旅が始まります。羽田までは約1時間45分の移動です。",
     tag: "transport",
     tagLabel: "Departure",
+    plannedBudget: 2606, // JR八王子→浜松町¥810×2 + モノレール¥493×2
     locationUrl: "https://www.google.com/maps/search/?api=1&query=八王子駅",
     transitSteps: [
       {
@@ -65,6 +66,7 @@ export const day1Events: TripEvent[] = [
     desc: "羽田空港 07:30発。雲の上で、これからの二人の時間に想いを馳せて。✈️",
     tag: "transport",
     tagLabel: "Flight",
+    plannedBudget: 0, // 楽天トラベルパッケージ支払い済み。実費は actualExpense に入力
     locationUrl: "https://www.google.com/maps/dir/?api=1&origin=羽田空港&destination=福岡空港&travelmode=transit",
     isConfirmed: true,
   },
@@ -76,6 +78,7 @@ export const day1Events: TripEvent[] = [
     desc: "福岡に到着！降機後、地下鉄駅へ。11時のランチ予約に向けて移動を開始します。",
     tag: "sightseeing",
     tagLabel: "Arrival",
+    plannedBudget: 520, // 地下鉄 福岡空港→中洲川端 ¥260×2
     locationUrl: "https://www.google.com/maps/search/?api=1&query=福岡空港",
     transitSteps: [
       {
@@ -109,6 +112,7 @@ export const day1Events: TripEvent[] = [
     desc: "中洲川端から天神へ。西鉄の急行で太宰府を目指します。",
     tag: "transport",
     tagLabel: "Transit",
+    plannedBudget: 2740, // 往路¥1,240(地下鉄¥420+西鉄¥820) + 復路¥1,500(西鉄¥1,080+地下鉄¥420)
     locationUrl: "https://www.google.com/maps/dir/?api=1&origin=中洲川端駅&destination=太宰府駅&travelmode=transit",
     transitSteps: [
       {
@@ -160,34 +164,37 @@ export const day1Events: TripEvent[] = [
     locationUrl: "https://www.dazaifu-kagura.jp/",
     tag: "food",
     tagLabel: "Reserved",
+    plannedBudget: 8000,
     isConfirmed: true,
   },
   {
-    time: "14:00",
+    time: "13:10",
     type: "sightseeing",
     slug: "kyushu-national-museum",
     title: "九州国立博物館",
     formalName: "九州国立博物館",
-    desc: "太宰府天満宮に隣接。美しい建築と展示をゆっくり見学。",
+    desc: "太宰府天満宮に隣接する国内最大級の博物館。アジアとの交流をテーマにした展示をゆっくり見学。",
     tag: "sightseeing",
     tagLabel: "Culture",
+    plannedBudget: 1500, // 入場料¥700×2
     locationUrl: "https://www.google.com/maps/search/?api=1&query=九州国立博物館",
     transitSteps: [
       {
-        time: "13:50",
+        time: "13:00",
         station: "和牛めんたい 神楽",
         mode: "walking",
         duration: "徒歩10分",
+        desc: "参道を抜けて天満宮方面へ。",
       },
       {
-        time: "14:00",
+        time: "13:10",
         station: "九州国立博物館",
         mode: "arrival",
       },
     ],
   },
   {
-    time: "15:00",
+    time: "16:00",
     type: "hotel",
     slug: "hotel-checkin",
     title: "🏨 ホテルオークラ福岡 チェックイン",
@@ -195,41 +202,60 @@ export const day1Events: TripEvent[] = [
     desc: "ホテルに戻りチェックイン。一休みしてから夜の街へ。",
     tag: "hotel",
     tagLabel: "Reserved",
+    plannedBudget: 0, // 楽天トラベルパッケージ支払い済み。実費は actualExpense に入力
     isConfirmed: true,
     locationUrl:
       "https://www.google.com/maps/dir/?api=1&origin=太宰府駅&destination=ホテルオークラ福岡&travelmode=transit",
     transitSteps: [
       {
-        time: "14:30",
-        station: "太宰府",
+        time: "14:45",
+        station: "九州国立博物館",
+        mode: "walking",
+        duration: "徒歩15分",
+        desc: "天満宮前を通り太宰府駅へ。",
+      },
+      {
+        time: "15:00",
+        station: "太宰府駅",
         mode: "train",
         lineName: "西鉄太宰府線・二日市行",
         duration: "6分",
+        fare: "160円",
       },
       {
-        time: "14:40",
+        time: "15:06",
         station: "西鉄二日市",
         mode: "train",
         lineName: "西鉄天神大牟田線急行・福岡天神行",
         duration: "15分",
+        fare: "380円",
       },
       {
-        time: "14:55",
-        station: "西鉄福岡",
+        time: "15:21",
+        station: "西鉄福岡（天神）",
         mode: "walking",
         duration: "徒歩7分",
+        desc: "地下街を通って地下鉄天神駅へ。",
       },
       {
-        time: "15:02",
-        station: "天神",
+        time: "15:28",
+        station: "天神駅",
         mode: "subway",
-        lineName: "地下鉄空港線",
+        lineName: "地下鉄空港線・福岡空港行",
         duration: "2分",
+        fare: "210円",
       },
       {
-        time: "15:05",
-        station: "中洲川端",
+        time: "15:30",
+        station: "中洲川端駅",
+        mode: "walking",
+        duration: "徒歩5分",
+      },
+      {
+        time: "15:35",
+        station: "ホテルオークラ福岡",
         mode: "arrival",
+        desc: "チェックインは15:00から可能。博物館を楽しんだ後、余裕を持って16:00頃到着。",
       },
     ],
   },
@@ -245,6 +271,7 @@ export const day1Events: TripEvent[] = [
     locationUrl: "https://www.google.com/maps/search/?api=1&query=キャナルシティ博多+はじめの一歩",
     tag: "food",
     tagLabel: "Reserved",
+    plannedBudget: 8000,
     isConfirmed: true,
     transitSteps: [
       {
@@ -268,6 +295,7 @@ export const day1Events: TripEvent[] = [
     desc: "福岡の夜の定番、屋台巡り。キャナルから中洲へはすぐです。",
     tag: "night",
     tagLabel: "Night View",
+    plannedBudget: 6000,
     isYatai: true,
     locationUrl:
       "https://www.google.com/maps/dir/?api=1&origin=キャナルシティ博多&destination=中洲屋台街&travelmode=walking",
@@ -313,6 +341,7 @@ export const day2Events: TripEvent[] = [
     locationUrl: "https://tabelog.com/fukuoka/A4001/A400102/40000010/",
     tag: "food",
     tagLabel: "Reserved",
+    plannedBudget: 12000,
     isConfirmed: true,
     transitSteps: [
       {
@@ -337,6 +366,8 @@ export const day2Events: TripEvent[] = [
     desc: "水辺を散策した後は、大濠テラスで八女茶を。静かな時間が、この後の特別なひとときをより輝かせます。",
     tag: "sightseeing",
     tagLabel: "Relax",
+    plannedBudget: 3420, // カフェ¥3,000 + 地下鉄中洲川端→大濠公園¥210×2
+    locationUrl: "https://www.google.com/maps/search/?api=1&query=大濠公園",
     transitSteps: [
       {
         time: "13:30",
@@ -376,6 +407,7 @@ export const day2Events: TripEvent[] = [
     locationUrl: "https://tabelog.com/fukuoka/A4001/A400105/40004903/",
     tag: "surprise",
     tagLabel: "Surprise",
+    plannedBudget: 12400, // アフタヌーンティー¥12,000 + バス大濠→ヒルトン¥200×2
     isConfirmed: true,
     transitSteps: [
       {
@@ -406,8 +438,10 @@ export const day2Events: TripEvent[] = [
     formalName: "牧のうどん 空港店",
     foodName: "🍜 牧のうどん 空港店",
     foodDesc: "旅の〆は博多のソウルフード。スープを吸う麺が特徴。",
+    locationUrl: "https://www.google.com/maps/search/?api=1&query=牧のうどん+福岡空港店",
     tag: "food",
     tagLabel: "Reserved",
+    plannedBudget: 2400, // うどん¥2,000 + バスヒルトン→空港¥200×2
     isConfirmed: true,
     transitSteps: [
       {
@@ -432,6 +466,7 @@ export const day2Events: TripEvent[] = [
     desc: "20:45発。二人の素晴らしい旅の締めくくりです。✈️",
     tag: "transport",
     tagLabel: "Flight",
+    plannedBudget: 0, // 楽天トラベルパッケージ支払い済み。実費は actualExpense に入力
     isConfirmed: true,
     transitSteps: [
       {

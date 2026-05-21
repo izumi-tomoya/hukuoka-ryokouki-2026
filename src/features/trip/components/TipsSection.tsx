@@ -31,8 +31,9 @@ export default function TipsSection({ tips }: TipsSectionProps) {
       </div>
 
       <div className="grid gap-4 md:gap-6">
-        {tips.map((tip) => (
-          <MagazineCard key={tip.id || tip.title} padding="sm" className="group relative overflow-hidden">
+        {tips.map((tip, i) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: tips have no stable unique id
+          <MagazineCard key={tip.id || `${tip.title}-${i}`} padding="sm" className="group relative overflow-hidden">
             {/* Category Ribbon */}
             <div className="absolute top-0 right-0">
               <div className="bg-primary/10 dark:bg-primary/20 text-primary border-border rounded-bl-xl border-b border-l px-3 py-1 text-[8px] font-black tracking-widest uppercase transition-colors">

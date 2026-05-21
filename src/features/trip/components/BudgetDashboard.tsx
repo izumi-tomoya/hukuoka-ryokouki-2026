@@ -3,11 +3,19 @@ import { MagazineCard } from "@/components/ui/MagazineCard";
 import { cn } from "@/lib/utils";
 import type { BudgetStats } from "../utils/tripUtils";
 
-interface Props {
-  stats: BudgetStats;
+interface DayStat {
+  dayNumber: number;
+  title?: string | null;
+  planned: number;
+  actual: number;
 }
 
-export default function BudgetDashboard({ stats }: Props) {
+interface Props {
+  stats: BudgetStats;
+  dayStats?: DayStat[];
+}
+
+export default function BudgetDashboard({ stats, dayStats }: Props) {
   const { totalPlanned, totalActual, byCategory } = stats;
   const isOverBudget = totalActual > totalPlanned;
   const difference = Math.abs(totalActual - totalPlanned);
@@ -27,6 +35,57 @@ export default function BudgetDashboard({ stats }: Props) {
           </p>
         </div>
       </div>
+
+      {/* ─── Day-by-Day Summary ─── */}
+      {dayStats && dayStats.length > 0 && (
+        <MagazineCard padding="md" className="mb-2">
+          <h3 className="text-muted-foreground mb-5 flex items-center gap-2 text-xs font-black tracking-[0.14em] uppercase sm:tracking-[0.2em]">
+            <Wallet size={14} /> Daily Expense
+          </h3>
+          <div className="space-y-4">
+            {dayStats.map((day) => {
+              const ratio = day.planned > 0 ? Math.min((day.actual / day.planned) * 100, 100) : 0;
+              const over = day.actual > day.planned && day.planned > 0;
+              return (
+                <div key={day.dayNumber}>
+                  <div className="mb-1.5 flex items-baseline justify-between gap-2">
+                    <div className="flex items-baseline gap-2 min-w-0">
+                      <span className="text-primary text-[10px] font-black tracking-widest uppercase shrink-0">
+                        Day {day.dayNumber}
+                      </span>
+                      {day.title && (
+                        <span className="text-muted-foreground truncate text-[10px]">{day.title}</span>
+                      )}
+                    </div>
+                    <div className="flex items-baseline gap-2 shrink-0">
+                      <span className={cn("text-sm font-black", day.actual > 0 ? (over ? "text-rose-500" : "text-foreground") : "text-muted-foreground/40")}>
+                        {day.actual > 0 ? `¥${day.actual.toLocaleString()}` : "—"}
+                      </span>
+                      {day.planned > 0 && (
+                        <span className="text-muted-foreground text-[10px]">/ ¥{day.planned.toLocaleString()}</span>
+                      )}
+                    </div>
+                  </div>
+                  {day.planned > 0 && (
+                    <div className="bg-secondary h-1.5 w-full overflow-hidden rounded-full">
+                      <div
+                        className={cn("h-full rounded-full transition-all duration-700", over ? "bg-rose-500" : "bg-emerald-500")}
+                        style={{ width: `${ratio}%` }}
+                      />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+            <div className="border-border flex items-baseline justify-between border-t pt-4">
+              <span className="text-[10px] font-black tracking-widest text-zinc-500 uppercase">合計実費</span>
+              <span className="font-playfair text-xl font-black text-foreground">
+                ¥{dayStats.reduce((s, d) => s + d.actual, 0).toLocaleString()}
+              </span>
+            </div>
+          </div>
+        </MagazineCard>
+      )}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* ─── Total Summary ─── */}

@@ -1,24 +1,11 @@
-"use client";
-
 import { AlertCircle, JapaneseYen } from "lucide-react";
 import { MagazineCard } from "@/components/ui/MagazineCard";
 import type { TripEvent } from "@/features/trip/types/trip";
-import { useEventUserStore } from "@/lib/store/useEventUserStore";
 import { cn } from "@/lib/utils";
 
 export default function BudgetSummary({ events }: { events: TripEvent[] }) {
-  const { getBudget } = useEventUserStore();
-
-  // 各イベントの予算（予定額）を計算。ユーザーが上書きした値があればそれを使用し、なければDBの値を優先。
-  // ここでは plannedTotal はDBの予定額、actualTotal はユーザーが入力した実績額とする。
   const plannedTotal = events.reduce((sum, e) => sum + (e.plannedBudget || e.budget || 0), 0);
-
-  // クライアントサイドのストアから各イベントの入力を取得して合計する
-  const actualTotal = events.reduce((sum, e) => {
-    if (!e.id) return sum;
-    return sum + getBudget(e.id, 0); // 第2引数を0にすることで、入力がない場合は0として扱う
-  }, 0);
-
+  const actualTotal = events.reduce((sum, e) => sum + (e.actualExpense || 0), 0);
   const hasActuals = actualTotal > 0;
   const isOverBudget = hasActuals && actualTotal > plannedTotal;
 

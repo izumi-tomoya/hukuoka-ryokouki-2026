@@ -16,7 +16,9 @@ import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { MagazineCard } from "@/components/ui/MagazineCard";
 import AccessRow from "@/features/trip/components/AccessRow";
+import BudgetEditRow from "@/features/trip/components/client/BudgetEditRow";
 import ClickableCard from "@/features/trip/components/client/ClickableCard";
+import PhotoUploadButton from "@/features/trip/components/client/PhotoUploadButton";
 import ConfirmCheckbox from "@/features/trip/components/client/ConfirmCheckbox";
 import { EventActionButtons } from "@/features/trip/components/client/EventActionButtons";
 import { ExternalSpotInfo } from "@/features/trip/components/client/ExternalSpotInfo";
@@ -143,6 +145,11 @@ function BasicCard({
 
         <div className={cn(isFood && "md:grid md:grid-cols-2 md:gap-6")}>
           <PhotoGallery photos={event.photos || []} eventId={event.id} />
+          {isAdmin && event.id && (
+            <div onClick={(e) => e.stopPropagation()}>
+              <PhotoUploadButton eventId={event.id} />
+            </div>
+          )}
 
           {event.highlight && (
             <div className="mt-4 flex flex-col justify-center rounded-[2rem] border border-amber-100 bg-amber-50/50 p-4 md:mt-0 md:p-6">
@@ -231,6 +238,16 @@ function BasicCard({
         {event.weatherStats && (
           <div className="mt-6 md:mt-8">
             <WeatherStatsDisplay stats={event.weatherStats} />
+          </div>
+        )}
+
+        {isAdmin && event.id && (
+          <div className="mt-4">
+            <BudgetEditRow
+              eventId={event.id}
+              plannedBudget={event.plannedBudget}
+              actualExpense={event.actualExpense}
+            />
           </div>
         )}
       </div>

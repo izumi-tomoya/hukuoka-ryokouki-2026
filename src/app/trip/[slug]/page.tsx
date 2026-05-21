@@ -90,29 +90,6 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
       events={allTripEvents as TripEvent[]}
       tips={trip.tips as Tip[]}
     >
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "BreadcrumbList",
-            "itemListElement": [
-              {
-                "@type": "ListItem",
-                "position": 1,
-                "name": "Home",
-                "item": process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
-              },
-              {
-                "@type": "ListItem",
-                "position": 2,
-                "name": trip.title,
-                "item": `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/trip/${slug}`
-              }
-            ]
-          })
-        }}
-      />
       <Container className="pb-24">
         <div className="grid grid-cols-1 gap-10 md:gap-16">
           {/* ─── Hero / Overview Card ─── */}
@@ -198,9 +175,7 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
                 {/* Section header */}
                 <div className="mb-2">
                   <p className="text-primary mb-2 text-[10px] font-black tracking-[0.3em] uppercase">Curated For You</p>
-                  <h2 className="font-playfair text-foreground text-2xl font-black md:text-3xl">
-                    Explore Collections
-                  </h2>
+                  <h2 className="font-playfair text-foreground text-2xl font-black md:text-3xl">Explore Collections</h2>
                 </div>
 
                 {/* Featured row */}

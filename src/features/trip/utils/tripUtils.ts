@@ -98,6 +98,8 @@ export function mapEventToTripEvent(event: EventWithStops): TripEvent {
       createdAt: p.createdAt,
     })),
     actualExpense: event.actualExpense ?? undefined,
+    myExpense: event.myExpense ?? undefined,
+    herExpense: event.herExpense ?? undefined,
     plannedBudget: plannedBudget,
     budget: plannedBudget,
 

@@ -2,10 +2,11 @@
 import { Dialog } from "@base-ui/react/dialog";
 import { AlertTriangle, Clock, Edit2, FileText, JapaneseYen, Lightbulb, MapPin, Route, Star, X } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { useEffect, useOptimistic, useState, useTransition } from "react";
 import { MagazineCard } from "@/components/ui/MagazineCard";
 import { getLocationCoordinates } from "@/features/trip/utils/locationCatalog";
 import { isSecretEvent, maskSecretText } from "@/features/trip/utils/tripUtils";
+import { updateEventBudgetAction } from "@/features/trip/api/tripActions";
 import { getDirectionsUrl } from "@/lib/mapUtils";
 import { useEventUserStore } from "@/lib/store/useEventUserStore";
 import { useModalStore } from "@/lib/store/useModalStore";
@@ -17,17 +18,29 @@ import { ExternalSpotInfo } from "./ExternalSpotInfo";
 
 export default function EventDetailModal() {
   const { isOpen, selectedEvent, closeModal, tripTips, previousLocation } = useModalStore();
-  const { getNote, setNote, getBudget, setBudget } = useEventUserStore();
+  const { getNote, setNote } = useEventUserStore();
   const { data: session } = useSession();
   const isAdmin = !!session?.user?.isAdmin;
   const [isEditing, setIsEditing] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
-  // ステートの初期値を selectedEvent に基づくように戻す
-  const [noteText, setNoteText] = useState(() => (selectedEvent?.id ? getNote(selectedEvent.id) : ""));
-  const [budgetAmount, setBudgetAmount] = useState<string>(() =>
-    selectedEvent?.id ? getBudget(selectedEvent.id, selectedEvent.budget).toString() : "0",
+  // DB 値をソースとして optimistic 状態管理
+  const [optimisticExpense, setOptimisticExpense] = useOptimistic(
+    { my: selectedEvent?.myExpense ?? 0, her: selectedEvent?.herExpense ?? 0 },
   );
+  const [noteText, setNoteText] = useState(() => (selectedEvent?.id ? getNote(selectedEvent.id) : ""));
+  const [myAmount, setMyAmount] = useState<string>(() => (selectedEvent?.myExpense ?? 0) > 0 ? String(selectedEvent?.myExpense) : "");
+  const [herAmount, setHerAmount] = useState<string>(() => (selectedEvent?.herExpense ?? 0) > 0 ? String(selectedEvent?.herExpense) : "");
   const [isUserEditing, setIsUserEditing] = useState(false);
+
+  // イベント切替時に再初期化
+  useEffect(() => {
+    if (!selectedEvent?.id) return;
+    setNoteText(getNote(selectedEvent.id));
+    setMyAmount((selectedEvent.myExpense ?? 0) > 0 ? String(selectedEvent.myExpense) : "");
+    setHerAmount((selectedEvent.herExpense ?? 0) > 0 ? String(selectedEvent.herExpense) : "");
+    setIsUserEditing(false);
+  }, [selectedEvent?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!selectedEvent) return null;
 
@@ -45,12 +58,20 @@ export default function EventDetailModal() {
   const mapSearchUrl = `https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${encodeURIComponent(locationName)}`;
 
   const handleSaveUserData = () => {
-    if (selectedEvent.id) {
-      setNote(selectedEvent.id, noteText);
-      const amount = parseInt(budgetAmount, 10);
-      setBudget(selectedEvent.id, Number.isNaN(amount) ? 0 : amount);
-      setIsUserEditing(false);
-    }
+    if (!selectedEvent.id) return;
+    setNote(selectedEvent.id, noteText);
+    const my = parseInt(myAmount, 10) || 0;
+    const her = parseInt(herAmount, 10) || 0;
+    startTransition(async () => {
+      setOptimisticExpense({ my, her });
+      await updateEventBudgetAction(
+        selectedEvent.id!,
+        selectedEvent.plannedBudget ?? null,
+        my > 0 ? my : null,
+        her > 0 ? her : null,
+      );
+    });
+    setIsUserEditing(false);
   };
 
   return (
@@ -187,24 +208,50 @@ export default function EventDetailModal() {
                       <button
                         type="button"
                         onClick={() => (isUserEditing ? handleSaveUserData() : setIsUserEditing(true))}
-                        className="text-primary hover:text-primary/80 text-[10px] font-bold transition-colors"
+                        disabled={isPending}
+                        className="text-primary hover:text-primary/80 text-[10px] font-bold transition-colors disabled:opacity-50"
                       >
-                        {isUserEditing ? "保存" : "編集"}
+                        {isPending ? "保存中..." : isUserEditing ? "保存" : "編集"}
                       </button>
                     )}
                   </div>
+                  {/* 予算参照（plannedBudget） */}
+                  {(selectedEvent.plannedBudget ?? 0) > 0 && (
+                    <div className="mb-3 flex items-center justify-between text-xs text-zinc-400">
+                      <span className="font-black tracking-widest uppercase">予算</span>
+                      <span className="font-bold">¥{(selectedEvent.plannedBudget ?? 0).toLocaleString()}</span>
+                    </div>
+                  )}
                   {isUserEditing ? (
                     <div className="space-y-4">
-                      <div className="flex items-center gap-2">
-                        <JapaneseYen size={14} className="text-muted-foreground" />
-                        <input
-                          type="number"
-                          value={budgetAmount}
-                          onChange={(e) => setBudgetAmount(e.target.value)}
-                          className="bg-background border-border v2-focus w-full rounded-xl border p-3 text-sm"
-                          placeholder="予算額"
-                        />
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <p className="mb-1 text-[9px] font-black tracking-widest text-zinc-400 uppercase">智也 (¥)</p>
+                          <input
+                            type="number"
+                            value={myAmount}
+                            onChange={(e) => setMyAmount(e.target.value)}
+                            className="bg-background border-border v2-focus w-full rounded-xl border p-3 text-sm"
+                            placeholder="0"
+                          />
+                        </div>
+                        <div>
+                          <p className="mb-1 text-[9px] font-black tracking-widest text-zinc-400 uppercase">知里 (¥)</p>
+                          <input
+                            type="number"
+                            value={herAmount}
+                            onChange={(e) => setHerAmount(e.target.value)}
+                            className="bg-background border-border v2-focus w-full rounded-xl border p-3 text-sm"
+                            placeholder="0"
+                          />
+                        </div>
                       </div>
+                      {((parseInt(myAmount, 10) || 0) + (parseInt(herAmount, 10) || 0)) > 0 && (
+                        <div className="flex items-center justify-between text-xs font-bold text-zinc-500">
+                          <span>合計</span>
+                          <span className="text-primary">¥{((parseInt(myAmount, 10) || 0) + (parseInt(herAmount, 10) || 0)).toLocaleString()}</span>
+                        </div>
+                      )}
                       <textarea
                         value={noteText}
                         onChange={(e) => setNoteText(e.target.value)}
@@ -215,9 +262,21 @@ export default function EventDetailModal() {
                     </div>
                   ) : (
                     <div className="space-y-2">
-                      <div className="text-foreground flex items-center gap-2 text-sm font-bold">
-                        <JapaneseYen size={14} className="text-primary" /> {parseInt(budgetAmount, 10).toLocaleString()}
-                      </div>
+                      {(optimisticExpense.my + optimisticExpense.her) > 0 ? (
+                        <div className="space-y-1 text-sm">
+                          {optimisticExpense.my > 0 && <div className="flex justify-between text-zinc-600"><span className="font-black text-[10px] tracking-widest uppercase">智也</span><span className="font-bold">¥{optimisticExpense.my.toLocaleString()}</span></div>}
+                          {optimisticExpense.her > 0 && <div className="flex justify-between text-zinc-600"><span className="font-black text-[10px] tracking-widest uppercase">知里</span><span className="font-bold">¥{optimisticExpense.her.toLocaleString()}</span></div>}
+                          <div className="flex justify-between border-t border-zinc-100 pt-1 text-sm font-black text-primary">
+                            <span>合計</span>
+                            <span>¥{(optimisticExpense.my + optimisticExpense.her).toLocaleString()}</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="text-foreground flex items-center gap-2 text-sm font-bold">
+                          <JapaneseYen size={14} className="text-primary" />
+                          未記録
+                        </div>
+                      )}
                       <p className="text-muted-foreground text-sm italic">&ldquo;{noteText || "メモなし"}&rdquo;</p>
                     </div>
                   )}

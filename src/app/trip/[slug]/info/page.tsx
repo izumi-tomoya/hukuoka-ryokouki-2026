@@ -75,7 +75,7 @@ export default async function TripInfoPage({ params }: { params: Promise<{ slug:
           <section>
             <SectionHeader title="Transportation" subtitle="主な移動経路の確認" />
             <div className="mt-8">
-              <TransitTimeline events={transitEvents} />
+              <TransitTimeline steps={transitEvents.flatMap((e) => e.transitSteps ?? [])} isAdmin={isAdmin} />
             </div>
           </section>
         )}

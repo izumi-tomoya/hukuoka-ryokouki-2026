@@ -49,10 +49,12 @@ export default function AdvisorConciergePanel({ slug }: Props) {
   ]);
   const [provider, setProvider] = useState<string>("local-ai");
   const [isPending, setIsPending] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatAreaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const el = chatAreaRef.current;
+    if (!el) return;
+    el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
   }, [messages, isPending]);
 
   const ask = async (raw: string) => {
@@ -153,7 +155,7 @@ export default function AdvisorConciergePanel({ slug }: Props) {
         </div>
 
         {/* Chat area */}
-        <div className="no-scrollbar bg-secondary/8 border-border/50 mt-5 max-h-96 space-y-3 overflow-y-auto rounded-[1.5rem] border p-4">
+        <div ref={chatAreaRef} className="no-scrollbar bg-secondary/8 border-border/50 mt-5 max-h-96 space-y-3 overflow-y-auto rounded-[1.5rem] border p-4">
           {messages.map((message, index) => (
             <div
               // biome-ignore lint/suspicious/noArrayIndexKey: chat messages are appended sequentially
@@ -204,7 +206,6 @@ export default function AdvisorConciergePanel({ slug }: Props) {
             </div>
           )}
 
-          <div ref={messagesEndRef} />
         </div>
 
         {/* Input form */}

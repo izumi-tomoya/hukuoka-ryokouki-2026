@@ -1,7 +1,6 @@
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
-import { createOpenAI } from "@ai-sdk/openai";
 import { Sandbox } from "@vercel/sandbox";
-import { generateText, type ModelMessage, stepCountIs, tool } from "ai";
+import { createGateway, generateText, type ModelMessage, stepCountIs, tool } from "ai";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { compactAdvisorAnswer } from "@/lib/advisorResponse";
@@ -16,28 +15,24 @@ const ADVISOR_MAX_ANSWER_CHARACTERS = 350;
 const ADVISOR_MAX_HISTORY_MESSAGES = 10;
 const ADVISOR_MAX_EVENTS_PER_DAY = 12;
 
-// プロバイダーの設定
-function getAiProvider() {
+// プロバイダーの設定 (リクエストごとに env を読む)
+function resolveProvider() {
+  const googleDirect = process.env.AI_PROVIDER === "google_direct";
   const gatewayApiKey = process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN;
   const googleApiKey = getGoogleApiKey();
 
-  // Vercel AI Gateway (Unified API) が設定されている場合は優先使用
-  if (gatewayApiKey && process.env.AI_PROVIDER !== "google_direct") {
-    return createOpenAI({
-      apiKey: gatewayApiKey,
-      baseURL: "https://ai-gateway.vercel.sh/v1",
-    });
+  if (!googleDirect && gatewayApiKey) {
+    const gw = createGateway({ apiKey: gatewayApiKey });
+    const modelId = process.env.AI_GATEWAY_MODEL || "anthropic/claude-3-haiku";
+    return { model: gw(modelId) };
   }
 
   // 直接 Google AI に接続 (v1beta: systemInstruction/tools/toolConfig サポート)
-  return createGoogleGenerativeAI({
-    apiKey: googleApiKey ?? "",
-  });
+  const goog = createGoogleGenerativeAI({ apiKey: googleApiKey ?? "" });
+  const preferred = getGoogleTravelAiModelsConfig().models;
+  const modelId = preferred[0] || "gemini-2.5-flash";
+  return { model: goog(modelId) };
 }
-
-const aiProvider = getAiProvider();
-const preferredModels = getGoogleTravelAiModelsConfig().models;
-const defaultModel = preferredModels[0] || "gemini-2.5-flash";
 
 export async function POST(req: Request) {
   try {
@@ -119,15 +114,10 @@ ${itineraryContext}`;
       { role: "user" as const, content: message },
     ];
 
-    // モデルIDの決定
-    const isUnifiedGateway =
-      !!(process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN) &&
-      process.env.AI_PROVIDER !== "google_direct";
-    const gatewayModel = process.env.AI_GATEWAY_MODEL || "anthropic/claude-3-haiku";
-    const modelId = isUnifiedGateway ? gatewayModel : defaultModel;
+    const { model } = resolveProvider();
 
     const { text } = await generateText({
-      model: aiProvider(modelId),
+      model,
       system: systemPrompt,
       messages,
       tools: {

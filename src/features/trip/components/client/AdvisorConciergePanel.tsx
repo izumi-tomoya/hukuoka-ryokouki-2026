@@ -1,8 +1,7 @@
 "use client";
 
-import { Loader2, MessageCircleHeart, Send, Sparkles } from "lucide-react";
-import { useState } from "react";
-import { MagazineCard } from "@/components/ui/MagazineCard";
+import { MessageCircleHeart, Send, Sparkles } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
 type ChatMessage = {
@@ -20,6 +19,26 @@ const starterPrompts = [
   "このあと疲れにくい回り方を教えて",
 ];
 
+function TypingDots() {
+  return (
+    <div className="flex items-center gap-1.5 px-1 py-1">
+      {[0, 1, 2].map((i) => (
+        <span
+          key={i}
+          className="bg-primary/50 h-2 w-2 rounded-full"
+          style={{ animation: `bounce 1.2s ease-in-out ${i * 0.2}s infinite` }}
+        />
+      ))}
+      <style>{`
+        @keyframes bounce {
+          0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+          40% { transform: translateY(-6px); opacity: 1; }
+        }
+      `}</style>
+    </div>
+  );
+}
+
 export default function AdvisorConciergePanel({ slug }: Props) {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -30,6 +49,11 @@ export default function AdvisorConciergePanel({ slug }: Props) {
   ]);
   const [provider, setProvider] = useState<string>("local-ai");
   const [isPending, setIsPending] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, isPending]);
 
   const ask = async (raw: string) => {
     const message = raw.trim();
@@ -80,86 +104,140 @@ export default function AdvisorConciergePanel({ slug }: Props) {
   };
 
   return (
-    <MagazineCard className="border-primary/20">
-      <div className="border-primary/20 bg-primary/10 text-primary mb-5 inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-[10px] font-black tracking-[0.18em] uppercase">
-        <MessageCircleHeart size={13} />
-        Travel Concierge
-      </div>
-
-      <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+    <div className="bg-card border-border md:rounded-article overflow-hidden rounded-3xl border shadow-sm">
+      {/* Header */}
+      <div className="border-primary/10 bg-primary/5 border-b px-6 pt-7 pb-6">
         <div>
-          <h3 className="font-playfair text-foreground text-3xl font-black">旅のコンシェルジュ</h3>
-          <p className="text-muted-foreground mt-2 text-sm leading-relaxed">
-            旅程と予約情報を見ながら、次の一手を短く返します。
-          </p>
-        </div>
-        <div className="bg-secondary/40 text-muted-foreground inline-flex items-center gap-2 rounded-full px-4 py-2 text-[10px] font-black tracking-[0.16em] uppercase">
-          <Sparkles size={12} className="text-primary" />
-          {provider === "none" ? "Standby" : "Private Guide"}
-        </div>
-      </div>
-
-      <div className="mt-6 flex flex-wrap gap-2">
-        {starterPrompts.map((prompt) => (
-          <button
-            type="button"
-            key={prompt}
-            onClick={() => {
-              void ask(prompt);
-            }}
-            disabled={isPending}
-            className="border-border bg-secondary/20 text-foreground hover:border-primary/40 rounded-full border px-4 py-2 text-xs font-black transition-colors disabled:opacity-50"
-          >
-            {prompt}
-          </button>
-        ))}
-      </div>
-
-      <div className="no-scrollbar border-border bg-secondary/10 dark:bg-card/30 mt-6 max-h-96 space-y-4 overflow-y-auto rounded-[1.75rem] border p-4">
-        {messages.map((message, index) => (
-          <div
-            // biome-ignore lint/suspicious/noArrayIndexKey: chat messages are appended sequentially
-            key={`${message.role}-${index}`}
-            className={cn(
-              "rounded-[1.25rem] px-5 py-4 text-sm leading-relaxed transition-all",
-              message.role === "assistant"
-                ? "bg-card text-card-foreground border-border/40 dark:bg-card/80 dark:border-border/50 mr-8 border shadow-sm"
-                : "bg-primary text-primary-foreground ml-8 font-medium shadow-md",
-            )}
-          >
-            {message.content.split("\n").map((line, i) => (
-              // biome-ignore lint/suspicious/noArrayIndexKey: splitting content by newline is stable
-              <p key={i} className={cn(i !== 0 && "mt-2")}>
-                {line}
+          <div className="border-primary/25 bg-primary/12 text-primary mb-4 inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[10px] font-black tracking-[0.18em] uppercase backdrop-blur-sm">
+            <MessageCircleHeart size={12} />
+            Travel Concierge
+          </div>
+          <div className="flex items-end justify-between gap-3">
+            <div>
+              <h3 className="font-playfair text-foreground text-3xl font-black leading-tight">
+                旅のコンシェルジュ
+              </h3>
+              <p className="text-muted-foreground mt-1.5 text-sm leading-relaxed">
+                旅程と予約情報を見ながら、次の一手を短く返します。
               </p>
-            ))}
+            </div>
+            <div
+              className={cn(
+                "shrink-0 inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-[10px] font-black tracking-[0.14em] uppercase transition-colors",
+                provider === "none"
+                  ? "bg-muted/60 text-muted-foreground"
+                  : "bg-primary/10 text-primary border-primary/20 border",
+              )}
+            >
+              <Sparkles size={11} className={provider === "none" ? "opacity-40" : "text-primary"} />
+              {provider === "none" ? "Standby" : "Online"}
+            </div>
           </div>
-        ))}
-        {isPending && (
-          <div className="bg-card/80 text-muted-foreground border-border/40 mr-8 flex items-center gap-2 rounded-[1.25rem] border px-5 py-4 text-sm shadow-sm backdrop-blur-sm">
-            <Loader2 size={16} className="text-primary animate-spin" />
-            知里様と智也様に最適な案を考えています...
-          </div>
-        )}
+        </div>
       </div>
 
-      <form onSubmit={onSubmit} className="mt-6 flex gap-3">
-        <textarea
-          value={input}
-          onChange={(event) => setInput(event.target.value)}
-          rows={2}
-          placeholder="今の予定で、何を優先すべき？"
-          className="border-border bg-card focus:border-primary focus:ring-primary/20 dark:bg-background/50 min-h-14 flex-1 resize-none rounded-3xl border px-4 py-4 text-sm transition-all outline-none focus:ring-1"
-        />
-        <button
-          type="submit"
-          disabled={isPending || !input.trim()}
-          className="bg-primary text-primary-foreground shadow-primary/20 flex h-14 w-14 shrink-0 items-center justify-center rounded-[1.25rem] shadow-lg transition-all hover:brightness-110 active:scale-95 disabled:opacity-40 disabled:shadow-none"
-          aria-label="送信"
-        >
-          <Send size={18} />
-        </button>
-      </form>
-    </MagazineCard>
+      <div className="px-6 pb-6">
+        {/* Starter prompts */}
+        <div className="mt-5 flex flex-wrap gap-2">
+          {starterPrompts.map((prompt) => (
+            <button
+              type="button"
+              key={prompt}
+              onClick={() => { void ask(prompt); }}
+              disabled={isPending}
+              className="border-border/70 bg-secondary/20 text-foreground hover:border-primary/40 hover:bg-primary/8 group relative overflow-hidden rounded-full border px-4 py-2 text-xs font-semibold transition-all duration-200 disabled:opacity-40"
+            >
+              <span className="relative z-10">{prompt}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Chat area */}
+        <div className="no-scrollbar bg-secondary/8 border-border/50 mt-5 max-h-96 space-y-3 overflow-y-auto rounded-[1.5rem] border p-4">
+          {messages.map((message, index) => (
+            <div
+              // biome-ignore lint/suspicious/noArrayIndexKey: chat messages are appended sequentially
+              key={`${message.role}-${index}`}
+              className={cn(
+                "flex gap-2.5",
+                message.role === "user" ? "flex-row-reverse" : "flex-row",
+              )}
+            >
+              {/* Avatar dot */}
+              <div
+                className={cn(
+                  "mt-1 h-7 w-7 shrink-0 rounded-full flex items-center justify-center text-[10px] font-black",
+                  message.role === "assistant"
+                    ? "bg-primary/15 text-primary border-primary/20 border"
+                    : "bg-primary text-primary-foreground shadow-sm",
+                )}
+              >
+                {message.role === "assistant" ? <Sparkles size={13} /> : "旅"}
+              </div>
+
+              <div
+                className={cn(
+                  "max-w-[82%] rounded-[1.1rem] px-4 py-3 text-sm leading-relaxed",
+                  message.role === "assistant"
+                    ? "bg-card text-card-foreground border-border/40 border shadow-sm"
+                    : "bg-primary text-primary-foreground shadow-sm",
+                )}
+              >
+                {message.content.split("\n").map((line, i) => (
+                  // biome-ignore lint/suspicious/noArrayIndexKey: splitting content by newline is stable
+                  <p key={i} className={cn(i !== 0 && "mt-2")}>
+                    {line}
+                  </p>
+                ))}
+              </div>
+            </div>
+          ))}
+
+          {isPending && (
+            <div className="flex flex-row gap-2.5">
+              <div className="bg-primary/15 text-primary border-primary/20 mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border">
+                <Sparkles size={13} />
+              </div>
+              <div className="bg-card border-border/40 rounded-[1.1rem] border px-4 py-3 shadow-sm">
+                <TypingDots />
+              </div>
+            </div>
+          )}
+
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* Input form */}
+        <form onSubmit={onSubmit} className="mt-4 flex gap-2.5">
+          <div className="relative flex-1">
+            <textarea
+              value={input}
+              onChange={(event) => setInput(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
+                  event.preventDefault();
+                  void ask(input);
+                }
+              }}
+              rows={2}
+              placeholder="今の予定で、何を優先すべき？"
+              aria-label="コンシェルジュへの質問"
+              className="border-border bg-card focus:border-primary/60 focus:ring-primary/15 dark:bg-background/50 w-full resize-none rounded-2xl border px-4 py-3.5 pb-6 text-sm transition-all outline-none focus:ring-2"
+            />
+            <p className="text-muted-foreground/50 absolute right-3 bottom-2 text-[9px] font-medium">
+              ⌘ Enter
+            </p>
+          </div>
+          <button
+            type="submit"
+            disabled={isPending || !input.trim()}
+            aria-label="送信"
+            className="bg-primary text-primary-foreground shadow-primary/20 flex h-[72px] w-12 shrink-0 items-center justify-center rounded-2xl shadow-md transition-all hover:brightness-110 active:scale-95 disabled:opacity-35 disabled:shadow-none"
+          >
+            <Send size={17} />
+          </button>
+        </form>
+      </div>
+    </div>
   );
 }

@@ -1,54 +1,69 @@
 import { Container } from "@/components/ui/Container";
-import { MagazineCard } from "@/components/ui/MagazineCard";
 import { Skeleton } from "@/components/ui/Skeleton";
 import PackingListSkeleton from "@/features/trip/components/PackingListSkeleton";
+import TransitTimelineSkeleton from "@/features/trip/components/TransitTimelineSkeleton";
 import TripLayout from "@/features/trip/components/TripLayout";
 import TripWeatherSummarySkeleton from "@/features/trip/components/TripWeatherSummarySkeleton";
+import WeatherStatsSkeleton from "@/features/trip/components/WeatherStatsSkeleton";
 
 export default function InfoLoading() {
   return (
     <TripLayout isLoading={true}>
-      <Container className="pb-24">
-        <div className="mb-16">
-          <Skeleton className="mb-8 h-8 w-48 rounded-lg" />
+      <Container className="space-y-24 pb-24">
+        {/* --- Weather Summary Skeleton --- */}
+        <section>
+          <div className="mb-8 flex flex-col gap-2">
+            <Skeleton className="h-8 w-48 rounded-lg" />
+            <Skeleton className="h-4 w-64 rounded-md" />
+          </div>
           <TripWeatherSummarySkeleton />
-        </div>
+        </section>
 
-        <div className="mb-16">
-          <MagazineCard padding="lg" className="border-primary/20 from-primary/8 bg-linear-to-br to-transparent">
-            <div className="mb-8">
-              <Skeleton className="mb-4 h-7 w-32 rounded-full" />
-              <Skeleton className="mb-2 h-10 w-64" />
-              <Skeleton className="h-4 w-3/4" />
-            </div>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {[1, 2, 3].map((i) => (
-                <div
-                  key={i}
-                  className="border-border bg-background/70 flex flex-col rounded-[1.75rem] border p-5"
-                >
-                  <div className="mb-4 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Skeleton className="h-11 w-11 rounded-2xl" />
-                      <div className="space-y-1">
-                        <Skeleton className="h-4 w-20" />
-                        <Skeleton className="h-3 w-12" />
-                      </div>
-                    </div>
-                    <Skeleton className="h-10 w-10 rounded-2xl" />
-                  </div>
-                  <Skeleton className="h-3 w-full" />
-                  <Skeleton className="mt-1 h-3 w-5/6" />
-                </div>
-              ))}
-            </div>
-          </MagazineCard>
-        </div>
+        {/* --- Budget Section Skeleton --- */}
+        <section>
+          <div className="mb-8 flex flex-col gap-2">
+            <Skeleton className="h-8 w-48 rounded-lg" />
+            <Skeleton className="h-4 w-64 rounded-md" />
+          </div>
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            <Skeleton className="h-64 rounded-[2rem]" />
+            <Skeleton className="h-64 rounded-[2rem] lg:col-span-2" />
+          </div>
+        </section>
 
-        <div className="mb-16">
-          <Skeleton className="mb-8 h-8 w-48 rounded-lg" />
+        {/* --- Transit Timeline Skeleton --- */}
+        <section>
+          <div className="mb-8 flex flex-col gap-2">
+            <Skeleton className="h-8 w-48 rounded-lg" />
+            <Skeleton className="h-4 w-64 rounded-md" />
+          </div>
+          <TransitTimelineSkeleton />
+        </section>
+
+        {/* --- Packing Section Skeleton --- */}
+        <section>
+          <div className="mb-8 flex flex-col gap-2">
+            <Skeleton className="h-8 w-48 rounded-lg" />
+            <Skeleton className="h-4 w-64 rounded-md" />
+          </div>
+          <div className="mb-8">
+            <Skeleton className="h-32 w-full rounded-3xl" />
+          </div>
           <PackingListSkeleton />
-        </div>
+        </section>
+
+        {/* --- Knowledge Section Skeleton --- */}
+        <section>
+          <div className="mb-8 flex flex-col gap-2">
+            <Skeleton className="h-8 w-48 rounded-lg" />
+            <Skeleton className="h-4 w-64 rounded-md" />
+          </div>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            {[1, 2, 3, 4].map((i) => (
+              <Skeleton key={i} className="h-40 rounded-3xl" />
+            ))}
+          </div>
+        </section>
       </Container>
     </TripLayout>
   );

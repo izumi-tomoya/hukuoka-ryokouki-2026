@@ -1,34 +1,44 @@
-import { google } from "@ai-sdk/google";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { createOpenAI } from "@ai-sdk/openai";
 import { Sandbox } from "@vercel/sandbox";
-import { generateText, tool } from "ai";
+import { generateText, stepCountIs, tool } from "ai";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { cleanLocationName, getLocationCoordinates } from "@/features/trip/utils/locationCatalog";
 import { compactAdvisorAnswer } from "@/lib/advisorResponse";
 import { auth } from "@/lib/auth";
-import { searchGourmet } from "@/lib/external/hotpepper";
+import { getGoogleApiKey, getGoogleBaseUrl, getGoogleTravelAiModelsConfig } from "@/lib/googleAi";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
 const ADVISOR_MAX_ANSWER_SENTENCES = 3;
-const ADVISOR_MAX_ANSWER_CHARACTERS = 350; // Sandboxを使うため少し余裕を持たせる
-const ADVISOR_MAX_HISTORY_MESSAGES = 6;
-const ADVISOR_MAX_EVENTS_PER_DAY = 10;
-const ADVISOR_MAX_TIPS = 10;
-const ADVISOR_MAX_TIP_BODY_CHARACTERS = 100;
+const ADVISOR_MAX_ANSWER_CHARACTERS = 350;
+const ADVISOR_MAX_HISTORY_MESSAGES = 10;
+const ADVISOR_MAX_EVENTS_PER_DAY = 12;
 
-interface ChatMessage {
-  role: "user" | "assistant" | "tool";
-  content: string;
+// プロバイダーの設定
+function getAiProvider() {
+  const gatewayApiKey = process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN;
+  const googleApiKey = getGoogleApiKey();
+
+  // Vercel AI Gateway (Unified API) が設定されている場合は優先使用
+  if (gatewayApiKey && process.env.AI_PROVIDER !== "google_direct") {
+    return createOpenAI({
+      apiKey: gatewayApiKey,
+      baseURL: "https://ai-gateway.vercel.sh/v1",
+    });
+  }
+
+  // 直接 Google AI に接続
+  return createGoogleGenerativeAI({
+    apiKey: googleApiKey ?? "",
+    baseURL: `${getGoogleBaseUrl()}/v1`, // v1beta より安定した v1 を優先
+  });
 }
 
-function truncateContextText(value: string | null | undefined, maxCharacters: number) {
-  if (!value) return "";
-  const normalized = value.replace(/\s+/g, " ").trim();
-  if (Array.from(normalized).length <= maxCharacters) return normalized;
-  return `${Array.from(normalized).slice(0, maxCharacters - 1).join("").trim()}…`;
-}
+const aiProvider = getAiProvider();
+const preferredModels = getGoogleTravelAiModelsConfig().models;
+const defaultModel = preferredModels[0] || "gemini-2.5-flash";
 
 export async function POST(req: Request) {
   try {
@@ -54,21 +64,14 @@ export async function POST(req: Request) {
       include: {
         days: {
           orderBy: { dayNumber: "asc" },
-          include: {
-            events: {
-              orderBy: { order: "asc" },
-            },
-          },
+          include: { events: { orderBy: { order: "asc" } } },
         },
-        tips: {
-          orderBy: { order: "asc" },
-        },
+        tips: { orderBy: { order: "asc" } },
       },
     });
 
     if (!trip) return NextResponse.json({ error: "Trip not found" }, { status: 404 });
 
-    // コンテキストの構築
     const itineraryContext = trip.days
       .map((day) => {
         const events = day.events
@@ -86,53 +89,71 @@ export async function POST(req: Request) {
     const systemPrompt = `あなたは「${trip.title}」の専属コンシェルジュです。
 知里様と智也様の旅が上質で淀みなく進むようサポートしてください。
 
-【Sandboxの活用】
-計算が必要な場合（予算合計、移動時間の合算、スケジュールの重複チェックなど）は、積極的に 'runPythonCode' ツールを使って正確な結果を算出してください。
-推測で計算せず、コードを実行して確認してください。
+【ツール活用】
+複雑な計算や分析が必要な場合は 'runPythonCode' ツールを使ってください。
+結果は正確に、かつ自然な日本語で回答に組み込んでください。
 
 【人格とトーン】
 - 控えめながら的確な「大人のコンシェルジュ」。
 - 丁寧語を用いつつ、事務的すぎない。
 
+
 【制約】
 - 日本語で回答。
 - 1回答は最大3文、350字以内。
-- 1文目に結論、2文目以降に理由やSandboxの実行結果に基づいた助言。
+- 1文目に結論、2文目以降に理由や助言。
+- 箇条書きやMarkdown見出しは使わず、自然な文章で。
 
 【コンテキスト】
 場所: ${trip.location}
 旅程:
 ${itineraryContext}`;
 
-    const { text, toolResults } = await generateText({
-      model: google("gemini-1.5-flash"),
-      system: systemPrompt,
-      messages: [
-        ...history.map(m => ({
+    // 履歴の正規化
+    const messages = [
+      ...history
+        .filter(m => m.role === "user" || m.role === "assistant")
+        .slice(-ADVISOR_MAX_HISTORY_MESSAGES)
+        .map(m => ({
           role: m.role as "user" | "assistant",
           content: m.content
         })),
-        { role: "user", content: message }
-      ],
+      { role: "user", content: message }
+    ] as any[];
+
+    // モデルIDの決定
+    const isUnifiedGateway = !!(process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN) && process.env.AI_PROVIDER !== "google_direct";
+    const gatewayModel = process.env.AI_GATEWAY_MODEL || "anthropic/claude-3-haiku";
+    const modelId = isUnifiedGateway ? gatewayModel : defaultModel;
+
+    const { text } = await generateText({
+      model: aiProvider(modelId),
+      system: systemPrompt,
+      messages,
       tools: {
         runPythonCode: tool({
-          description: "Pythonコードを実行して計算やデータ処理を行います。予算の計算や時間の計算に使用してください。",
+          description: "Pythonコードを実行して計算やデータ処理を行います。予算の計算や時間の計算、スケジュールの分析に使用してください。",
           parameters: z.object({
-            code: z.string().description("実行するPythonコード"),
+            code: z.string().describe("実行するPythonコード"),
           }),
           execute: async ({ code }) => {
-            const sandbox = await Sandbox.create();
             try {
-              const result = await sandbox.runCommand("python3", ["-c", code]);
-              const output = await result.stdout();
-              return { output };
-            } finally {
-              await sandbox.stop();
+              const sandbox = await Sandbox.create();
+              try {
+                const result = await sandbox.runCommand("python3", ["-c", code]);
+                const output = await result.stdout();
+                return { output };
+              } finally {
+                await sandbox.stop();
+              }
+            } catch (sandboxError) {
+              console.error("Sandbox Execution Failed:", sandboxError);
+              return { error: "Sandbox environment is currently unavailable. Please perform calculation manually or try again later." };
             }
           },
         }),
       },
-      maxSteps: 5, // ツール実行を含めて最大5回やり取り
+      stopWhen: stepCountIs(5),
     });
 
     const finalAnswer = compactAdvisorAnswer(text, {
@@ -148,8 +169,12 @@ ${itineraryContext}`;
         { role: "assistant", content: finalAnswer }
       ],
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("AI Advisor Error:", error);
-    return NextResponse.json({ error: "エラーが発生しました" }, { status: 500 });
+    const errorMessage = error.message || "Unknown error";
+    return NextResponse.json({ 
+      error: "AIとの通信中にエラーが発生しました",
+      details: errorMessage 
+    }, { status: 500 });
   }
 }

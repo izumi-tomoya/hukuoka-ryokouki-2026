@@ -11,7 +11,7 @@ const gateway = createOpenAI({
 async function main() {
   try {
     const result = await streamText({
-      model: gateway('google/gemini-1.5-flash'),
+      model: gateway('google/gemini-2.5-flash'),
       prompt: '福岡旅行のおすすめスポットを3つ、非常に簡潔に教えてください。',
     });
 

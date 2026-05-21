@@ -171,7 +171,7 @@ export async function listGoogleModels() {
       headers["x-goog-api-key"] = apiKey;
     }
 
-    const response = await fetch(`${getGoogleBaseUrl()}/v1beta/models?${searchParams.toString()}`, {
+    const response = await fetch(`${getGoogleBaseUrl()}/v1/models?${searchParams.toString()}`, {
       headers,
       cache: "no-store",
     });
@@ -243,7 +243,7 @@ export async function generateGoogleText({
   }
 
   try {
-    const response = await fetch(`${getGoogleBaseUrl()}/v1beta/models/${model}:generateContent`, {
+    const response = await fetch(`${getGoogleBaseUrl()}/v1/models/${model}:generateContent`, {
       method: "POST",
       headers,
       cache: "no-store",

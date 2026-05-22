@@ -46,9 +46,7 @@ export default function BudgetEditRow({ eventId, plannedBudget, actualExpense }:
         <div className="flex items-center gap-4 text-[10px] font-black tracking-widest text-zinc-400 uppercase">
           {hasValues ? (
             <>
-              {(plannedBudget ?? 0) > 0 && (
-                <span>予算 ¥{plannedBudget?.toLocaleString()}</span>
-              )}
+              {(plannedBudget ?? 0) > 0 && <span>予算 ¥{plannedBudget?.toLocaleString()}</span>}
               {(actualExpense ?? 0) > 0 && (
                 <span className="text-emerald-500">実費 ¥{actualExpense?.toLocaleString()}</span>
               )}
@@ -67,9 +65,7 @@ export default function BudgetEditRow({ eventId, plannedBudget, actualExpense }:
       <div className="mb-3 text-[10px] font-black tracking-widest text-primary uppercase">Budget Edit</div>
       <div className="flex gap-3">
         <div className="flex-1">
-          <label className="mb-1 block text-[9px] font-black tracking-widest text-zinc-400 uppercase">
-            予算 (¥)
-          </label>
+          <label className="mb-1 block text-[9px] font-black tracking-widest text-zinc-400 uppercase">予算 (¥)</label>
           <input
             type="number"
             value={planned}
@@ -79,9 +75,7 @@ export default function BudgetEditRow({ eventId, plannedBudget, actualExpense }:
           />
         </div>
         <div className="flex-1">
-          <label className="mb-1 block text-[9px] font-black tracking-widest text-zinc-400 uppercase">
-            実費 (¥)
-          </label>
+          <label className="mb-1 block text-[9px] font-black tracking-widest text-zinc-400 uppercase">実費 (¥)</label>
           <input
             type="number"
             value={actual}

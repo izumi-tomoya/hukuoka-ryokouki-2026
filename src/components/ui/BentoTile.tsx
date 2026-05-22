@@ -14,12 +14,27 @@ interface BentoTileProps {
 }
 
 const accentColor = {
-  rose:    { icon: "bg-rose-50 text-rose-500",    num: "text-rose-500",    border: "border-rose-100",   glow: "bg-rose-400" },
-  sky:     { icon: "bg-sky-50 text-sky-500",      num: "text-sky-500",     border: "border-sky-100",    glow: "bg-sky-400" },
-  zinc:    { icon: "bg-zinc-100 text-zinc-500",   num: "text-zinc-700",    border: "border-zinc-100",   glow: "bg-zinc-400" },
-  emerald: { icon: "bg-emerald-50 text-emerald-500", num: "text-emerald-600", border: "border-emerald-100", glow: "bg-emerald-400" },
-  amber:   { icon: "bg-amber-50 text-amber-500",  num: "text-amber-500",   border: "border-amber-100",  glow: "bg-amber-400" },
-  indigo:  { icon: "bg-indigo-50 text-indigo-500", num: "text-indigo-500", border: "border-indigo-100", glow: "bg-indigo-400" },
+  rose: { icon: "bg-rose-50 text-rose-500", num: "text-rose-500", border: "border-rose-100", glow: "bg-rose-400" },
+  sky: { icon: "bg-sky-50 text-sky-500", num: "text-sky-500", border: "border-sky-100", glow: "bg-sky-400" },
+  zinc: { icon: "bg-zinc-100 text-zinc-500", num: "text-zinc-700", border: "border-zinc-100", glow: "bg-zinc-400" },
+  emerald: {
+    icon: "bg-emerald-50 text-emerald-500",
+    num: "text-emerald-600",
+    border: "border-emerald-100",
+    glow: "bg-emerald-400",
+  },
+  amber: {
+    icon: "bg-amber-50 text-amber-500",
+    num: "text-amber-500",
+    border: "border-amber-100",
+    glow: "bg-amber-400",
+  },
+  indigo: {
+    icon: "bg-indigo-50 text-indigo-500",
+    num: "text-indigo-500",
+    border: "border-indigo-100",
+    glow: "bg-indigo-400",
+  },
 };
 
 export function BentoTile({
@@ -44,7 +59,12 @@ export function BentoTile({
         )}
       >
         {/* Subtle color wash */}
-        <div className={cn("absolute inset-0 opacity-[0.03] transition-opacity duration-500 group-hover:opacity-[0.06]", c.glow)} />
+        <div
+          className={cn(
+            "absolute inset-0 opacity-[0.03] transition-opacity duration-500 group-hover:opacity-[0.06]",
+            c.glow,
+          )}
+        />
 
         <div className="relative z-10 flex h-full flex-col justify-between gap-5">
           <div className="flex items-start justify-between">
@@ -56,12 +76,8 @@ export function BentoTile({
           </div>
 
           <div>
-            {title && (
-              <h3 className="mb-0.5 text-base font-black tracking-tight text-zinc-900">{title}</h3>
-            )}
-            {subtitle && (
-              <p className="text-[10px] font-bold tracking-widest text-zinc-400 uppercase">{subtitle}</p>
-            )}
+            {title && <h3 className="mb-0.5 text-base font-black tracking-tight text-zinc-900">{title}</h3>}
+            {subtitle && <p className="text-[10px] font-bold tracking-widest text-zinc-400 uppercase">{subtitle}</p>}
           </div>
 
           {children}
@@ -82,12 +98,8 @@ export function BentoTile({
           )}
 
           <div>
-            {title && (
-              <h3 className="mb-0.5 text-sm font-black tracking-tight text-zinc-900">{title}</h3>
-            )}
-            {subtitle && (
-              <p className="text-[9px] font-bold tracking-widest text-zinc-400 uppercase">{subtitle}</p>
-            )}
+            {title && <h3 className="mb-0.5 text-sm font-black tracking-tight text-zinc-900">{title}</h3>}
+            {subtitle && <p className="text-[9px] font-bold tracking-widest text-zinc-400 uppercase">{subtitle}</p>}
           </div>
 
           {children}

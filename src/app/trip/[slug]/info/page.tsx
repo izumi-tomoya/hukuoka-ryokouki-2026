@@ -38,7 +38,9 @@ export default async function TripInfoPage({ params }: { params: Promise<{ slug:
       actual: events.reduce((s, e) => s + (e.actualExpense || 0), 0),
     };
   });
-  const transitEvents = allEvents.filter((e) => e.type === "transport" || (e.transitSteps && e.transitSteps.length > 0));
+  const transitEvents = allEvents.filter(
+    (e) => e.type === "transport" || (e.transitSteps && e.transitSteps.length > 0),
+  );
 
   const insightEvents = allEvents.map((event, index) => ({
     id: event.id || `insight-${index}`,

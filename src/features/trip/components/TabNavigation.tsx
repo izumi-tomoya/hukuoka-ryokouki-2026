@@ -23,10 +23,12 @@ export default function TabNavigation({ isSecretMode }: TabNavigationProps) {
     { href: `/trip/${slug}/day/2`, label: "Day 2", icon: Calendar },
     { href: `/trip/${slug}/memories`, label: "Memories", icon: Camera },
     { href: `/trip/${slug}/info`, label: "Essentials", icon: InfoIcon },
-    ...(isSecretMode ? [
-      { href: `/trip/${slug}/tips`, label: "Secret Tips", icon: Compass },
-      { href: `/trip/${slug}/budget`, label: "Budget", icon: Wallet },
-    ] : []),
+    ...(isSecretMode
+      ? [
+          { href: `/trip/${slug}/tips`, label: "Secret Tips", icon: Compass },
+          { href: `/trip/${slug}/budget`, label: "Budget", icon: Wallet },
+        ]
+      : []),
   ];
 
   return (

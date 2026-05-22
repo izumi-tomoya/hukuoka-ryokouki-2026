@@ -1,12 +1,15 @@
 import { NextResponse } from "next/server";
 import { buildFallbackAlternatives } from "@/features/trip/utils/tripInsights";
+import {
+  type AlternativesTrigger,
+  buildAlternativesSystemInstruction,
+  buildAlternativesUserPrompt,
+} from "@/lib/aiPrompts";
 import { generateTravelTextWithFallback } from "@/lib/aiProvider";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
-
-type Trigger = "rain" | "crowd" | "tired" | "budget";
 
 function safeJsonParse<T>(input: string): T | null {
   const normalized = input
@@ -40,7 +43,7 @@ export async function POST(request: Request) {
       delayMinutes = 0,
     } = (await request.json()) as {
       slug?: string;
-      trigger?: Trigger;
+      trigger?: AlternativesTrigger;
       delayMinutes?: number;
     };
 
@@ -119,34 +122,25 @@ export async function POST(request: Request) {
       .map((tip) => `${tip.title}: ${tip.body}`)
       .join("\n");
 
-    const prompt = `次の旅行プランに対して、トリガー「${trigger}」発生時の代替案を2〜3件提案してください。
-JSON配列だけを返してください。各要素は {"title": string, "reason": string, "action": string } の形です。
-簡潔で実務的に、固定予約を優先しつつ二人旅に合う代替案にしてください。
-マークダウンのコードブロック（\`\`\`jsonなど）は含めず、純粋なJSON文字列のみを出力してください。
-
-場所: ${trip.location}
-遅延: ${delayMinutes}分
-
-旅程:
-${itinerary}
-
-補足:
-${knowledge}`;
+    const prompt = buildAlternativesUserPrompt({
+      trigger,
+      location: trip.location,
+      delayMinutes,
+      itinerary,
+      knowledge,
+    });
 
     let content = "";
     let usedProvider = "";
     let providerSource = "";
 
-    const systemInstruction =
-      'You are a travel operations concierge. Return only a valid JSON array with 2-3 objects shaped as {"title": string, "reason": string, "action": string}. Do not include markdown code blocks or extra text.';
-
     try {
       const result = await generateTravelTextWithFallback({
         prompt,
-        systemInstruction,
-        maxOutputTokens: 600,
-        temperature: 0.2,
-        topP: 0.8,
+        systemInstruction: buildAlternativesSystemInstruction(),
+        maxOutputTokens: 720,
+        temperature: 0.25,
+        topP: 0.85,
       });
       content = result.text;
       usedProvider = `${result.provider}:${result.model}`;

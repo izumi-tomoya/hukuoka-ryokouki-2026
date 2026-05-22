@@ -473,7 +473,13 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
                         <span className="text-xs font-bold text-indigo-400">スクリーンショットをアップロード</span>
                       </>
                     )}
-                    <input id="file-upload" type="file" accept="image/*" className="hidden" onChange={handleFileUpload} />
+                    <input
+                      id="file-upload"
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleFileUpload}
+                    />
                   </label>
                 )}
               </div>
@@ -514,9 +520,7 @@ export default function TipsList({ initialTips, tripId }: TipsListProps) {
                     min="1"
                     max="5"
                     value={editingTip.deepLevel || 1}
-                    onChange={(e) =>
-                      setEditingTip({ ...editingTip, deepLevel: Number.parseInt(e.target.value, 10) })
-                    }
+                    onChange={(e) => setEditingTip({ ...editingTip, deepLevel: Number.parseInt(e.target.value, 10) })}
                     className="bg-secondary/50 border-border v2-focus min-h-12 w-full rounded-2xl border px-5 py-4 text-base sm:text-sm"
                   />
                 </div>

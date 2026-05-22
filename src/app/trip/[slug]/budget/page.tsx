@@ -3,9 +3,9 @@ import { Container } from "@/components/ui/Container";
 import { getTripBySlug } from "@/features/trip/api/tripActions";
 import BudgetManager from "@/features/trip/components/client/BudgetManager";
 import TripLayout from "@/features/trip/components/TripLayout";
+import type { Tip, TripEvent } from "@/features/trip/types/trip";
 import { mapEventToTripEvent } from "@/features/trip/utils/tripUtils";
 import { auth } from "@/lib/auth";
-import type { TripEvent, Tip } from "@/features/trip/types/trip";
 
 export default async function BudgetPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -20,7 +20,7 @@ export default async function BudgetPage({ params }: { params: Promise<{ slug: s
       ...mapEventToTripEvent(e as never),
       dayNumber: day.dayNumber,
       dayTitle: day.title,
-    }))
+    })),
   );
 
   return (

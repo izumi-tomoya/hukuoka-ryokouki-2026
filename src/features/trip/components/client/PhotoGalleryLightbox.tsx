@@ -94,12 +94,13 @@ export default function PhotoGalleryLightbox({ photos, eventId }: Props) {
           <button
             key={photo.id}
             type="button"
-            onClick={() => { setDirection("right"); setIndex(i); }}
+            onClick={() => {
+              setDirection("right");
+              setIndex(i);
+            }}
             className={cn(
               "group border-border bg-muted relative overflow-hidden rounded-[1.75rem] border shadow-sm transition-all duration-500 hover:-translate-y-0.5 hover:shadow-xl active:scale-[0.97]",
-              photos.length % 3 !== 0 && i === 0 && photos.length > 2
-                ? "md:col-span-2 aspect-[21/9]"
-                : "aspect-square",
+              photos.length % 3 !== 0 && i === 0 && photos.length > 2 ? "md:col-span-2 aspect-[21/9]" : "aspect-square",
             )}
           >
             <Image
@@ -127,9 +128,7 @@ export default function PhotoGalleryLightbox({ photos, eventId }: Props) {
         >
           {/* Top bar */}
           <div className="flex items-center justify-between px-6 pt-6 pb-4">
-            <div className="text-[10px] font-black tracking-[0.3em] text-white/40 uppercase">
-              Memory Collection
-            </div>
+            <div className="text-[10px] font-black tracking-[0.3em] text-white/40 uppercase">Memory Collection</div>
             <div className="flex items-center gap-4">
               <span className="font-playfair text-sm font-bold text-white/60">
                 {index + 1} <span className="text-white/30">/</span> {photos.length}
@@ -175,13 +174,7 @@ export default function PhotoGalleryLightbox({ photos, eventId }: Props) {
               )}
               style={{ transition: "transform 220ms ease, opacity 220ms ease" }}
             >
-              <Image
-                src={photos[index].url}
-                alt={`Memory ${index + 1}`}
-                fill
-                className="object-contain"
-                priority
-              />
+              <Image src={photos[index].url} alt={`Memory ${index + 1}`} fill className="object-contain" priority />
             </div>
 
             {/* Next */}
@@ -196,15 +189,15 @@ export default function PhotoGalleryLightbox({ photos, eventId }: Props) {
 
           {/* Thumbnail strip */}
           <div className="px-6 pt-4 pb-8">
-            <div
-              ref={thumbsRef}
-              className="no-scrollbar flex gap-2 overflow-x-auto"
-            >
+            <div ref={thumbsRef} className="no-scrollbar flex gap-2 overflow-x-auto">
               {photos.map((photo, i) => (
                 <button
                   key={photo.id}
                   type="button"
-                  onClick={() => { setDirection(i > index ? "right" : "left"); setIndex(i); }}
+                  onClick={() => {
+                    setDirection(i > index ? "right" : "left");
+                    setIndex(i);
+                  }}
                   className={cn(
                     "relative h-14 w-14 shrink-0 overflow-hidden rounded-xl transition-all duration-300",
                     i === index

@@ -4,9 +4,9 @@ import { AlertTriangle, Clock, Edit2, FileText, JapaneseYen, Lightbulb, MapPin, 
 import { useSession } from "next-auth/react";
 import { useEffect, useOptimistic, useState, useTransition } from "react";
 import { MagazineCard } from "@/components/ui/MagazineCard";
+import { updateEventBudgetAction } from "@/features/trip/api/tripActions";
 import { getLocationCoordinates } from "@/features/trip/utils/locationCatalog";
 import { isSecretEvent, maskSecretText } from "@/features/trip/utils/tripUtils";
-import { updateEventBudgetAction } from "@/features/trip/api/tripActions";
 import { getDirectionsUrl } from "@/lib/mapUtils";
 import { useEventUserStore } from "@/lib/store/useEventUserStore";
 import { useModalStore } from "@/lib/store/useModalStore";
@@ -25,12 +25,17 @@ export default function EventDetailModal() {
   const [isPending, startTransition] = useTransition();
 
   // DB 値をソースとして optimistic 状態管理
-  const [optimisticExpense, setOptimisticExpense] = useOptimistic(
-    { my: selectedEvent?.myExpense ?? 0, her: selectedEvent?.herExpense ?? 0 },
-  );
+  const [optimisticExpense, setOptimisticExpense] = useOptimistic({
+    my: selectedEvent?.myExpense ?? 0,
+    her: selectedEvent?.herExpense ?? 0,
+  });
   const [noteText, setNoteText] = useState(() => (selectedEvent?.id ? getNote(selectedEvent.id) : ""));
-  const [myAmount, setMyAmount] = useState<string>(() => (selectedEvent?.myExpense ?? 0) > 0 ? String(selectedEvent?.myExpense) : "");
-  const [herAmount, setHerAmount] = useState<string>(() => (selectedEvent?.herExpense ?? 0) > 0 ? String(selectedEvent?.herExpense) : "");
+  const [myAmount, setMyAmount] = useState<string>(() =>
+    (selectedEvent?.myExpense ?? 0) > 0 ? String(selectedEvent?.myExpense) : "",
+  );
+  const [herAmount, setHerAmount] = useState<string>(() =>
+    (selectedEvent?.herExpense ?? 0) > 0 ? String(selectedEvent?.herExpense) : "",
+  );
   const [isUserEditing, setIsUserEditing] = useState(false);
 
   // イベント切替時に再初期化
@@ -246,10 +251,12 @@ export default function EventDetailModal() {
                           />
                         </div>
                       </div>
-                      {((parseInt(myAmount, 10) || 0) + (parseInt(herAmount, 10) || 0)) > 0 && (
+                      {(parseInt(myAmount, 10) || 0) + (parseInt(herAmount, 10) || 0) > 0 && (
                         <div className="flex items-center justify-between text-xs font-bold text-zinc-500">
                           <span>合計</span>
-                          <span className="text-primary">¥{((parseInt(myAmount, 10) || 0) + (parseInt(herAmount, 10) || 0)).toLocaleString()}</span>
+                          <span className="text-primary">
+                            ¥{((parseInt(myAmount, 10) || 0) + (parseInt(herAmount, 10) || 0)).toLocaleString()}
+                          </span>
                         </div>
                       )}
                       <textarea
@@ -262,10 +269,20 @@ export default function EventDetailModal() {
                     </div>
                   ) : (
                     <div className="space-y-2">
-                      {(optimisticExpense.my + optimisticExpense.her) > 0 ? (
+                      {optimisticExpense.my + optimisticExpense.her > 0 ? (
                         <div className="space-y-1 text-sm">
-                          {optimisticExpense.my > 0 && <div className="flex justify-between text-zinc-600"><span className="font-black text-[10px] tracking-widest uppercase">智也</span><span className="font-bold">¥{optimisticExpense.my.toLocaleString()}</span></div>}
-                          {optimisticExpense.her > 0 && <div className="flex justify-between text-zinc-600"><span className="font-black text-[10px] tracking-widest uppercase">知里</span><span className="font-bold">¥{optimisticExpense.her.toLocaleString()}</span></div>}
+                          {optimisticExpense.my > 0 && (
+                            <div className="flex justify-between text-zinc-600">
+                              <span className="font-black text-[10px] tracking-widest uppercase">智也</span>
+                              <span className="font-bold">¥{optimisticExpense.my.toLocaleString()}</span>
+                            </div>
+                          )}
+                          {optimisticExpense.her > 0 && (
+                            <div className="flex justify-between text-zinc-600">
+                              <span className="font-black text-[10px] tracking-widest uppercase">知里</span>
+                              <span className="font-bold">¥{optimisticExpense.her.toLocaleString()}</span>
+                            </div>
+                          )}
                           <div className="flex justify-between border-t border-zinc-100 pt-1 text-sm font-black text-primary">
                             <span>合計</span>
                             <span>¥{(optimisticExpense.my + optimisticExpense.her).toLocaleString()}</span>

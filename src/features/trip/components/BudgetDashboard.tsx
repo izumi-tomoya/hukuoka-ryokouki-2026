@@ -53,12 +53,15 @@ export default function BudgetDashboard({ stats, dayStats }: Props) {
                       <span className="text-primary text-[10px] font-black tracking-widest uppercase shrink-0">
                         Day {day.dayNumber}
                       </span>
-                      {day.title && (
-                        <span className="text-muted-foreground truncate text-[10px]">{day.title}</span>
-                      )}
+                      {day.title && <span className="text-muted-foreground truncate text-[10px]">{day.title}</span>}
                     </div>
                     <div className="flex items-baseline gap-2 shrink-0">
-                      <span className={cn("text-sm font-black", day.actual > 0 ? (over ? "text-rose-500" : "text-foreground") : "text-muted-foreground/40")}>
+                      <span
+                        className={cn(
+                          "text-sm font-black",
+                          day.actual > 0 ? (over ? "text-rose-500" : "text-foreground") : "text-muted-foreground/40",
+                        )}
+                      >
                         {day.actual > 0 ? `¥${day.actual.toLocaleString()}` : "—"}
                       </span>
                       {day.planned > 0 && (
@@ -69,7 +72,10 @@ export default function BudgetDashboard({ stats, dayStats }: Props) {
                   {day.planned > 0 && (
                     <div className="bg-secondary h-1.5 w-full overflow-hidden rounded-full">
                       <div
-                        className={cn("h-full rounded-full transition-all duration-700", over ? "bg-rose-500" : "bg-emerald-500")}
+                        className={cn(
+                          "h-full rounded-full transition-all duration-700",
+                          over ? "bg-rose-500" : "bg-emerald-500",
+                        )}
                         style={{ width: `${ratio}%` }}
                       />
                     </div>

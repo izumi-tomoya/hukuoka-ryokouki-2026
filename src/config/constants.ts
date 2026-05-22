@@ -34,3 +34,9 @@ export const TRIP_CATEGORIES = [
 ] as const;
 
 export const PACKING_CATEGORIES = ["Essential", "Clothing", "Gadget", "Other"] as const;
+
+export const ADVISOR_STARTER_PROMPTS = [
+  "今日の動き、ひとことアドバイスある？",
+  "雨続きなら、どこ先に回すとラク？",
+  "このあと、疲れにくい回り方教えて",
+] as const;

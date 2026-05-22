@@ -35,10 +35,7 @@ export default function PackingListSkeleton() {
       {/* ─── List Area Skeleton ─── */}
       <div className="grid gap-4">
         {[1, 2, 3, 4, 5].map((i) => (
-          <div
-            key={i}
-            className="border-border bg-card flex items-center gap-3 rounded-3xl border p-4 sm:gap-4 sm:p-5"
-          >
+          <div key={i} className="border-border bg-card flex items-center gap-3 rounded-3xl border p-4 sm:gap-4 sm:p-5">
             <Skeleton className="h-9 w-9 shrink-0 rounded-xl" />
             <Skeleton className="h-4 flex-1" />
             <Skeleton className="h-10 w-10 rounded-full" />

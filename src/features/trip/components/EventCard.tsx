@@ -18,10 +18,10 @@ import { MagazineCard } from "@/components/ui/MagazineCard";
 import AccessRow from "@/features/trip/components/AccessRow";
 import BudgetEditRow from "@/features/trip/components/client/BudgetEditRow";
 import ClickableCard from "@/features/trip/components/client/ClickableCard";
-import PhotoUploadButton from "@/features/trip/components/client/PhotoUploadButton";
 import ConfirmCheckbox from "@/features/trip/components/client/ConfirmCheckbox";
 import { EventActionButtons } from "@/features/trip/components/client/EventActionButtons";
 import { ExternalSpotInfo } from "@/features/trip/components/client/ExternalSpotInfo";
+import PhotoUploadButton from "@/features/trip/components/client/PhotoUploadButton";
 import { SafeLink } from "@/features/trip/components/client/SafeLink";
 import YataiLiveTracker from "@/features/trip/components/client/YataiLiveTracker";
 import PhotoGallery from "@/features/trip/components/PhotoGallery";
@@ -243,11 +243,7 @@ function BasicCard({
 
         {isAdmin && event.id && (
           <div className="mt-4">
-            <BudgetEditRow
-              eventId={event.id}
-              plannedBudget={event.plannedBudget}
-              actualExpense={event.actualExpense}
-            />
+            <BudgetEditRow eventId={event.id} plannedBudget={event.plannedBudget} actualExpense={event.actualExpense} />
           </div>
         )}
       </div>

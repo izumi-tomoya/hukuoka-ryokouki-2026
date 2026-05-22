@@ -2,6 +2,7 @@
 
 import { MessageCircleHeart, Send, Sparkles } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { ADVISOR_STARTER_PROMPTS } from "@/config/constants";
 import { cn } from "@/lib/utils";
 
 type ChatMessage = {
@@ -12,12 +13,6 @@ type ChatMessage = {
 type Props = {
   slug: string;
 };
-
-const starterPrompts = [
-  "今日の動きで気をつけることは？",
-  "雨ならどこを入れ替えるべき？",
-  "このあと疲れにくい回り方を教えて",
-];
 
 function TypingDots() {
   return (
@@ -53,9 +48,9 @@ export default function AdvisorConciergePanel({ slug }: Props) {
 
   useEffect(() => {
     const el = chatAreaRef.current;
-    if (!el) return;
-    el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
-  }, [messages, isPending]);
+    if (!el || messages.length === 0) return;
+    el.scrollTo({ top: el.scrollHeight, behavior: isPending ? "auto" : "smooth" });
+  }, [messages.length, isPending]);
 
   const ask = async (raw: string) => {
     const message = raw.trim();
@@ -116,9 +111,7 @@ export default function AdvisorConciergePanel({ slug }: Props) {
           </div>
           <div className="flex items-end justify-between gap-3">
             <div>
-              <h3 className="font-playfair text-foreground text-3xl font-black leading-tight">
-                旅のコンシェルジュ
-              </h3>
+              <h3 className="font-playfair text-foreground text-3xl font-black leading-tight">旅のコンシェルジュ</h3>
               <p className="text-muted-foreground mt-1.5 text-sm leading-relaxed">
                 旅程と予約情報を見ながら、次の一手を短く返します。
               </p>
@@ -141,11 +134,13 @@ export default function AdvisorConciergePanel({ slug }: Props) {
       <div className="px-6 pb-6">
         {/* Starter prompts */}
         <div className="mt-5 flex flex-wrap gap-2">
-          {starterPrompts.map((prompt) => (
+          {ADVISOR_STARTER_PROMPTS.map((prompt) => (
             <button
               type="button"
               key={prompt}
-              onClick={() => { void ask(prompt); }}
+              onClick={() => {
+                void ask(prompt);
+              }}
               disabled={isPending}
               className="border-border/70 bg-secondary/20 text-foreground hover:border-primary/40 hover:bg-primary/8 group relative overflow-hidden rounded-full border px-4 py-2 text-xs font-semibold transition-all duration-200 disabled:opacity-40"
             >
@@ -155,15 +150,15 @@ export default function AdvisorConciergePanel({ slug }: Props) {
         </div>
 
         {/* Chat area */}
-        <div ref={chatAreaRef} className="no-scrollbar bg-secondary/8 border-border/50 mt-5 max-h-96 space-y-3 overflow-y-auto rounded-[1.5rem] border p-4">
+        <div
+          ref={chatAreaRef}
+          className="no-scrollbar bg-secondary/8 border-border/50 mt-5 max-h-96 space-y-3 overflow-y-auto rounded-3xl border p-4"
+        >
           {messages.map((message, index) => (
             <div
               // biome-ignore lint/suspicious/noArrayIndexKey: chat messages are appended sequentially
               key={`${message.role}-${index}`}
-              className={cn(
-                "flex gap-2.5",
-                message.role === "user" ? "flex-row-reverse" : "flex-row",
-              )}
+              className={cn("flex gap-2.5", message.role === "user" ? "flex-row-reverse" : "flex-row")}
             >
               {/* Avatar dot */}
               <div
@@ -205,7 +200,6 @@ export default function AdvisorConciergePanel({ slug }: Props) {
               </div>
             </div>
           )}
-
         </div>
 
         {/* Input form */}
@@ -225,9 +219,7 @@ export default function AdvisorConciergePanel({ slug }: Props) {
               aria-label="コンシェルジュへの質問"
               className="border-border bg-card focus:border-primary/60 focus:ring-primary/15 dark:bg-background/50 w-full resize-none rounded-2xl border px-4 py-3.5 pb-6 text-sm transition-all outline-none focus:ring-2"
             />
-            <p className="text-muted-foreground/50 absolute right-3 bottom-2 text-[9px] font-medium">
-              ⌘ Enter
-            </p>
+            <p className="text-muted-foreground/50 absolute right-3 bottom-2 text-[9px] font-medium">⌘ Enter</p>
           </div>
           <button
             type="submit"

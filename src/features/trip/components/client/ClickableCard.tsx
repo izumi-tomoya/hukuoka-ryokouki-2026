@@ -23,8 +23,13 @@ export default function ClickableCard({ event, children, className, previousLoca
       role="button"
       tabIndex={0}
       onClick={handlePress}
-      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") handlePress(); }}
-      className={cn("w-full cursor-pointer text-left outline-hidden transition-transform active:scale-[0.98]", className)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") handlePress();
+      }}
+      className={cn(
+        "w-full cursor-pointer text-left outline-hidden transition-transform active:scale-[0.98]",
+        className,
+      )}
     >
       {children}
     </div>

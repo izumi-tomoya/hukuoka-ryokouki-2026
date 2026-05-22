@@ -4,9 +4,11 @@ import { createGateway, generateText, type ModelMessage, stepCountIs, tool } fro
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { compactAdvisorAnswer } from "@/lib/advisorResponse";
+import { buildAdvisorAiConfig } from "@/lib/aiPrompts";
 import { auth } from "@/lib/auth";
 import { getGoogleApiKey, getGoogleTravelAiModelsConfig } from "@/lib/googleAi";
 import { prisma } from "@/lib/prisma";
+import { getWeatherData } from "@/lib/weather";
 
 export const dynamic = "force-dynamic";
 
@@ -23,7 +25,7 @@ function resolveProvider() {
 
   if (!googleDirect && gatewayApiKey) {
     const gw = createGateway({ apiKey: gatewayApiKey });
-    const modelId = process.env.AI_GATEWAY_MODEL || "anthropic/claude-3-haiku";
+    const modelId = process.env.AI_GATEWAY_MODEL || "google/gemini-2.5-flash";
     return { model: gw(modelId) };
   }
 
@@ -33,6 +35,8 @@ function resolveProvider() {
   const modelId = preferred[0] || "gemini-2.5-flash";
   return { model: goog(modelId) };
 }
+
+type AdvisorAiConfig = ReturnType<typeof buildAdvisorAiConfig>;
 
 export async function POST(req: Request) {
   try {
@@ -68,6 +72,7 @@ export async function POST(req: Request) {
 
     const itineraryContext = trip.days
       .map((day) => {
+        const dateStr = day.date.toLocaleDateString("ja-JP", { month: "short", day: "numeric", weekday: "short" });
         const events = day.events
           .slice(0, ADVISOR_MAX_EVENTS_PER_DAY)
           .map((event) => {
@@ -75,35 +80,54 @@ export async function POST(req: Request) {
             const isSecret =
               !isAdmin &&
               (event.tag === "surprise" || ["ヒルトン", "CLOUDS", "サプライズ"].some((s) => titleText.includes(s)));
-            return `${event.time} ${isSecret ? "🎁 Surprise" : titleText}${event.isConfirmed ? " [fixed]" : ""}`;
+            const status = event.isConfirmed ? " [予約確定]" : "";
+            const tag = event.tag ? ` #${event.tag}` : "";
+            return `${event.time} ${isSecret ? "🎁 サプライズ予定" : titleText}${status}${tag}`;
           })
           .join(" / ");
-        return `Day ${day.dayNumber}: ${events}`;
+        return `Day ${day.dayNumber} (${dateStr}): ${events}`;
       })
       .join("\n");
 
-    const systemPrompt = `あなたは「${trip.title}」の専属コンシェルジュです。
-知里様と智也様の旅が上質で淀みなく進むようサポートしてください。
+    const tipsContext = trip.tips
+      .slice(0, 10)
+      .map((tip) => {
+        const warning = tip.isWarning ? "【注意】" : "";
+        const venue = tip.venue ? `（場所: ${tip.venue}）` : "";
+        return `- ${tip.title}: ${tip.body}${venue}${warning}`;
+      })
+      .join("\n");
 
-【ツール活用】
-複雑な計算や分析が必要な場合は 'runPythonCode' ツールを使ってください。
-結果は正確に、かつ自然な日本語で回答に組み込んでください。
+    // 現在状況の構築
+    const now = new Date();
+    const currentTime = now.toLocaleString("ja-JP", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      weekday: "short",
+    });
 
-【人格とトーン】
-- 控えめながら的確な「大人のコンシェルジュ」。
-- 丁寧語を用いつつ、事務的すぎない。
+    const weather = await getWeatherData(trip.location);
+    const weatherContext = weather
+      ? `現在: ${weather.current.text} (${weather.current.temp}℃) / 今日の予報: ${weather.forecast[0]?.text || "不明"} (最高${weather.forecast[0]?.tempMax}℃ / 降水${weather.forecast[0]?.rainChance}%)`
+      : "取得失敗";
 
+    const allEvents = trip.days.flatMap((d) => d.events);
+    const totalPlanned = allEvents.reduce((sum, e) => sum + (e.plannedBudget || 0), 0);
+    const totalActual = allEvents.reduce((sum, e) => sum + (e.actualExpense || (e.myExpense || 0) + (e.herExpense || 0) || 0), 0);
+    const budgetContext = `予定合計: ¥${totalPlanned.toLocaleString()} / 支出確定分: ¥${totalActual.toLocaleString()} / 残り予算(見込): ¥${(totalPlanned - totalActual).toLocaleString()}`;
 
-【制約】
-- 日本語で回答。
-- 1回答は最大3文、350字以内。
-- 1文目に結論、2文目以降に理由や助言。
-- 箇条書きやMarkdown見出しは使わず、自然な文章で。
-
-【コンテキスト】
-場所: ${trip.location}
-旅程:
-${itineraryContext}`;
+    const advisor = buildAdvisorAiConfig({
+      tripTitle: trip.title,
+      location: trip.location,
+      itineraryContext,
+      tipsContext,
+      currentTime,
+      weatherContext,
+      budgetContext,
+    });
 
     // 履歴の正規化
     const messages: ModelMessage[] = [
@@ -116,39 +140,7 @@ ${itineraryContext}`;
 
     const { model } = resolveProvider();
 
-    const { text } = await generateText({
-      model,
-      system: systemPrompt,
-      messages,
-      tools: {
-        runPythonCode: tool({
-          description:
-            "Pythonコードを実行して計算やデータ処理を行います。予算の計算や時間の計算、スケジュールの分析に使用してください。",
-          inputSchema: z.object({
-            code: z.string().describe("実行するPythonコード"),
-          }),
-          execute: async ({ code }) => {
-            try {
-              const sandbox = await Sandbox.create();
-              try {
-                const result = await sandbox.runCommand("python3", ["-c", code]);
-                const output = await result.stdout();
-                return { output };
-              } finally {
-                await sandbox.stop();
-              }
-            } catch (sandboxError) {
-              console.error("Sandbox Execution Failed:", sandboxError);
-              return {
-                error:
-                  "Sandbox environment is currently unavailable. Please perform calculation manually or try again later.",
-              };
-            }
-          },
-        }),
-      },
-      stopWhen: stepCountIs(5),
-    });
+    const { text } = await generateAdvisorReply(model, advisor, messages);
 
     const finalAnswer = compactAdvisorAnswer(text, {
       maxSentences: ADVISOR_MAX_ANSWER_SENTENCES,
@@ -170,4 +162,48 @@ ${itineraryContext}`;
       { status: 500 },
     );
   }
+}
+
+/**
+ * AIアドバイザーの返信を生成する
+ */
+export async function generateAdvisorReply(
+  model: ReturnType<typeof resolveProvider>["model"],
+  advisor: AdvisorAiConfig,
+  messages: ModelMessage[],
+) {
+  return generateText({
+    model,
+    system: advisor.systemPrompt,
+    messages,
+    temperature: 0.4,
+    topP: 0.8,
+    tools: {
+      runPythonCode: tool({
+        description: advisor.pythonToolDescription,
+        inputSchema: z.object({
+          code: z.string().describe("実行するPythonコード"),
+        }),
+        execute: async ({ code }) => {
+          try {
+            const sandbox = await Sandbox.create();
+            try {
+              const result = await sandbox.runCommand("python3", ["-c", code]);
+              const output = await result.stdout();
+              return { output };
+            } finally {
+              await sandbox.stop();
+            }
+          } catch (sandboxError) {
+            console.error("Sandbox Execution Failed:", sandboxError);
+            return {
+              error:
+                "Sandbox environment is currently unavailable. Please perform calculation manually or try again later.",
+            };
+          }
+        },
+      }),
+    },
+    stopWhen: stepCountIs(5),
+  });
 }

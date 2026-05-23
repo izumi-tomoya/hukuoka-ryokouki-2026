@@ -8,7 +8,7 @@ export default function AccessRow({ chips }: AccessRowProps) {
       {chips.map((chip, i) =>
         chip.startsWith("→") ? (
           // biome-ignore lint/suspicious/noArrayIndexKey: chips may contain duplicate arrow symbols, so index is needed for uniqueness
-          <span key={`${chip}-${i}`} className="text-[10px] text-stone-400">
+          <span key={`${chip}-${i}`} className="text-[10px] text-stone-400 dark:text-muted-foreground/70">
             {chip}
           </span>
         ) : (

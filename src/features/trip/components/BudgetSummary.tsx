@@ -41,7 +41,7 @@ export default function BudgetSummary({ events }: { events: TripEvent[] }) {
             ¥{(hasActuals ? actualTotal : plannedTotal).toLocaleString()}
           </p>
           {hasActuals && (
-            <span className="dark:text-muted-foreground truncate text-[9px] font-bold text-stone-400 md:text-[10px]">
+            <span className="text-stone-400 dark:text-muted-foreground truncate text-[9px] font-bold md:text-[10px]">
               / ¥{plannedTotal.toLocaleString()}
             </span>
           )}

@@ -54,33 +54,33 @@ export default async function SignInPage({ searchParams }: { searchParams: Searc
   return (
     <div className="bg-background relative flex min-h-screen items-center justify-center overflow-hidden p-6">
       {/* Decorative Background Elements */}
-      <div className="pointer-events-none absolute top-0 right-0 h-125 w-125 translate-x-1/2 -translate-y-1/2 rounded-full bg-rose-50/50 blur-3xl" />
-      <div className="pointer-events-none absolute bottom-0 left-0 h-100 w-100 -translate-x-1/2 translate-y-1/2 rounded-full bg-stone-100 blur-3xl" />
+      <div className="pointer-events-none absolute top-0 right-0 h-125 w-125 translate-x-1/2 -translate-y-1/2 rounded-full bg-rose-50/50 blur-3xl dark:bg-rose-900/10" />
+      <div className="pointer-events-none absolute bottom-0 left-0 h-100 w-100 -translate-x-1/2 translate-y-1/2 rounded-full bg-stone-100 blur-3xl dark:bg-stone-900/20" />
 
       {/* Large background text like a magazine */}
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden select-none">
-        <span className="font-playfair text-[40vw] leading-none font-black text-stone-200/20 select-none">M</span>
+        <span className="font-playfair text-[40vw] leading-none font-black text-stone-200/20 select-none dark:text-stone-800/10">M</span>
       </div>
 
       <div className="relative z-10 w-full max-w-md">
-        <div className="rounded-[4rem] border border-white/50 bg-white/80 p-10 text-center shadow-2xl ring-1 shadow-rose-100/20 ring-rose-100/30 backdrop-blur-xl md:p-16">
+        <div className="rounded-[4rem] border border-white/50 bg-white/80 p-10 text-center shadow-2xl ring-1 shadow-rose-100/20 ring-rose-100/30 backdrop-blur-xl md:p-16 dark:border-white/10 dark:bg-black/40 dark:shadow-none dark:ring-white/5">
           {/* Brand Logo/Icon */}
           <div className="relative mx-auto mb-10 h-20 w-20">
-            <div className="rounded-article absolute inset-0 rotate-6 animate-pulse bg-rose-500 opacity-10" />
-            <div className="rounded-logo absolute inset-0 z-10 flex items-center justify-center border border-rose-50 bg-white text-rose-500 shadow-sm">
+            <div className="rounded-article absolute inset-0 rotate-6 animate-pulse bg-rose-500 opacity-10 dark:opacity-20" />
+            <div className="rounded-logo absolute inset-0 z-10 flex items-center justify-center border border-rose-50 bg-white text-rose-500 shadow-sm dark:border-white/10 dark:bg-stone-900">
               <Sparkles size={32} />
             </div>
           </div>
 
           {/* Title Section */}
           <div className="mb-12 space-y-4">
-            <h1 className="font-playfair text-4xl font-bold tracking-tight text-stone-900 md:text-5xl">Memoir</h1>
+            <h1 className="font-playfair text-4xl font-bold tracking-tight text-stone-900 md:text-5xl dark:text-foreground">Memoir</h1>
             <div className="flex items-center justify-center gap-2">
-              <div className="h-px w-8 bg-rose-100" />
+              <div className="h-px w-8 bg-rose-100 dark:bg-rose-900/30" />
               <p className="text-[10px] font-black tracking-[0.4em] text-rose-400 uppercase">Exclusive Access</p>
-              <div className="h-px w-8 bg-rose-100" />
+              <div className="h-px w-8 bg-rose-100 dark:bg-rose-900/30" />
             </div>
-            <p className="mx-auto max-w-60 pt-2 text-sm leading-relaxed font-medium text-stone-500">
+            <p className="mx-auto max-w-60 pt-2 text-sm leading-relaxed font-medium text-stone-500 dark:text-muted-foreground">
               旅の続きを、ふたりで。
               <br />
               新しい記憶を刻む準備はできましたか？
@@ -88,7 +88,7 @@ export default async function SignInPage({ searchParams }: { searchParams: Searc
           </div>
 
           {errorMessage && (
-            <div className="mb-8 rounded-3xl border border-rose-200 bg-rose-50 px-5 py-4 text-left text-xs leading-relaxed font-bold text-rose-700">
+            <div className="mb-8 rounded-3xl border border-rose-200 bg-rose-50 px-5 py-4 text-left text-xs leading-relaxed font-bold text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-400">
               {errorMessage}
             </div>
           )}
@@ -103,12 +103,12 @@ export default async function SignInPage({ searchParams }: { searchParams: Searc
           >
             <button
               type="submit"
-              className="group relative w-full overflow-hidden rounded-4xl bg-stone-900 p-px transition-all hover:shadow-2xl hover:shadow-stone-200 active:scale-[0.98]"
+              className="group relative w-full overflow-hidden rounded-4xl bg-stone-900 p-px transition-all hover:shadow-2xl hover:shadow-stone-200 active:scale-[0.98] dark:bg-white/10 dark:hover:shadow-none"
             >
               {/* Button inner gradient effect */}
-              <div className="absolute inset-0 bg-linear-to-tr from-stone-800 to-stone-700 opacity-0 transition-opacity group-hover:opacity-100" />
+              <div className="absolute inset-0 bg-linear-to-tr from-stone-800 to-stone-700 opacity-0 transition-opacity group-hover:opacity-100 dark:from-stone-700 dark:to-stone-600" />
 
-              <div className="rounded-inner relative flex items-center justify-center gap-4 bg-stone-900 px-8 py-5 transition-colors group-hover:bg-transparent">
+              <div className="rounded-inner relative flex items-center justify-center gap-4 bg-stone-900 px-8 py-5 transition-colors group-hover:bg-transparent dark:bg-stone-950">
                 <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white shadow-sm">
                   <Image src="https://www.google.com/favicon.ico" alt="G" width={14} height={14} />
                 </div>
@@ -118,21 +118,21 @@ export default async function SignInPage({ searchParams }: { searchParams: Searc
               </div>
             </button>
 
-            <p className="text-[9px] font-bold tracking-widest text-stone-300 uppercase">
+            <p className="text-[9px] font-bold tracking-widest text-stone-300 uppercase dark:text-stone-600">
               Secured by Google Authentication
             </p>
           </form>
 
           {/* Footer Decoration */}
-          <div className="mt-16 flex justify-center gap-6 border-t border-stone-50 pt-8 text-stone-300">
+          <div className="mt-16 flex justify-center gap-6 border-t border-stone-50 pt-8 text-stone-300 dark:border-white/5 dark:text-stone-700">
             <MapIcon size={14} />
-            <div className="h-4 w-px bg-stone-100" />
+            <div className="h-4 w-px bg-stone-100 dark:bg-stone-900" />
             <LogIn size={14} />
           </div>
         </div>
 
         {/* Helper bottom link */}
-        <p className="mt-8 text-center text-[10px] font-bold tracking-[0.2em] text-stone-400 uppercase">
+        <p className="mt-8 text-center text-[10px] font-bold tracking-[0.2em] text-stone-400 uppercase dark:text-stone-600">
           &copy; 2026 Fukuoka Memoir Project
         </p>
       </div>

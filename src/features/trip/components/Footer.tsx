@@ -7,7 +7,7 @@ export default function Footer() {
         <Link href="/" className="font-playfair dark:text-foreground text-2xl font-bold tracking-tight text-stone-900">
           Memoir
         </Link>
-        <p className="text-[10px] font-black tracking-[0.4em] text-stone-300 uppercase dark:text-zinc-600">
+        <p className="text-[10px] font-black tracking-[0.4em] text-stone-300 uppercase dark:text-muted-foreground/60">
           © 2026 Memoir — Private Travel Journal
         </p>
       </div>

@@ -50,9 +50,9 @@ export default function CategorySummaryView({ category, events, slug }: Category
   const openModal = useModalStore((s) => s.openModal);
 
   return (
-    <div className="min-h-screen bg-slate-50/50 pb-32">
+    <div className="bg-slate-50/50 dark:bg-background min-h-screen pb-32">
       {/* Premium Header */}
-      <div className="relative overflow-hidden border-b border-slate-100 bg-white px-8 pt-20 pb-12 shadow-sm">
+      <div className="relative overflow-hidden border-b border-slate-100 bg-white px-8 pt-20 pb-12 shadow-sm dark:border-border dark:bg-card">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 0.05, scale: 1 }}
@@ -64,7 +64,7 @@ export default function CategorySummaryView({ category, events, slug }: Category
         <div className="relative z-10">
           <Link
             href={`/trip/${slug}`}
-            className="group mb-8 inline-flex items-center text-slate-400 transition-all hover:text-slate-900"
+            className="group mb-8 inline-flex items-center text-slate-400 transition-all hover:text-slate-900 dark:text-muted-foreground dark:hover:text-foreground"
           >
             <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
             <span className="text-[10px] font-black tracking-[0.3em] uppercase">Back to Trip</span>
@@ -72,10 +72,10 @@ export default function CategorySummaryView({ category, events, slug }: Category
 
           <div className="flex items-end justify-between">
             <div>
-              <h1 className="font-playfair text-5xl font-black tracking-tight text-slate-900 capitalize">{category}</h1>
+              <h1 className="font-playfair text-5xl font-black tracking-tight text-slate-900 capitalize dark:text-foreground">{category}</h1>
               <div className="mt-4 flex items-center gap-2">
                 <div className={cn("h-1 w-12 rounded-full", theme.color.replace("text-", "bg-"))} />
-                <p className="text-xs font-bold tracking-widest text-slate-400 uppercase">
+                <p className="text-xs font-bold tracking-widest text-slate-400 uppercase dark:text-muted-foreground">
                   {events.length} Selected Spots
                 </p>
               </div>
@@ -85,6 +85,7 @@ export default function CategorySummaryView({ category, events, slug }: Category
                 "flex h-16 w-16 items-center justify-center rounded-[2rem] shadow-xl",
                 theme.bg,
                 theme.color,
+                "dark:bg-secondary dark:text-foreground",
               )}
             >
               <Icon size={32} />
@@ -103,8 +104,8 @@ export default function CategorySummaryView({ category, events, slug }: Category
         <AnimatePresence mode="popLayout">
           {events.length === 0 ? (
             <motion.div variants={item} className="py-32 text-center">
-              <Sparkles className="mx-auto mb-4 h-12 w-12 text-slate-200" />
-              <p className="text-sm font-bold tracking-widest text-slate-300 uppercase">
+              <Sparkles className="mx-auto mb-4 h-12 w-12 text-slate-200 dark:text-muted" />
+              <p className="text-sm font-bold tracking-widest text-slate-300 uppercase dark:text-muted-foreground">
                 No spots found in this category
               </p>
             </motion.div>
@@ -121,7 +122,7 @@ export default function CategorySummaryView({ category, events, slug }: Category
                       openModal(event);
                     }
                   }}
-                  className="group relative flex cursor-pointer flex-col gap-4 rounded-[2.5rem] border border-transparent bg-white p-6 shadow-sm transition-all hover:border-slate-200 hover:shadow-xl hover:shadow-slate-200/50 active:scale-98"
+                  className="group relative flex cursor-pointer flex-col gap-4 rounded-[2.5rem] border border-transparent bg-white p-6 shadow-sm transition-all hover:border-slate-200 hover:shadow-xl hover:shadow-slate-200/50 active:scale-98 dark:bg-card dark:hover:border-border dark:hover:shadow-none"
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-4">
@@ -130,33 +131,33 @@ export default function CategorySummaryView({ category, events, slug }: Category
                           "flex h-12 w-12 items-center justify-center rounded-2xl font-mono text-lg font-black transition-colors",
                           theme.bg,
                           theme.color,
-                          "group-hover:bg-slate-900 group-hover:text-white",
+                          "group-hover:bg-slate-900 group-hover:text-white dark:bg-secondary dark:text-foreground dark:group-hover:bg-primary dark:group-hover:text-primary-foreground",
                         )}
                       >
                         {event.time.split(":")[0]}
                       </div>
                       <div>
-                        <h3 className="group-hover:text-primary text-lg leading-tight font-bold text-slate-900 transition-colors">
+                        <h3 className="group-hover:text-primary text-lg leading-tight font-bold text-slate-900 transition-colors dark:text-foreground">
                           {event.foodName || event.title}
                         </h3>
-                        <p className="mt-1 text-[10px] font-black tracking-widest text-slate-400 uppercase">
+                        <p className="mt-1 text-[10px] font-black tracking-widest text-slate-400 uppercase dark:text-muted-foreground">
                           {event.tagLabel || "Adventure"}
                         </p>
                       </div>
                     </div>
-                    <div className="rounded-full bg-slate-50 p-2 text-slate-300 transition-all group-hover:bg-slate-900 group-hover:text-white">
+                    <div className="rounded-full bg-slate-50 p-2 text-slate-300 transition-all group-hover:bg-slate-900 group-hover:text-white dark:bg-secondary dark:text-muted-foreground dark:group-hover:bg-primary dark:group-hover:text-primary-foreground">
                       <ChevronRight size={18} />
                     </div>
                   </div>
 
                   {event.desc && (
-                    <p className="line-clamp-2 text-sm leading-relaxed font-medium text-slate-500">{event.desc}</p>
+                    <p className="line-clamp-2 text-sm leading-relaxed font-medium text-slate-500 dark:text-muted-foreground">{event.desc}</p>
                   )}
 
                   {event.highlight && (
-                    <div className="mt-2 flex items-center gap-2 border-t border-slate-50 pt-4">
+                    <div className="mt-2 flex items-center gap-2 border-t border-slate-50 pt-4 dark:border-border">
                       <Sparkles size={12} className={theme.color} />
-                      <span className="text-[10px] font-bold text-slate-400 italic">
+                      <span className="text-[10px] font-bold text-slate-400 italic dark:text-muted-foreground/70">
                         &ldquo;{event.highlight}&rdquo;
                       </span>
                     </div>

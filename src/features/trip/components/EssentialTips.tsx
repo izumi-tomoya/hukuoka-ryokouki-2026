@@ -49,8 +49,8 @@ export default function EssentialTips() {
               <item.icon size={20} />
             </div>
             <div>
-              <h4 className="mb-2 font-bold text-stone-900">{item.title}</h4>
-              <p className="text-sm leading-relaxed text-stone-500">{item.desc}</p>
+              <h4 className="mb-2 font-bold text-stone-900 dark:text-foreground">{item.title}</h4>
+              <p className="text-sm leading-relaxed text-stone-500 dark:text-muted-foreground">{item.desc}</p>
             </div>
           </div>
         </MagazineCard>

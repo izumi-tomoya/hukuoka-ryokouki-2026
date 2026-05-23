@@ -3,6 +3,7 @@ import { Sandbox } from "@vercel/sandbox";
 import { createGateway, generateText, type ModelMessage, stepCountIs, tool } from "ai";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import type { TripEvent } from "@/features/trip/types/trip";
 import { compactAdvisorAnswer } from "@/lib/advisorResponse";
 import { buildAdvisorAiConfig } from "@/lib/aiPrompts";
 import { auth } from "@/lib/auth";
@@ -114,9 +115,12 @@ export async function POST(req: Request) {
       ? `現在: ${weather.current.text} (${weather.current.temp}℃) / 今日の予報: ${weather.forecast[0]?.text || "不明"} (最高${weather.forecast[0]?.tempMax}℃ / 降水${weather.forecast[0]?.rainChance}%)`
       : "取得失敗";
 
-    const allEvents = trip.days.flatMap((d) => d.events);
+    const allEvents = trip.days.flatMap((d) => d.events) as unknown as TripEvent[];
     const totalPlanned = allEvents.reduce((sum, e) => sum + (e.plannedBudget || 0), 0);
-    const totalActual = allEvents.reduce((sum, e) => sum + (e.actualExpense || (e.myExpense || 0) + (e.herExpense || 0) || 0), 0);
+    const totalActual = allEvents.reduce(
+      (sum, e) => sum + (e.actualExpense || (e.myExpense || 0) + (e.herExpense || 0) || 0),
+      0,
+    );
     const budgetContext = `予定合計: ¥${totalPlanned.toLocaleString()} / 支出確定分: ¥${totalActual.toLocaleString()} / 残り予算(見込): ¥${(totalPlanned - totalActual).toLocaleString()}`;
 
     const advisor = buildAdvisorAiConfig({
